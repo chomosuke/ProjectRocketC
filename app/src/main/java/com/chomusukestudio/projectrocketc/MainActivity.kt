@@ -86,7 +86,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         var joystick = TwoFingersJoystick()
         val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
-        var surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], TrigeralbeView(context as Activity, findViewById(R.id.visualText)))
+        var surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], TriggerableView<TextView>(findViewById(R.id.visualText), context as Activity))
         var rocket = TestRocket(surrounding)
         var processingThread = ProcessingThread(joystick, surrounding, rocket,
                 (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate)
@@ -148,7 +148,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 }
 
 
-fun giveVisualText(string: String, visualTextView: TrigeralbeView<TextView>) {
+fun giveVisualText(string: String, visualTextView: TriggerableView<TextView>) {
     visualTextView.activity.runOnUiThread {
         visualTextView.view.visibility = View.VISIBLE
         visualTextView.view.text = string
@@ -159,4 +159,4 @@ fun giveVisualText(string: String, visualTextView: TrigeralbeView<TextView>) {
     }
 }
 
-class TrigeralbeView<T : View>(val activity: Activity, val view: T)
+class TriggerableView<T : View>(val view: T, val activity: Activity)
