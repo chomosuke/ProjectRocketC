@@ -36,10 +36,6 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
     private val lockForProcessingThread = ReentrantLock()
     private val conditionForProcessingThread = lockForProcessingThread.newCondition()
     
-    fun setRefreshRate(refreshRate: Float) {
-        REFRESH_RATE = refreshRate
-    }
-    
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         
         //enable transparency
@@ -54,7 +50,7 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         // Set the background frame color
         GLES30.glClearColor(0f, 0f, 0f, 1f)
         
-        
+        Layer.initializeTriangularShapeClass()
         
         Log.i(TAG, "onSurfaceCreated() called")
         
