@@ -29,8 +29,8 @@ import java.lang.Math.random
  */
 
 class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
-                       private var bottomEnd: Float, private var topEnd: Float,
-                       private val visualTextView: TouchableView<TextView>) : Surrounding {
+                       private var bottomEnd: Float, private var topEnd: Float/*,
+                       private val visualTextView: TouchableView<TextView>*/) : Surrounding {
     override fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
         this.leftEnd = leftEnd
         this.rightEnd = rightEnd
@@ -316,7 +316,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         }
         for (i in littleStars.indices) {
             if (rocket.isEaten(littleStars[i])) {
-                littleStars[i].eatLittleStar(visualTextView)
+                littleStars[i].eatLittleStar(/*visualTextView*/)
                 when (littleStars[i].COLOR) {
                     YELLOW -> {
                         numberOfYellowStarEatenSinceLastRedStar++
@@ -493,9 +493,9 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             LittleStar.dScore = (LittleStar.dScore * (1 + flybysInThisYellowStar * 0.5)).toLong()
             //            LittleStar.Companion.setDScore(1000000);
             if ((1 + flybysInThisYellowStar * 0.5) % 1 == 0.0) { // display an integer
-                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5).toInt(), visualTextView)
+                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5).toInt()/*, visualTextView*/)
             } else {
-                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5), visualTextView)
+                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5)/*, visualTextView*/)
             }
             when (flybysInThisYellowStar) {
                 1 -> {

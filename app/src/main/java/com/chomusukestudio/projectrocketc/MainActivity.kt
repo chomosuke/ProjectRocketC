@@ -126,27 +126,16 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         init {
             
             // Create an OpenGL ES 3.0(3.1) context
-            setEGLContextClientVersion(2)/*
+            setEGLContextClientVersion(3)/*
             You can't explicitly request 3.1 when you create the context.
             Based on my understanding, 3.1 is not handled as a context type separate from 3.0.
             Essentially, a context supporting 3.1 is just a 3.0 context that also supports the additional 3.1 features.
              */
             
             setEGLConfigChooser(MyConfigChooser())// antialiasing
-            
-            // set width and height of surface view
-            
-            pixelWidth = width.toFloat()
-            pixelHeight = height.toFloat()
-        }
-        
-        fun setRefreshRate(refreshRate: Float) {
-            mRenderer.setRefreshRate(refreshRate)
-        }
 
-        fun initializeRenderer() {
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
-            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
+            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3]/*, TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity)*/)
             rocket = TestRocket(surrounding)
             processingThread = ProcessingThread(joystick, surrounding, rocket,
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate)
@@ -158,6 +147,18 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             //
             //            // Render the view only when there is a change in the drawing data
             //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            // set width and height of surface view
+            
+            pixelWidth = width.toFloat()
+            pixelHeight = height.toFloat()
+        }
+        
+        fun setRefreshRate(refreshRate: Float) {
+            mRenderer.setRefreshRate(refreshRate)
+        }
+
+        fun initializeRenderer() {
+
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {
@@ -201,15 +202,15 @@ fun transformToMatrixY(y: Float): Float {
     return resultY
 }
 
-fun giveVisualText(string: String, visualTextView: TouchableView<TextView>) {
-    visualTextView.activity.runOnUiThread {
-        visualTextView.view.visibility = View.VISIBLE
-        visualTextView.view.text = string
-        val visualEffectAnimation = AnimationUtils.loadAnimation(visualTextView.activity, R.anim.visual_text_effect)
-        // Now Set your animation
-        visualTextView.view.startAnimation(visualEffectAnimation)
-        visualTextView.view.visibility = View.INVISIBLE
-    }
+fun giveVisualText(string: String/*, visualTextView: TouchableView<TextView>*/) {
+//    visualTextView.activity.runOnUiThread {
+//        visualTextView.view.visibility = View.VISIBLE
+//        visualTextView.view.text = string
+//        val visualEffectAnimation = AnimationUtils.loadAnimation(visualTextView.activity, R.anim.visual_text_effect)
+//        // Now Set your animation
+//        visualTextView.view.startAnimation(visualEffectAnimation)
+//        visualTextView.view.visibility = View.INVISIBLE
+//    }
 }
 
 class TouchableView<V : View>(val view: V, val activity: Activity) {

@@ -4,7 +4,6 @@ package com.chomusukestudio.projectrocketc.GLRenderer
  * Created by Shuang Li on 11/03/2018.
  */
 
-import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.os.SystemClock
@@ -15,7 +14,7 @@ import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
-import android.opengl.GLES20
+import android.opengl.GLES30
 import com.chomusukestudio.projectrocketc.pixelHeight
 import com.chomusukestudio.projectrocketc.pixelWidth
 import java.util.concurrent.locks.ReentrantLock
@@ -44,8 +43,8 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         
         //enable transparency
-        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
-        GLES20.glEnable(GLES20.GL_BLEND)
+        GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA)
+        GLES30.glEnable(GLES30.GL_BLEND)
         //
         //        // Enable depth test
         //        glEnable(GL_DEPTH_TEST);
@@ -70,6 +69,7 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         if (now - previousTime >= 1000) {// just to get frame rates
             Log.i("Frame rate", "" + countingFrames + " and dynamic performance index " + CircularShape.dynamicPerformanceIndex)
             countingFrames = 0
+            previousTime = now
         }
 
         processingThread.waitForLastFrame()
