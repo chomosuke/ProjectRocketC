@@ -213,6 +213,6 @@ fun giveVisualText(string: String/*, visualTextView: TouchableView<TextView>*/) 
 //    }
 }
 
-class TouchableView<V : View>(val view: V, val activity: Activity) {
+class TouchableView<out V : View>(val view: V, val activity: Activity) {
 
 }
