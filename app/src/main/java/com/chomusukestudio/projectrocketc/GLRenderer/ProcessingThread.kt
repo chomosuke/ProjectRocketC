@@ -13,6 +13,8 @@ import java.util.concurrent.locks.ReentrantLock
 import java.util.logging.Level
 import java.util.logging.Logger
 import android.widget.TextView
+import com.chomusukestudio.projectrocketc.TransformToMatrixX
+import com.chomusukestudio.projectrocketc.TransformToMatrixY
 
 class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float) {
     fun onTouchEvent(e: MotionEvent): Boolean {
