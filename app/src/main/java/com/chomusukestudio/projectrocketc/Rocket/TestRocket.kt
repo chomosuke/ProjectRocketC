@@ -1,11 +1,8 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
+import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
-import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
-import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TraceShape.RegularPolygonalTraceShape
-import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 
 import java.util.ArrayList
 
@@ -73,8 +70,8 @@ class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         // lay down trace
         
         //        if (random() < 0.5)
-        //            traces.add(new TrapezoidalTraceShape(((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QuadrilateralShape.X4), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QuadrilateralShape.Y4),
-        //                    ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QuadrilateralShape.X3), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QuadrilateralShape.Y3), 2,
+        //            traces.add(new TrapezoidalTraceShape(((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QX4), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QY4),
+        //                    ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QX3), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QY3), 2,
         //                    -0.5 * speed * sin(currentRotation), -0.5 * speed * cos(currentRotation), 0.9, 0.9, 0.1, 1, 1.01));
         
         ds += unfilledDs // finish last frame unfinished work
@@ -90,12 +87,12 @@ class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
                 
                 var i = 0
                 while (i < I_MAX) {
-                    val initialRadius = (0.25f + 0.1f * random().toFloat()) * distance((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QuadrilateralShape.X4), (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QuadrilateralShape.Y4),
-                            (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QuadrilateralShape.X3), (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QuadrilateralShape.Y3))
-                    val x1 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QuadrilateralShape.X4) - initialRadius * cosCurrentRotation)
-                    val y1 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QuadrilateralShape.Y4) + initialRadius * sinCurrentRotation)
-                    val x2 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QuadrilateralShape.X3) + initialRadius * cosCurrentRotation)
-                    val y2 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QuadrilateralShape.Y3) - initialRadius * sinCurrentRotation).toDouble()
+                    val initialRadius = (0.25f + 0.1f * random().toFloat()) * distance((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4), (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4),
+                            (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3), (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3))
+                    val x1 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4) - initialRadius * cosCurrentRotation)
+                    val y1 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4) + initialRadius * sinCurrentRotation)
+                    val x2 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3) + initialRadius * cosCurrentRotation)
+                    val y2 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3) - initialRadius * sinCurrentRotation).toDouble()
                     
                     var centerX: Double
                     var centerY: Double
