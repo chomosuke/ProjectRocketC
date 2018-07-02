@@ -96,6 +96,10 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         
         val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
         
+        // refresh width and height of surfaceView
+        widthOfSurface = width.toFloat()
+        heightOfSurface = height.toFloat()
+        
         // for debugging
         //        Matrix.orthoM(mProjectionMatrix, 0, left/4*720/512, right/4*720/512, bottom/4*720/512, top/4*720/512, -1000, 1000);
         Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], -1000f, 1000f)
