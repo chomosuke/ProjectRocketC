@@ -8,10 +8,12 @@ interface Triangle {
     interface TriangleCoords {
         operator fun get(index: Int): Float
         operator fun set(index: Int, value: Float)
+        fun getFloatArray() : FloatArray
     }
     interface RGBAArray {
         operator fun get(index: Int): Float
         operator fun set(index: Int, value: Float)
+        fun getFloatArray() : FloatArray
     }
 }
 

@@ -16,8 +16,8 @@ import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
 import android.opengl.GLES20
-import com.chomusukestudio.projectrocketc.heightOfSurface
-import com.chomusukestudio.projectrocketc.widthOfSurface
+import com.chomusukestudio.projectrocketc.pixelHeight
+import com.chomusukestudio.projectrocketc.pixelWidth
 import java.util.concurrent.locks.ReentrantLock
 
 
@@ -99,8 +99,8 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
         
         // refresh width and height of surfaceView
-        widthOfSurface = width.toFloat()
-        heightOfSurface = height.toFloat()
+        pixelWidth = width.toFloat()
+        pixelHeight = height.toFloat()
         
         // for debugging
         //        Matrix.orthoM(mProjectionMatrix, 0, left/4*720/512, right/4*720/512, bottom/4*720/512, top/4*720/512, -1000, 1000);

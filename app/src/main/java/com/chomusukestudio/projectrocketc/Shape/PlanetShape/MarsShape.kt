@@ -32,7 +32,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float) : Plane
         componentShapes[0] = CircularShape(centerX, centerY, radius, mainColor[0], mainColor[1], mainColor[2], 1f, z)
         
         // generate some Crater on the planet
-        for (i in 1 until componentShapes!!.size) {
+        for (i in 1 until componentShapes.size) {
             // (radius) of crater
             val sRadius = (random() * 0.3 + 0.35) * PI / 6
             // (distance) of crater from center
@@ -46,7 +46,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float) : Plane
             val blue = darkerColor[2]
             val z1 = z - 0.01f
             componentShapes[i] = object : Shape() {
-                override lateinit var componentShapes: Array<Shape>
+                override var componentShapes: Array<Shape>
                 override val isOverlapMethodLevel: Double = 0.0
                 init {
                     val r = sin(sRadius).toFloat() * radius
@@ -55,7 +55,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float) : Plane
                     val componentShapes = arrayOfNulls<Shape>(numberOfEdges - 2)
                     
                     // generate components triangularShape for EllipseShape using center and a and b
-                    for (i in 1 until componentShapes!!.size + 1) {
+                    for (i in 1 until componentShapes.size + 1) {
                         componentShapes[i - 1] = TriangularShape(mSin(offsetRadius).toFloat() * radius * cos(sRadius).toFloat(),
                                 sin(sRadius).toFloat() * radius,
                                 mSin(offsetRadius + sRadius * sin(2.0 * PI * i.toDouble() / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * i.toDouble() / numberOfEdges)).toFloat(),
@@ -81,9 +81,9 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float) : Plane
                         //                        componentShapes[i - 1] = new TriangularShape(centerX, r, x2, y2, x3, y3,
                         //                            Red, green, blue, alpha, z); // close for modification
                     }
-                    moveShape(centerXOfBall.toFloat(), centerYOfBall.toFloat())
-                    
                     this.componentShapes = componentShapes as Array<Shape>
+
+                    moveShape(centerXOfBall.toFloat(), centerYOfBall.toFloat())
                 }
                 
                 private fun mSin(a: Double): Double {

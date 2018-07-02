@@ -17,7 +17,7 @@ import com.chomusukestudio.projectrocketc.Shape.Shape
 import java.util.ArrayList
 
 import com.chomusukestudio.projectrocketc.Shape.point.distance
-import com.chomusukestudio.projectrocketc.TriggerableView
+import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar.Color.YELLOW
 import java.lang.Math.PI
@@ -30,7 +30,7 @@ import java.lang.Math.random
 
 class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                        private var bottomEnd: Float, private var topEnd: Float,
-                       private val visualTextView: TriggerableView<TextView>) : Surrounding {
+                       private val visualTextView: TouchableView<TextView>) : Surrounding {
     override fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
         this.leftEnd = leftEnd
         this.rightEnd = rightEnd
@@ -547,7 +547,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         private val NUMBER_OF_STARS = 6000
         
         private val NUMBER_OF_PLANET = 1000
-        private val planetShapes = Array<PlanetShape>(NUMBER_OF_PLANET) {
+        private val planetShapes = Array(NUMBER_OF_PLANET) {
             val planetShape = generateRandomPlanetShape(random().toFloat(), random().toFloat(), generateRadius(), 10f)
             planetShape.removePlanet()
             return@Array planetShape
@@ -575,7 +575,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 Log.v("time take for newPlanet", "jupiter " + (System.currentTimeMillis() - timeStarted))
             }
             randomPlanetShape.rotateShape(centerX, centerY, (random() * 2.0 * PI).toFloat())
-            return getRandomPlanetShape()
+            return randomPlanetShape
         }
     
         private var lastUsedPlanet: Int = 0

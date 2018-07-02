@@ -14,6 +14,10 @@ class GLTriangle (x1: Float, y1: Float,
                   red: Float, green: Float, blue: Float, alpha: Float, z: Float) : Triangle {
     
     override val triangleCoords: Triangle.TriangleCoords = object : Triangle.TriangleCoords {
+        override fun getFloatArray(): FloatArray {
+            return FloatArray(CPT) { i -> this[i] }
+        }
+
         override fun get(index: Int): Float {
             if (index < 6)
                 return layer.triangleCoords[coordPointer + index]
@@ -36,6 +40,10 @@ class GLTriangle (x1: Float, y1: Float,
         get() = layer.z
     
     override val RGBA: Triangle.RGBAArray = object : Triangle.RGBAArray {
+        override fun getFloatArray() : FloatArray {
+            return FloatArray(12) { i -> this[i % 4] }
+        }
+
         override fun get(index: Int): Float {
             if (index < 4) {
                 return layer.colors[colorPointer + index]
@@ -46,9 +54,12 @@ class GLTriangle (x1: Float, y1: Float,
         override fun set(index: Int, value: Float) {
             if (index < 4) {
                 layer.colors[colorPointer + index] = value
+                layer.colors[colorPointer + index + 4] = value
+                layer.colors[colorPointer + index + 8] = value
             } else {
                 throw IndexOutOfBoundsException("invalid index for setRGBAArray: $index")
-            }        }
+            }
+        }
     }
     
     private fun getLayer(z: Float): Layer {

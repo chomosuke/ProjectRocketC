@@ -12,9 +12,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import java.util.logging.Level
 import java.util.logging.Logger
-import android.widget.TextView
-import com.chomusukestudio.projectrocketc.TransformToMatrixX
-import com.chomusukestudio.projectrocketc.TransformToMatrixY
+import com.chomusukestudio.projectrocketc.transformToMatrixX
+import com.chomusukestudio.projectrocketc.transformToMatrixY
 
 class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float) {
     fun onTouchEvent(e: MotionEvent): Boolean {
@@ -22,8 +21,8 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
 
-        val x = TransformToMatrixX(e.x)
-        val y = TransformToMatrixY(e.y)
+        val x = transformToMatrixX(e.x)
+        val y = transformToMatrixY(e.y)
 
         if (isStarted) {
             when (e.action) {

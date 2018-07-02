@@ -17,8 +17,10 @@ import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
+import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Rocket.TestRocket
 import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
+import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import java.util.concurrent.Executors
 
 import javax.microedition.khronos.egl.EGL10
@@ -29,18 +31,23 @@ import java.util.concurrent.TimeUnit
 
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
-    var mGLView: MyGLSurfaceView = findViewById(R.id.MyGLSurfaceView)
-    var scoreTextView: TextView = findViewById(R.id.pointTextView)
-    private var playButton: ImageButton = findViewById(R.id.playButton)
+    lateinit var mGLView: MyGLSurfaceView
+    lateinit var  scoreTextView: TextView
+    private lateinit var playButton: ImageButton
     
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // as the ContentView for this Activity.
-        setContentView(findViewById<ImageView>(R.id.splashImage))
-        mGLView.initializeSurrounding()
-        
+//        setContentView(findViewById<ImageView>(R.id.splashImage))
+
         setContentView(R.layout.activity_main)
+
+        playButton = findViewById(R.id.playButton)
+        mGLView = findViewById(R.id.MyGLSurfaceView)
+        scoreTextView = findViewById(R.id.pointTextView)
+
+        mGLView.initializeSurrounding()
     }
 
     private val updateScoreThread = Executors.newScheduledThreadPool(1)
@@ -85,13 +92,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
 
-        var joystick = TwoFingersJoystick()
-        val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
-        var surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], TriggerableView<TextView>(findViewById(R.id.visualText), context as Activity))
-        var rocket = TestRocket(surrounding)
-        var processingThread = ProcessingThread(joystick, surrounding, rocket,
-                (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate)
-        private val mRenderer = TheGLRenderer(processingThread)
+        private var joystick = TwoFingersJoystick()
+        lateinit var surrounding: Surrounding
+        private lateinit var rocket: Rocket
+        private lateinit var processingThread: ProcessingThread
+        private lateinit var mRenderer: TheGLRenderer
         
         fun removeAllShapes() {
             processingThread.removeAllShapes()
@@ -100,9 +105,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         internal inner class MyConfigChooser : GLSurfaceView.EGLConfigChooser {// this class is for antialiasing
             
             override fun chooseConfig(egl: EGL10, display: EGLDisplay): EGLConfig? {
+
                 val attribs = intArrayOf(EGL10.EGL_LEVEL, 0, EGL10.EGL_RENDERABLE_TYPE, 4, // EGL_OPENGL_ES2_BIT
-                        EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_RGB_BUFFER, EGL10.EGL_RED_SIZE, 8, EGL10.EGL_GREEN_SIZE, 8, EGL10.EGL_BLUE_SIZE, 8, EGL10.EGL_DEPTH_SIZE, 16, EGL10.EGL_SAMPLE_BUFFERS, 1, EGL10.EGL_SAMPLES, 4, // This is for 4x MSAA.
-                        EGL10.EGL_NONE)
+                        EGL10.EGL_COLOR_BUFFER_TYPE, EGL10.EGL_RGB_BUFFER, EGL10.EGL_RED_SIZE, 8,
+                        EGL10.EGL_GREEN_SIZE, 8, EGL10.EGL_BLUE_SIZE, 8, EGL10.EGL_DEPTH_SIZE, 16,
+                        EGL10.EGL_SAMPLE_BUFFERS, 1, EGL10.EGL_SAMPLES, 4, EGL10.EGL_NONE)// This is for 4x MSAA.
+
                 val configs = arrayOfNulls<EGLConfig>(1)
                 val configCounts = IntArray(1)
                 egl.eglChooseConfig(display, attribs, configs, 1, configCounts)
@@ -135,8 +143,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             
             // set width and height of surface view
             
-            widthOfSurface = getWidth().toFloat()
-            heightOfSurface = getHeight().toFloat()
+            pixelWidth = width.toFloat()
+            pixelHeight = height.toFloat()
         }
         
         fun setRefreshRate(refreshRate: Float) {
@@ -144,6 +152,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
 
         fun initializeSurrounding() {
+            val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
+            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
+            rocket = TestRocket(surrounding)
+            processingThread = ProcessingThread(joystick, surrounding, rocket,
+                    (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate)
+            mRenderer = TheGLRenderer(processingThread)
             surrounding.initializeSurrounding(rocket)
         }
         
@@ -153,43 +167,42 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 }
 
-var widthOfSurface: Float = 0f
-var heightOfSurface: Float = 0f
+var pixelWidth: Float = 0f
+var pixelHeight: Float = 0f
 
-
-fun TransformToMatrixX(x: Float): Float {
-    var x = x
+fun transformToMatrixX(x: Float): Float {
+    var resultX = x
     // transformation
-    x -= widthOfSurface / 2
-    x /= widthOfSurface / 2
-    val leftRightBottomTop = generateLeftRightBottomTop(widthOfSurface/ heightOfSurface)
-    x *= leftRightBottomTop[0]
+    resultX -= pixelWidth / 2
+    resultX /= pixelWidth / 2
+    val leftRightBottomTop = generateLeftRightBottomTop(pixelWidth/ pixelHeight)
+    resultX *= leftRightBottomTop[0]
     // assuming left == - right is true
     // need improvement to obey OOP principles by getting rid of the assumption above
     if (!(leftRightBottomTop[0] == -leftRightBottomTop[1]))
         throw RuntimeException("need improvement to obey OOP principles by not assuming left == - right is true.\n" +
                 "or you can ignore the above and just twist the code to get it work and not give a fuck about OOP principles.\n" +
                 "which is what i did when i wrote those code.  :)")
-    return x
+    return resultX
 }
 
-fun TransformToMatrixY(y: Float): Float {
-    var y = y
+fun transformToMatrixY(y: Float): Float {
+    var resultY = y
     // transformation
-    y -= heightOfSurface / 2
-    y /= heightOfSurface / 2
-    val leftRightBottomTop = generateLeftRightBottomTop(widthOfSurface/ heightOfSurface)
-    y *= leftRightBottomTop[2]
+    resultY -= pixelHeight / 2
+    resultY /= pixelHeight / 2
+    val leftRightBottomTop = generateLeftRightBottomTop(pixelWidth/ pixelHeight)
+    resultY *= leftRightBottomTop[2]
     // assuming top == - bottom is true
     // need improvement to obey OOP principles by getting rid of the assumption above
     if (!(leftRightBottomTop[3] == -leftRightBottomTop[2]))
         throw RuntimeException("need improvement to obey OOP principles by not assuming top == - bottom is true.\n" +
                 "or you can ignore the above and just twist the code to get it work and not give a fuck about OOP principles.\n" +
                 "which is what i did when i wrote those code.  :)")
-    return y
+    return resultY
 }
 
-fun giveVisualText(string: String, visualTextView: TriggerableView<TextView>) {
+fun giveVisualText(string: String, visualTextView: TouchableView<TextView>) {
     visualTextView.activity.runOnUiThread {
         visualTextView.view.visibility = View.VISIBLE
         visualTextView.view.text = string
@@ -200,4 +213,6 @@ fun giveVisualText(string: String, visualTextView: TriggerableView<TextView>) {
     }
 }
 
-class TriggerableView<T : View>(val view: T, val activity: Activity)
+class TouchableView<V : View>(val view: V, val activity: Activity) {
+
+}

@@ -12,8 +12,8 @@ class TriangularShape(x1: Float, y1: Float,
     private var triangle: Triangle? = GLTriangle(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, z)
     // nullable because sometimes invisible
     
-    private val triangleCoords = FloatArray(CPT)
-    private val RGBA = FloatArray(4)
+    private var triangleCoords = FloatArray(CPT)
+    private var RGBA = FloatArray(4)
     
     override var componentShapes: Array<Shape> = arrayOf(this)
         set(value) {
@@ -35,8 +35,8 @@ class TriangularShape(x1: Float, y1: Float,
                 if (visibility) {
                     triangle = GLTriangle(triangleCoords, RGBA, triangle!!.z)
                 } else {
-                    System.arraycopy(triangle!!.triangleCoords, 0, triangleCoords, 0, triangleCoords.size)
-                    System.arraycopy(triangle!!.RGBA, 0, RGBA, 0, RGBA.size)
+                    triangleCoords = triangle!!.triangleCoords.getFloatArray()
+                    RGBA = triangle!!.RGBA.getFloatArray()
                     triangle!!.removeTriangle()
                 }
                 field = visibility
