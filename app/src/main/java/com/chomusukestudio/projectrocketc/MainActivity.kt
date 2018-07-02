@@ -12,7 +12,6 @@ import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 
@@ -47,7 +46,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         mGLView = findViewById(R.id.MyGLSurfaceView)
         scoreTextView = findViewById(R.id.pointTextView)
 
-        mGLView.initializeSurrounding()
+        mGLView.initializeRenderer()
     }
 
     private val updateScoreThread = Executors.newScheduledThreadPool(1)
@@ -135,12 +134,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             
             setEGLConfigChooser(MyConfigChooser())// antialiasing
             
-            // Set the Renderer for drawing on the GLSurfaceView
-            setRenderer(mRenderer)
-            //
-            //            // Render the view only when there is a change in the drawing data
-            //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-            
             // set width and height of surface view
             
             pixelWidth = width.toFloat()
@@ -151,7 +144,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             mRenderer.setRefreshRate(refreshRate)
         }
 
-        fun initializeSurrounding() {
+        fun initializeRenderer() {
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
             surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
             rocket = TestRocket(surrounding)
@@ -159,6 +152,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate)
             mRenderer = TheGLRenderer(processingThread)
             surrounding.initializeSurrounding(rocket)
+
+            // Set the Renderer for drawing on the GLSurfaceView
+            setRenderer(mRenderer)
+            //
+            //            // Render the view only when there is a change in the drawing data
+            //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {

@@ -84,18 +84,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     @Volatile private var closeThisFrame = false
     private var distanceThisFrame: Float = 0f
     private var flybyDistance = 0.35f
-    private var rectangleForFlyby: QuadrilateralShape = run {
-        val rectangleForFlyby = QuadrilateralShape(centerOfRotationX + (rocket.width / 2 + flybyDistance),
-            centerOfRotationY + 0.4f,
-            centerOfRotationX + (rocket.width / 2 + flybyDistance),
-            centerOfRotationY - 0.4f,
-            centerOfRotationX - (rocket.width / 2 + flybyDistance),
-            centerOfRotationY - 0.4f,
-            centerOfRotationX - (rocket.width / 2 + flybyDistance),
-            centerOfRotationY + 0.4f, 0f, 1f, 0f, 1f, 0f)
-        rectangleForFlyby.visibility = false
-        return@run rectangleForFlyby
-    }
+    private lateinit var rectangleForFlyby: QuadrilateralShape
     private var flybysInThisYellowStar = 0
     private var flybyPlanetShape: PlanetShape? = null
     
@@ -115,19 +104,18 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     
     override fun initializeSurrounding(rocket: Rocket) {
 
-
-            this.rocket = rocket
-            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f,
-                    centerOfRotationX + rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
-                    centerOfRotationX + rocket.width / 2f, centerOfRotationY,
-                    centerOfRotationX - rocket.width / 2f, centerOfRotationY,
-                    0f, 1f, 0f, 1f, 10f) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
-            startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
-            startingPathOfRocket.visibility = false //  this shape will only be used in isOverlapToOverride.
-         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
+        this.rocket = rocket
+        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f,
+                centerOfRotationX + rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
+                centerOfRotationX + rocket.width / 2f, centerOfRotationY,
+                centerOfRotationX - rocket.width / 2f, centerOfRotationY,
+                0f, 1f, 0f, 1f, 10f) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
+        startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
+        startingPathOfRocket.visibility = false //  this shape will only be used in isOverlapToOverride.
+        // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
 
         PlanetShape.setENDs(leftEnd * 1.5f, rightEnd * 1.5f, bottomEnd * 1.5f, topEnd * (1.5f + topMarginForLittleStar))
-        
+
         // initialize all those stars in the backgrounds
         backgrounds = ArrayList(NUMBER_OF_STARS)
         for (i in 0 until NUMBER_OF_STARS) {
@@ -135,13 +123,13 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                     random().toFloat() * (topEnd - bottomEnd) + bottomEnd,
                     (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, 11f))
         }
-        
+
         // initialize surrounding
         val counter = 0 // just in case no more planet can be fit in
         for (i in 0..2048) {
             // randomly reposition the new planet
             newPlanet.resetPosition((random() * (leftEnd * 1.5f - rightEnd * 1.5f) + rightEnd * 1.5f).toFloat(), (random() * (topEnd * (1.5f + topMarginForLittleStar) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat())
-            
+
             if (isGoodPlanet(newPlanet)) {// it is not too close to any other planet
                 boundaries.add(newPlanet)// use the random new planet
                 // create another random new planet for next use
@@ -150,7 +138,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         }
         newPlanet.visibility = false
         // leave it for next makeNewTriangleAndDeleteTheOldOne()
-        
+
         // initialize this for flyby
         rectangleForFlyby = QuadrilateralShape(centerOfRotationX + (rocket.width / 2 + flybyDistance),
                 centerOfRotationY + 0.4f,
