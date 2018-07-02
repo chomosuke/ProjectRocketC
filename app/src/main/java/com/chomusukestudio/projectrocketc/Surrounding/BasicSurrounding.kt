@@ -17,7 +17,7 @@ import com.chomusukestudio.projectrocketc.Shape.Shape
 import java.util.ArrayList
 
 import com.chomusukestudio.projectrocketc.Shape.point.distance
-import com.chomusukestudio.projectrocketc.ViewWithActivity
+import com.chomusukestudio.projectrocketc.TriggerableView
 import com.chomusukestudio.projectrocketc.giveVisualText
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar.Color.YELLOW
 import java.lang.Math.PI
@@ -30,7 +30,7 @@ import java.lang.Math.random
 
 class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                        private var bottomEnd: Float, private var topEnd: Float,
-                       private val visualTextView: ViewWithActivity<TextView>) : Surrounding {
+                       private val visualTextView: TriggerableView<TextView>) : Surrounding {
     override fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
         this.leftEnd = leftEnd
         this.rightEnd = rightEnd

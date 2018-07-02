@@ -1,5 +1,7 @@
 package com.chomusukestudio.projectrocketc.Shape
 
+import com.chomusukestudio.projectrocketc.GLRenderer.COORDS_PER_VERTEX
+
 /**
  * Created by Shuang Li on 3/03/2018.
  */
@@ -53,8 +55,8 @@ class QuadrilateralShape : Shape {
         val Y2 = TriangularShape.Y2
         val X3 = TriangularShape.X3
         val Y3 = TriangularShape.Y3
-        val X4 = TriangularShape.X2 + 2 * TriangularShape.COORDS_PER_VERTEX
-        val Y4 = TriangularShape.Y2 + 2 * TriangularShape.COORDS_PER_VERTEX
+        val X4 = TriangularShape.X2 + 2 * COORDS_PER_VERTEX
+        val Y4 = TriangularShape.Y2 + 2 * COORDS_PER_VERTEX
     }
 }
 

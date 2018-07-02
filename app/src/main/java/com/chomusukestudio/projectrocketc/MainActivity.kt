@@ -135,8 +135,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             
             // set width and height of surface view
             
-            widthOfSurface = getWidth()
-            heightOfSurfce = getHeight()
+            widthOfSurface = getWidth().toFloat()
+            heightOfSurface = getHeight().toFloat()
         }
         
         fun setRefreshRate(refreshRate: Float) {
@@ -153,8 +153,41 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 }
 
-var widthOfSurface
-var heightOfSurface
+var widthOfSurface: Float = 0f
+var heightOfSurface: Float = 0f
+
+
+fun TransformToMatrixX(x: Float): Float {
+    var x = x
+    // transformation
+    x -= widthOfSurface / 2
+    x /= widthOfSurface / 2
+    val leftRightBottomTop = generateLeftRightBottomTop(widthOfSurface/ heightOfSurface)
+    x *= leftRightBottomTop[0]
+    // assuming left == - right is true
+    // need improvement to obey OOP principles by getting rid of the assumption above
+    if (!(leftRightBottomTop[0] == -leftRightBottomTop[1]))
+        throw RuntimeException("need improvement to obey OOP principles by not assuming left == - right is true.\n" +
+                "or you can ignore the above and just twist the code to get it work and not give a fuck about OOP principles.\n" +
+                "which is what i did when i wrote those code.  :)")
+    return x
+}
+
+fun TransformToMatrixY(y: Float): Float {
+    var y = y
+    // transformation
+    y -= heightOfSurface / 2
+    y /= heightOfSurface / 2
+    val leftRightBottomTop = generateLeftRightBottomTop(widthOfSurface/ heightOfSurface)
+    y *= leftRightBottomTop[2]
+    // assuming top == - bottom is true
+    // need improvement to obey OOP principles by getting rid of the assumption above
+    if (!(leftRightBottomTop[3] == -leftRightBottomTop[2]))
+        throw RuntimeException("need improvement to obey OOP principles by not assuming top == - bottom is true.\n" +
+                "or you can ignore the above and just twist the code to get it work and not give a fuck about OOP principles.\n" +
+                "which is what i did when i wrote those code.  :)")
+    return y
+}
 
 fun giveVisualText(string: String, visualTextView: TriggerableView<TextView>) {
     visualTextView.activity.runOnUiThread {

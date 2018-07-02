@@ -16,6 +16,8 @@ import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
 import android.opengl.GLES20
+import com.chomusukestudio.projectrocketc.heightOfSurface
+import com.chomusukestudio.projectrocketc.widthOfSurface
 import java.util.concurrent.locks.ReentrantLock
 
 

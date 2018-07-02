@@ -12,7 +12,7 @@ import com.chomusukestudio.projectrocketc.Shape.Shape
 
 import com.chomusukestudio.projectrocketc.Shape.point.distance
 import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
-import com.chomusukestudio.projectrocketc.ViewWithActivity
+import com.chomusukestudio.projectrocketc.TriggerableView
 import com.chomusukestudio.projectrocketc.giveVisualText
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -93,7 +93,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     }
     
     //    static final MediaPlayer eatYellowStar =
-    fun eatLittleStar(visualTextView: ViewWithActivity<TextView>) {
+    fun eatLittleStar(visualTextView: TriggerableView<TextView>) {
         when (COLOR) {
             LittleStar.Color.YELLOW -> {
                 score += dScore
