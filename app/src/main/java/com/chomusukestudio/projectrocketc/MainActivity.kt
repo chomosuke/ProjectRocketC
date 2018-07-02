@@ -9,7 +9,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.TextView
@@ -17,8 +16,6 @@ import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
-import com.chomusukestudio.projectrocketc.Rocket.TestRocket
-import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import java.util.concurrent.Executors
 
@@ -26,6 +23,8 @@ import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLDisplay
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
+import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
+import com.chomusukestudio.projectrocketc.processingThread.TestingProcessingThread
 import java.util.concurrent.TimeUnit
 
 
@@ -51,7 +50,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     private val updateScoreThread = Executors.newScheduledThreadPool(1)
     fun onPlay(view: View) {
-        mGLView.surrounding.start()
+        mGLView.surrounding.isStarted = true // start surrounding
 
         // start refresh score regularly
         val updater = Runnable { this.runOnUiThread { scoreTextView.text = LittleStar.putCommasInInt("" + LittleStar.score) } }
@@ -81,7 +80,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     public override fun onDestroy() {
         super.onDestroy()
         Log.i("", "\n\nonDestroy() called\n\n")
-        mGLView.removeAllShapes()
+        mGLView.shutDown()
     }// onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)
     
     override fun onBackPressed() {
@@ -97,8 +96,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         private lateinit var processingThread: ProcessingThread
         private lateinit var mRenderer: TheGLRenderer
         
-        fun removeAllShapes() {
-            processingThread.removeAllShapes()
+        fun shutDown() {
+            processingThread.shutDown()
         } // for onStop() and onDestroy() to remove Layer
         
         internal inner class MyConfigChooser : GLSurfaceView.EGLConfigChooser {// this class is for antialiasing
@@ -124,31 +123,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
         
         init {
-            
             // Create an OpenGL ES 3.0(3.1) context
-            setEGLContextClientVersion(3)/*
-            You can't explicitly request 3.1 when you create the context.
-            Based on my understanding, 3.1 is not handled as a context type separate from 3.0.
-            Essentially, a context supporting 3.1 is just a 3.0 context that also supports the additional 3.1 features.
-             */
-            
-            setEGLConfigChooser(MyConfigChooser())// antialiasing
+            setEGLContextClientVersion(3)
 
-            val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
-            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3]/*, TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity)*/)
-            rocket = TestRocket(surrounding)
-            processingThread = ProcessingThread(joystick, surrounding, rocket,
-                    (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate)
-            mRenderer = TheGLRenderer(processingThread)
-            surrounding.initializeSurrounding(rocket)
-
-            // Set the Renderer for drawing on the GLSurfaceView
-            setRenderer(mRenderer)
-            //
-            //            // Render the view only when there is a change in the drawing data
-            //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-            // set width and height of surface view
-            
             pixelWidth = width.toFloat()
             pixelHeight = height.toFloat()
         }
@@ -158,7 +135,23 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
 
         fun initializeRenderer() {
+            setEGLConfigChooser(MyConfigChooser())// antialiasing
 
+            val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
+//            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3]/*, TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity)*/)
+//            rocket = TestRocket(surrounding)
+//            processingThread = RocketProcessingThread(joystick, surrounding, rocket,
+//                    (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate)
+            processingThread = TestingProcessingThread()
+            mRenderer = TheGLRenderer(processingThread)
+//            surrounding.initializeSurrounding(rocket)
+
+            // Set the Renderer for drawing on the GLSurfaceView
+            setRenderer(mRenderer)
+            //
+            //            // Render the view only when there is a change in the drawing data
+            //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            // set width and height of surface view
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {

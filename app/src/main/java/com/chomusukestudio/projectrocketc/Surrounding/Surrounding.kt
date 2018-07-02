@@ -16,11 +16,5 @@ interface Surrounding {
     fun anyLittleStar()
     fun isCrashed(components: Array<Shape>): Boolean
     fun rotateSurrounding(angle: Float, now: Long, previousFrameTime: Long)
-    fun start() {
-        isStarted = true
-    }
-    fun end() {
-        isStarted = false
-    }
     fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float)
 }

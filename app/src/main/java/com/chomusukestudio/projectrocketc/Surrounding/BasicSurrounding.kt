@@ -521,15 +521,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         for (littleStar in littleStars)
             littleStar.rotateLittleStar(centerOfRotationX, centerOfRotationY, angle)
     }
-    
-    override fun start() {
-        isStarted = true
-    }
-    
-    override fun end() {
-        isStarted = false
-    }
-    
+
     companion object {
         
         private val NUMBER_OF_STARS = 6000

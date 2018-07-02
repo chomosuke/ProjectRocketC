@@ -188,12 +188,4 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
 //                littleStar.eatLittleStar(TODO("put some ViewWithActivity<TextView> here"))
         }
     }
-    
-    override fun start() {
-        isStarted = true
-    }
-    
-    override fun end() {
-        isStarted = false
-    }
 }

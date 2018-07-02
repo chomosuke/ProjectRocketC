@@ -17,6 +17,7 @@ import android.content.ContentValues.TAG
 import android.opengl.GLES30
 import com.chomusukestudio.projectrocketc.pixelHeight
 import com.chomusukestudio.projectrocketc.pixelWidth
+import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 import java.util.concurrent.locks.ReentrantLock
 
 

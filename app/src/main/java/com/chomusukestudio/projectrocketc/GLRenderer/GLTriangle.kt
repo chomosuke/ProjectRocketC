@@ -1,6 +1,7 @@
 package com.chomusukestudio.projectrocketc.GLRenderer
 
 import android.opengl.GLES30
+import android.opengl.GLES31
 import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
 import java.nio.ByteBuffer
@@ -178,7 +179,7 @@ class Layer(val z: Float) { // depth for the drawing order
     
     var triangleCoords: FloatArray // coordinate of triangles
     
-    private var vertexCount: Int = 0// number of vertex for each layer
+    private var vertexCount: Int = 30// number of vertex for each layer
     // number of triangle times 3
     
     var colors: FloatArray // colors of triangles
@@ -232,18 +233,26 @@ class Layer(val z: Float) { // depth for the drawing order
         val bb = ByteBuffer.allocateDirect(
                 // (number of coordinate values * 4 bytes per float)
                 triangleCoords.size * 4)
+        // use the device hardware's native byte order
         bb.order(ByteOrder.nativeOrder())
+
+        // create a floating score buffer from the ByteBuffer
         vertexBuffer = bb.asFloatBuffer()
+
+        // initialize vertex byte buffer for shape coordinates
         val bb2 = ByteBuffer.allocateDirect(
                 // (number of coordinate values * 4 bytes per float)
                 colors.size * 4)
+        // use the device hardware's native byte order
         bb2.order(ByteOrder.nativeOrder())
+
+        // create a floating score buffer from the ByteBuffer
         colorBuffer = bb2.asFloatBuffer()
     }
     
     companion object {
         // create empty OpenGL ES Program
-        private val mProgram = GLES30.glCreateProgram()
+        private val mProgram: Int = GLES30.glCreateProgram()
         // as this is static hence can't be assigned in constructor
         
         private var isInitialized = false // TriangularShape class can only be initialized once
@@ -279,14 +288,14 @@ class Layer(val z: Float) { // depth for the drawing order
                         // Note that the uMVPMatrix factor *must be first* in order
                         // for the matrix multiplication product to be correct.
                         "  gl_Position = uMVPMatrix * vPosition;" +
-                        "}";
+                        "}"
         
         private const val fragmentShaderCode =
                 "precision mediump float;" +
                 "varying vec4 vColor;" +
                 "void main() {" +
                 "  gl_FragColor = vColor;" +
-                "}";
+                "}"
     }
     
     private fun setupBuffers() {
@@ -358,7 +367,6 @@ class Layer(val z: Float) { // depth for the drawing order
     }
     
     fun drawLayer(mvpMatrix: FloatArray) {
-        // keep for loop instead foreach to enforce the idea of order
         
         // Add program to OpenGL ES environment
         GLES30.glUseProgram(mProgram)

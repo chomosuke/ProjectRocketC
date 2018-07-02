@@ -1,4 +1,4 @@
-package com.chomusukestudio.projectrocketc.GLRenderer
+package com.chomusukestudio.projectrocketc.processingThread
 
 import android.os.SystemClock
 import android.util.Log
@@ -15,8 +15,8 @@ import java.util.logging.Logger
 import com.chomusukestudio.projectrocketc.transformToMatrixX
 import com.chomusukestudio.projectrocketc.transformToMatrixY
 
-class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float) {
-    fun onTouchEvent(e: MotionEvent): Boolean {
+class RocketProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float) : ProcessingThread {
+    override fun onTouchEvent(e: MotionEvent): Boolean {
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
@@ -36,27 +36,21 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         return true
     }
 
-    fun removeAllShapes() {
+    override fun shutDown() {
+        removeAllShapes()
+    }
+    private fun removeAllShapes() {
         surrounding.removeAllShape()
         rocket.removeAllShape()
         joystick.removeAllShape()
     } // for onStop() and onDestroy() to remove Shapes
     // and when crashed
 
-    fun start() {
-        surrounding.start()
-        LittleStar.cleanScore()
-    }
-
-    fun end() {
-        surrounding.end()
-    }
-
     private val nextFrameThread = Executors.newSingleThreadExecutor { r -> Thread(r, "nextFrameThread") }
     private val lock = ReentrantLock()
     private val condition = lock.newCondition()
 
-    fun generateNextFrame(now: Long, previousFrameTime: Long) {
+    override fun generateNextFrame(now: Long, previousFrameTime: Long) {
         nextFrameThread.submit {
             try {
                 finished = false
@@ -106,7 +100,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         }
     }
 
-     fun waitForLastFrame() {
+     override fun waitForLastFrame() {
 // wait for the last nextFrameThread
         lock.lock()
         // synchronized outside the loop so other thread can't notify when it's not waiting
@@ -123,9 +117,13 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         lock.unlock()
     }
 
-    private var finished = true // last frame that doesn't exist has finish
+    var finished = true // last frame that doesn't exist has finish
 
-    var isStarted
+    override var isStarted
         get() = surrounding.isStarted
-        set(value) { surrounding.isStarted = value }
+        set(isStarted) {
+            surrounding.isStarted = isStarted
+            if (!isStarted)
+                LittleStar.cleanScore()
+        }
 }
