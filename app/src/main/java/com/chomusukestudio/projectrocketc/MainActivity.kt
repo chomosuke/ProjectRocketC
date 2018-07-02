@@ -39,6 +39,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // as the ContentView for this Activity.
         setContentView(findViewById<ImageView>(R.id.splashImage))
         mGLView.initializeSurrounding()
+        
         setContentView(R.layout.activity_main)
     }
 
@@ -131,6 +132,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             //
             //            // Render the view only when there is a change in the drawing data
             //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            
+            // set width and height of surface view
+            
+            widthOfSurface = getWidth()
+            heightOfSurfce = getHeight()
         }
         
         fun setRefreshRate(refreshRate: Float) {
@@ -147,6 +153,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 }
 
+var widthOfSurface
+var heightOfSurface
 
 fun giveVisualText(string: String, visualTextView: TriggerableView<TextView>) {
     visualTextView.activity.runOnUiThread {
