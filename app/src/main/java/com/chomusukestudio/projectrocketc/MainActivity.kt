@@ -129,10 +129,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             pixelWidth = width.toFloat()
             pixelHeight = height.toFloat()
         }
-        
-        fun setRefreshRate(refreshRate: Float) {
-            mRenderer.setRefreshRate(refreshRate)
-        }
 
         fun initializeRenderer() {
             setEGLConfigChooser(MyConfigChooser())// antialiasing

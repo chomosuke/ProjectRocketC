@@ -120,11 +120,11 @@ class GLTriangle (x1: Float, y1: Float,
             i += COORDS_PER_VERTEX
         }
     }
-    
+
     fun getBaseTriangleShapeCoords(coord: Int): Float {
         return layer.triangleCoords[coord + coordPointer]
     }
-    
+
     fun getShapeColor(colorCode: Int): Float {
         return layer.colors[colorCode + colorPointer]
     }
@@ -215,11 +215,6 @@ class Layer(val z: Float) { // depth for the drawing order
     }
     
     init {
-        if (!isInitialized) {
-            initializeTriangularShapeClass()
-            isInitialized = true
-        }
-        
         triangleCoords = FloatArray(size * CPT)
         colors = FloatArray(size * 12)
         
@@ -254,9 +249,8 @@ class Layer(val z: Float) { // depth for the drawing order
         // create empty OpenGL ES Program
         private val mProgram: Int = GLES30.glCreateProgram()
         // as this is static hence can't be assigned in constructor
-        
-        private var isInitialized = false // TriangularShape class can only be initialized once
-        private fun initializeTriangularShapeClass() { // called when the first triangle is formed
+
+        fun initializeTriangularShapeClass() {
             val vertexShader = TheGLRenderer.loadShader(GLES30.GL_VERTEX_SHADER,
                     vertexShaderCode)
             val fragmentShader = TheGLRenderer.loadShader(GLES30.GL_FRAGMENT_SHADER,
