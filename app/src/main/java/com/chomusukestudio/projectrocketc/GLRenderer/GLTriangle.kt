@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.GLRenderer
 
+import android.opengl.GLES20.GL_NO_ERROR
 import android.opengl.GLES30
 import android.opengl.GLES31
 import android.util.Log
@@ -394,7 +395,11 @@ class Layer(val z: Float) { // depth for the drawing order
         
         // Draw the triangle
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, vertexCount)
-        
+
+        val error = GLES30.glGetError()
+        if (error != GL_NO_ERROR) {
+            Log.d("GL error", "$error")
+        }
         // Disable vertex array
         GLES30.glDisableVertexAttribArray(mPositionHandle)
         GLES30.glDisableVertexAttribArray(mColorHandle)
