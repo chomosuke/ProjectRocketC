@@ -6,7 +6,6 @@ import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.app.Activity
 import android.opengl.GLES20
-import android.opengl.GLES30
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -129,8 +128,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
         
         init {
-            // Create an OpenGL ES 3.0(3.1) context
-            setEGLContextClientVersion(3)
+            // Create an OpenGL ES 2.0 context
+            setEGLContextClientVersion(2)
 
             pixelWidth = width.toFloat()
             pixelHeight = height.toFloat()
@@ -150,7 +149,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(mRenderer)
-            GLES30.glEnable(DEBUG_LOG_GL_CALLS)
+            GLES20.glEnable(DEBUG_LOG_GL_CALLS)
             //
             //            // Render the view only when there is a change in the drawing data
             //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);

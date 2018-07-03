@@ -15,7 +15,6 @@ import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
 import android.opengl.GLES20
-import android.opengl.GLES30
 import com.chomusukestudio.projectrocketc.pixelHeight
 import com.chomusukestudio.projectrocketc.pixelWidth
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
@@ -40,8 +39,8 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
     
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         //enable transparency
-        GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA)
-        GLES30.glEnable(GLES30.GL_BLEND)
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
+        GLES20.glEnable(GLES20.GL_BLEND)
         //
         //        // Enable depth test
         //        glEnable(GL_DEPTH_TEST);
@@ -49,7 +48,7 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         //        glDepthFunc(GL_LESS);
         
         // Set the background frame color
-        GLES30.glClearColor(0f, 0f, 0f, 1f)
+        GLES20.glClearColor(0f, 0f, 0f, 1f)
         
         Layer.initializeTriangularShapeClass()
         Log.i(TAG, "onSurfaceCreated() called")
@@ -78,15 +77,15 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         previousFrameTime = now
         
         // Clear the screen
-        //        GLES30.glClear(GL_DEPTH_BUFFER_BIT);
+        //        GLES20.glClear(GL_DEPTH_BUFFER_BIT);
         // Redraw background color
-        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT)
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         // Draw all!
         GLTriangle.drawAllTriangles(mvpMatrix)
     }
     
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
-        GLES30.glViewport(0, 0, width, height)
+        GLES20.glViewport(0, 0, width, height)
         // for transformation to matrix
         
         // this projection matrix is applied to object coordinates
@@ -122,11 +121,11 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
             
             // create a vertex shader type (GLES31.GL_VERTEX_SHADER)
             // or a fragment shader type (GLES31.GL_FRAGMENT_SHADER)
-            val shader = GLES30.glCreateShader(type)
+            val shader = GLES20.glCreateShader(type)
             
             // add the source code to the shader and compile it
-            GLES30.glShaderSource(shader, shaderCode)
-            GLES30.glCompileShader(shader)
+            GLES20.glShaderSource(shader, shaderCode)
+            GLES20.glCompileShader(shader)
             
             return shader
         }
