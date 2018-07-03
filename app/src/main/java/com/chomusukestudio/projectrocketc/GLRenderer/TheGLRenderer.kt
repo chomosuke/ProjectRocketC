@@ -14,6 +14,7 @@ import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
+import android.opengl.GLES20
 import android.opengl.GLES30
 import com.chomusukestudio.projectrocketc.pixelHeight
 import com.chomusukestudio.projectrocketc.pixelWidth
@@ -38,7 +39,6 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
     private val conditionForProcessingThread = lockForProcessingThread.newCondition()
     
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
-        
         //enable transparency
         GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA)
         GLES30.glEnable(GLES30.GL_BLEND)
@@ -52,7 +52,6 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         GLES30.glClearColor(0f, 0f, 0f, 1f)
         
         Layer.initializeTriangularShapeClass()
-        
         Log.i(TAG, "onSurfaceCreated() called")
         
     }

@@ -5,10 +5,13 @@ import android.content.Intent
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.app.Activity
+import android.opengl.GLES20
+import android.opengl.GLES30
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.TextView
@@ -16,6 +19,8 @@ import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
+import com.chomusukestudio.projectrocketc.Rocket.TestRocket
+import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import java.util.concurrent.Executors
 
@@ -24,6 +29,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLDisplay
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
+import com.chomusukestudio.projectrocketc.processingThread.RocketProcessingThread
 import com.chomusukestudio.projectrocketc.processingThread.TestingProcessingThread
 import java.util.concurrent.TimeUnit
 
@@ -134,16 +140,17 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
-//            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3]/*, TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity)*/)
-//            rocket = TestRocket(surrounding)
-//            processingThread = RocketProcessingThread(joystick, surrounding, rocket,
-//                    (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate)
-            processingThread = TestingProcessingThread()
+            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3]/*, TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity)*/)
+            rocket = TestRocket(surrounding)
+            processingThread = RocketProcessingThread(joystick, surrounding, rocket,
+                    (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/)
+//            processingThread = TestingProcessingThread()
             mRenderer = TheGLRenderer(processingThread)
-//            surrounding.initializeSurrounding(rocket)
+            surrounding.initializeSurrounding(rocket)
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(mRenderer)
+            GLES30.glEnable(DEBUG_LOG_GL_CALLS)
             //
             //            // Render the view only when there is a change in the drawing data
             //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
