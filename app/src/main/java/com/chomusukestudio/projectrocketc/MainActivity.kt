@@ -87,10 +87,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         mGLView.shutDown()
     }// onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)
     
-    override fun onBackPressed() {
-        // to home
-        startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
-    }
+//    override fun onBackPressed() {
+//        // to home
+//        startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
+//    }
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
 

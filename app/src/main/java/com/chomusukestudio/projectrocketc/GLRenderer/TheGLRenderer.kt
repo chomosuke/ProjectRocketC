@@ -18,7 +18,6 @@ import android.opengl.GLES20
 import com.chomusukestudio.projectrocketc.heightInPixel
 import com.chomusukestudio.projectrocketc.widthInPixel
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
-import java.util.concurrent.locks.ReentrantLock
 
 
 class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Renderer {
