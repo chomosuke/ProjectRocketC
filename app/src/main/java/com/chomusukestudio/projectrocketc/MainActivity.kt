@@ -21,6 +21,7 @@ import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Rocket.TestRocket
 import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.ThreadClasses.ScheduledThread
 import java.util.concurrent.Executors
 
 import javax.microedition.khronos.egl.EGL10
@@ -52,14 +53,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         mGLView.initializeRenderer()
     }
 
-    private val updateScoreThread = Executors.newScheduledThreadPool(1)
+    private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
+        this.runOnUiThread { scoreTextView.text = LittleStar.putCommasInInt("" + LittleStar.score) }
+    }
     fun onPlay(view: View) {
         mGLView.surrounding.isStarted = true // start surrounding
 
         // start refresh score regularly
-        val updater = Runnable { this.runOnUiThread { scoreTextView.text = LittleStar.putCommasInInt("" + LittleStar.score) } }
-        val scoreHandle = updateScoreThread.scheduleAtFixedRate(updater, 0, 20, TimeUnit.MILLISECONDS)
-        updateScoreThread.schedule({ scoreHandle.cancel(true) }, 10, TimeUnit.SECONDS)
+        updateScoreThread.run()
 
         val fadeOutAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_play_button_animation)
         // Now Set your animation
@@ -67,7 +68,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         playButton.visibility = View.INVISIBLE
     }
     
-    fun showPlayButton() {
+    fun onCrashed() {
+        updateScoreThread.pause()
         runOnUiThread { playButton.visibility = View.VISIBLE }
     }
     
@@ -142,7 +144,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3]/*, TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity)*/)
             rocket = TestRocket(surrounding)
             processingThread = RocketProcessingThread(joystick, surrounding, rocket,
-                    (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/)
+                    (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
+                    context as MainActivity) // we know that the context is MainActivity
 //            processingThread = TestingProcessingThread()
             mRenderer = TheGLRenderer(processingThread)
             surrounding.initializeSurrounding(rocket)

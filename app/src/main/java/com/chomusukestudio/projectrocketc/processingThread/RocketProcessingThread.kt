@@ -1,9 +1,11 @@
 package com.chomusukestudio.projectrocketc.processingThread
 
+import android.app.Activity
 import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import com.chomusukestudio.projectrocketc.Joystick.Joystick
+import com.chomusukestudio.projectrocketc.MainActivity
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
@@ -15,7 +17,7 @@ import java.util.logging.Logger
 import com.chomusukestudio.projectrocketc.transformToMatrixX
 import com.chomusukestudio.projectrocketc.transformToMatrixY
 
-class RocketProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float) : ProcessingThread {
+class RocketProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) : ProcessingThread {
     override fun onTouchEvent(e: MotionEvent): Boolean {
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
@@ -61,7 +63,7 @@ class RocketProcessingThread(var joystick: Joystick, var surrounding: Surroundin
                     if (rocket.isCrashed(surrounding)) {
                         removeAllShapes()// removing shapes
                         Log.v("TODO", "call mainActivity")
-                        TODO("call mainActivity")
+                        mainActivity.onCrashed()
                     }
                     surrounding.anyLittleStar()
                 }
