@@ -6,10 +6,10 @@ class ScheduledThread(private val periodInMillisecond: Long, private val task: (
     private val name = "Scheduled Thread with period of $periodInMillisecond millisecond."
     @Volatile
     private var running = false
-    private val singleThread = Executors.newSingleThreadExecutor { Thread(name) }
+    private val singleThread = Executors.newSingleThreadExecutor { runnable ->  Thread(runnable, name) }
     fun run() {
         if (running) {
-            throw IllegalThreadStateException("name is running")
+            throw IllegalThreadStateException("$name is running")
         } else {
             running = true
         }
