@@ -72,10 +72,6 @@ abstract class Shape{
             componentShape.changeShapeColor(red, green, blue, alpha)
     }
     
-    open fun getShapeColor(colorCode: Int): Float {
-        return componentShapes[0].getShapeColor(colorCode)
-    }
-    
     fun isOverlap(anotherShape: Shape): Boolean {
         return if (anotherShape.isOverlapMethodLevel > this.isOverlapMethodLevel) {
             // if anotherShape has a more considerate isOverlapToOverride method then of course use it

@@ -14,24 +14,51 @@ class TriangularShape(x1: Float, y1: Float,
     
     private var triangleCoords = FloatArray(CPT)
     private var RGBA = FloatArray(4)
+
+    override val shapeColor: FloatArray
+        get() =
+            if (triangle != null)
+                triangle!!.RGBA.getFloatArray()
+            else
+                RGBA
+
+    override fun resetAlpha(alpha: Float) {
+        if (triangle != null)
+            triangle!!.RGBA[3] = alpha
+        else
+            RGBA[3] = alpha
+    }
+
+    override fun changeShapeColor(red: Float, green: Float, blue: Float, alpha: Float) {
+        if (triangle != null) {
+            triangle!!.RGBA[0] = red
+            triangle!!.RGBA[1] = green
+            triangle!!.RGBA[2] = blue
+            triangle!!.RGBA[3] = alpha
+        } else {
+            RGBA[0] = red
+            RGBA[1] = green
+            RGBA[2] = blue
+            RGBA[3] = alpha
+        }
+    }
     
     override var componentShapes: Array<Shape> = arrayOf(this)
         set(value) {
             throw IllegalAccessException("TriangularShape itself is the componentShape of itself")
         }
     
-    override val size: Int
-        get() = 1
+    override val size: Int = 1
     
     fun getTriangularShapeCoords() = if (visibility) {
-            FloatArray(6) { i -> triangle!!.triangleCoords[i]}
-        } else {
-            triangleCoords
-        }
+        triangle!!.triangleCoords.getFloatArray()
+    } else {
+        triangleCoords
+    }
     
     override var visibility: Boolean = true
         set(visibility) {
-            if (this.visibility != visibility) {
+            if (field != visibility) {
                 if (visibility) {
                     triangle = GLTriangle(triangleCoords, RGBA, triangle!!.z)
                 } else {

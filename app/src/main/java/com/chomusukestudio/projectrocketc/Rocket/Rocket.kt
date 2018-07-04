@@ -122,7 +122,7 @@ abstract class Rocket(protected val surrounding: Surrounding) {
         // remove faded traces
         var i = 0
         while (i < traces.size) {
-            if (1.0 / 256 >= traces[i].getShapeColor(3)) {
+            if (1.0 / 256 >= traces[i].shapeColor[3]) {
                 traces.removeAt(i).removeShape()
                 i--
             }

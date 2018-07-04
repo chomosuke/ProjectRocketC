@@ -125,7 +125,6 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         }
 
         // initialize surrounding
-        val counter = 0 // just in case no more planet can be fit in
         for (i in 0..2048) {
             // randomly reposition the new planet
             newPlanet.resetPosition((random() * (leftEnd * 1.5f - rightEnd * 1.5f) + rightEnd * 1.5f).toFloat(), (random() * (topEnd * (1.5f + topMarginForLittleStar) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat())

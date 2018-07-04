@@ -29,7 +29,6 @@ import javax.microedition.khronos.egl.EGLDisplay
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 import com.chomusukestudio.projectrocketc.processingThread.RocketProcessingThread
-import com.chomusukestudio.projectrocketc.processingThread.TestingProcessingThread
 import java.util.concurrent.TimeUnit
 
 
@@ -130,12 +129,13 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         init {
             // Create an OpenGL ES 2.0 context
             setEGLContextClientVersion(2)
-
-            pixelWidth = width.toFloat()
-            pixelHeight = height.toFloat()
         }
 
         fun initializeRenderer() {
+            // set width and height as everything is fully initialized
+            widthInPixel = width.toFloat()
+            heightInPixel = height.toFloat()
+
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
@@ -162,15 +162,19 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 }
 
-var pixelWidth: Float = 0f
-var pixelHeight: Float = 0f
+var widthInPixel: Float = 0f
+    get() { return field }
+    set(value) { field = value }
+var heightInPixel: Float = 0f
+    get() { return field }
+    set(value) { field = value }
 
 fun transformToMatrixX(x: Float): Float {
     var resultX = x
     // transformation
-    resultX -= pixelWidth / 2
-    resultX /= pixelWidth / 2
-    val leftRightBottomTop = generateLeftRightBottomTop(pixelWidth/ pixelHeight)
+    resultX -= widthInPixel / 2
+    resultX /= widthInPixel / 2
+    val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel/ heightInPixel)
     resultX *= leftRightBottomTop[0]
     // assuming left == - right is true
     // need improvement to obey OOP principles by getting rid of the assumption above
@@ -184,9 +188,9 @@ fun transformToMatrixX(x: Float): Float {
 fun transformToMatrixY(y: Float): Float {
     var resultY = y
     // transformation
-    resultY -= pixelHeight / 2
-    resultY /= pixelHeight / 2
-    val leftRightBottomTop = generateLeftRightBottomTop(pixelWidth/ pixelHeight)
+    resultY -= heightInPixel / 2
+    resultY /= heightInPixel / 2
+    val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel/ heightInPixel)
     resultY *= leftRightBottomTop[2]
     // assuming top == - bottom is true
     // need improvement to obey OOP principles by getting rid of the assumption above

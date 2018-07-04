@@ -15,14 +15,13 @@ import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
 import android.opengl.GLES20
-import com.chomusukestudio.projectrocketc.pixelHeight
-import com.chomusukestudio.projectrocketc.pixelWidth
+import com.chomusukestudio.projectrocketc.heightInPixel
+import com.chomusukestudio.projectrocketc.widthInPixel
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 import java.util.concurrent.locks.ReentrantLock
 
 
 class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Renderer {
-    private var REFRESH_RATE: Float = 0f
     
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private val mProjectionMatrix = FloatArray(16)
@@ -33,9 +32,6 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
     private var countingFrames: Long = 0
     private var previousTime: Long = 0
     private var now: Long = 0
-    
-    private val lockForProcessingThread = ReentrantLock()
-    private val conditionForProcessingThread = lockForProcessingThread.newCondition()
     
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         //enable transparency
@@ -50,7 +46,7 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         // Set the background frame color
         GLES20.glClearColor(0f, 0f, 0f, 1f)
         
-        Layer.initializeTriangularShapeClass()
+        Layer.initializeGLShaderAndStuff()
         Log.i(TAG, "onSurfaceCreated() called")
         
     }
@@ -94,8 +90,8 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
         
         // refresh width and height of surfaceView
-        pixelWidth = width.toFloat()
-        pixelHeight = height.toFloat()
+        widthInPixel = width.toFloat()
+        heightInPixel = height.toFloat()
         
         // for debugging
         //        Matrix.orthoM(mProjectionMatrix, 0, left/4*720/512, right/4*720/512, bottom/4*720/512, top/4*720/512, -1000, 1000);

@@ -13,8 +13,16 @@ class GLTriangle (x1: Float, y1: Float,
                   x2: Float, y2: Float,
                   x3: Float, y3: Float,
                   red: Float, green: Float, blue: Float, alpha: Float, z: Float) : Triangle {
-    
+
+    private val layer: Layer = getLayer(z) // the layer this triangle belong
+
+    override val z: Float
+        get() = layer.z
+
+    // can't be private in triangleCoords because RGBA have to refer to it in getColorPointer(coordPointer)
+    private val coordPointer: Int = layer.getCoordPointer() // point to the first of the six layer.triangleCoords[] this triangle is using
     override val triangleCoords: Triangle.TriangleCoords = object : Triangle.TriangleCoords {
+
         override fun getFloatArray(): FloatArray {
             return FloatArray(CPT) { i -> this[i] }
         }
@@ -32,25 +40,19 @@ class GLTriangle (x1: Float, y1: Float,
                 throw IndexOutOfBoundsException("invalid index for setTriangleCoords: $index")
         }
     }
-    
-    private val layer: Layer = getLayer(z) // the layer this triangle belong
-    private val coordPointer: Int = layer.getCoordPointer() // point to the first of the six layer.triangleCoords[] this triangle is using
-    private val colorPointer: Int = layer.getColorPointer(coordPointer) // point to the first of the twelve layer.colors[] this triangle is using
-    
-    override val z: Float
-        get() = layer.z
-    
+
     override val RGBA: Triangle.RGBAArray = object : Triangle.RGBAArray {
+        private val colorPointer = layer.getColorPointer(coordPointer)
+        
         override fun getFloatArray() : FloatArray {
             return FloatArray(12) { i -> this[i] }
         }
 
         override fun get(index: Int): Float {
-            if (index < 12) {
+            if (index < 12)
                 return layer.colors[colorPointer + index]
-            } else {
+            else
                 throw IndexOutOfBoundsException("invalid index for getRGBAArray: $index")
-            }
         }
         override fun set(index: Int, value: Float) {
             if (index < 4) {
@@ -114,19 +116,11 @@ class GLTriangle (x1: Float, y1: Float,
         var i = 0
         while (i < CPT) {
             // rotate score
-            val result = rotatePoint(layer.triangleCoords[i + coordPointer], layer.triangleCoords[i + 1 + coordPointer], centerOfRotationX, centerOfRotationY, angle)
-            layer.triangleCoords[i + coordPointer] = result[0]
-            layer.triangleCoords[i + 1 + coordPointer] = result[1]
+            val result = rotatePoint(triangleCoords[i], triangleCoords[i + 1], centerOfRotationX, centerOfRotationY, angle)
+            triangleCoords[i] = result[0]
+            triangleCoords[i + 1] = result[1]
             i += COORDS_PER_VERTEX
         }
-    }
-
-    fun getBaseTriangleShapeCoords(coord: Int): Float {
-        return layer.triangleCoords[coord + coordPointer]
-    }
-
-    fun getShapeColor(colorCode: Int): Float {
-        return layer.colors[colorCode + colorPointer]
     }
     
     override fun removeTriangle() {
@@ -249,7 +243,7 @@ class Layer(val z: Float) { // depth for the drawing order
         // create empty OpenGL ES Program
         private var mProgram: Int = -1000
 
-        fun initializeTriangularShapeClass() {
+        fun initializeGLShaderAndStuff() {
             mProgram = GLES20.glCreateProgram()
             // can't do in the declaration as will return 0 because not everything is prepared
 
