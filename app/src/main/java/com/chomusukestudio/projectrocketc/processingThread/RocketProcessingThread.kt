@@ -62,7 +62,6 @@ class RocketProcessingThread(var joystick: Joystick, var surrounding: Surroundin
                     // see if crashed
                     if (rocket.isCrashed(surrounding)) {
                         removeAllShapes()// removing shapes
-                        Log.v("TODO", "call mainActivity")
                         mainActivity.onCrashed()
                     }
                     surrounding.anyLittleStar()
