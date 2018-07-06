@@ -3,7 +3,7 @@ package com.chomusukestudio.projectrocketc.processingThread
 import android.view.MotionEvent
 import com.chomusukestudio.projectrocketc.GLRenderer.GLTriangle
 
-class TestingProcessingThread : ProcessingThread {
+class TestingProcessingThread : ProcessingThread() {
     override fun shutDown() {
         // do nothing
     }

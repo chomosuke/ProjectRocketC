@@ -93,15 +93,15 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     }
     
     //    static final MediaPlayer eatYellowStar =
-    fun eatLittleStar(/*visualTextView: TouchableView<TextView>*/) {
+    fun eatLittleStar(visualTextView: TouchableView<TextView>) {
         when (COLOR) {
             LittleStar.Color.YELLOW -> {
                 score += dScore
-                giveVisualText("+$dScore"/*, visualTextView*/)
+                giveVisualText("+$dScore", visualTextView)
             }
             LittleStar.Color.RED -> {
                 dScore *= 2
-                giveVisualText("×$dScore"/*, visualTextView*/)
+                giveVisualText("×$dScore", visualTextView)
             }
         }
         littleStarShape.removeShape()

@@ -29,8 +29,8 @@ import java.lang.Math.random
  */
 
 class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
-                       private var bottomEnd: Float, private var topEnd: Float/*,
-                       private val visualTextView: TouchableView<TextView>*/) : Surrounding {
+                       private var bottomEnd: Float, private var topEnd: Float,
+                       private val visualTextView: TouchableView<TextView>) : Surrounding() {
     override fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
         this.leftEnd = leftEnd
         this.rightEnd = rightEnd
@@ -76,17 +76,6 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     private val parallelForIForBackgroundStars = ParallelForI(8, "move background")
     
     private var numberOfYellowStarEatenSinceLastRedStar = 0
-    
-    @Volatile private var isCrashed: Boolean = false
-    private val parallelForIForIsCrashed = ParallelForI(8, "is crashed")
-    private var closeLastFrame = false
-    private var distanceLastFrame: Float = 0f
-    @Volatile private var closeThisFrame = false
-    private var distanceThisFrame: Float = 0f
-    private var flybyDistance = 0.35f
-    private lateinit var rectangleForFlyby: QuadrilateralShape
-    private var flybysInThisYellowStar = 0
-    private var flybyPlanetShape: PlanetShape? = null
     
     init {
         setLeftRightBottomTopEnd(leftEnd, rightEnd, bottomEnd, topEnd)
@@ -158,7 +147,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 return false
         }
         // it is not too close to any other planet
-        if (!isStarted)
+//        if (!isStarted)
             if (planetShape.isOverlap(startingPathOfRocket))
                 return false// if it blocks the rocket before start
         return true
@@ -315,7 +304,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         }
         for (i in littleStars.indices) {
             if (rocket.isEaten(littleStars[i])) {
-                littleStars[i].eatLittleStar(/*visualTextView*/)
+                littleStars[i].eatLittleStar(visualTextView)
                 when (littleStars[i].COLOR) {
                     YELLOW -> {
                         numberOfYellowStarEatenSinceLastRedStar++
@@ -445,7 +434,18 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             }
         }
     }
-    
+
+    @Volatile private var isCrashed: Boolean = false
+    private val parallelForIForIsCrashed = ParallelForI(8, "is crashed")
+    private var closeLastFrame = false
+    private var distanceLastFrame: Float = 0f
+    @Volatile private var closeThisFrame = false
+    private var distanceThisFrame: Float = 0f
+    private var flybyDistance = 0.35f
+    private lateinit var rectangleForFlyby: QuadrilateralShape
+    private var flybysInThisYellowStar = 0
+    private var flybyPlanetShape: PlanetShape? = null
+
     override fun isCrashed(components: Array<Shape>): Boolean {
         isCrashed = false
         val boundariesNeedToBeChecked = ArrayList<Shape>(100)
@@ -489,13 +489,13 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             
             flybysInThisYellowStar++
             
-            LittleStar.dScore = (LittleStar.dScore * (1 + flybysInThisYellowStar * 0.5)).toLong()
+            LittleStar.dScore = (LittleStar.dScore + (flybysInThisYellowStar * 5))
             //            LittleStar.Companion.setDScore(1000000);
-            if ((1 + flybysInThisYellowStar * 0.5) % 1 == 0.0) { // display an integer
-                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5).toInt()/*, visualTextView*/)
-            } else {
-                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5)/*, visualTextView*/)
-            }
+//            if ((1 + flybysInThisYellowStar * 0.5) % 1 == 0.0) { // display an integer
+                giveVisualText("next +" + (flybysInThisYellowStar * 5), visualTextView)
+//            } else {
+//                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5), visualTextView)
+//            }
             when (flybysInThisYellowStar) {
                 1 -> {
                 }

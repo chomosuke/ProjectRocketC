@@ -19,7 +19,7 @@ import java.util.ArrayList
 
 import java.lang.Math.random
 
-class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, private var rightEnd: Float, private var leftEnd: Float): Surrounding {
+class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, private var rightEnd: Float, private var leftEnd: Float): Surrounding() {
 
     override fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
         TODO("not implemented")

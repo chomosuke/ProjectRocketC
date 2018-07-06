@@ -33,12 +33,15 @@ class GLTriangle (x1: Float, y1: Float,
             else
                 throw IndexOutOfBoundsException("invalid index for getTriangleCoords: $index")
         }
+
         override fun set(index: Int, value: Float) {
             if (index < 6)
                 layer.triangleCoords[coordPointer + index] = value
             else
                 throw IndexOutOfBoundsException("invalid index for setTriangleCoords: $index")
         }
+
+
     }
 
     override val RGBA: Triangle.RGBAArray = object : Triangle.RGBAArray() {

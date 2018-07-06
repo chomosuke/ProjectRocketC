@@ -8,12 +8,12 @@ abstract class Triangle {
     abstract class TriangleCoords {
         abstract operator fun get(index: Int): Float
         abstract operator fun set(index: Int, value: Float)
-        abstract fun getFloatArray() : FloatArray
+        abstract val floatArray : FloatArray
     }
     abstract class RGBAArray {
         abstract operator fun get(index: Int): Float
         abstract operator fun set(index: Int, value: Float)
-        abstract fun getFloatArray() : FloatArray
+        abstract val floatArray : FloatArray
     }
 }
 

@@ -135,13 +135,13 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         fun initializeRenderer() {
             // set width and height as everything is fully initialized
-            widthInPixel = width.toFloat()
-            heightInPixel = height.toFloat()
+//            widthInPixel = width.toFloat()
+//            heightInPixel = height.toFloat()
 
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
-            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3]/*, TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity)*/)
+            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
             rocket = TestRocket(surrounding)
             processingThread = RocketProcessingThread(joystick, surrounding, rocket,
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
@@ -165,10 +165,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 }
 
-var widthInPixel: Float = 0f
+var widthInPixel: Float = 720f
     get() { return field }
     set(value) { field = value }
-var heightInPixel: Float = 0f
+var heightInPixel: Float = 1280f
     get() { return field }
     set(value) { field = value }
 
@@ -204,17 +204,19 @@ fun transformToMatrixY(y: Float): Float {
     return resultY
 }
 
-fun giveVisualText(string: String/*, visualTextView: TouchableView<TextView>*/) {
-//    visualTextView.activity.runOnUiThread {
-//        visualTextView.view.visibility = View.VISIBLE
-//        visualTextView.view.text = string
-//        val visualEffectAnimation = AnimationUtils.loadAnimation(visualTextView.activity, R.anim.visual_text_effect)
-//        // Now Set your animation
-//        visualTextView.view.startAnimation(visualEffectAnimation)
-//        visualTextView.view.visibility = View.INVISIBLE
-//    }
+fun giveVisualText(string: String, visualTextView: TouchableView<TextView>) {
+    visualTextView.touchView { textView ->
+        textView.visibility = View.VISIBLE
+        textView.text = string
+        val visualEffectAnimation = AnimationUtils.loadAnimation(visualTextView.activity, R.anim.visual_text_effect)
+        // Now Set your animation
+        textView.startAnimation(visualEffectAnimation)
+        textView.visibility = View.INVISIBLE
+    }
 }
 
 class TouchableView<out V : View>(val view: V, val activity: Activity) {
-
+    fun touchView(touch: (V) -> Unit) {
+        activity.runOnUiThread { touch(view) }
+    }
 }
