@@ -12,7 +12,7 @@ import java.util.*
 class GLTriangle (x1: Float, y1: Float,
                   x2: Float, y2: Float,
                   x3: Float, y3: Float,
-                  red: Float, green: Float, blue: Float, alpha: Float, z: Float) : Triangle {
+                  red: Float, green: Float, blue: Float, alpha: Float, z: Float) : Triangle() {
 
     private val layer: Layer = getLayer(z) // the layer this triangle belong
 
@@ -21,7 +21,7 @@ class GLTriangle (x1: Float, y1: Float,
 
     // can't be private in triangleCoords because RGBA have to refer to it in getColorPointer(coordPointer)
     private val coordPointer: Int = layer.getCoordPointer() // point to the first of the six layer.triangleCoords[] this triangle is using
-    override val triangleCoords: Triangle.TriangleCoords = object : Triangle.TriangleCoords {
+    override val triangleCoords: Triangle.TriangleCoords = object : Triangle.TriangleCoords() {
 
         override fun getFloatArray(): FloatArray {
             return FloatArray(CPT) { i -> this[i] }
@@ -41,7 +41,7 @@ class GLTriangle (x1: Float, y1: Float,
         }
     }
 
-    override val RGBA: Triangle.RGBAArray = object : Triangle.RGBAArray {
+    override val RGBA: Triangle.RGBAArray = object : Triangle.RGBAArray() {
         private val colorPointer = layer.getColorPointer(coordPointer)
         
         override fun getFloatArray() : FloatArray {

@@ -1,19 +1,19 @@
 package com.chomusukestudio.projectrocketc.GLRenderer
 
-interface Triangle {
-    val triangleCoords: TriangleCoords
-    val RGBA: RGBAArray
-    val z: Float
-    fun removeTriangle()
-    interface TriangleCoords {
-        operator fun get(index: Int): Float
-        operator fun set(index: Int, value: Float)
-        fun getFloatArray() : FloatArray
+abstract class Triangle {
+    abstract val triangleCoords: TriangleCoords
+    abstract val RGBA: RGBAArray
+    abstract val z: Float
+    abstract fun removeTriangle()
+    abstract class TriangleCoords {
+        abstract operator fun get(index: Int): Float
+        abstract operator fun set(index: Int, value: Float)
+        abstract fun getFloatArray() : FloatArray
     }
-    interface RGBAArray {
-        operator fun get(index: Int): Float
-        operator fun set(index: Int, value: Float)
-        fun getFloatArray() : FloatArray
+    abstract class RGBAArray {
+        abstract operator fun get(index: Int): Float
+        abstract operator fun set(index: Int, value: Float)
+        abstract fun getFloatArray() : FloatArray
     }
 }
 

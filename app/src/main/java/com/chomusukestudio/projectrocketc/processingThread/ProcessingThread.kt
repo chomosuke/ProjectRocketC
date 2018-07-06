@@ -2,10 +2,10 @@ package com.chomusukestudio.projectrocketc.processingThread
 
 import android.view.MotionEvent
 
-interface ProcessingThread {
-    var isStarted: Boolean
-    fun onTouchEvent(e: MotionEvent): Boolean
-    fun generateNextFrame(now: Long, previousFrameTime: Long)
-    fun waitForLastFrame()
-    fun shutDown()
+abstract class ProcessingThread {
+    abstract var isStarted: Boolean
+    abstract fun onTouchEvent(e: MotionEvent): Boolean
+    abstract fun generateNextFrame(now: Long, previousFrameTime: Long)
+    abstract fun waitForLastFrame()
+    abstract fun shutDown()
 }
