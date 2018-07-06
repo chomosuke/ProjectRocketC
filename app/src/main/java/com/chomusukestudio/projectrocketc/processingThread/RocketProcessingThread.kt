@@ -17,7 +17,7 @@ import java.util.logging.Logger
 import com.chomusukestudio.projectrocketc.transformToMatrixX
 import com.chomusukestudio.projectrocketc.transformToMatrixY
 
-class RocketProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) : ProcessingThread {
+class RocketProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) : ProcessingThread() {
     override fun onTouchEvent(e: MotionEvent): Boolean {
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
