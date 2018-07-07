@@ -21,11 +21,7 @@ import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 
 
 class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Renderer {
-    
-    // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
-    private val mProjectionMatrix = FloatArray(16)
-    private val mViewMatrix = FloatArray(16)
-    private val mvpMatrix = FloatArray(16)
+
     // so you calculate the how many milliseconds have passed since last frame
     private var previousFrameTime: Long = 0
     private var countingFrames: Long = 0
@@ -76,7 +72,7 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         // Redraw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         // Draw all!
-        GLTriangle.drawAllTriangles(mvpMatrix)
+        GLTriangle.drawAllTriangles()
     }
     
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
@@ -85,24 +81,11 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        
-        val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
-        
+
         // refresh width and height of surfaceView
         widthInPixel = width.toFloat()
         heightInPixel = height.toFloat()
-        
-        // for debugging
-        //        Matrix.orthoM(mProjectionMatrix, 0, left/4*720/512, right/4*720/512, bottom/4*720/512, top/4*720/512, -1000, 1000);
-        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], -1000f, 1000f)
-        // this game shall be optimised for any aspect ratio as now all left, right, bottom and top are visibility
-        
-        // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
-        
-        // Calculate the projection and view transformation
-        Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
-        
+
         previousFrameTime = SystemClock.uptimeMillis()// just to set this as close to draw as possible
     }
     

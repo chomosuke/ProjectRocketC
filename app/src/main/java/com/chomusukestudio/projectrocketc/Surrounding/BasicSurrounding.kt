@@ -2,6 +2,7 @@ package com.chomusukestudio.projectrocketc.Surrounding
 
 import android.util.Log
 import android.widget.TextView
+import com.chomusukestudio.projectrocketc.GLRenderer.GLTriangle
 
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
@@ -68,7 +69,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     private val minDistantBetweenPlanet = 4f
     
     private val topMarginForLittleStar = 1f
-    private var newPlanet: PlanetShape = getRandomPlanetShape()
+    private lateinit var newPlanet: PlanetShape
     private var numberOfRedStar = 0
     
     private var displacementX: Double = 0.0
@@ -81,17 +82,19 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         setLeftRightBottomTopEnd(leftEnd, rightEnd, bottomEnd, topEnd)
         
         LittleStar.setCenterOfRocket(centerOfRotationX, centerOfRotationY)
-        
-        if (!staticPlanetInitialized) {
-            for (i in 0 until planetShapes.size) {
-                planetShapes[i] = generateRandomPlanetShape(random().toFloat(), random().toFloat(), generateRadius(), 10f)
-                planetShapes[i].removePlanet()
-            }
-            staticPlanetInitialized = true
-        }
     }
     
     override fun initializeSurrounding(rocket: Rocket) {
+        if (planetShapes == null) { // initialize planetShapes
+            planetShapes = Array(NUMBER_OF_PLANET) {
+                val planetShape = generateRandomPlanetShape(random().toFloat(), random().toFloat(), generateRadius(), 10f)
+                planetShape.removePlanet()
+                return@Array planetShape
+            }
+            planetShapesZs = getAllPlanetZs()
+
+            newPlanet = getRandomPlanetShape()
+        }
 
         this.rocket = rocket
         startingPathOfRocket = QuadrilateralShape(centerOfRotationX - rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f,
@@ -526,12 +529,8 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         private val NUMBER_OF_STARS = 6000
         
         private val NUMBER_OF_PLANET = 1000
-        private val planetShapes = Array(NUMBER_OF_PLANET) {
-            val planetShape = generateRandomPlanetShape(random().toFloat(), random().toFloat(), generateRadius(), 10f)
-            planetShape.removePlanet()
-            return@Array planetShape
-        }
-        private var staticPlanetInitialized = false
+        private var planetShapes: Array<PlanetShape>? = null
+        private lateinit var planetShapesZs: ArrayList<Float>
         
         private val RADIUS_MARGIN = 0.5f
         private val AVERAGE_RADIUS = 0.75f// for planet shape to determent which type of planet suits the size best.
@@ -562,16 +561,35 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         // if it's not in use then use it
         // actually run out of planets....
         fun getRandomPlanetShape(): PlanetShape {
-            for (i in planetShapes.indices) {
+            for (i in planetShapes!!.indices) {
                 lastUsedPlanet++
-                lastUsedPlanet %= planetShapes.size
-                val planetShape = planetShapes[lastUsedPlanet]
+                lastUsedPlanet %= planetShapes!!.size
+                val planetShape = planetShapes!![lastUsedPlanet]
                 if (!planetShape.isInUse) {
                     planetShape.usePlanet()
                     return planetShape as PlanetShape
                 }
             }
             throw IndexOutOfBoundsException("run out of planet?!")
+        }
+
+        fun getAllPlanetZs(): ArrayList<Float> {
+            val zs = ArrayList<Float>()
+            for (planetShape in planetShapes!!) {
+                val planetShapeZs = planetShape.getZs()
+                var isDifferentZ = true
+                for (planetShapeZ in planetShapeZs) {
+                    for (z in zs) {
+                        if (z == planetShapeZ) {
+                            isDifferentZ = false
+                            break
+                        }
+                    }
+                    if (isDifferentZ)
+                        zs.add(planetShapeZ)
+                }
+            }
+            return zs
         }
     
         private fun generateRadius(): Float {

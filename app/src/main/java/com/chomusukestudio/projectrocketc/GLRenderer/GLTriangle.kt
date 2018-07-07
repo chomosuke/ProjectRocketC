@@ -2,8 +2,11 @@ package com.chomusukestudio.projectrocketc.GLRenderer
 
 import android.opengl.GLES20.GL_NO_ERROR
 import android.opengl.GLES20
+import android.opengl.Matrix
 import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
+import com.chomusukestudio.projectrocketc.heightInPixel
+import com.chomusukestudio.projectrocketc.widthInPixel
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -14,12 +17,11 @@ class GLTriangle (x1: Float, y1: Float,
                   x3: Float, y3: Float,
                   red: Float, green: Float, blue: Float, alpha: Float, z: Float) : Triangle() {
 
-    private val layer: Layer = getLayer(z) // the layer this triangle belong
+    val layer: Layer = getLayer(z) // the layer this triangle belong
 
     override val z: Float
         get() = layer.z
 
-    // can't be private in triangleCoords because RGBA have to refer to it in getColorPointer(coordPointer)
     private val coordPointer: Int = layer.getCoordPointer() // point to the first of the six layer.triangleCoords[] this triangle is using
     override val triangleCoords: Triangle.TriangleCoords = object : Triangle.TriangleCoords() {
 
@@ -28,15 +30,23 @@ class GLTriangle (x1: Float, y1: Float,
             set(value) { System.arraycopy(layer.triangleCoords, coordPointer, value, 0, value.size) }
 
         override fun get(index: Int): Float {
-            if (index < 6)
-                return layer.triangleCoords[coordPointer + index]
+            if (index < 6) {
+                return if (index % 2 == 0)
+                    layer.triangleCoords[coordPointer + index] - layer.offsetX
+                else
+                    layer.triangleCoords[coordPointer + index] - layer.offsetY
+            }
             else
                 throw IndexOutOfBoundsException("invalid index for getTriangleCoords: $index")
         }
 
         override fun set(index: Int, value: Float) {
-            if (index < 6)
-                layer.triangleCoords[coordPointer + index] = value
+            if (index < 6) {
+                if (index % 2 == 0)
+                    layer.triangleCoords[coordPointer + index] = value + layer.offsetX
+                else
+                    layer.triangleCoords[coordPointer + index] = value + layer.offsetY
+            }
             else
                 throw IndexOutOfBoundsException("invalid index for setTriangleCoords: $index")
         }
@@ -44,8 +54,8 @@ class GLTriangle (x1: Float, y1: Float,
 
     }
 
+    private val colorPointer = layer.getColorPointer(coordPointer)
     override val RGBA: Triangle.RGBAArray = object : Triangle.RGBAArray() {
-        private val colorPointer = layer.getColorPointer(coordPointer)
 
         override var floatArray: FloatArray
             get() { return FloatArray(4) { i -> this[i] } }
@@ -142,28 +152,33 @@ class GLTriangle (x1: Float, y1: Float,
     }
 
     override fun moveTriangle(dx: Float, dy: Float) {
-        triangleCoords[X1] += dx
-            triangleCoords[Y1] += dy
-            triangleCoords[X2] += dx
-            triangleCoords[Y2] += dy
-            triangleCoords[X3] += dx
-            triangleCoords[Y3] += dy
+        layer.triangleCoords[X1 + coordPointer] += dx
+        layer.triangleCoords[Y1 + coordPointer] += dy
+        layer.triangleCoords[X2 + coordPointer] += dx
+        layer.triangleCoords[Y2 + coordPointer] += dy
+        layer.triangleCoords[X3 + coordPointer] += dx
+        layer.triangleCoords[Y3 + coordPointer] += dy
     }
     
     companion object {
-        private val layers = ArrayList<Layer>()
+        val layers = ArrayList<Layer>()
         
-        fun drawAllTriangles(mvpMatrix: FloatArray) {
+        fun drawAllTriangles() {
             // no need to sort, already in order
             for (i in layers.indices) { // draw layers in order
                 // keep for loop instead foreach to enforce the idea of order
-                layers[i].drawLayer(mvpMatrix)
+                layers[i].drawLayer()
             }
         }
         
         fun passArraysToBuffers() {
             for (i in layers.indices)
                 layers[i].passArraysToBuffers()
+        }
+
+        fun offsetAllLayer(dOffsetX: Float, dOffsetY: Float) {
+            for (i in layers.indices)
+                layers[i].offsetLayer(dOffsetX, dOffsetY)
         }
     }
 }
@@ -174,7 +189,17 @@ const val COORDS_PER_VERTEX = 2
 const val CPT = COORDS_PER_VERTEX * 3 // number of coordinates per vertex in this array
 
 class Layer(val z: Float) { // depth for the drawing order
-    
+
+    // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
+    private val mProjectionMatrix = FloatArray(16)
+    private val mViewMatrix = FloatArray(16)
+    private val mvpMatrix = FloatArray(16)
+
+    var offsetX = 0f
+        private set
+    var offsetY = 0f
+        private set
+
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
     
     private var vertexBuffer: FloatBuffer
@@ -249,6 +274,22 @@ class Layer(val z: Float) { // depth for the drawing order
 
         // create a floating score buffer from the ByteBuffer
         colorBuffer = bb2.asFloatBuffer()
+
+        // this projection matrix is applied to object coordinates
+        // in the onDrawFrame() method
+        val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)
+
+        // for debugging
+        //        Matrix.orthoM(mProjectionMatrix, 0, left/4*720/512, right/4*720/512, bottom/4*720/512, top/4*720/512, -1000, 1000);
+        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0] + offsetX, leftRightBottomTop[1] + offsetX,
+                leftRightBottomTop[2] + offsetY, leftRightBottomTop[3] + offsetY, -1000f, 1000f)
+        // this game shall be optimised for any aspect ratio as now all left, right, bottom and top are visibility
+
+        // Set the camera position (View matrix)
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+
+        // Calculate the projection and view transformation
+        Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
     }
     
     companion object {
@@ -378,11 +419,28 @@ class Layer(val z: Float) { // depth for the drawing order
         return coordsPointerToBeReturned
     }
 
-    fun offsetLayer(offsetX: Float, offsetY: Float) {
+    fun offsetLayer(dOffsetX: Float, dOffsetY: Float) {
+        offsetX += dOffsetX
+        offsetY += dOffsetY
 
+        // this projection matrix is applied to object coordinates
+        // in the onDrawFrame() method
+        val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)
+
+        // for debugging
+        //        Matrix.orthoM(mProjectionMatrix, 0, left/4*720/512, right/4*720/512, bottom/4*720/512, top/4*720/512, -1000, 1000);
+        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0] - offsetX, leftRightBottomTop[1] - offsetX,
+                leftRightBottomTop[2] - offsetY, leftRightBottomTop[3] - offsetY, -1000f, 1000f)
+        // this game shall be optimised for any aspect ratio as now all left, right, bottom and top are visibility
+
+        // Set the camera position (View matrix)
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+
+        // Calculate the projection and view transformation
+        Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
     }
     
-    fun drawLayer(mvpMatrix: FloatArray) {
+    fun drawLayer() {
         // Add program to OpenGL ES environment
         GLES20.glUseProgram(mProgram)
 

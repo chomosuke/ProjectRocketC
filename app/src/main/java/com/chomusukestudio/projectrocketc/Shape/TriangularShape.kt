@@ -159,12 +159,7 @@ class TriangularShape(x1: Float, y1: Float,
     
     override fun moveShape(dx: Float, dy: Float) {
         if (visibility) {
-            triangle!!.triangleCoords[X1] += dx
-            triangle!!.triangleCoords[Y1] += dy
-            triangle!!.triangleCoords[X2] += dx
-            triangle!!.triangleCoords[Y2] += dy
-            triangle!!.triangleCoords[X3] += dx
-            triangle!!.triangleCoords[Y3] += dy
+            triangle!!.moveTriangle(dx, dy)
         }
         else {
             triangleCoords[X1] += dx
@@ -218,5 +213,11 @@ class TriangularShape(x1: Float, y1: Float,
             triangle!!.removeTriangle()
             triangle = null
         }
+    }
+
+    override fun getZs(): ArrayList<Float> {
+        val z = ArrayList<Float>()
+        z.add(this.z)
+        return z
     }
 }

@@ -100,4 +100,23 @@ abstract class Shape{
         for (componentShape in componentShapes)
             componentShape.removeShape()
     }
+
+    open fun getZs(): ArrayList<Float> {
+        val zs = ArrayList<Float>()
+        for (componentShape in componentShapes) {
+            val componentShapeZs = componentShape.getZs()
+            var isDifferentZ = true
+            for (componentShapeZ in componentShapeZs) {
+                for (z in zs) {
+                    if (z == componentShapeZ) {
+                        isDifferentZ = false
+                        break
+                    }
+                }
+                if (isDifferentZ)
+                    zs.add(componentShapeZ)
+            }
+        }
+        return zs
+    }
 }
