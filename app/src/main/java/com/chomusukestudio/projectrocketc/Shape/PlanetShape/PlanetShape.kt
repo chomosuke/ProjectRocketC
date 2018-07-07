@@ -5,7 +5,7 @@ import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
 import com.chomusukestudio.projectrocketc.Shape.point.square
 
-abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, val radius: Float, override val isOverlapMethodLevel: Double) : Shape() {
+abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, val radius: Float) : Shape() {
     var centerX: Float = 0.toFloat()
         private set
     var centerY: Float = 0.toFloat()

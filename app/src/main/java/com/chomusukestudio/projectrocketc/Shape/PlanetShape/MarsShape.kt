@@ -13,7 +13,8 @@ import java.lang.Math.cos
 import java.lang.Math.random
 import java.lang.Math.sin
 
-class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float) : PlanetShape(centerX, centerY, radius, 2.0) {
+class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float) : PlanetShape(centerX, centerY, radius) {
+    override val isOverlapMethodLevel: Double = 2.0
     override lateinit var componentShapes: Array<Shape>
     
     init {

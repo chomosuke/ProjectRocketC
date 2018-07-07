@@ -23,9 +23,9 @@ class GLTriangle (x1: Float, y1: Float,
     private val coordPointer: Int = layer.getCoordPointer() // point to the first of the six layer.triangleCoords[] this triangle is using
     override val triangleCoords: Triangle.TriangleCoords = object : Triangle.TriangleCoords() {
 
-        override fun getFloatArray(): FloatArray {
-            return FloatArray(CPT) { i -> this[i] }
-        }
+        override var floatArray: FloatArray
+            get() { return FloatArray(6) { i -> this[i] } }
+            set(value) { System.arraycopy(layer.triangleCoords, coordPointer, value, 0, value.size) }
 
         override fun get(index: Int): Float {
             if (index < 6)
@@ -46,10 +46,10 @@ class GLTriangle (x1: Float, y1: Float,
 
     override val RGBA: Triangle.RGBAArray = object : Triangle.RGBAArray() {
         private val colorPointer = layer.getColorPointer(coordPointer)
-        
-        override fun getFloatArray() : FloatArray {
-            return FloatArray(12) { i -> this[i] }
-        }
+
+        override var floatArray: FloatArray
+            get() { return FloatArray(4) { i -> this[i] } }
+            set(value) { System.arraycopy(layer.triangleCoords, colorPointer, value, 0, value.size) }
 
         override fun get(index: Int): Float {
             if (index < 12)
@@ -67,14 +67,14 @@ class GLTriangle (x1: Float, y1: Float,
             }
         }
     }
-    
+
     private fun getLayer(z: Float): Layer {
         for (i in layers.indices) {
             if (layers[i].z == z) {
                 return layers[i] // find the layer with that z
             }
         }
-        
+
         // there is no layer with that z so create one and return index of that layer
         val newLayer = Layer(z)
         var i = 0
@@ -94,7 +94,7 @@ class GLTriangle (x1: Float, y1: Float,
         }
         return newLayer
     }
-    
+
     init {
         triangleCoords[X1] = x1
         triangleCoords[Y1] = y1
@@ -102,19 +102,19 @@ class GLTriangle (x1: Float, y1: Float,
         triangleCoords[Y2] = y2
         triangleCoords[X3] = x3
         triangleCoords[Y3] = y3
-        
+
         RGBA[0] = red
         RGBA[1] = green
         RGBA[2] = blue
         RGBA[3] = alpha
     }// as no special isOverlapToOverride method is provided.
-    
+
     constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, z: Float)
             : this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], red, green, blue, alpha, z)
-    
+
     constructor(coords: FloatArray, color: FloatArray, z: Float)
             : this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], color[0], color[1], color[2], color[3], z)
-    
+
     fun rotateTriangle(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
         var i = 0
         while (i < CPT) {
@@ -125,7 +125,7 @@ class GLTriangle (x1: Float, y1: Float,
             i += COORDS_PER_VERTEX
         }
     }
-    
+
     override fun removeTriangle() {
         // mark coords as unused
         triangleCoords[X1] = UNUSED
@@ -139,6 +139,15 @@ class GLTriangle (x1: Float, y1: Float,
         RGBA[1] = UNUSED
         RGBA[2] = UNUSED
         RGBA[3] = UNUSED
+    }
+
+    override fun moveTriangle(dx: Float, dy: Float) {
+        triangleCoords[X1] += dx
+            triangleCoords[Y1] += dy
+            triangleCoords[X2] += dx
+            triangleCoords[Y2] += dy
+            triangleCoords[X3] += dx
+            triangleCoords[Y3] += dy
     }
     
     companion object {
@@ -367,6 +376,10 @@ class Layer(val z: Float) { // depth for the drawing order
             increaseSize()
         } // check if index out of bound.
         return coordsPointerToBeReturned
+    }
+
+    fun offsetLayer(offsetX: Float, offsetY: Float) {
+
     }
     
     fun drawLayer(mvpMatrix: FloatArray) {

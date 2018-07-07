@@ -48,8 +48,6 @@ class ParallelForI(private val NUMBER_OF_THREAD: Int, private val NAME: String) 
                     //                        Log.v(NAME, "waiting");
                     condition.await() //
                     //                        Log.v(NAME, "waked");
-                
-                
                 }
                 i++
             }
@@ -60,8 +58,8 @@ class ParallelForI(private val NUMBER_OF_THREAD: Int, private val NAME: String) 
         }
     }
     
-    /*fun run(functionForI: (Int) -> Unit, MAX_I: Int) = runInlined(functionForI, MAX_I)
-    private inline */fun run/*Inlined*/(/*crossinline*/ functionForI: (Int) -> Unit, MAX_I: Int) {
+    fun run(functionForI: (Int) -> Unit, MAX_I: Int) = runInlined(functionForI, MAX_I)
+    private inline fun runInlined(crossinline functionForI: (Int) -> Unit, MAX_I: Int) {
         for (finished in finished)
             finished.set(false) // just started
         for (i in 0 until NUMBER_OF_THREAD) {

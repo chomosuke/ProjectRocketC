@@ -3,6 +3,7 @@ package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TopHalfRingShape
+import com.chomusukestudio.projectrocketc.Shape.point.distance
 
 import java.util.ArrayList
 
@@ -12,7 +13,8 @@ import java.lang.Math.pow
 import java.lang.Math.random
 import java.lang.Math.sin
 
-class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int, centerX: Float, centerY: Float, radius: Float, z: Float) : PlanetShape(centerX, centerY, radius, 3.0) {
+class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int, centerX: Float, centerY: Float, radius: Float, z: Float) : PlanetShape(centerX, centerY, radius) {
+    override val isOverlapMethodLevel: Double = 3.0 // one level higher than other PlanetShape cause the ring
     override lateinit var componentShapes: Array<Shape>
     
     val ringWidth: Float
@@ -78,7 +80,14 @@ class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int,
         val pointsOutsideX = ArrayList<Float>()
         val pointsOutsideY = ArrayList<Float>()
         
-        for (i in 0 until numberOfPointsOnRing)
+        for (i in 0 until numberOfPointsOnRing) {
+            val pointX = centerX + aForPointsOutside * sin(PI * 2 * i / numberOfPointsOnRing).toFloat()
+            val pointY = centerY + bForPointsOutside * cos(PI * 2 * i / numberOfPointsOnRing).toFloat()
+            if (distance(pointX, pointY, centerX, centerY) > radius) { // point is out side planet itself
+                pointsOutsideX.add(pointX)
+                pointsOutsideY.add(pointY)
+            }
+        }
         
         // put it in the array for superclass and isOverlapToOverride
         this.pointsOutsideX = FloatArray(pointsOutsideX.size)
@@ -96,7 +105,7 @@ class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int,
             pointsOutsideX[i] = centerX + innerA + (float) i / (numberOfPointsOutside - 1) * dA;
             pointsOutsideY[i] = centerY;
         }*/
-    }// one level higher than other PlanetShape cause the ring
+    }
     
     override fun isOverlapToOverride(anotherShape: Shape): Boolean {
         if (super.isOverlapToOverride(anotherShape))

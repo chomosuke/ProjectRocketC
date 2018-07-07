@@ -5,6 +5,7 @@ abstract class Triangle {
     abstract val RGBA: RGBAArray
     abstract val z: Float
     abstract fun removeTriangle()
+    abstract fun moveTriangle(dx: Float, dy: Float) // for performance
     abstract class TriangleCoords {
         abstract operator fun get(index: Int): Float
         abstract operator fun set(index: Int, value: Float)

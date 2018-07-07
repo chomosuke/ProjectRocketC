@@ -7,18 +7,20 @@ class TriangularShape(x1: Float, y1: Float,
                       x2: Float, y2: Float,
                       x3: Float, y3: Float,
                       red: Float, green: Float, blue: Float, alpha: Float, z: Float) : Shape() {
+    constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, z: Float): this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], red, green, blue, alpha, z)
+
     override val isOverlapMethodLevel: Double = 0.0
     
     private var triangle: Triangle? = GLTriangle(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, z)
     // nullable because sometimes invisible
     
-    private var triangleCoords = FloatArray(CPT)
+    private var triangleCoords = FloatArray(6)
     private var RGBA = FloatArray(4)
 
     override val shapeColor: FloatArray
         get() =
             if (triangle != null)
-                triangle!!.RGBA.getFloatArray()
+                triangle!!.RGBA.floatArray
             else
                 RGBA
 
@@ -51,7 +53,7 @@ class TriangularShape(x1: Float, y1: Float,
     override val size: Int = 1
     
     fun getTriangularShapeCoords() = if (visibility) {
-        triangle!!.triangleCoords.getFloatArray()
+        triangle!!.triangleCoords.floatArray
     } else {
         triangleCoords
     }
@@ -62,8 +64,8 @@ class TriangularShape(x1: Float, y1: Float,
                 if (visibility) {
                     triangle = GLTriangle(triangleCoords, RGBA, triangle!!.z)
                 } else {
-                    triangleCoords = triangle!!.triangleCoords.getFloatArray()
-                    RGBA = triangle!!.RGBA.getFloatArray()
+                    triangleCoords = triangle!!.triangleCoords.floatArray
+                    RGBA = triangle!!.RGBA.floatArray
                     triangle!!.removeTriangle()
                 }
                 field = visibility
@@ -72,9 +74,7 @@ class TriangularShape(x1: Float, y1: Float,
     
     val z: Float = z
         get() = if (triangle != null) triangle!!.z else field
-    
-    constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, z: Float): this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], red, green, blue, alpha, z)
-    
+
     public override fun isOverlapToOverride(anotherShape: Shape): Boolean {
         for (anotherComponentShape in anotherShape.componentShapes) {
             if (anotherComponentShape is TriangularShape) {
