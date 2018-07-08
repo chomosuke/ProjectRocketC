@@ -1,7 +1,6 @@
 package com.chomusukestudio.projectrocketc
 
 import android.content.Context
-import android.content.Intent
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.app.Activity
@@ -17,20 +16,15 @@ import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
-import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Rocket.TestRocket
 import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
-import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.ThreadClasses.ScheduledThread
-import java.util.concurrent.Executors
 
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLDisplay
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
-import com.chomusukestudio.projectrocketc.processingThread.RocketProcessingThread
-import java.util.concurrent.TimeUnit
 
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
@@ -39,6 +33,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     private lateinit var playButton: ImageButton
     
     public override fun onCreate(savedInstanceState: Bundle?) {
+        // Make sure this is before calling super.onCreate
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
 
         // as the ContentView for this Activity.
@@ -56,21 +52,28 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
         this.runOnUiThread { scoreTextView.text = LittleStar.putCommasInInt("" + LittleStar.score) }
     }
+
     fun onPlay(view: View) {
-        mGLView.surrounding.isStarted = true // start surrounding
+        mGLView.processingThread.isStarted = true // start surrounding
 
         // start refresh score regularly
         updateScoreThread.run()
 
         val fadeOutAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_play_button_animation)
         // Now Set your animation
-        playButton.startAnimation(fadeOutAnimation)
-        playButton.visibility = View.INVISIBLE
+        view.startAnimation(fadeOutAnimation)
+        view.visibility = View.INVISIBLE
     }
     
     fun onCrashed() {
+        mGLView.mRenderer.pauseGLRenderer()
         updateScoreThread.pause()
-        runOnUiThread { playButton.visibility = View.VISIBLE }
+        runOnUiThread {
+            playButton.visibility = View.VISIBLE
+        }
+        mGLView.processingThread.isStarted = false
+        mGLView.resetGame()
+        mGLView.mRenderer.resumeGLRenderer()
     }
     
     public override fun onStop() {
@@ -96,11 +99,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
 
-        private var joystick = TwoFingersJoystick()
-        lateinit var surrounding: Surrounding
-        private lateinit var rocket: Rocket
-        private lateinit var processingThread: ProcessingThread
-        private lateinit var mRenderer: TheGLRenderer
+        lateinit var processingThread: ProcessingThread
+        lateinit var mRenderer: TheGLRenderer
         
         fun shutDown() {
             processingThread.shutDown()
@@ -134,21 +134,25 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
 
         fun initializeRenderer() {
-            // set width and height as everything is fully initialized
-//            widthInPixel = width.toFloat()
-//            heightInPixel = height.toFloat()
 
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
-            surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3], TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
-            rocket = TestRocket(surrounding)
-            processingThread = RocketProcessingThread(joystick, surrounding, rocket,
+
+            val surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
+                    TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
+            val rocket = TestRocket(surrounding)
+
+            processingThread = ProcessingThread(
+                    TwoFingersJoystick(),
+                    surrounding,
+                    rocket,
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
                     context as MainActivity) // we know that the context is MainActivity
 //            processingThread = TestingProcessingThread()
-            mRenderer = TheGLRenderer(processingThread)
-            surrounding.initializeSurrounding(rocket)
+            mRenderer = TheGLRenderer(processingThread, this)
+            BasicSurrounding.fillUpPlanetShapes()
+            processingThread.surrounding.initializeSurrounding(rocket)
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(mRenderer)
@@ -156,7 +160,22 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             //
             //            // Render the view only when there is a change in the drawing data
             //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-            // set width and height of surface view
+        }
+
+        override fun onMeasure(width: Int, height: Int) {
+            super.onMeasure(width, height)
+            // set width and height
+            widthInPixel = width.toFloat()
+            heightInPixel = height.toFloat()
+        }
+
+        fun resetGame() {
+            val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
+            processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
+                    TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
+            processingThread.rocket = TestRocket(processingThread.surrounding)
+            processingThread.surrounding.initializeSurrounding(processingThread.rocket)
+            processingThread.joystick = TwoFingersJoystick()
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {
@@ -165,12 +184,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 }
 
-var widthInPixel: Float = 720f
-    get() { return field }
-    set(value) { field = value }
-var heightInPixel: Float = 1280f
-    get() { return field }
-    set(value) { field = value }
+@Volatile var widthInPixel: Float = 0f
+@Volatile var heightInPixel: Float = 0f
 
 fun transformToMatrixX(x: Float): Float {
     var resultX = x

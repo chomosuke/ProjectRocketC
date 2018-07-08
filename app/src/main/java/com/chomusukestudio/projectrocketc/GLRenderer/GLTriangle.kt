@@ -172,13 +172,18 @@ class GLTriangle (x1: Float, y1: Float,
         }
         
         fun passArraysToBuffers() {
-            for (i in layers.indices)
-                layers[i].passArraysToBuffers()
+            for (layer in layers)
+                layer.passArraysToBuffers()
         }
 
         fun offsetAllLayer(dOffsetX: Float, dOffsetY: Float) {
-            for (i in layers.indices)
-                layers[i].offsetLayer(dOffsetX, dOffsetY)
+            for (layer in layers)
+                layer.offsetLayer(dOffsetX, dOffsetY)
+        }
+
+        fun refreshAllMatrix() {
+            for (layer in layers)
+                layer.refreshMatrix()
         }
     }
 }
@@ -423,6 +428,10 @@ class Layer(val z: Float) { // depth for the drawing order
         offsetX += dOffsetX
         offsetY += dOffsetY
 
+        refreshMatrix()
+    }
+
+    fun refreshMatrix() {
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
         val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)

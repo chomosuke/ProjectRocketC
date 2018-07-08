@@ -5,7 +5,6 @@ package com.chomusukestudio.projectrocketc.GLRenderer
  */
 
 import android.opengl.GLSurfaceView
-import android.opengl.Matrix
 import android.os.SystemClock
 import android.util.Log
 
@@ -15,12 +14,12 @@ import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
 import android.opengl.GLES20
+import com.chomusukestudio.projectrocketc.MainActivity
 import com.chomusukestudio.projectrocketc.heightInPixel
 import com.chomusukestudio.projectrocketc.widthInPixel
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 
-
-class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Renderer {
+class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MainActivity.MyGLSurfaceView) : GLSurfaceView.Renderer {
 
     // so you calculate the how many milliseconds have passed since last frame
     private var previousFrameTime: Long = 0
@@ -86,11 +85,18 @@ class TheGLRenderer(val processingThread: ProcessingThread) : GLSurfaceView.Rend
         widthInPixel = width.toFloat()
         heightInPixel = height.toFloat()
 
+        GLTriangle.refreshAllMatrix()
+
         previousFrameTime = SystemClock.uptimeMillis()// just to set this as close to draw as possible
     }
     
     fun pauseGLRenderer() {
-        // TODO: pause GLRenderer here
+        myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+    }
+
+    fun resumeGLRenderer() {
+        now = previousFrameTime
+        myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
     }
     
     companion object {

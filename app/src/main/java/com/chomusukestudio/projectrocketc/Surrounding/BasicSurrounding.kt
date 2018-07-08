@@ -85,16 +85,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     }
     
     override fun initializeSurrounding(rocket: Rocket) {
-        if (planetShapes == null) { // initialize planetShapes
-            planetShapes = Array(NUMBER_OF_PLANET) {
-                val planetShape = generateRandomPlanetShape(random().toFloat(), random().toFloat(), generateRadius(), 10f)
-                planetShape.removePlanet()
-                return@Array planetShape
-            }
-            planetShapesZs = getAllPlanetZs()
-
-            newPlanet = getRandomPlanetShape()
-        }
+        newPlanet = getRandomPlanetShape()
 
         this.rocket = rocket
         startingPathOfRocket = QuadrilateralShape(centerOfRotationX - rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f,
@@ -531,6 +522,14 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         private val NUMBER_OF_PLANET = 1000
         private var planetShapes: Array<PlanetShape>? = null
         private lateinit var planetShapesZs: ArrayList<Float>
+        fun fillUpPlanetShapes() {
+            planetShapes = Array(NUMBER_OF_PLANET) {
+                val planetShape = generateRandomPlanetShape(random().toFloat(), random().toFloat(), generateRadius(), 10f)
+                planetShape.removePlanet()
+                return@Array planetShape
+            }
+            planetShapesZs = getAllPlanetZs()
+        }
         
         private val RADIUS_MARGIN = 0.5f
         private val AVERAGE_RADIUS = 0.75f// for planet shape to determent which type of planet suits the size best.
