@@ -6,7 +6,19 @@
     android:id="@+id/motherView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
     tools:context="com.chomusukestudio.projectrocketc.MainActivity">
+
+    <ImageView
+        android:id="@+id/chomusukeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/profile_chomusuke_anh_nger_vorschau"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <view
         android:id="@+id/MyGLSurfaceView"
@@ -16,7 +28,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/pointTextView"
@@ -35,7 +48,8 @@
         android:typeface="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/MyGLSurfaceView" />
+        app:layout_constraintTop_toTopOf="@+id/MyGLSurfaceView"
+        android:visibility="invisible"/>
 
     <ImageButton
         android:id="@+id/playButton"
@@ -47,13 +61,15 @@
         android:layout_marginTop="8dp"
         android:onClick="onPlay"
         android:scaleType="centerCrop"
+        android:cropToPadding="false"
         android:src="@drawable/play_button"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.75" />
+        app:layout_constraintVertical_bias="0.75"
+        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/visualText"
@@ -76,6 +92,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.45" />
+        app:layout_constraintVertical_bias="0.45"
+        android:visibility="invisible"/>
 
 </android.support.constraint.ConstraintLayout>

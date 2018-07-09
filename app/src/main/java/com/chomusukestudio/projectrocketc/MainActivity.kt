@@ -4,7 +4,9 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.app.Activity
+import android.content.Intent
 import android.opengl.GLES20
+import android.support.annotation.VisibleForTesting
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -26,6 +28,9 @@ import javax.microedition.khronos.egl.EGLDisplay
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 import android.util.DisplayMetrics
+import android.view.ViewGroup
+import android.widget.ImageView
+import java.util.concurrent.Executors
 
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
@@ -41,11 +46,48 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         setContentView(R.layout.activity_main)
 
+
         playButton = findViewById(R.id.playButton)
         mGLView = findViewById(R.id.MyGLSurfaceView)
         scoreTextView = findViewById(R.id.pointTextView)
 
-        mGLView.initializeRenderer()
+        disableClipOnParents(playButton)
+
+        // display splashScreen
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        heightInPixel = displayMetrics.heightPixels.toFloat()
+        widthInPixel = displayMetrics.widthPixels.toFloat()
+
+        val chomusukeView = findViewById<ImageView>(R.id.chomusukeView)
+        chomusukeView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
+
+        Executors.newSingleThreadExecutor().submit {
+            BasicSurrounding.fillUpPlanetShapes()
+
+            mGLView.initializeRenderer()
+            this.runOnUiThread {
+                mGLView.visibility = View.VISIBLE
+                scoreTextView.visibility = View.VISIBLE
+                playButton.visibility = View.VISIBLE
+                chomusukeView.visibility = View.INVISIBLE
+            }
+        }
+
+    }
+
+    private fun disableClipOnParents(v: View) {
+        if (v.parent == null) {
+            return
+        }
+
+        if (v is ViewGroup) {
+            v.clipChildren = false
+        }
+
+        if (v.parent is View) {
+            disableClipOnParents(v.parent as View)
+        }
     }
 
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
@@ -91,10 +133,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         mGLView.shutDown()
     }// onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)
     
-//    override fun onBackPressed() {
-//        // to home
-//        startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
-//    }
+    override fun onBackPressed() {
+        // to home
+        startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
+    }
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
 
