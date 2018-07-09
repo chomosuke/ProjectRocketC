@@ -12,15 +12,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Launcher"
-        android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:screenOrientation="portrait">
+        <activity android:name=".SplashActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+        <activity android:name=".MainActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
     </application>
 
 </manifest>

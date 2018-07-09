@@ -16,6 +16,8 @@ abstract class Triangle {
         abstract operator fun set(index: Int, value: Float)
         abstract val floatArray : FloatArray
     }
+    abstract fun setTriangleCoords(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float)
+    abstract fun setTriangleRGBA(red: Float, green: Float, blue: Float, alpha: Float)
 }
 
 const val X1 = 0

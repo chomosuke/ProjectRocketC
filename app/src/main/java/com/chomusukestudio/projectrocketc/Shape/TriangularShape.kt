@@ -33,15 +33,15 @@ class TriangularShape(x1: Float, y1: Float,
 
     override fun changeShapeColor(red: Float, green: Float, blue: Float, alpha: Float) {
         if (triangle != null) {
-            triangle!!.RGBA[0] = red
-            triangle!!.RGBA[1] = green
-            triangle!!.RGBA[2] = blue
-            triangle!!.RGBA[3] = alpha
+            triangle!!.RGBA[0] += red
+            triangle!!.RGBA[1] += green
+            triangle!!.RGBA[2] += blue
+            triangle!!.RGBA[3] += alpha
         } else {
-            RGBA[0] = red
-            RGBA[1] = green
-            RGBA[2] = blue
-            RGBA[3] = alpha
+            RGBA[0] += red
+            RGBA[1] += green
+            RGBA[2] += blue
+            RGBA[3] += alpha
         }
     }
     
@@ -140,12 +140,7 @@ class TriangularShape(x1: Float, y1: Float,
                           x2: Float, y2: Float,
                           x3: Float, y3: Float) {
         if (visibility) {
-            triangle!!.triangleCoords[X1] = x1
-            triangle!!.triangleCoords[Y1] = y1
-            triangle!!.triangleCoords[X2] = x2
-            triangle!!.triangleCoords[Y2] = y2
-            triangle!!.triangleCoords[X3] = x3
-            triangle!!.triangleCoords[Y3] = y3
+            triangle!!.setTriangleCoords(x1, y1, x2, y2, x3, y3)
         }
         else {
             triangleCoords[X1] = x1
@@ -196,10 +191,7 @@ class TriangularShape(x1: Float, y1: Float,
     
     override fun resetShapeColor(red: Float, green: Float, blue: Float, alpha: Float) {
         if (visibility) {
-            triangle!!.RGBA[0] = red
-            triangle!!.RGBA[1] = green
-            triangle!!.RGBA[2] = blue
-            triangle!!.RGBA[3] = alpha
+            triangle!!.setTriangleRGBA(red, green, blue, alpha)
         } else {
             RGBA[0] = red
             RGBA[1] = green
@@ -212,6 +204,17 @@ class TriangularShape(x1: Float, y1: Float,
         if (visibility) {
             triangle!!.removeTriangle()
             triangle = null
+        } else {
+            triangleCoords[0] = UNUSED
+            triangleCoords[1] = UNUSED
+            triangleCoords[2] = UNUSED
+            triangleCoords[3] = UNUSED
+            triangleCoords[4] = UNUSED
+            triangleCoords[5] = UNUSED
+            RGBA[0] = UNUSED
+            RGBA[1] = UNUSED
+            RGBA[2] = UNUSED
+            RGBA[3] = UNUSED
         }
     }
 

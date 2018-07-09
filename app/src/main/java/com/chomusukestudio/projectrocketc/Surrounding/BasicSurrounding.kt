@@ -88,10 +88,10 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         newPlanet = getRandomPlanetShape()
 
         this.rocket = rocket
-        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f,
-                centerOfRotationX + rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
-                centerOfRotationX + rocket.width / 2f, centerOfRotationY,
-                centerOfRotationX - rocket.width / 2f, centerOfRotationY,
+        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - (rocket.width / 2 + flybyDistance), java.lang.Float.MAX_VALUE / 100f,
+                centerOfRotationX + (rocket.width / 2 + flybyDistance), java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
+                centerOfRotationX + (rocket.width / 2 + flybyDistance), centerOfRotationY,
+                centerOfRotationX - (rocket.width / 2 + flybyDistance), centerOfRotationY,
                 0f, 1f, 0f, 1f, 10f) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
         startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
         startingPathOfRocket.visibility = false //  this shape will only be used in isOverlapToOverride.
@@ -570,6 +570,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 }
             }
             throw IndexOutOfBoundsException("run out of planet?!")
+//            return generateRandomPlanetShape(0f, 0f, generateRadius(), 10f)
         }
 
         fun getAllPlanetZs(): ArrayList<Float> {

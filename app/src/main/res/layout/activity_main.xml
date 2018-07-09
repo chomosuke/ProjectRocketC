@@ -36,7 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/MyGLSurfaceView" />
-<!--the idea here is that if you fly really close to a planet, you get a ×2. maybe this is better. it is better in theory. it's just that it's really dumb when you don't know how close count as a flyby.-->
+
     <ImageButton
         android:id="@+id/playButton"
         android:layout_width="64dp"

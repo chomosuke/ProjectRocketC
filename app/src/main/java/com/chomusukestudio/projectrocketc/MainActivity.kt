@@ -25,6 +25,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLDisplay
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
+import android.util.DisplayMetrics
 
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
@@ -33,8 +34,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     private lateinit var playButton: ImageButton
     
     public override fun onCreate(savedInstanceState: Bundle?) {
-        // Make sure this is before calling super.onCreate
-        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
 
         // as the ContentView for this Activity.
@@ -134,7 +133,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
 
         fun initializeRenderer() {
-
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
@@ -151,8 +149,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     context as MainActivity) // we know that the context is MainActivity
 //            processingThread = TestingProcessingThread()
             mRenderer = TheGLRenderer(processingThread, this)
-            BasicSurrounding.fillUpPlanetShapes()
-            processingThread.surrounding.initializeSurrounding(rocket)
+            processingThread.surrounding.initializeSurrounding(processingThread.rocket)
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(mRenderer)
@@ -162,12 +159,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         }
 
-        override fun onMeasure(width: Int, height: Int) {
-            super.onMeasure(width, height)
-            // set width and height
-            widthInPixel = width.toFloat()
-            heightInPixel = height.toFloat()
-        }
+//        override fun onMeasure(width: Int, height: Int) {
+//            super.onMeasure(width, height)
+//            // set width and height
+//            widthInPixel = width.toFloat()
+//            heightInPixel = height.toFloat()
+//
+//            GLTriangle.refreshAllMatrix()
+//        }
 
         fun resetGame() {
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())

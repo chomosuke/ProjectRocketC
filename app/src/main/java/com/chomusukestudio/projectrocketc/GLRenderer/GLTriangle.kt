@@ -138,17 +138,17 @@ class GLTriangle (x1: Float, y1: Float,
 
     override fun removeTriangle() {
         // mark coords as unused
-        triangleCoords[X1] = UNUSED
-        triangleCoords[Y1] = UNUSED
-        triangleCoords[X2] = UNUSED
-        triangleCoords[Y2] = UNUSED
-        triangleCoords[X3] = UNUSED
-        triangleCoords[Y3] = UNUSED
+        layer.triangleCoords[X1 + coordPointer] = UNUSED
+        layer.triangleCoords[Y1 + coordPointer] = UNUSED
+        layer.triangleCoords[X2 + coordPointer] = UNUSED
+        layer.triangleCoords[Y2 + coordPointer] = UNUSED
+        layer.triangleCoords[X3 + coordPointer] = UNUSED
+        layer.triangleCoords[Y3 + coordPointer] = UNUSED
         // mark colors as unused
-        RGBA[0] = UNUSED
-        RGBA[1] = UNUSED
-        RGBA[2] = UNUSED
-        RGBA[3] = UNUSED
+        layer.colors[0 + colorPointer] = UNUSED
+        layer.colors[1 + colorPointer] = UNUSED
+        layer.colors[2 + colorPointer] = UNUSED
+        layer.colors[3 + colorPointer] = UNUSED
     }
 
     override fun moveTriangle(dx: Float, dy: Float) {
@@ -159,7 +159,33 @@ class GLTriangle (x1: Float, y1: Float,
         layer.triangleCoords[X3 + coordPointer] += dx
         layer.triangleCoords[Y3 + coordPointer] += dy
     }
-    
+
+    override fun setTriangleCoords(x1: Float, y1: Float,
+                          x2: Float, y2: Float,
+                          x3: Float, y3: Float) {
+        layer.triangleCoords[X1 + coordPointer] = x1
+        layer.triangleCoords[Y1 + coordPointer] = y1
+        layer.triangleCoords[X2 + coordPointer] = x2
+        layer.triangleCoords[Y2 + coordPointer] = y2
+        layer.triangleCoords[X3 + coordPointer] = x3
+        layer.triangleCoords[Y3 + coordPointer] = y3
+    }
+
+    override fun setTriangleRGBA(red: Float, green: Float, blue: Float, alpha: Float) {
+        layer.colors[0 + colorPointer] = red
+        layer.colors[1 + colorPointer] = green
+        layer.colors[2 + colorPointer] = blue
+        layer.colors[3 + colorPointer] = alpha
+        layer.colors[4 + colorPointer] = red
+        layer.colors[5 + colorPointer] = green
+        layer.colors[6 + colorPointer] = blue
+        layer.colors[7 + colorPointer] = alpha
+        layer.colors[8 + colorPointer] = red
+        layer.colors[9 + colorPointer] = green
+        layer.colors[10 + colorPointer] = blue
+        layer.colors[11 + colorPointer] = alpha
+    }
+
     companion object {
         val layers = ArrayList<Layer>()
         

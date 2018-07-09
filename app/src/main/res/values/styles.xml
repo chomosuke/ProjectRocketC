@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme.NoTitleBar.Fullscreen">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@android:color/background_dark</item>
         <item name="colorPrimaryDark">@android:color/background_dark</item>
@@ -13,6 +13,7 @@
     <!-- The launcher theme. It sets the main window background to the launch_screen drawable -->
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="android:windowEnterAnimation">@anim/fade_in_splash_image</item>
         <!-- Optional, on Android 5+ you can modify the colorPrimaryDark color to match the windowBackground color for further branding-->
          <item name="colorPrimaryDark">@android:color/background_dark</item>
     </style>
