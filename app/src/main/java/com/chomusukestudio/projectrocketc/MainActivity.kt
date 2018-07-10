@@ -122,6 +122,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         updateScoreThread.pause()
         runOnUiThread {
             playButton.visibility = View.VISIBLE
+//            playButton.invalidate()
+            playButton.bringToFront()
         }
         mGLView.processingThread.isStarted = false
         mGLView.resetGame()
