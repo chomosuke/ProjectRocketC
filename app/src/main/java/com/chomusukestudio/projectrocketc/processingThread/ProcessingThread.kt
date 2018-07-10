@@ -126,7 +126,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         get() = surrounding.isStarted
         set(isStarted) {
             surrounding.isStarted = isStarted
-            if (!isStarted)
+            if (isStarted)
                 LittleStar.cleanScore()
         }
 }

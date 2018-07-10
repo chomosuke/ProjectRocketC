@@ -17,7 +17,7 @@ import java.lang.Math.cos
 import java.lang.Math.log
 import java.lang.Math.sin
 
-// TODO: both rocket and trace needs clean up
+// TODO: both rocket and trace needs clean up, except I have no intention to do so
 abstract class Rocket(protected val surrounding: Surrounding) {
     
     protected var traces = ArrayList<TraceShape>()
