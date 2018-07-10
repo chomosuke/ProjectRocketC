@@ -223,4 +223,10 @@ class TriangularShape(x1: Float, y1: Float,
         z.add(this.z)
         return z
     }
+
+    // finalize it after garbage collection
+    protected fun finalize() {
+        if (triangle != null)
+            triangle!!.removeTriangle()
+    }
 }

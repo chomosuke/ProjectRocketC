@@ -94,7 +94,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 centerOfRotationX - (rocket.width / 2 + flybyDistance), centerOfRotationY,
                 0f, 1f, 0f, 1f, 10f) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
         startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
-        startingPathOfRocket.visibility = false //  this shape will only be used in isOverlapToOverride.
+        startingPathOfRocket.visibility = false // this shape will only be used in isOverlap
         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
 
         PlanetShape.setENDs(leftEnd * 1.5f, rightEnd * 1.5f, bottomEnd * 1.5f, topEnd * (1.5f + topMarginForLittleStar))
@@ -448,7 +448,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 boundariesNeedToBeChecked.add(boundary)
             }
         }
-        flybyDistance = minDistantBetweenPlanet / 10f
+//        flybyDistance = minDistantBetweenPlanet / 10f
         rectangleForFlyby.setQuadrilateralShapeCoords(centerOfRotationX + (rocket.width / 2 + flybyDistance),
                 centerOfRotationY + 0.5f,
                 centerOfRotationX + (rocket.width / 2 + flybyDistance),

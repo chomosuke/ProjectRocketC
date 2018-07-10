@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.processingThread
 
-import android.app.Activity
 import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent

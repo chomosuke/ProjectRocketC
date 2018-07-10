@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.Intent
 import android.opengl.GLES20
-import android.support.annotation.VisibleForTesting
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -48,8 +47,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         mGLView = findViewById(R.id.MyGLSurfaceView)
         scoreTextView = findViewById(R.id.pointTextView)
         playButtonAnimationImageView = findViewById(R.id.playButtonAnimationImageView)
-
-        disableClipOnParents(playButton)
 
         // display splashScreen
         val displayMetrics = DisplayMetrics()
