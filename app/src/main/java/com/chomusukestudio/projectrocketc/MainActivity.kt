@@ -37,19 +37,17 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     lateinit var mGLView: MyGLSurfaceView
     lateinit var  scoreTextView: TextView
     private lateinit var playButton: ImageButton
+    private lateinit var playButtonAnimationImageView: ImageView
     
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // as the ContentView for this Activity.
-//        setContentView(findViewById<ImageView>(R.id.splashImage))
-
         setContentView(R.layout.activity_main)
-
 
         playButton = findViewById(R.id.playButton)
         mGLView = findViewById(R.id.MyGLSurfaceView)
         scoreTextView = findViewById(R.id.pointTextView)
+        playButtonAnimationImageView = findViewById(R.id.playButtonAnimationImageView)
 
         disableClipOnParents(playButton)
 
@@ -97,13 +95,16 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     fun onPlay(view: View) {
         mGLView.processingThread.isStarted = true // start surrounding
 
+
         // start refresh score regularly
         updateScoreThread.run()
 
         val fadeOutAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_play_button_animation)
+        playButton.visibility = View.INVISIBLE
+        playButtonAnimationImageView.visibility = View.VISIBLE
         // Now Set your animation
-        view.startAnimation(fadeOutAnimation)
-        view.visibility = View.INVISIBLE
+        playButtonAnimationImageView.startAnimation(fadeOutAnimation)
+        playButtonAnimationImageView.visibility = View.INVISIBLE
     }
     
     fun onCrashed() {

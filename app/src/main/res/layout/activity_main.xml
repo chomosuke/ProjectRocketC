@@ -55,10 +55,6 @@
         android:id="@+id/playButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:onClick="onPlay"
         android:scaleType="centerCrop"
         android:cropToPadding="false"
@@ -70,6 +66,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.75"
         android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/playButtonAnimationImageView"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:background="@android:color/transparent"
+        android:cropToPadding="false"
+        android:scaleType="centerCrop"
+        android:src="@drawable/play_button"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="@+id/playButton"
+        app:layout_constraintStart_toStartOf="@+id/playButton"
+        app:layout_constraintTop_toTopOf="@+id/playButton" />
 
     <TextView
         android:id="@+id/visualText"
@@ -84,7 +94,7 @@
         android:text=""
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="20sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         android:typeface="normal"
         app:layout_constraintBottom_toBottomOf="@+id/MyGLSurfaceView"

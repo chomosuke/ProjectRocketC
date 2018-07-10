@@ -11,10 +11,10 @@
         android:interpolator="@android:anim/accelerate_interpolator"
         android:duration="800" />
     <scale
-        android:fromXScale="1.0"
-        android:fromYScale="1.0"
-        android:toXScale="1.5"
-        android:toYScale="1.5"
+        android:fromXScale="0.67"
+        android:fromYScale="0.67"
+        android:toXScale="1.0"
+        android:toYScale="1.0"
         android:pivotX="50%"
         android:pivotY="50%"
         android:duration="1000" />
