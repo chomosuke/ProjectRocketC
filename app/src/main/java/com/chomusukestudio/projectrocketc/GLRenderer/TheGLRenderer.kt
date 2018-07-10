@@ -87,15 +87,23 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
         previousFrameTime = upTimeMillis()// just to set this as close to draw as possible
     }
-    
+
+    var paused = false
+        private set
     fun pauseGLRenderer() {
-        myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
-        lastPausedTime = SystemClock.uptimeMillis()
+        if (!paused) {
+            myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+            lastPausedTime = SystemClock.uptimeMillis()
+            paused = true
+        }
     }
     private var lastPausedTime = 0L
     fun resumeGLRenderer() {
-        pausedTime += SystemClock.uptimeMillis() - lastPausedTime
-        myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
+        if (paused) {
+            pausedTime += SystemClock.uptimeMillis() - lastPausedTime
+            myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
+            paused = false
+        }
     }
     
     companion object {

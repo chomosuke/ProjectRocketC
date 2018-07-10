@@ -30,28 +30,18 @@ class GLTriangle (x1: Float, y1: Float,
             set(value) { System.arraycopy(layer.triangleCoords, coordPointer, value, 0, value.size) }
 
         override fun get(index: Int): Float {
-            if (index < 6) {
-                return if (index % 2 == 0)
-                    layer.triangleCoords[coordPointer + index] - layer.offsetX
-                else
-                    layer.triangleCoords[coordPointer + index] - layer.offsetY
-            }
+            if (index < 6)
+                return layer.triangleCoords[coordPointer + index]
             else
                 throw IndexOutOfBoundsException("invalid index for getTriangleCoords: $index")
         }
 
         override fun set(index: Int, value: Float) {
-            if (index < 6) {
-                if (index % 2 == 0)
-                    layer.triangleCoords[coordPointer + index] = value + layer.offsetX
-                else
-                    layer.triangleCoords[coordPointer + index] = value + layer.offsetY
-            }
+            if (index < 6)
+                layer.triangleCoords[coordPointer + index] = value
             else
                 throw IndexOutOfBoundsException("invalid index for setTriangleCoords: $index")
         }
-
-
     }
 
     private val colorPointer = layer.getColorPointer(coordPointer)
@@ -106,17 +96,9 @@ class GLTriangle (x1: Float, y1: Float,
     }
 
     init {
-        triangleCoords[X1] = x1
-        triangleCoords[Y1] = y1
-        triangleCoords[X2] = x2
-        triangleCoords[Y2] = y2
-        triangleCoords[X3] = x3
-        triangleCoords[Y3] = y3
+        setTriangleCoords(x1, y1, x2, y2, x3, y3)
 
-        RGBA[0] = red
-        RGBA[1] = green
-        RGBA[2] = blue
-        RGBA[3] = alpha
+        setTriangleRGBA(red, green, blue, alpha)
     }// as no special isOverlapToOverride method is provided.
 
     constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, z: Float)
@@ -138,17 +120,9 @@ class GLTriangle (x1: Float, y1: Float,
 
     override fun removeTriangle() {
         // mark coords as unused
-        layer.triangleCoords[X1 + coordPointer] = UNUSED
-        layer.triangleCoords[Y1 + coordPointer] = UNUSED
-        layer.triangleCoords[X2 + coordPointer] = UNUSED
-        layer.triangleCoords[Y2 + coordPointer] = UNUSED
-        layer.triangleCoords[X3 + coordPointer] = UNUSED
-        layer.triangleCoords[Y3 + coordPointer] = UNUSED
+        setTriangleCoords(UNUSED, UNUSED, UNUSED, UNUSED, UNUSED, UNUSED)
         // mark colors as unused
-        layer.colors[0 + colorPointer] = UNUSED
-        layer.colors[1 + colorPointer] = UNUSED
-        layer.colors[2 + colorPointer] = UNUSED
-        layer.colors[3 + colorPointer] = UNUSED
+        setTriangleRGBA(UNUSED, UNUSED, UNUSED, UNUSED)
     }
 
     override fun moveTriangle(dx: Float, dy: Float) {
@@ -202,11 +176,6 @@ class GLTriangle (x1: Float, y1: Float,
                 layer.passArraysToBuffers()
         }
 
-        fun offsetAllLayer(dOffsetX: Float, dOffsetY: Float) {
-            for (layer in layers)
-                layer.offsetLayer(dOffsetX, dOffsetY)
-        }
-
         fun refreshAllMatrix() {
             for (layer in layers)
                 layer.refreshMatrix()
@@ -226,11 +195,6 @@ class Layer(val z: Float) { // depth for the drawing order
     private val mViewMatrix = FloatArray(16)
     private val mvpMatrix = FloatArray(16)
 
-    var offsetX = 0f
-        private set
-    var offsetY = 0f
-        private set
-
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
     
     private var vertexBuffer: FloatBuffer
@@ -247,27 +211,23 @@ class Layer(val z: Float) { // depth for the drawing order
     var colors: FloatArray // colors of triangles
     
     private var lastUsedCoordIndex = 0 // should increase performance by ever so slightly, isn't really necessary.
-    /* vertexCount <= size * 3*/// if lastUsedCoordIndex is reached vertexCount then bring it back to 0
-    // if all before vertexCount does not have unused triangle left
-    // log it
-    //                else
-    //                    Log.v("number of triangle draw", "" + layer.vertexCount / 3);
-    // return the new unused triangle
-    // found an unused coords
-    @Synchronized fun getCoordPointer(): Int {
+    @Synchronized
+    fun getCoordPointer(): Int {
         var i = 0
         while (true) {
-            
+
+            // if lastUsedCoordIndex has reached vertexCount then bring it back to 0
             if (lastUsedCoordIndex >= vertexCount * COORDS_PER_VERTEX)
                 lastUsedCoordIndex = 0
             
             if (i >= vertexCount * COORDS_PER_VERTEX) {
+                // if all before vertexCount does not have unused triangle left
                 lastUsedCoordIndex = incrementVertexCountAndGiveNewCoordsPointer()
-                
                 return lastUsedCoordIndex
             }
             
             if (triangleCoords[lastUsedCoordIndex] == UNUSED) {
+                // found an unused coords
                 return lastUsedCoordIndex
             }
             
@@ -306,73 +266,9 @@ class Layer(val z: Float) { // depth for the drawing order
         // create a floating score buffer from the ByteBuffer
         colorBuffer = bb2.asFloatBuffer()
 
-        // this projection matrix is applied to object coordinates
-        // in the onDrawFrame() method
-        val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)
-
-        // for debugging
-        //        Matrix.orthoM(mProjectionMatrix, 0, left/4*720/512, right/4*720/512, bottom/4*720/512, top/4*720/512, -1000, 1000);
-        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0] + offsetX, leftRightBottomTop[1] + offsetX,
-                leftRightBottomTop[2] + offsetY, leftRightBottomTop[3] + offsetY, -1000f, 1000f)
-        // this game shall be optimised for any aspect ratio as now all left, right, bottom and top are visibility
-
-        // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
-
-        // Calculate the projection and view transformation
-        Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
+        refreshMatrix()
     }
-    
-    companion object {
-        // create empty OpenGL ES Program
-        private var mProgram: Int = -1000
 
-        fun initializeGLShaderAndStuff() {
-            mProgram = GLES20.glCreateProgram()
-            // can't do in the declaration as will return 0 because not everything is prepared
-
-            val vertexShader = TheGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER,
-                    vertexShaderCode)
-
-            val fragmentShader = TheGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER,
-                    fragmentShaderCode)
-
-            // add the vertex shader to program
-            GLES20.glAttachShader(mProgram, vertexShader)
-
-            // add the fragment shader to program
-            GLES20.glAttachShader(mProgram, fragmentShader)
-
-            // creates OpenGL ES program executables
-            GLES20.glLinkProgram(mProgram)
-        }
-        
-        private const val vertexShaderCode =
-        // This matrix member variable provides a hook to manipulate
-        // the coordinates of the objects that use this vertex shader
-                "uniform mat4 uMVPMatrix;" +
-
-                        "attribute vec4 vPosition;" +
-                        "attribute vec4 aColor;" +
-
-                        "varying vec4 vColor;" +
-
-                        "void main() {" +
-                        "vColor = aColor;" +
-                        // the matrix must be included as a modifier of gl_Position
-                        // Note that the uMVPMatrix factor *must be first* in order
-                        // for the matrix multiplication product to be correct.
-                        "  gl_Position = uMVPMatrix * vPosition;" +
-                        "}"
-        
-        private const val fragmentShaderCode =
-                "precision mediump float;" +
-                "varying vec4 vColor;" +
-                "void main() {" +
-                "  gl_FragColor = vColor;" +
-                "}"
-    }
-    
     private fun setupBuffers() {
         // initialize vertex byte buffer for shape coordinates
         val bb = ByteBuffer.allocateDirect(
@@ -418,7 +314,7 @@ class Layer(val z: Float) { // depth for the drawing order
         val oldColor = colors
         
         // create new arrays with new size
-        triangleCoords = FloatArray(CPT * size + 1)
+        triangleCoords = FloatArray(CPT * size)
         colors = FloatArray(12 * size)
         
         // copy old array to new array
@@ -443,18 +339,11 @@ class Layer(val z: Float) { // depth for the drawing order
 
     private fun incrementVertexCountAndGiveNewCoordsPointer(): Int {
         val coordsPointerToBeReturned = vertexCount * COORDS_PER_VERTEX
-        vertexCount += 300 // one hundred more triangle
+        vertexCount = (vertexCount * 1.25).toInt() / 3 * 3 // 25% more triangle
         while (vertexCount > size * 3) {
             increaseSize()
         } // check if index out of bound.
         return coordsPointerToBeReturned
-    }
-
-    fun offsetLayer(dOffsetX: Float, dOffsetY: Float) {
-        offsetX += dOffsetX
-        offsetY += dOffsetY
-
-        refreshMatrix()
     }
 
     fun refreshMatrix() {
@@ -464,8 +353,8 @@ class Layer(val z: Float) { // depth for the drawing order
 
         // for debugging
         //        Matrix.orthoM(mProjectionMatrix, 0, left/4*720/512, right/4*720/512, bottom/4*720/512, top/4*720/512, -1000, 1000);
-        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0] - offsetX, leftRightBottomTop[1] - offsetX,
-                leftRightBottomTop[2] - offsetY, leftRightBottomTop[3] - offsetY, -1000f, 1000f)
+        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0], leftRightBottomTop[1],
+                leftRightBottomTop[2], leftRightBottomTop[3], -1000f, 1000f)
         // this game shall be optimised for any aspect ratio as now all left, right, bottom and top are visibility
 
         // Set the camera position (View matrix)
@@ -474,7 +363,57 @@ class Layer(val z: Float) { // depth for the drawing order
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
     }
-    
+
+    companion object {
+        // create empty OpenGL ES Program
+        private var mProgram: Int = -1000
+
+        fun initializeGLShaderAndStuff() {
+            mProgram = GLES20.glCreateProgram()
+            // can't do in the declaration as will return 0 because not everything is prepared
+
+            val vertexShader = TheGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER,
+                    vertexShaderCode)
+
+            val fragmentShader = TheGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER,
+                    fragmentShaderCode)
+
+            // add the vertex shader to program
+            GLES20.glAttachShader(mProgram, vertexShader)
+
+            // add the fragment shader to program
+            GLES20.glAttachShader(mProgram, fragmentShader)
+
+            // creates OpenGL ES program executables
+            GLES20.glLinkProgram(mProgram)
+        }
+
+        private const val vertexShaderCode =
+        // This matrix member variable provides a hook to manipulate
+        // the coordinates of the objects that use this vertex shader
+                "uniform mat4 uMVPMatrix;" +
+
+                        "attribute vec4 vPosition;" +
+                        "attribute vec4 aColor;" +
+
+                        "varying vec4 vColor;" +
+
+                        "void main() {" +
+                        "vColor = aColor;" +
+                        // the matrix must be included as a modifier of gl_Position
+                        // Note that the uMVPMatrix factor *must be first* in order
+                        // for the matrix multiplication product to be correct.
+                        "  gl_Position = uMVPMatrix * vPosition;" +
+                        "}"
+
+        private const val fragmentShaderCode =
+                "precision mediump float;" +
+                        "varying vec4 vColor;" +
+                        "void main() {" +
+                        "  gl_FragColor = vColor;" +
+                        "}"
+    }
+
     fun drawLayer() {
         // Add program to OpenGL ES environment
         GLES20.glUseProgram(mProgram)

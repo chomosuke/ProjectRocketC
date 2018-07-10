@@ -103,17 +103,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         playButtonAnimationImageView.visibility = View.INVISIBLE
     }
 
-    private var paused = false
     fun onPause(view: View) {
         try {
-            if (paused) {
+            if (mGLView.mRenderer.paused) {
                 mGLView.mRenderer.resumeGLRenderer()
                 (view as TextView).text = "PauseMe"
-                paused = false
             } else {
                 mGLView.mRenderer.pauseGLRenderer()
                 (view as TextView).text = "ResumeMe"
-                paused = true
             }
         } catch (e: UninitializedPropertyAccessException) {
             // TODO: we should do something here
