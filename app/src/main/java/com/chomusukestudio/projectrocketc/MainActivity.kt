@@ -9,9 +9,6 @@ import android.opengl.GLES20
 import android.os.SystemClock
 import android.util.AttributeSet
 import android.util.Log
-import android.view.MotionEvent
-import android.view.View
-import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.TextView
@@ -28,9 +25,11 @@ import javax.microedition.khronos.egl.EGLDisplay
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 import android.util.DisplayMetrics
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import java.util.concurrent.Executors
+import java.util.logging.Level
+import java.util.logging.Logger
 
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
@@ -63,9 +62,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             mGLView.initializeRenderer()
             this.runOnUiThread {
+                findViewById<View>(R.id.preGameLayout).visibility = View.VISIBLE
                 mGLView.visibility = View.VISIBLE
-                scoreTextView.visibility = View.VISIBLE
-                playButton.visibility = View.VISIBLE
                 chomusukeView.visibility = View.INVISIBLE
             }
         }
@@ -110,9 +108,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         try {
             if (paused) {
                 mGLView.mRenderer.resumeGLRenderer()
+                (view as TextView).text = "PauseMe"
                 paused = false
             } else {
                 mGLView.mRenderer.pauseGLRenderer()
+                (view as TextView).text = "ResumeMe"
                 paused = true
             }
         } catch (e: UninitializedPropertyAccessException) {
@@ -213,6 +213,22 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             //
             //            // Render the view only when there is a change in the drawing data
             //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        }
+
+        override fun surfaceCreated(holder: SurfaceHolder?) {
+            var nullPointerFailure: Boolean
+            do {
+                try {
+                    super.surfaceCreated(holder)
+                    nullPointerFailure = false
+                } catch (e: NullPointerException) {
+                    // this means setRenderer() haven't being called yet (most likely)
+                    val logger = Logger.getAnonymousLogger()
+                    logger.log(Level.SEVERE, "an exception was thrown in nextFrameThread", e)
+                    // so log it and try again
+                    nullPointerFailure = true
+                }
+            } while (nullPointerFailure)
         }
 
 //        override fun onMeasure(width: Int, height: Int) {
