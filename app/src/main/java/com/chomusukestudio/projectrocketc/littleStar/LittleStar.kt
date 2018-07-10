@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.littleStar
 
-import android.os.SystemClock
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.FullRingShape
@@ -14,6 +13,7 @@ import com.chomusukestudio.projectrocketc.Shape.point.distance
 import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
 import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText
+import com.chomusukestudio.projectrocketc.upTimeMillis
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -34,7 +34,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     
     private val birthTime: Long
     init {
-        birthTime = SystemClock.uptimeMillis()
+        birthTime = upTimeMillis()
         
         // circle color for arrowToLittleStarShape is star color
         // arrow color is circle color for littleStarShape
@@ -64,18 +64,18 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     private var lastFlash: Long = 0
     private val flashDuration = 100
     fun timeOut(): Boolean {
-        if (SystemClock.uptimeMillis() - birthTime > duration * 0.75f) {
-            if (SystemClock.uptimeMillis() - lastFlash > flashDuration) {
+        if (upTimeMillis() - birthTime > duration * 0.75f) {
+            if (upTimeMillis() - lastFlash > flashDuration) {
                 // need to flash again
                 if (inScreen) {
                     littleStarShape.visibility = !littleStarShape.visibility
                 } else {
                     arrowToLittleStarShape.visibility = !arrowToLittleStarShape.visibility
                 }
-                lastFlash = SystemClock.uptimeMillis()
+                lastFlash = upTimeMillis()
             }
         }
-        val isTimeOut = SystemClock.uptimeMillis() - birthTime > duration
+        val isTimeOut = upTimeMillis() - birthTime > duration
 //        if (isTimeOut) {
 //            if (dScore > 1 && COLOR == Color.RED) {
 //                dScore /= 2

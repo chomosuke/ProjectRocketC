@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.processingThread
 
-import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import com.chomusukestudio.projectrocketc.Joystick.Joystick
@@ -15,6 +14,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import com.chomusukestudio.projectrocketc.transformToMatrixX
 import com.chomusukestudio.projectrocketc.transformToMatrixY
+import com.chomusukestudio.projectrocketc.upTimeMillis
 
 class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) {
     fun onTouchEvent(e: MotionEvent): Boolean {
@@ -71,22 +71,22 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
 
                 joystick.drawJoystick()
 
-                if (SystemClock.uptimeMillis() - now > 1000 / refreshRate) {
+                if (upTimeMillis() - now > 1000 / refreshRate) {
                     if (CircularShape.dynamicPerformanceIndex > 0.3) {
                         CircularShape.dynamicPerformanceIndex /= 1.001
                     }
                 }
 
-                if (SystemClock.uptimeMillis() - now < 1000 / refreshRate) { // increase imageQuality by increasing number of edges
+                if (upTimeMillis() - now < 1000 / refreshRate) { // increase imageQuality by increasing number of edges
                     if (CircularShape.dynamicPerformanceIndex < 1) {
                         CircularShape.dynamicPerformanceIndex *= 1.001
                     }
                 }
 
-                if (SystemClock.uptimeMillis() - now > 1000 / refreshRate) {
-                    Log.i("processing thread", "" + (SystemClock.uptimeMillis() - now))
+                if (upTimeMillis() - now > 1000 / refreshRate) {
+                    Log.i("processing thread", "" + (upTimeMillis() - now))
                 }
-                //            Log.v("processing thread", "" + (SystemClock.uptimeMillis() - now));
+                //            Log.v("processing thread", "" + (upTimeMillis() - now));
 
                 finished = true
 

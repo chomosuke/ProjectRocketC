@@ -5,7 +5,6 @@ package com.chomusukestudio.projectrocketc.GLRenderer
  */
 
 import android.opengl.GLSurfaceView
-import android.os.SystemClock
 import android.util.Log
 
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
@@ -14,9 +13,8 @@ import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
 import android.opengl.GLES20
-import com.chomusukestudio.projectrocketc.MainActivity
-import com.chomusukestudio.projectrocketc.heightInPixel
-import com.chomusukestudio.projectrocketc.widthInPixel
+import android.os.SystemClock
+import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 
 class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MainActivity.MyGLSurfaceView) : GLSurfaceView.Renderer {
@@ -48,7 +46,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     override fun onDrawFrame(unused: GL10) {
         countingFrames++
 
-        now = SystemClock.uptimeMillis()// so you access SystemClock.uptimeMillis() less
+        now = upTimeMillis()// so you access SystemClock.uptimeMillis() less
         //                previousFrameTime = now - 16; // for break point
 
         if (now - previousTime >= 1000) {// just to get frame rates
@@ -87,15 +85,16 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
         GLTriangle.refreshAllMatrix()
 
-        previousFrameTime = SystemClock.uptimeMillis()// just to set this as close to draw as possible
+        previousFrameTime = upTimeMillis()// just to set this as close to draw as possible
     }
     
     fun pauseGLRenderer() {
         myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+        lastPausedTime = SystemClock.uptimeMillis()
     }
-
+    private var lastPausedTime = 0L
     fun resumeGLRenderer() {
-        now = previousFrameTime
+        pausedTime += SystemClock.uptimeMillis() - lastPausedTime
         myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
     }
     

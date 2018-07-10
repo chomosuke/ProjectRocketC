@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.Intent
 import android.opengl.GLES20
+import android.os.SystemClock
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -103,7 +104,22 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         playButtonAnimationImageView.startAnimation(fadeOutAnimation)
         playButtonAnimationImageView.visibility = View.INVISIBLE
     }
-    
+
+    private var paused = false
+    fun onPause(view: View) {
+        try {
+            if (paused) {
+                mGLView.mRenderer.resumeGLRenderer()
+                paused = false
+            } else {
+                mGLView.mRenderer.pauseGLRenderer()
+                paused = true
+            }
+        } catch (e: UninitializedPropertyAccessException) {
+            // TODO: we should do something here
+        }
+    }
+
     fun onCrashed() {
         mGLView.mRenderer.pauseGLRenderer()
         updateScoreThread.pause()
@@ -273,4 +289,9 @@ class TouchableView<out V : View>(val view: V, val activity: Activity) {
     fun touchView(touch: (V) -> Unit) {
         activity.runOnUiThread { touch(view) }
     }
+}
+
+var pausedTime: Long = 0L
+fun upTimeMillis(): Long {
+    return SystemClock.uptimeMillis() - pausedTime
 }
