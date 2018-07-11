@@ -21,9 +21,17 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
     // so you calculate the how many milliseconds have passed since last frame
     private var previousFrameTime: Long = 0
+        set(value) {
+            Log.d("previousFrameTime", "" + value)
+            field = value
+        }
     private var countingFrames: Long = 0
     private var previousTime: Long = 0
     private var now: Long = 0
+        set(value) {
+            Log.d("now", "" + value)
+            field = value
+        }
     
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         //enable transparency
@@ -44,26 +52,27 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     }
     
     override fun onDrawFrame(unused: GL10) {
-        countingFrames++
+        if (!paused) { // if this is called when paused for some reason don't do anything as nothing suppose to change
+            countingFrames++
 
-        now = upTimeMillis()// so you access SystemClock.uptimeMillis() less
-        //                previousFrameTime = now - 16; // for break point
+            now = upTimeMillis()// so you access SystemClock.uptimeMillis() less
+            //                previousFrameTime = now - 16; // for break point
 
-        if (now - previousTime >= 1000) {// just to get frame rates
-            Log.i("Frame rate", "" + countingFrames + " and dynamic performance index " + CircularShape.dynamicPerformanceIndex)
-            countingFrames = 0
-            previousTime = now
+            if (now - previousTime >= 1000) {// just to get frame rates
+                Log.i("Frame rate", "" + countingFrames + " and dynamic performance index " + CircularShape.dynamicPerformanceIndex)
+                countingFrames = 0
+                previousTime = now
+            }
+
+            processingThread.waitForLastFrame()
+
+            // can't refresh buffers when processingThread is running or when drawing all triangles
+            GLTriangle.passArraysToBuffers()
+
+            processingThread.generateNextFrame(now, previousFrameTime)
+
+            previousFrameTime = now
         }
-
-        processingThread.waitForLastFrame()
-
-        // can't refresh buffers when processingThread is running or when drawing all triangles
-        GLTriangle.passArraysToBuffers()
-
-        processingThread.generateNextFrame(now, previousFrameTime)
-
-        previousFrameTime = now
-        
         // Clear the screen
         //        GLES20.glClear(GL_DEPTH_BUFFER_BIT);
         // Redraw background color
@@ -85,15 +94,18 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
         GLTriangle.refreshAllMatrix()
 
-        previousFrameTime = upTimeMillis()// just to set this as close to draw as possible
+        if (!paused) // if paused that means surfaceView is being redrawn (most likely)
+            // so this will likely to ruin the time so don't do it
+            previousFrameTime = upTimeMillis()// just to set this as close to draw as possible
     }
 
     var paused = false
         private set
     fun pauseGLRenderer() {
         if (!paused) {
-            myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
             lastPausedTime = SystemClock.uptimeMillis()
+            myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+            Log.d("upTimeMillis", "" + upTimeMillis())
             paused = true
         }
     }
@@ -101,8 +113,15 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     fun resumeGLRenderer() {
         if (paused) {
             pausedTime += SystemClock.uptimeMillis() - lastPausedTime
+            // pausedTime have to be set before changing renderMode as change of renderMode will trigger
+            // onDrawFrame which will cause upTimeMillis to be accessed before pauseTime being set
             myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
+            Log.d("upTimeMillis", "" + upTimeMillis())
             paused = false
+
+//            // if something happened with time try uncomment this
+//            now = upTimeMillis()
+//            previousFrameTime = upTimeMillis()
         }
     }
     

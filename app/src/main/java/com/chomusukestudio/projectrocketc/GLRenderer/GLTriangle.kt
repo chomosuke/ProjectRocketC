@@ -339,6 +339,7 @@ class Layer(val z: Float) { // depth for the drawing order
 
     private fun incrementVertexCountAndGiveNewCoordsPointer(): Int {
         val coordsPointerToBeReturned = vertexCount * COORDS_PER_VERTEX
+        // vertexCount have to be multiple of 3
         vertexCount = (vertexCount * 1.25).toInt() / 3 * 3 // 25% more triangle
         while (vertexCount > size * 3) {
             increaseSize()

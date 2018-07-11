@@ -55,7 +55,7 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     }
     
     @CallSuper // allow rocket to have moving component
-    fun moveRocket(rotationNeeded: Float, now: Long, previousFrameTime: Long) {
+    open fun moveRocket(rotationNeeded: Float, now: Long, previousFrameTime: Long) {
         
         if (surrounding.isStarted) { // only make it faster if it's already started
             // when 0 score, 1 times as fast, when 1024 score, 2 times as fast

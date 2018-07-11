@@ -26,6 +26,7 @@ import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 import android.util.DisplayMetrics
 import android.view.*
+import android.widget.Button
 import android.widget.ImageView
 import java.util.concurrent.Executors
 import java.util.logging.Level
@@ -37,6 +38,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     lateinit var  scoreTextView: TextView
     private lateinit var playButton: ImageButton
     private lateinit var playButtonAnimationImageView: ImageView
+    private lateinit var pauseButton: Button
     
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +49,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         mGLView = findViewById(R.id.MyGLSurfaceView)
         scoreTextView = findViewById(R.id.pointTextView)
         playButtonAnimationImageView = findViewById(R.id.playButtonAnimationImageView)
+        pauseButton = findViewById(R.id.pauseButton)
 
         // display splashScreen
         val displayMetrics = DisplayMetrics()
@@ -107,10 +110,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         try {
             if (mGLView.mRenderer.paused) {
                 mGLView.mRenderer.resumeGLRenderer()
-                (view as TextView).text = "PauseMe"
+                pauseButton.text = "PauseMe"
             } else {
                 mGLView.mRenderer.pauseGLRenderer()
-                (view as TextView).text = "ResumeMe"
+                pauseButton.text = "ResumeMe"
             }
         } catch (e: UninitializedPropertyAccessException) {
             // TODO: we should do something here
@@ -145,10 +148,21 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         Log.i("", "\n\nonDestroy() called\n\n")
         mGLView.shutDown()
     }// onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)
-    
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        try {
+            if (!hasFocus) {
+                mGLView.mRenderer.pauseGLRenderer()
+                pauseButton.text = "ResumeMe"
+            }
+        } catch (e: UninitializedPropertyAccessException) {
+            // so the app is just starting in the first time... do nothing
+        }
+    }
+
     override fun onBackPressed() {
-        // to home
-        startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
+        onPause(pauseButton)
     }
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
@@ -306,7 +320,7 @@ class TouchableView<out V : View>(val view: V, val activity: Activity) {
     }
 }
 
-var pausedTime: Long = 0L
+@Volatile var pausedTime: Long = 0L
 fun upTimeMillis(): Long {
     return SystemClock.uptimeMillis() - pausedTime
 }

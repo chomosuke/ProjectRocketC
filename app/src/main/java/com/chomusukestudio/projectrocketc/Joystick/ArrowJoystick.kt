@@ -8,9 +8,9 @@ import java.lang.Math.atan2
 
 class ArrowJoystick(private val centerOfRotationX: Float, private val centerOfRotationY: Float) : Joystick() {
     @Volatile
-    private var centerOfJoystickX: Float = 0.toFloat()
+    private var centerOfJoystickX: Float = 0f
     @Volatile
-    private var centerOfJoystickY: Float = 0.toFloat()
+    private var centerOfJoystickY: Float = 0f
     
     private// range from -pi to pi;
     val intendedDirection: Float

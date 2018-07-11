@@ -2,7 +2,6 @@ package com.chomusukestudio.projectrocketc.Surrounding
 
 import android.util.Log
 import android.widget.TextView
-import com.chomusukestudio.projectrocketc.GLRenderer.GLTriangle
 
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
@@ -21,6 +20,7 @@ import com.chomusukestudio.projectrocketc.Shape.point.distance
 import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar.Color.YELLOW
+import com.chomusukestudio.projectrocketc.upTimeMillis
 import java.lang.Math.PI
 import java.lang.Math.abs
 import java.lang.Math.random
@@ -537,19 +537,19 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         private fun generateRandomPlanetShape(centerX: Float, centerY: Float, radius: Float, z: Float): PlanetShape {
             val randomPlanetShape: PlanetShape
             if (radius < AVERAGE_RADIUS) {
-                val timeStarted = System.currentTimeMillis()
+                val timeStarted = upTimeMillis()
                 randomPlanetShape = MarsShape(centerX, centerY, radius, z)
-                Log.v("time take for newPlanet", "mars " + (System.currentTimeMillis() - timeStarted))
+                Log.v("time take for newPlanet", "mars " + (upTimeMillis() - timeStarted))
             } else if (radius < AVERAGE_RADIUS + RADIUS_MARGIN / 3) {
-                val timeStarted = System.currentTimeMillis()
+                val timeStarted = upTimeMillis()
                 val ringA = ((1.5 + random() * 0.2) * radius).toFloat()
                 randomPlanetShape = SaturnShape(ringA, (0.1 + 0.5 * random()).toFloat() * ringA, 1.2f * radius, (3 * random() + 3).toInt(), centerX, centerY, radius, z)
                 //            randomPlanetShape = new SaturnShape(ringA, (float) (0.1 + 0.5 * random()) * ringA, (0.67f + 0.2f*(float)random()) * ringA, (int) (3 * random() + 3), centerX, centerY, radius, z);
-                Log.v("time take for newPlanet", "saturn " + (System.currentTimeMillis() - timeStarted))
+                Log.v("time take for newPlanet", "saturn " + (upTimeMillis() - timeStarted))
             } else {
-                val timeStarted = System.currentTimeMillis()
+                val timeStarted = upTimeMillis()
                 randomPlanetShape = JupiterShape(centerX, centerY, radius, z)
-                Log.v("time take for newPlanet", "jupiter " + (System.currentTimeMillis() - timeStarted))
+                Log.v("time take for newPlanet", "jupiter " + (upTimeMillis() - timeStarted))
             }
             randomPlanetShape.rotateShape(centerX, centerY, (random() * 2.0 * PI).toFloat())
             return randomPlanetShape
