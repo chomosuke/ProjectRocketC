@@ -57,7 +57,7 @@ class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
     init {
         // initialize trace
         traces = ArrayList(NUMBER_OF_TRACES)
-        val numberOfEdges = CircularShape.getNumberOfEdges(0.05f) // to give 8 ish
+        val numberOfEdges = CircularShape.getNumberOfEdges(0.1f) // to give 16 ish
         for (i in 0 until NUMBER_OF_TRACES) {
             traces.add(RegularPolygonalTraceShape(numberOfEdges, 1.01f))
         }

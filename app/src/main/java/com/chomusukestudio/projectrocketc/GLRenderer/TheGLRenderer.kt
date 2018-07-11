@@ -21,17 +21,9 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
     // so you calculate the how many milliseconds have passed since last frame
     private var previousFrameTime: Long = 0
-        set(value) {
-            Log.d("previousFrameTime", "" + value)
-            field = value
-        }
     private var countingFrames: Long = 0
     private var previousTime: Long = 0
     private var now: Long = 0
-        set(value) {
-            Log.d("now", "" + value)
-            field = value
-        }
     
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         //enable transparency
