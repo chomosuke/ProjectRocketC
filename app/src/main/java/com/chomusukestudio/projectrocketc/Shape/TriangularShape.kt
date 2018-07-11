@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.Shape
 
+import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
 
@@ -19,20 +20,20 @@ class TriangularShape(x1: Float, y1: Float,
 
     override val shapeColor: FloatArray
         get() =
-            if (triangle != null)
+            if (visibility)
                 triangle!!.RGBA.floatArray
             else
                 RGBA
 
     override fun resetAlpha(alpha: Float) {
-        if (triangle != null)
+        if (visibility)
             triangle!!.RGBA[3] = alpha
         else
             RGBA[3] = alpha
     }
 
     override fun changeShapeColor(red: Float, green: Float, blue: Float, alpha: Float) {
-        if (triangle != null) {
+        if (visibility) {
             triangle!!.RGBA[0] += red
             triangle!!.RGBA[1] += green
             triangle!!.RGBA[2] += blue
@@ -62,18 +63,19 @@ class TriangularShape(x1: Float, y1: Float,
         set(visibility) {
             if (field != visibility) {
                 if (visibility) {
-                    triangle = GLTriangle(triangleCoords, RGBA, triangle!!.z)
+                    triangle = GLTriangle(triangleCoords, RGBA, z)
                 } else {
                     triangleCoords = triangle!!.triangleCoords.floatArray
                     RGBA = triangle!!.RGBA.floatArray
                     triangle!!.removeTriangle()
+//                    triangle = null
                 }
                 field = visibility
             }
         }
     
     val z: Float = z
-        get() = if (triangle != null) triangle!!.z else field
+        get() = if (visibility) triangle!!.z else field
 
     public override fun isOverlapToOverride(anotherShape: Shape): Boolean {
         for (anotherComponentShape in anotherShape.componentShapes) {
@@ -222,11 +224,5 @@ class TriangularShape(x1: Float, y1: Float,
         val z = ArrayList<Float>()
         z.add(this.z)
         return z
-    }
-
-    // finalize it after garbage collection
-    protected fun finalize() {
-        if (triangle != null)
-            triangle!!.removeTriangle()
     }
 }

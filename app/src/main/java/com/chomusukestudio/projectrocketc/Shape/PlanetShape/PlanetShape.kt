@@ -2,13 +2,16 @@ package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
 import com.chomusukestudio.projectrocketc.Shape.point.square
 
+
+
 abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, val radius: Float) : Shape() {
-    var centerX: Float = 0.toFloat()
+    var centerX: Float = 0f
         private set
-    var centerY: Float = 0.toFloat()
+    var centerY: Float = 0f
         private set
     
     var flybyed = false
@@ -21,10 +24,10 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
     var isInUse: Boolean = false
         private set
     
-    private var angleRotated: Float = 0.toFloat()
+    private var angleRotated: Float = 0f
     
-    private var actualCenterX: Float = 0.toFloat()
-    private var actualCenterY: Float = 0.toFloat()
+    private var actualCenterX: Float = 0f
+    private var actualCenterY: Float = 0f
     
     init {
         this.centerX = centerX
@@ -70,6 +73,7 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
     private fun setActual(actualCenterX: Float, actualCenterY: Float) {
         val dx = actualCenterX - this.actualCenterX
         val dy = actualCenterY - this.actualCenterY
+//        moveShapeMultiThreaded(dx, dy)
         super.moveShape(dx, dy)
         this.actualCenterX = actualCenterX
         this.actualCenterY = actualCenterY
@@ -79,7 +83,28 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
         }
         visibility = true
     }
-    
+
+//    private fun moveShapeMultiThreaded(dx: Float, dy: Float) {
+//        val componentTriangularShapes = getComponentTriangularShapes(this)
+//        // turns out i don't really need this
+//    }
+
+    private fun getComponentTriangularShapes(shape: Shape): Array<TriangularShape> {
+        val componentTriangularShapes = arrayOfNulls<TriangularShape>(size)
+        if (shape is TriangularShape) {
+            componentTriangularShapes[0] = shape
+            return componentTriangularShapes as Array<TriangularShape>
+        } else {
+            var i = 0
+            for (componentShape in shape.componentShapes) {
+                val componentShapeComponentTriangularShapes = getComponentTriangularShapes(componentShape)
+                System.arraycopy(componentShapeComponentTriangularShapes, 0, componentTriangularShapes, i, componentShapeComponentTriangularShapes.size)
+                i += componentShapeComponentTriangularShapes.size
+            }
+            return componentTriangularShapes as Array<TriangularShape>
+        }
+    }
+
     fun resetPosition(centerX: Float, centerY: Float) {
         val dx = centerX - this.centerX
         val dy = centerY - this.centerY

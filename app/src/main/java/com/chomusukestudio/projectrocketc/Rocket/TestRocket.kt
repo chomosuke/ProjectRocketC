@@ -16,7 +16,7 @@ import java.lang.Math.sin
  * Created by Shuang Li on 11/03/2018.
  */
 
-class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
+open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
     override var radiusOfRotation = 2f
     override val initialSpeed = 4f / 1000f
     override var speed = initialSpeed
@@ -78,7 +78,7 @@ class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         if (surrounding.isStarted) {
             val sinCurrentRotation = sin(currentRotation.toDouble()).toFloat()
             val cosCurrentRotation = cos(currentRotation.toDouble()).toFloat()
-            val I_MAX = ds / 128f * 1000f - random().toFloat() // - (random()) so no every single frame create a trace
+            val I_MAX = ds / 128f * 1000f - random().toFloat() + 0.5f // - (random()) + 0.5 so no every single frame create one trace
             if (I_MAX <= 0) { // if we are not adding any trace this frame
                 // let the next frame know
                 unfilledDs = ds // there is unfinished work

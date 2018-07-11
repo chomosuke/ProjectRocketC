@@ -259,9 +259,9 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             starShape.isSparkling = true
         }
     }
-    
+
+    private val parallelForIForMoveBoundaries = ParallelForI(8, "parallelForIForMoveBoundaries")
     override fun moveSurrounding(dx: Float, dy: Float, now: Long, previousFrameTime: Long) {
-        parallelForIForBackgroundStars.waitForLastRun()
         
         // move background
         parallelForIForBackgroundStars.run({ i ->
@@ -278,7 +278,20 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             if (starShape.centerX > leftEnd)
                 starShape.resetPosition(starShape.centerX - (leftEnd - rightEnd), starShape.centerY)
         }, backgrounds.size)
-        
+
+//        parallelForIForMoveBoundaries.waitForLastRun()
+//        val visibleBoundaries = ArrayList<Shape>()
+//        for (boundary in boundaries) {
+//            if (boundary.visibility)
+//                visibleBoundaries.add(boundary)
+//            else
+//                boundary.moveShape(dx, dy)
+//        }
+//        parallelForIForMoveBoundaries.run({ i ->
+//            visibleBoundaries[i].moveShape(dx, dy)
+//        }, visibleBoundaries.size)
+//        parallelForIForBackgroundStars.waitForLastRun()
+
         for (i in boundaries.indices)
             boundaries[i].moveShape(dx, dy)
         for (littleStar in littleStars)
@@ -435,7 +448,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     private var distanceLastFrame: Float = 0f
     @Volatile private var closeThisFrame = false
     private var distanceThisFrame: Float = 0f
-    private var flybyDistance = 0.35f
+    private val flybyDistance = 0.35f
     private lateinit var rectangleForFlyby: QuadrilateralShape
     private var flybysInThisYellowStar = 0
     private var flybyPlanetShape: PlanetShape? = null

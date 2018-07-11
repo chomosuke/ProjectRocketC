@@ -97,6 +97,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
             } catch (e: Exception) {
                 val logger = Logger.getAnonymousLogger()
                 logger.log(Level.SEVERE, "an exception was thrown in nextFrameThread", e)
+                Log.e("exception", "in processingThread" + e)
                 throw e
             }
         }
