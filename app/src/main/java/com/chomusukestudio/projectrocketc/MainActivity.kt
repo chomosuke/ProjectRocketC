@@ -38,7 +38,6 @@ import java.util.logging.Logger
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +46,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
-        editor = sharedPreferences.edit()
 
         // display splashScreen
         val displayMetrics = DisplayMetrics()
@@ -68,6 +66,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
                 findViewById<ImageButton>(R.id.playButton).visibility = View.VISIBLE
                 findViewById<TextView>(R.id.pointTextView).visibility = View.VISIBLE
+                findViewById<TextView>(R.id.highestScoreTextView).visibility = View.VISIBLE
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
                 chomusukeView.visibility = View.INVISIBLE
             }
@@ -134,8 +133,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             if (LittleStar.score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
                 // update highest score
-                editor.putInt(getString(R.string.highestScore), LittleStar.score)
-                editor.apply()
+                with(sharedPreferences.edit()) {
+                    putInt(getString(R.string.highestScore), LittleStar.score)
+                    apply()
+                }
                 findViewById<TextView>(R.id.highestScoreTextView).text = LittleStar.score.toString()
             }
 
