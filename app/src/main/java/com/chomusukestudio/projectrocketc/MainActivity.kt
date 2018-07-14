@@ -30,6 +30,7 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import com.chomusukestudio.projectrocketc.R.id.preGameLayout
+import com.chomusukestudio.projectrocketc.littleStar.putCommasInInt
 import org.w3c.dom.Text
 import java.util.concurrent.Executors
 import java.util.logging.Level
@@ -56,7 +57,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         val chomusukeView = findViewById<ImageView>(R.id.chomusukeView)
         chomusukeView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
 
-        findViewById<TextView>(R.id.highestScoreTextView).text = sharedPreferences.getInt(getString(R.string.highestScore), 0).toString()
+        findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
         Executors.newSingleThreadExecutor().submit {
             BasicSurrounding.fillUpPlanetShapes()
@@ -89,7 +90,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
-        this.runOnUiThread { findViewById<TextView>(R.id.pointTextView).text = LittleStar.putCommasInInt("" + LittleStar.score) }
+        this.runOnUiThread { findViewById<TextView>(R.id.pointTextView).text = putCommasInInt(LittleStar.score.toString()) }
     }
 
     fun startGame(view: View) {
@@ -137,7 +138,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     putInt(getString(R.string.highestScore), LittleStar.score)
                     apply()
                 }
-                findViewById<TextView>(R.id.highestScoreTextView).text = LittleStar.score.toString()
+                findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(LittleStar.score.toString())
             }
 
             findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
