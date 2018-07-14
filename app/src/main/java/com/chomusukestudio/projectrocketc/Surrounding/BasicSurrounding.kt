@@ -141,7 +141,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 return false
         }
         // it is not too close to any other planet
-//        if (!isStarted)
+        if (!isStarted)
             if (planetShape.isOverlap(startingPathOfRocket))
                 return false// if it blocks the rocket before start
         return true

@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.Shape.TraceShape
 
+import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.RegularPolygonalShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 
@@ -9,16 +10,16 @@ import java.lang.Math.sqrt
 
 class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float) : TraceShape() {
     override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(numberOfEdges, 0f, 0f, 0f, 0f, 0f, 0f, 0f, z))
-    private var initialRed: Float = 0.toFloat()
-    private var initialGreen: Float = 0.toFloat()
-    private var initialBlue: Float = 0.toFloat()
-    private var initialAlpha: Float = 0.toFloat()
-    private var duration: Float = 0.toFloat()
-    private var initialRadius: Float = 0.toFloat()
-    private var deltaRadius: Float = 0.toFloat()
-    private var AlphaEveryMiniSecond: Float = 0.toFloat()
+    private var initialRed: Float = 0f
+    private var initialGreen: Float = 0f
+    private var initialBlue: Float = 0f
+    private var initialAlpha: Float = 0f
+    private var duration: Float = 0f
+    private var initialRadius: Float = 0f
+    private var deltaRadius: Float = 0f
+    private var AlphaEveryMiniSecond: Float = 0f
     
-    private var timeSinceReset: Long = 0
+    private var timeSinceReset: Float = 0f
     var showing = false
         private set
     
@@ -40,11 +41,11 @@ class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float) : TraceShape() {
         (componentShapes[0] as RegularPolygonalShape).resetParameter(centerX, centerY, initialRadius)
         componentShapes[0].resetShapeColor(initialRed, initialGreen, initialBlue, initialAlpha)
         AlphaEveryMiniSecond = pow(1.0 / 256 / initialAlpha, 1.0 / duration).toFloat()
-        timeSinceReset = 0
+        timeSinceReset = 0f
         numberOfTraceInUse++
-        //        if (numberOfTraceInUse % 10 == 0) {
-        //            Log.v("numberOfTraceInUse", "" + numberOfTraceInUse);
-        //        }
+        if (numberOfTraceInUse % 10 == 0) {
+            Log.v("numberOfTraceInUse", "" + numberOfTraceInUse);
+        }
     }
     
     override fun fadeTraceShape(ds: Float, now: Long, previousFrameTime: Long) {

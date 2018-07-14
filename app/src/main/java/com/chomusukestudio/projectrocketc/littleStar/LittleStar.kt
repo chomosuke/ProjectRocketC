@@ -260,8 +260,8 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
             return string
         }
         
-        var score: Long = 0
-        var dScore: Long = 1
+        var score = 0
+        var dScore = 1
         
         fun cleanScore() {
             dScore = 1

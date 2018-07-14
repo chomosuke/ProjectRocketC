@@ -68,7 +68,7 @@ class TriangularShape(x1: Float, y1: Float,
                     triangleCoords = triangle!!.triangleCoords.floatArray
                     RGBA = triangle!!.RGBA.floatArray
                     triangle!!.removeTriangle()
-//                    triangle = null
+                    triangle = null
                 }
                 field = visibility
             }

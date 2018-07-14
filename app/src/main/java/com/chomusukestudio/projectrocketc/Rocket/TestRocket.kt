@@ -18,7 +18,7 @@ import java.lang.Math.sin
 
 open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
     override var radiusOfRotation = 2f
-    override val initialSpeed = 4f / 1000f
+    final override val initialSpeed = 4f / 1000f
     override var speed = initialSpeed
 
     private var unfilledDs = 0f
@@ -57,7 +57,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
     init {
         // initialize trace
         traces = ArrayList(NUMBER_OF_TRACES)
-        val numberOfEdges = CircularShape.getNumberOfEdges(0.1f) // to give 16 ish
+        val numberOfEdges = CircularShape.getNumberOfEdges(0.6f) // to give 8 ish
         for (i in 0 until NUMBER_OF_TRACES) {
             traces.add(RegularPolygonalTraceShape(numberOfEdges, 1.01f))
         }
@@ -78,7 +78,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         if (surrounding.isStarted) {
             val sinCurrentRotation = sin(currentRotation.toDouble()).toFloat()
             val cosCurrentRotation = cos(currentRotation.toDouble()).toFloat()
-            val I_MAX = ds / 128f * 1000f - random().toFloat() + 0.5f // - (random()) + 0.5 so no every single frame create one trace
+            val I_MAX = ds / 128f * 1000f - random().toFloat()
             if (I_MAX <= 0) { // if we are not adding any trace this frame
                 // let the next frame know
                 unfilledDs = ds // there is unfinished work
@@ -110,7 +110,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
                             1f, 1f, 0f, 3f)
                     
                     val random = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
-                    newTraceShape.moveTraceShape(now, previousFrameTime + ((1 - random) * (now - previousFrameTime) + 0.5).toInt()) // + 0.5 for rounding
+                    newTraceShape.moveTraceShape(now, previousFrameTime + ((1 - random) * (now - previousFrameTime) + random()).toInt()) // + 0.5 for rounding
                     newTraceShape.moveShape(-ds * random * sinCurrentRotation, -ds * random * cosCurrentRotation)
                     i++
                 }
