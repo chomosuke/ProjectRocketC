@@ -75,15 +75,15 @@ class TrapezoidalTraceShape(protected var xL: Float, protected var yL: Float, pr
         val ry3 = y3
         val rx4 = x4
         val ry4 = y4
-        xL = xL + ds * cosAngle + rateOfNarrowing * ds * sinAngle
-        yL = yL + ds * sinAngle - rateOfNarrowing * ds * cosAngle
-        xR = xR + ds * cosAngle - rateOfNarrowing * ds * sinAngle
-        yR = yR + ds * sinAngle + rateOfNarrowing * ds * cosAngle
-        x3 = x3 + ds * cosAngle - rateOfNarrowing * ds * sinAngle
-        y3 = y3 + ds * sinAngle + rateOfNarrowing * ds * cosAngle
-        x4 = x4 + ds * cosAngle + rateOfNarrowing * ds * sinAngle
-        y4 = y4 + ds * sinAngle - rateOfNarrowing * ds * cosAngle
-        (componentShapes!![0] as QuadrilateralShape).setQuadrilateralShapeCoords(xL, yL, xR, yR, x3, y3, x4, y4)
+        xL += ds * cosAngle + rateOfNarrowing * ds * sinAngle
+        yL += ds * sinAngle - rateOfNarrowing * ds * cosAngle
+        xR += ds * cosAngle - rateOfNarrowing * ds * sinAngle
+        yR += ds * sinAngle + rateOfNarrowing * ds * cosAngle
+        x3 += ds * cosAngle - rateOfNarrowing * ds * sinAngle
+        y3 += ds * sinAngle + rateOfNarrowing * ds * cosAngle
+        x4 += ds * cosAngle + rateOfNarrowing * ds * sinAngle
+        y4 += ds * sinAngle - rateOfNarrowing * ds * cosAngle
+        (componentShapes[0] as QuadrilateralShape).setQuadrilateralShapeCoords(xL, yL, xR, yR, x3, y3, x4, y4)
         
         if (xL < xR != rxL < rxR || yL < yR != ryL < ryR) {
             topWidthGreaterThanZero = false

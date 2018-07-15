@@ -579,7 +579,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 val planetShape = planetShapes!![lastUsedPlanet]
                 if (!planetShape.isInUse) {
                     planetShape.usePlanet()
-                    return planetShape as PlanetShape
+                    return planetShape
                 }
             }
             throw IndexOutOfBoundsException("run out of planet?!")

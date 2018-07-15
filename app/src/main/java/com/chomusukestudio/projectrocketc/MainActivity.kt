@@ -1,5 +1,7 @@
 package com.chomusukestudio.projectrocketc
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.os.Bundle
@@ -29,9 +31,7 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
-import com.chomusukestudio.projectrocketc.R.id.preGameLayout
 import com.chomusukestudio.projectrocketc.littleStar.putCommasInInt
-import org.w3c.dom.Text
 import java.util.concurrent.Executors
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -48,31 +48,44 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
 
-        // display splashScreen
+        // set height and width of the screen
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         heightInPixel = displayMetrics.heightPixels.toFloat()
         widthInPixel = displayMetrics.widthPixels.toFloat()
 
-        val chomusukeView = findViewById<ImageView>(R.id.chomusukeView)
-        chomusukeView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
+        // display splashScreen
+        findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
 
+        // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
+        // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
             BasicSurrounding.fillUpPlanetShapes()
 
             findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).initializeRenderer()
+
+            // hide splash screen and show game
             this.runOnUiThread {
                 findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
-                findViewById<ImageButton>(R.id.playButton).visibility = View.VISIBLE
                 findViewById<TextView>(R.id.pointTextView).visibility = View.VISIBLE
                 findViewById<TextView>(R.id.highestScoreTextView).visibility = View.VISIBLE
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
-                chomusukeView.visibility = View.INVISIBLE
+                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+
+                findViewById<ImageView>(R.id.chomusukeView).bringToFront()
+                findViewById<ImageView>(R.id.chomusukeView).animate()
+                        .alpha(0f)
+                        .setDuration(250)
+                        .setListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator?) {
+                                findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
+                            }
+                        })
+                findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
             }
         }
-
     }
 
     private fun disableClipOnParents(v: View) {
@@ -99,13 +112,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // start refresh score regularly
         updateScoreThread.run()
 
-        val fadeOutAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_play_button_animation)
         // Now Set your animation
-        findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(fadeOutAnimation)
+        findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_animation))
+
         findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
         findViewById<Button>(R.id.pauseButton).visibility = View.VISIBLE
 
-        findViewById<ImageButton>(R.id.playButton).visibility = View.INVISIBLE
         findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.INVISIBLE
     }
 
@@ -140,12 +152,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 }
                 findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(LittleStar.score.toString())
             }
-
             findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
-            findViewById<ImageButton>(R.id.playButton).visibility = View.VISIBLE
-//            playButton.invalidate()
-            findViewById<ImageButton>(R.id.playButton).bringToFront()
-            findViewById<Button>(R.id.pauseButton).visibility = View.INVISIBLE
+            findViewById<ConstraintLayout>(R.id.preGameLayout).bringToFront()
+
+            findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
         }
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).processingThread.isStarted = false
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
