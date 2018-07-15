@@ -13,7 +13,7 @@ import java.lang.Math.pow
 import java.lang.Math.random
 import java.lang.Math.sin
 
-class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int, centerX: Float, centerY: Float, radius: Float, z: Float) : PlanetShape(centerX, centerY, radius) {
+class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int, centerX: Float, centerY: Float, radius: Float, z: Float, visibility: Boolean) : PlanetShape(centerX, centerY, radius) {
     override val isOverlapMethodLevel: Double = 3.0 // one level higher than other PlanetShape cause the ring
     override lateinit var componentShapes: Array<Shape>
     
@@ -28,7 +28,7 @@ class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int,
         val mainColor = floatArrayOf((random() * 0.6 + 0.2).toFloat(), (random() * 0.6 + 0.2).toFloat(), (random() * 0.6 + 0.2).toFloat())
         
         val centerComponentShapes = arrayOfNulls<Shape>(1)
-        centerComponentShapes[0] = CircularShape(centerX, centerY, radius, mainColor[0], mainColor[1], mainColor[2], 1f, z)
+        centerComponentShapes[0] = CircularShape(centerX, centerY, radius, mainColor[0], mainColor[1], mainColor[2], 1f, z, visibility)
         
         val theRatio = ringB / ringA
         
@@ -51,13 +51,13 @@ class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int,
                 // top half ring
                 ringComponentShapes[i] = TopHalfRingShape(centerX, centerY, ringA, ringB, factor,
                         ringColor[0], ringColor[1], ringColor[2],
-                        ringColor[3], z + 0.01f)
+                        ringColor[3], z + 0.01f, visibility)
                 
             } else {
                 // bottom half ring
                 ringComponentShapes[i] = TopHalfRingShape(centerX, centerY, ringA, ringB, factor,
                         ringColor[0], ringColor[1], ringColor[2],
-                        ringColor[3], z - 0.01f)
+                        ringColor[3], z - 0.01f, visibility)
                 ringComponentShapes[i]!!.rotateShape(centerX, centerY, PI.toFloat())
                 
                 // smaller a & b

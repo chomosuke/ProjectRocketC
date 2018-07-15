@@ -18,23 +18,11 @@ import com.chomusukestudio.projectrocketc.upTimeMillis
 
 class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) {
     fun onTouchEvent(e: MotionEvent): Boolean {
-        // MotionEvent reports input details from the touch screen
-        // and other input controls. In this case, you are only
-        // interested in events where the touch position changed.
-
-        val x = transformToMatrixX(e.x)
-        val y = transformToMatrixY(e.y)
-
-        if (isStarted) {
-            when (e.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    joystick.updateTouchPosition(x, y)
-                }
-                MotionEvent.ACTION_UP -> joystick.actionUp()
-                MotionEvent.ACTION_MOVE -> joystick.updateTouchPosition(x, y)
-            }
-        }
-        return true
+        return if (isStarted) {
+            joystick.onTouchEvent(e)
+            true
+        } else
+            false
     }
 
     fun shutDown() {

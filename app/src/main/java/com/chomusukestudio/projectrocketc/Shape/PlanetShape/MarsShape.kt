@@ -13,7 +13,7 @@ import java.lang.Math.cos
 import java.lang.Math.random
 import java.lang.Math.sin
 
-class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float) : PlanetShape(centerX, centerY, radius) {
+class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibility: Boolean) : PlanetShape(centerX, centerY, radius) {
     override val isOverlapMethodLevel: Double = 2.0
     override lateinit var componentShapes: Array<Shape>
     
@@ -30,7 +30,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float) : Plane
         val darkerColor = floatArrayOf(randomDarker * mainColor[0], randomDarker * mainColor[1], randomDarker * mainColor[2])
         
         // the planet itself
-        componentShapes[0] = CircularShape(centerX, centerY, radius, mainColor[0], mainColor[1], mainColor[2], 1f, z)
+        componentShapes[0] = CircularShape(centerX, centerY, radius, mainColor[0], mainColor[1], mainColor[2], 1f, z, visibility)
         
         // generate some Crater on the planet
         for (i in 1 until componentShapes.size) {
@@ -63,7 +63,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float) : Plane
                                 sin(sRadius * cos(2.0 * PI * i.toDouble() / numberOfEdges)).toFloat() * radius,
                                 mSin(offsetRadius + sRadius * sin(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat(),
                                 sin(sRadius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat() * radius,
-                                red, green, blue, 1f, z1) // close for modification
+                                red, green, blue, 1f, z1, visibility) // close for modification
                         // screw that low efficiency thingy
                         //                    double x2 = centerX + (r * sin(2*PI*i/numberOfEdges));
                         //                    double y2 = (r * cos(2*PI*i/numberOfEdges));

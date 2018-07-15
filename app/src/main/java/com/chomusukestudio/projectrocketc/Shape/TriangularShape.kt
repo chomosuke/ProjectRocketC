@@ -7,16 +7,16 @@ import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
 class TriangularShape(x1: Float, y1: Float,
                       x2: Float, y2: Float,
                       x3: Float, y3: Float,
-                      red: Float, green: Float, blue: Float, alpha: Float, z: Float) : Shape() {
-    constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, z: Float): this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], red, green, blue, alpha, z)
+                      red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean) : Shape() {
+    constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean): this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], red, green, blue, alpha, z, visibility)
 
     override val isOverlapMethodLevel: Double = 0.0
     
-    private var triangle: Triangle? = GLTriangle(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, z)
+    private var triangle: Triangle? = if (visibility) GLTriangle(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, z) else null
     // nullable because sometimes invisible
     
-    private var triangleCoords = FloatArray(6)
-    private var RGBA = FloatArray(4)
+    private var triangleCoords = /*if (visibility) FloatArray(6) else */floatArrayOf(x1, y1, x2, y2, x3, y3)
+    private var RGBA = /*if (visibility) FloatArray(4) else */floatArrayOf(red, green, blue, alpha)
 
     override val shapeColor: FloatArray
         get() =
@@ -45,24 +45,24 @@ class TriangularShape(x1: Float, y1: Float,
             RGBA[3] += alpha
         }
     }
-    
+
     override var componentShapes: Array<Shape> = arrayOf(this)
         set(value) {
             throw IllegalAccessException("TriangularShape itself is the componentShape of itself")
         }
-    
+
     override val size: Int = 1
-    
+
     fun getTriangularShapeCoords() = if (visibility) {
         triangle!!.triangleCoords.floatArray
     } else {
         triangleCoords
     }
-    
-    override var visibility: Boolean = true
-        set(visibility) {
-            if (field != visibility) {
-                if (visibility) {
+
+    override var visibility: Boolean = visibility
+        set(value) {
+            if (field != value) {
+                if (value) {
                     triangle = GLTriangle(triangleCoords, RGBA, z)
                 } else {
                     triangleCoords = triangle!!.triangleCoords.floatArray
@@ -70,10 +70,10 @@ class TriangularShape(x1: Float, y1: Float,
                     triangle!!.removeTriangle()
                     triangle = null
                 }
-                field = visibility
+                field = value
             }
         }
-    
+
     val z: Float = z
         get() = if (visibility) triangle!!.z else field
 
@@ -95,7 +95,7 @@ class TriangularShape(x1: Float, y1: Float,
         }
         return false
     }
-    
+
     override fun isInside(x: Float, y: Float): Boolean { // close for modification
         val areaA = getArea(this.getTriangularShapeCoords(0),
                 this.getTriangularShapeCoords(1),
@@ -122,14 +122,14 @@ class TriangularShape(x1: Float, y1: Float,
         // https://stackoverflow.com/questions/13300904/determine-whether-point-lies-inside-triangle
         // https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/
     }
-    
+
     private fun getArea(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float): Float {
         return if ((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2 < 0)
             -(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
         else
             (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
     }
-    
+
     fun getTriangularShapeCoords(coord: Int): Float {
         return if (visibility)
             triangle!!.triangleCoords[coord]
@@ -137,7 +137,7 @@ class TriangularShape(x1: Float, y1: Float,
             triangleCoords[coord]
         }
     }
-    
+
     fun setTriangleCoords(x1: Float, y1: Float,
                           x2: Float, y2: Float,
                           x3: Float, y3: Float) {
@@ -153,7 +153,7 @@ class TriangularShape(x1: Float, y1: Float,
             triangleCoords[Y3] = y3
         }
     }
-    
+
     override fun moveShape(dx: Float, dy: Float) {
         if (visibility) {
             triangle!!.moveTriangle(dx, dy)
@@ -167,7 +167,7 @@ class TriangularShape(x1: Float, y1: Float,
             triangleCoords[Y3] += dy
         }
     }
-    
+
     override fun rotateShape(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
         if (visibility) {
             var i = 0
@@ -190,7 +190,7 @@ class TriangularShape(x1: Float, y1: Float,
             }
         }
     }
-    
+
     override fun resetShapeColor(red: Float, green: Float, blue: Float, alpha: Float) {
         if (visibility) {
             triangle!!.setTriangleRGBA(red, green, blue, alpha)
@@ -201,7 +201,7 @@ class TriangularShape(x1: Float, y1: Float,
             RGBA[3] = alpha
         }
     }
-    
+
     override fun removeShape() {
         if (visibility) {
             triangle!!.removeTriangle()

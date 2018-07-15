@@ -38,9 +38,9 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         
         // circle color for arrowToLittleStarShape is star color
         // arrow color is circle color for littleStarShape
-        littleStarShape = LittleStarShape(centerX, centerY, RADIUS_OF_LITTLE_STAR, COLOR.red, COLOR.green, COLOR.blue, 1f, 1f, 1f, -10f)
-        arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, 1f, 1f, 1f, COLOR.red, COLOR.green, COLOR.blue, -10f)
-    
+        littleStarShape = LittleStarShape(centerX, centerY, RADIUS_OF_LITTLE_STAR, COLOR.red, COLOR.green, COLOR.blue, 1f, 1f, 1f, -10f, true)
+        arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, 1f, 1f, 1f, COLOR.red, COLOR.green, COLOR.blue, -10f, true)
+
         if (centerX + RADIUS_OF_LITTLE_STAR + range > RIGHT_END &&
                         centerX - RADIUS_OF_LITTLE_STAR + range < LEFT_END &&
                         centerY + RADIUS_OF_LITTLE_STAR + range > BOTTOM_END &&

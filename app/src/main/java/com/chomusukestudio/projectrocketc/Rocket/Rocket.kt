@@ -5,11 +5,15 @@ package com.chomusukestudio.projectrocketc.Rocket
  */
 
 import android.support.annotation.CallSuper
+import com.chomusukestudio.projectrocketc.GLRenderer.GLTriangle
+import com.chomusukestudio.projectrocketc.GLRenderer.generateLeftRightBottomTop
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TraceShape.TraceShape
+import com.chomusukestudio.projectrocketc.heightInPixel
+import com.chomusukestudio.projectrocketc.widthInPixel
 
 import java.util.ArrayList
 
@@ -39,7 +43,17 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     
     fun isCrashed(surrounding: Surrounding): Boolean {
         // surrounding will handle this
-        return surrounding.isCrashed(components)
+        val crashedComponent = surrounding.isCrashed(components)
+        if (crashedComponent != null) {
+            explosion()
+            return true
+        }
+        else
+            return false
+    }
+
+    open fun explosion() {
+
     }
     
     abstract val width: Float
@@ -91,6 +105,14 @@ abstract class Rocket(protected val surrounding: Surrounding) {
         
         surrounding.moveSurrounding(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat(), now, previousFrameTime)
         //        surrounding.moveSurrounding(0, -ds, now, previousFrameTime);
+
+//        // move rocket components
+//
+//        GLTriangle.offsetAllLayers(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat())
+//
+//        // refresh ends of surrounding
+//        val leftRightBottomTopEnd = generateLeftRightBottomTop(widthInPixel / heightInPixel)
+//        surrounding.setLeftRightBottomTopEnd(leftRightBottomTopEnd[0], leftRightBottomTopEnd[1], leftRightBottomTopEnd[2], leftRightBottomTopEnd[3])
         
         waitForFadeMoveAndRemoveTraces()
         

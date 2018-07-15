@@ -175,7 +175,8 @@ class Layer(val z: Float) { // depth for the drawing order
         val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)
 
         // for debugging
-        //        Matrix.orthoM(mProjectionMatrix, 0, left/4*720/512, right/4*720/512, bottom/4*720/512, top/4*720/512, -1000, 1000);
+//        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0] * 3, leftRightBottomTop[1] * 3,
+//                leftRightBottomTop[2] * 3, leftRightBottomTop[3] * 3, -1000f, 1000f)
         Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0], leftRightBottomTop[1],
                 leftRightBottomTop[2], leftRightBottomTop[3], -1000f, 1000f)
         // this game shall be optimised for any aspect ratio as now all left, right, bottom and top are visibility
@@ -186,6 +187,18 @@ class Layer(val z: Float) { // depth for the drawing order
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
     }
+
+//    var offsetX = 0f
+//        private set
+//    var offsetY = 0f
+//        private set
+
+//    fun offsetLayer(dOffsetX: Float, dOffsetY: Float) {
+//        offsetX += dOffsetX
+//        offsetY += dOffsetY
+//
+//        refreshMatrix()
+//    }
 
     companion object {
         // create empty OpenGL ES Program

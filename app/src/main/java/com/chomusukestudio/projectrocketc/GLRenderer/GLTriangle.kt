@@ -165,6 +165,11 @@ class GLTriangle (z: Float) : Triangle() {
 
     companion object {
         val layers = ArrayList<Layer>()
+
+//        fun offsetAllLayers(dOffsetX: Float, dOffsetY: Float) {
+//            for (layer in layers)
+//                layer.offsetLayer(dOffsetX, dOffsetY)
+//        }
         
         fun drawAllTriangles() {
             // no need to sort, already in order

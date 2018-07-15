@@ -31,6 +31,7 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
+import com.chomusukestudio.projectrocketc.Joystick.OneFingerJoystick
 import com.chomusukestudio.projectrocketc.littleStar.putCommasInInt
 import java.util.concurrent.Executors
 import java.util.logging.Level
@@ -94,17 +95,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     private fun disableClipOnParents(v: View) {
-        if (v.parent == null) {
+        if (v.parent == null)
             return
-        }
-
-        if (v is ViewGroup) {
+        if (v is ViewGroup)
             v.clipChildren = false
-        }
-
-        if (v.parent is View) {
+        if (v.parent is View)
             disableClipOnParents(v.parent as View)
-        }
     }
 
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
@@ -121,7 +117,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_animation))
 
         findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
-        findViewById<Button>(R.id.pauseButton).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.inGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
         findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.INVISIBLE
     }
@@ -247,6 +243,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             processingThread = ProcessingThread(
                     TwoFingersJoystick(),
+//                    OneFingerJoystick(),
                     surrounding,
                     rocket,
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
@@ -295,10 +292,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             processingThread.rocket = TestRocket(processingThread.surrounding)
             processingThread.surrounding.initializeSurrounding(processingThread.rocket)
             processingThread.joystick = TwoFingersJoystick()
+//            processingThread.joystick = OneFingerJoystick()
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {
-            return processingThread.onTouchEvent(e)
+            return if (mRenderer.paused)
+                false
+            else
+                processingThread.onTouchEvent(e)
         }
     }
 }

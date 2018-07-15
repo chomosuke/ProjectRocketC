@@ -36,18 +36,18 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
                 TriangularShape(centerOfRotationX, centerOfRotationY + 0.5f,
                         centerOfRotationX + 0.15f, centerOfRotationY + 0.3f,
                         centerOfRotationX - 0.15f, centerOfRotationY + 0.3f,
-                        1f, 1f, 1f, 1f, 1f)
+                        1f, 1f, 1f, 1f, 1f, true)
             1 ->
                 QuadrilateralShape(centerOfRotationX + 0.15f, centerOfRotationY + 0.3f,
                         centerOfRotationX - 0.15f, centerOfRotationY + 0.3f, centerOfRotationX - 0.15f, centerOfRotationY - 0.3f,
-                        centerOfRotationX + 0.15f, centerOfRotationY - 0.3f, 1f, 1f, 1f, 1f, 1f)
+                        centerOfRotationX + 0.15f, centerOfRotationY - 0.3f, 1f, 1f, 1f, 1f, 1f, true)
             2 ->
                 CircularShape(centerOfRotationX, centerOfRotationY /*+ 0.38*/, 0.07f,
-                        0.1f, 0.1f, 0.1f, 1f, 0.9999f)
+                        0.1f, 0.1f, 0.1f, 1f, 0.9999f, true)
             3 ->
                 QuadrilateralShape(centerOfRotationX + 0.1f, centerOfRotationY - 0.3f,
                         centerOfRotationX - 0.1f, centerOfRotationY - 0.3f, centerOfRotationX - 0.12f, centerOfRotationY - 0.4f,
-                        centerOfRotationX + 0.12f, centerOfRotationY - 0.4f, 1f, 1f, 1f, 1f, 1f)
+                        centerOfRotationX + 0.12f, centerOfRotationY - 0.4f, 1f, 1f, 1f, 1f, 1f, true)
             else -> {
                 throw IndexOutOfBoundsException()
             }
@@ -59,7 +59,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         traces = ArrayList(NUMBER_OF_TRACES)
         val numberOfEdges = CircularShape.getNumberOfEdges(0.6f) // to give 8 ish
         for (i in 0 until NUMBER_OF_TRACES) {
-            traces.add(RegularPolygonalTraceShape(numberOfEdges, 1.01f))
+            traces.add(RegularPolygonalTraceShape(numberOfEdges, 1.01f, true))
         }
         
         setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)

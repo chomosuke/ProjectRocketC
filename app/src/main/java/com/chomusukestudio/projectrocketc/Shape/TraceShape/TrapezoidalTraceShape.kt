@@ -10,7 +10,7 @@ import java.lang.Math.random
 import java.lang.Math.sin
 import java.lang.Math.sqrt
 
-class TrapezoidalTraceShape(protected var xL: Float, protected var yL: Float, protected var xR: Float, protected var yR: Float, private val h: Float, speedX: Float, speedY: Float, red: Float, green: Float, blue: Float, alpha: Float, z: Float) : TraceShape() {
+class TrapezoidalTraceShape(protected var xL: Float, protected var yL: Float, protected var xR: Float, protected var yR: Float, private val h: Float, speedX: Float, speedY: Float, red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean) : TraceShape() {
     override lateinit var componentShapes: Array<Shape>
     private val angle: Float
     private val sinAngle: Float
@@ -47,7 +47,7 @@ class TrapezoidalTraceShape(protected var xL: Float, protected var yL: Float, pr
         x4 = x1 + length * cosAngle + 0.5f * rateOfNarrowing * length * sinAngle
         y4 = y1 + length * sinAngle - 0.5f * rateOfNarrowing * length * cosAngle
         
-        componentShapes = arrayOf(QuadrilateralShape(x1, y1, x2, y2, x3, y3, x4, y4, red, green, blue, alpha, z))
+        componentShapes = arrayOf(QuadrilateralShape(x1, y1, x2, y2, x3, y3, x4, y4, red, green, blue, alpha, z, visibility))
         
         val random = (0.5 - random()).toFloat()
         moveShape(initWidth * random * cosAngle, initWidth * random * sinAngle)

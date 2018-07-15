@@ -13,7 +13,7 @@ class TwoFingersJoystick : Joystick() {
         return if (actionDown) {
             if (nowX > 0)
                 1f
-            else if (nowX < 0)
+            else if (nowX < -0)
                 -1f
             else
                 0f

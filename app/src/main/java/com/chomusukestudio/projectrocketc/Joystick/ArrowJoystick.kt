@@ -16,8 +16,8 @@ class ArrowJoystick(private val centerOfRotationX: Float, private val centerOfRo
     val intendedDirection: Float
         get() = atan2((nowX - centerOfJoystickX).toDouble(), (nowY - centerOfJoystickY).toDouble()).toFloat()
     
-    private val triangularShape = TriangularShape(0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, -10f)
-    private val quadrilateralShape = QuadrilateralShape(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, -10f)
+    private val triangularShape = TriangularShape(0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, -10f, true)
+    private val quadrilateralShape = QuadrilateralShape(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, -10f, true)
     private fun actionDown() {
         this.centerOfJoystickX = nowX
         this.centerOfJoystickY = nowY

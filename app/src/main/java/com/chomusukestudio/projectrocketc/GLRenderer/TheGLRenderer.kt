@@ -155,5 +155,6 @@ fun generateLeftRightBottomTop(widthOverHeight: Float): Array<Float> {
         bottom = -8f
         top = 8f
     }
+//    return arrayOf(left - GLTriangle.layers[0].offsetX, right - GLTriangle.layers[0].offsetX, bottom - GLTriangle.layers[0].offsetY, top - GLTriangle.layers[0].offsetY)
     return arrayOf(left, right, bottom, top)
 }

@@ -7,9 +7,9 @@ import java.lang.Math.pow
 import java.lang.Math.sqrt
 
 class CircularTraceShape(centerX: Float, centerY: Float, private val initialRadius: Float, private val finalRadius: Float, speedX: Float, speedY: Float, val duration: Long,
-                         private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float, z: Float) : TraceShape() {
+                         private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float, z: Float, visibility: Boolean) : TraceShape() {
     override var componentShapes: Array<Shape> = arrayOf(CircularShape(centerX, centerY, initialRadius,
-            initialRed, initialGreen, initialBlue, initialAlpha, z))
+            initialRed, initialGreen, initialBlue, initialAlpha, z, visibility))
     private val AlphaEveryMiniSecond: Float
     
     private var timeSinceMade: Long = 0
