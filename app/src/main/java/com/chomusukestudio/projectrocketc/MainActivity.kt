@@ -38,6 +38,11 @@ import java.util.logging.Logger
 
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
+    init {
+        // when a new activity start, static field will be cleaned
+        GLTriangle.layers.removeAll { true }
+    }
+
     private lateinit var sharedPreferences: SharedPreferences
 
     public override fun onCreate(savedInstanceState: Bundle?) {
