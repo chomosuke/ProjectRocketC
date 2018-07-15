@@ -9,8 +9,8 @@ import kotlin.math.PI
 class ArrowToLittleStarShape(radius: Float, redArrow: Float, greenArrow: Float, blueArrow: Float,
                              redCircle: Float, greenCircle: Float, blueCircle: Float, z: Float): Shape()/* can't overlap with the arrow */{
     override val isOverlapMethodLevel: Double = 0.0
-    override var componentShapes: Array<Shape> = arrayOf(CircularShape(0f, 0f, radius, redCircle, greenCircle, blueCircle, 1f, z)
-            , RegularPolygonalShape(3, 0f, 0f, radius * 0.75f, redArrow, greenArrow, blueArrow, 1f, z - 0.01f))
+    override var componentShapes: Array<Shape> = arrayOf(CircularShape(0f, 0f, radius, redCircle, greenCircle, blueCircle, 1f, z),
+            RegularPolygonalShape(3, 0f, 0f, radius * 0.75f, redArrow, greenArrow, blueArrow, 1f, z - 0.01f))
 
     enum class Direction(val direction: Int) {
         UP(0), LEFT(1), DOWN(2), RIGHT(3)
