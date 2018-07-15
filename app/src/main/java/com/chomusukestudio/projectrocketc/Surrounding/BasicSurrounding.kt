@@ -96,7 +96,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
 
-        PlanetShape.setENDs(leftEnd * 1.5f, rightEnd * 1.5f, bottomEnd * 1.5f, topEnd * (1.5f + topMarginForLittleStar))
+        PlanetShape.setENDs(leftEnd * 1.5f, rightEnd * 1.5f, bottomEnd * 1.5f, topEnd * (1.5f/* + topMarginForLittleStar*/))
 
         // initialize all those stars in the backgrounds
         backgrounds = ArrayList(NUMBER_OF_STARS)
@@ -226,6 +226,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         for (boundary in boundaries) {
             boundary.removePlanet()
         }
+        newPlanet.removePlanet()
         for (background in backgrounds) {
             background.removeShape()
         }
@@ -256,7 +257,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         }
     }
 
-    private val parallelForIForMoveBoundaries = ParallelForI(8, "parallelForIForMoveBoundaries")
+//    private val parallelForIForMoveBoundaries = ParallelForI(8, "parallelForIForMoveBoundaries")
     override fun moveSurrounding(dx: Float, dy: Float, now: Long, previousFrameTime: Long) {
         
         // move background
@@ -533,7 +534,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         private lateinit var planetShapesZs: ArrayList<Float>
         fun fillUpPlanetShapes() {
             planetShapes = Array(NUMBER_OF_PLANET) {
-                val planetShape = generateRandomPlanetShape(random().toFloat(), random().toFloat(), generateRadius(), 10f)
+                val planetShape = generateRandomPlanetShape(100f, 100f, generateRadius(), 10f)
                 planetShape.removePlanet()
                 return@Array planetShape
             }
