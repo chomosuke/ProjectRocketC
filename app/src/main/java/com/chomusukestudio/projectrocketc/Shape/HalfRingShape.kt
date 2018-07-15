@@ -4,7 +4,7 @@ import java.lang.Math.PI
 import java.lang.Math.cos
 import java.lang.Math.sin
 
-class HalfRingShape(centerX: Float, centerY: Float, a: Float, b: Float, factor: Float, red: Float, green: Float, blue: Float, alpha: Float, z: Float) : Shape() {
+class HalfRingShape(centerX: Float, centerY: Float, a: Float, b: Float, factor: Float, red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean) : Shape() {
     override val isOverlapMethodLevel: Double = 0.0
     override lateinit var componentShapes: Array<Shape>
     
@@ -24,7 +24,7 @@ class HalfRingShape(centerX: Float, centerY: Float, a: Float, b: Float, factor: 
             val x3 = centerX + factor * a * sin(PI * (i + 1) / numberOfEdges).toFloat()
             val y3 = centerY + factor * b * cos(PI * (i + 1) / numberOfEdges).toFloat()
             componentShapes[i] = QuadrilateralShape(previousX2, previousY2, x2, y2, x3, y3, previousX3, previousY3,
-                    red, green, blue, alpha, z)
+                    red, green, blue, alpha, z, visibility)
             previousX2 = x2
             previousY2 = y2
             previousX3 = x3

@@ -112,7 +112,6 @@
             android:layout_marginStart="8dp"
             android:onClick="onPause"
             android:text="PauseMe"
-            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 

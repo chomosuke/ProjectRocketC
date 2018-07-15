@@ -30,14 +30,14 @@ abstract class Shape{
             return numberOfTriangularShape
         }
     
-    open var visibility: Boolean = true
-        set(visibility) {
-            if (field != visibility) {
-                field = visibility
+    open var visibility: Boolean
+        set(value) {
+            if (value != visibility) {
                 for (componentShape in componentShapes)
-                    componentShape.visibility = visibility
+                    componentShape.visibility = value
             }
         }
+        get() = componentShapes[0].visibility
     
     open fun moveShape(dx: Float, dy: Float) {
         if (dx == 0f && dy == 0f) {

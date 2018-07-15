@@ -52,8 +52,10 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
                 actualCenterX < LEFT_END &&
                 actualCenterX > RIGHT_END &&
                 actualCenterY < TOP_END &&
-                actualCenterY > BOTTOM_END)
+                actualCenterY > BOTTOM_END) {
             setActual(centerX, centerY)
+            visibility = true
+        }
         else {
             // if can't be seen
             visibility = false
@@ -81,7 +83,6 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
             super.rotateShape(centerX, centerY, angleRotated)
             angleRotated = 0f // reset angleRotated
         }
-        visibility = true
     }
 
 //    private fun moveShapeMultiThreaded(dx: Float, dy: Float) {

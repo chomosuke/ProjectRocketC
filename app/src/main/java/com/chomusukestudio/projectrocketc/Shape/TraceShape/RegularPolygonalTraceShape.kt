@@ -8,8 +8,8 @@ import java.lang.Math.pow
 import java.lang.Math.sqrt
 
 
-class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float) : TraceShape() {
-    override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(numberOfEdges, 0f, 0f, 0f, 0f, 0f, 0f, 0f, z))
+class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float, visibility: Boolean) : TraceShape() {
+    override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(numberOfEdges, 0f, 0f, 0f, 0f, 0f, 0f, 0f, z, visibility))
     private var initialRed: Float = 0f
     private var initialGreen: Float = 0f
     private var initialBlue: Float = 0f

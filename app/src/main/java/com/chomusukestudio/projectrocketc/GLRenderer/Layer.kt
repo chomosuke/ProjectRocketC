@@ -187,6 +187,18 @@ class Layer(val z: Float) { // depth for the drawing order
         Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
     }
 
+//    var offsetX = 0f
+//        private set
+//    var offsetY = 0f
+//        private set
+
+//    fun offsetLayer(dOffsetX: Float, dOffsetY: Float) {
+//        offsetX += dOffsetX
+//        offsetY += dOffsetY
+//
+//        refreshMatrix()
+//    }
+
     companion object {
         // create empty OpenGL ES Program
         private var mProgram: Int = -1000

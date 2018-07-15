@@ -2,7 +2,7 @@ package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
 import com.chomusukestudio.projectrocketc.Shape.Shape
 
-class EarthShape(centerX: Float, centerY: Float, radius: Float, z: Float)
+class EarthShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibility: Boolean)
     : PlanetShape(centerX, centerY, radius) {
     override val isOverlapMethodLevel: Double = 2.0// one level higher than circularShape
     override var componentShapes: Array<Shape>

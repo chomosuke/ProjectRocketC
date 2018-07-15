@@ -14,9 +14,9 @@ class QuadrilateralShape : Shape {
                 x2: Float, y2: Float,
                 x3: Float, y3: Float,
                 x4: Float, y4: Float,
-                red: Float, green: Float, blue: Float, alpha: Float, z: Float) {
-        componentShapes = arrayOf(TriangularShape(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, z),
-                TriangularShape(x1, y1, x4, y4, x3, y3, red, green, blue, alpha, z))
+                red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean) {
+        componentShapes = arrayOf(TriangularShape(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, z, visibility),
+                TriangularShape(x1, y1, x4, y4, x3, y3, red, green, blue, alpha, z, visibility))
     }
 
     fun setQuadrilateralShapeCoords(x1: Float, y1: Float, // in order:
@@ -28,8 +28,8 @@ class QuadrilateralShape : Shape {
     }
 
     constructor(coords1: FloatArray, coords2: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, z: Float) {
-        componentShapes = arrayOf(TriangularShape(coords1, red, green, blue, alpha, z),
-                TriangularShape(coords2, red, green, blue, alpha, z))
+        componentShapes = arrayOf(TriangularShape(coords1, red, green, blue, alpha, z, visibility),
+                TriangularShape(coords2, red, green, blue, alpha, z, visibility))
     }// as no special isOverlapToOverride method is provided.
 
     fun getQuadrilateralShapeCoords(coord: Int): Float {

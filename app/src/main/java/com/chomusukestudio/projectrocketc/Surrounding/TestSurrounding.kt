@@ -2,6 +2,7 @@ package com.chomusukestudio.projectrocketc.Surrounding
 
 
 import android.support.annotation.CallSuper
+import android.support.annotation.PluralsRes
 import com.chomusukestudio.projectrocketc.GLRenderer.Y2
 import com.chomusukestudio.projectrocketc.GLRenderer.Y3
 import com.chomusukestudio.projectrocketc.GLRenderer.X1
@@ -9,6 +10,7 @@ import com.chomusukestudio.projectrocketc.GLRenderer.Y1
 import com.chomusukestudio.projectrocketc.GLRenderer.X2
 
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
+import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
@@ -22,7 +24,10 @@ import java.lang.Math.random
 class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, private var rightEnd: Float, private var leftEnd: Float): Surrounding() {
 
     override fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
-        TODO("not implemented")
+        this.leftEnd = leftEnd
+        this.rightEnd = rightEnd
+        this.bottomEnd = bottomEnd
+        this.topEnd = topEnd
     }
 
     override fun initializeSurrounding(rocket: Rocket) {
@@ -31,7 +36,7 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
                 centerOfRotationX + rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
                 centerOfRotationX + rocket.width / 2f, centerOfRotationY,
                 centerOfRotationX - rocket.width / 2f, centerOfRotationY,
-                0f, 1f, 0f, 1f, 10f) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
+                0f, 1f, 0f, 1f, 10f, true) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
         startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
         startingPathOfRocket.visibility = false //  this shape will only be used in isOverlapToOverride.
     } // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
@@ -46,7 +51,7 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
     @Volatile
     override var isStarted = false
     @Volatile
-    private var isCrashed: Boolean = false
+    private var crashedShape: Shape? = null
     private val parallelForIForIsCrashed = ParallelForI(8, "is crashed")
     
     override val centerOfRotationX: Float = 0f
@@ -59,11 +64,11 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
     private val previousTriangles = arrayOf(TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //top left
             2f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //top right
             2f, -13f, //bottom right
-            random().toFloat(), 1f, 1f, 1f, 10f),//left top
+            random().toFloat(), 1f, 1f, 1f, 10f, true),//left top
             TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //top left
                     6f, -13f, // bottom left
                     2f, -13f, //bottom right
-                    random().toFloat(), 1f, 1f, 1f, 10f))//left bottom
+                    random().toFloat(), 1f, 1f, 1f, 10f, true))//left bottom
     
     init {
         if (rightEnd > leftEnd) {
@@ -109,23 +114,23 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
             boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //top left
                     randomPoint + 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //top right
                     previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottom right (previous top right)
-                    random().toFloat(), 1f, 1f, 1f, 10f))//left top
+                    random().toFloat(), 1f, 1f, 1f, 10f, true))//left top
             // refresh previous triangle so other can follow
             boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //top left
                     previousTriangles[0].getTriangularShapeCoords(X1), previousTriangles[0].getTriangularShapeCoords(Y1), // bottom left (previous top left)
                     previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottom right (previous top right)
-                    random().toFloat(), 1f, 1f, 1f, 10f))//left bottom
+                    random().toFloat(), 1f, 1f, 1f, 10f, true))//left bottom
             previousTriangles[0] = boundaries[boundaries.size - 2] as TriangularShape
             
             boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //top right
                     randomPoint - 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //top left
                     previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottom left (previous top left)
-                    random().toFloat(), 1f, 1f, 1f, 10f))//right top
+                    random().toFloat(), 1f, 1f, 1f, 10f, true))//right top
             // refresh previous triangle so other can follow
             boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //top right
                     previousTriangles[1].getTriangularShapeCoords(X1), previousTriangles[1].getTriangularShapeCoords(Y1), // bottom right (previous top right)
                     previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottom left (previous top left)
-                    random().toFloat(), 1f, 1f, 1f, 10f))//right bottom
+                    random().toFloat(), 1f, 1f, 1f, 10f, true))//right bottom
             previousTriangles[1] = boundaries[boundaries.size - 2] as TriangularShape
         }
     }
@@ -149,8 +154,8 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
             littleStar.rotateLittleStar(centerOfRotationX, centerOfRotationY, angle)
     }
     
-    override fun isCrashed(components: Array<Shape>): Boolean {
-        isCrashed = false
+    override fun isCrashed(components: Array<Shape>): Shape? {
+        crashedShape = null
         val boundariesNeedToBeChecked = ArrayList<Shape>(100)
         for (boundary in boundaries) {
             if (boundary.visibility) { // rocket can only hit on visibility stuff
@@ -161,13 +166,13 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
             val boundary = boundariesNeedToBeChecked[i]
             for (component in components) {
                 if (boundary.isOverlap(component)) { // if does overlap
-                    isCrashed = true
+                    crashedShape = component
                 }
             }
         }, boundariesNeedToBeChecked.size)
         parallelForIForIsCrashed.waitForLastRun()
         // no need for improvement for immediate return true, most of the time there will not be any overlap.
-        return isCrashed
+        return crashedShape
     }
     
     override fun removeAllShape() {
