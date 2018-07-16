@@ -16,14 +16,12 @@ import java.lang.Math.sin
 class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int, centerX: Float, centerY: Float, radius: Float, z: Float, visibility: Boolean) : PlanetShape(centerX, centerY, radius) {
     override val isOverlapMethodLevel: Double = 3.0 // one level higher than other PlanetShape cause the ring
     override lateinit var componentShapes: Array<Shape>
-    
-    val ringWidth: Float
+
+    override val maxWidth: Float = ringA
     
     init {
         var ringA = ringA
         var ringB = ringB
-        
-        ringWidth = ringA
         
         val mainColor = floatArrayOf((random() * 0.6 + 0.2).toFloat(), (random() * 0.6 + 0.2).toFloat(), (random() * 0.6 + 0.2).toFloat())
         

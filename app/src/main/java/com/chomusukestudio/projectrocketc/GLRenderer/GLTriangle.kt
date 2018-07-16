@@ -183,10 +183,5 @@ class GLTriangle (z: Float) : Triangle() {
             for (layer in layers)
                 layer.passArraysToBuffers()
         }
-
-        fun refreshAllMatrix() {
-            for (layer in layers)
-                layer.refreshMatrix()
-        }
     }
 }

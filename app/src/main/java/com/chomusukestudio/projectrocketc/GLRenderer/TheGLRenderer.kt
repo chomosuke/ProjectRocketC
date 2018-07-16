@@ -84,15 +84,14 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         widthInPixel = width.toFloat()
         heightInPixel = height.toFloat()
 
-        GLTriangle.refreshAllMatrix()
+        Layer.refreshMatrix()
 
         if (!paused) // if paused that means surfaceView is being redrawn (most likely)
             // so this will likely to ruin the time so don't do it
             previousFrameTime = upTimeMillis()// just to set this as close to draw as possible
     }
 
-    var paused = false
-        private set
+    @Volatile private var paused = false
     fun pauseGLRenderer() {
         if (!paused) {
             lastPausedTime = SystemClock.uptimeMillis()
@@ -156,5 +155,15 @@ fun generateLeftRightBottomTop(widthOverHeight: Float): Array<Float> {
         top = 8f
     }
 //    return arrayOf(left - GLTriangle.layers[0].offsetX, right - GLTriangle.layers[0].offsetX, bottom - GLTriangle.layers[0].offsetY, top - GLTriangle.layers[0].offsetY)
-    return arrayOf(left, right, bottom, top)
+    return arrayOf(left + offsetX, right + offsetX, bottom + offsetY, top + offsetY)
+}
+
+var offsetX = 0f
+var offsetY = 0f
+@Deprecated("failed multiple times, need to change some entire structure to achieve this")
+fun offsetCamera(dOffsetX: Float, dOffsetY: Float) {
+    offsetX += dOffsetX
+    offsetY += dOffsetY
+
+    Layer.refreshMatrix()
 }

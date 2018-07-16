@@ -2,8 +2,8 @@ package com.chomusukestudio.projectrocketc.processingThread
 
 import android.util.Log
 import android.view.MotionEvent
+import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.Joystick.Joystick
-import com.chomusukestudio.projectrocketc.MainActivity
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
@@ -12,13 +12,10 @@ import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import java.util.logging.Level
 import java.util.logging.Logger
-import com.chomusukestudio.projectrocketc.transformToMatrixX
-import com.chomusukestudio.projectrocketc.transformToMatrixY
-import com.chomusukestudio.projectrocketc.upTimeMillis
 
 class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) {
     fun onTouchEvent(e: MotionEvent): Boolean {
-        return if (isStarted) {
+        return if (state == State.InGame) {
             joystick.onTouchEvent(e)
             true
         } else
@@ -45,7 +42,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
             try {
                 finished = false
 
-                if (isStarted) {
+                if (state == State.InGame) {
 
                     // see if crashed
                     if (rocket.isCrashed(surrounding)) {
@@ -109,12 +106,4 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
     }
 
     var finished = true // last frame that doesn't exist has finish
-
-    var isStarted
-        get() = surrounding.isStarted
-        set(isStarted) {
-            surrounding.isStarted = isStarted
-            if (isStarted)
-                LittleStar.cleanScore()
-        }
 }

@@ -7,7 +7,9 @@ import com.chomusukestudio.projectrocketc.Shape.TraceShape.RegularPolygonalTrace
 import java.util.ArrayList
 
 import com.chomusukestudio.projectrocketc.Shape.point.distance
+import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.state
 import java.lang.Math.cos
 import java.lang.Math.random
 import java.lang.Math.sin
@@ -75,7 +77,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         //                    -0.5 * speed * sin(currentRotation), -0.5 * speed * cos(currentRotation), 0.9, 0.9, 0.1, 1, 1.01));
         
         ds += unfilledDs // finish last frame unfinished work
-        if (surrounding.isStarted) {
+        if (state == State.InGame) {
             val sinCurrentRotation = sin(currentRotation.toDouble()).toFloat()
             val cosCurrentRotation = cos(currentRotation.toDouble()).toFloat()
             val I_MAX = ds / 128f * 1000f - random().toFloat()

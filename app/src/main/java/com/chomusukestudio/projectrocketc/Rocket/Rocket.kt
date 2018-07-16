@@ -5,15 +5,13 @@ package com.chomusukestudio.projectrocketc.Rocket
  */
 
 import android.support.annotation.CallSuper
-import com.chomusukestudio.projectrocketc.GLRenderer.GLTriangle
-import com.chomusukestudio.projectrocketc.GLRenderer.generateLeftRightBottomTop
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TraceShape.TraceShape
-import com.chomusukestudio.projectrocketc.heightInPixel
-import com.chomusukestudio.projectrocketc.widthInPixel
+import com.chomusukestudio.projectrocketc.state
+import com.chomusukestudio.projectrocketc.State
 
 import java.util.ArrayList
 
@@ -71,9 +69,9 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     @CallSuper // allow rocket to have moving component
     open fun moveRocket(rotationNeeded: Float, now: Long, previousFrameTime: Long) {
         
-        if (surrounding.isStarted) { // only make it faster if it's already started
+        if (state == State.InGame) { // only make it faster if it's already started
             // when 0 score, 1 times as fast, when 1024 score, 2 times as fast
-            speed = initialSpeed * (log(/*(LittleStar.Companion.getDScore()) + */(LittleStar.score + 1).toDouble()) / log(64.0) + 1).toFloat()
+            speed = initialSpeed * (log((LittleStar.score + 1).toDouble()) / log(64.0) + 1).toFloat()
             //            speed = initialSpeed * (LittleStar.Companion.getScore() / 64f + 1);
         }
         val speedOfRotation = speed / radiusOfRotation // dr/dt = ds/dt / radiusOfRotation
@@ -102,18 +100,21 @@ abstract class Rocket(protected val surrounding: Surrounding) {
         }
         
         fadeMoveAndRemoveTraces(now, previousFrameTime, ds)
-        
+
         surrounding.moveSurrounding(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat(), now, previousFrameTime)
+//        surrounding.moveSurrounding(0f,0f, now, previousFrameTime)
         //        surrounding.moveSurrounding(0, -ds, now, previousFrameTime);
 
 //        // move rocket components
+//        for (component in components)
+//            component.moveShape(ds * sin(currentRotation.toDouble()).toFloat(), ds * cos(currentRotation.toDouble()).toFloat())
 //
-//        GLTriangle.offsetAllLayers(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat())
+//        offsetCamera(ds * sin(currentRotation.toDouble()).toFloat(), ds * cos(currentRotation.toDouble()).toFloat())
 //
 //        // refresh ends of surrounding
 //        val leftRightBottomTopEnd = generateLeftRightBottomTop(widthInPixel / heightInPixel)
 //        surrounding.setLeftRightBottomTopEnd(leftRightBottomTopEnd[0], leftRightBottomTopEnd[1], leftRightBottomTopEnd[2], leftRightBottomTopEnd[3])
-        
+
         waitForFadeMoveAndRemoveTraces()
         
         generateTraces(previousFrameTime, now, ds)

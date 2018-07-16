@@ -16,10 +16,6 @@ const val CPT = COORDS_PER_VERTEX * 3 // number of coordinates per vertex in thi
 
 class Layer(val z: Float) { // depth for the drawing order
 
-    // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
-    private val mProjectionMatrix = FloatArray(16)
-    private val mViewMatrix = FloatArray(16)
-    private val mvpMatrix = FloatArray(16)
 
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
 
@@ -87,8 +83,6 @@ class Layer(val z: Float) { // depth for the drawing order
 
         // create a floating score buffer from the ByteBuffer
         colorBuffer = bb2.asFloatBuffer()
-
-        refreshMatrix()
     }
 
     private fun setupBuffers() {
@@ -169,38 +163,33 @@ class Layer(val z: Float) { // depth for the drawing order
         return coordsPointerToBeReturned
     }
 
-    fun refreshMatrix() {
-        // this projection matrix is applied to object coordinates
-        // in the onDrawFrame() method
-        val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)
-
-        // for debugging
-//        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0] * 3, leftRightBottomTop[1] * 3,
-//                leftRightBottomTop[2] * 3, leftRightBottomTop[3] * 3, -1000f, 1000f)
-        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0], leftRightBottomTop[1],
-                leftRightBottomTop[2], leftRightBottomTop[3], -1000f, 1000f)
-        // this game shall be optimised for any aspect ratio as now all left, right, bottom and top are visibility
-
-        // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
-
-        // Calculate the projection and view transformation
-        Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
-    }
-
-//    var offsetX = 0f
-//        private set
-//    var offsetY = 0f
-//        private set
-
-//    fun offsetLayer(dOffsetX: Float, dOffsetY: Float) {
-//        offsetX += dOffsetX
-//        offsetY += dOffsetY
-//
-//        refreshMatrix()
-//    }
 
     companion object {
+
+        // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
+        private val mProjectionMatrix = FloatArray(16)
+        private val mViewMatrix = FloatArray(16)
+        private val mvpMatrix = FloatArray(16)
+
+        fun refreshMatrix() {
+            // this projection matrix is applied to object coordinates
+            // in the onDrawFrame() method
+            val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)
+
+            // for debugging
+//        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0] * 3, leftRightBottomTop[1] * 3,
+//                leftRightBottomTop[2] * 3, leftRightBottomTop[3] * 3, -1000f, 1000f)
+            Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0], leftRightBottomTop[1],
+                    leftRightBottomTop[2], leftRightBottomTop[3], -1000f, 1000f)
+            // this game shall be optimised for any aspect ratio as now all left, right, bottom and top are visibility
+
+            // Set the camera position (View matrix)
+            Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+
+            // Calculate the projection and view transformation
+            Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
+        }
+
         // create empty OpenGL ES Program
         private var mProgram: Int = -1000
 
@@ -222,6 +211,8 @@ class Layer(val z: Float) { // depth for the drawing order
 
             // creates OpenGL ES program executables
             GLES20.glLinkProgram(mProgram)
+
+            refreshMatrix()
         }
 
         private const val vertexShaderCode =
@@ -292,6 +283,5 @@ class Layer(val z: Float) { // depth for the drawing order
         // Disable vertex array
         GLES20.glDisableVertexAttribArray(mPositionHandle)
         GLES20.glDisableVertexAttribArray(mColorHandle)
-
     }
 }

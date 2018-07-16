@@ -37,6 +37,8 @@ import java.util.concurrent.Executors
 import java.util.logging.Level
 import java.util.logging.Logger
 
+@Volatile var state: State = State.PreGame
+enum class State { InGame, PreGame, Paused, Crashed }
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
     private lateinit var sharedPreferences: SharedPreferences
@@ -103,7 +105,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun startGame(view: View) {
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).processingThread.isStarted = true // start surrounding
+        state = State.InGame // start game
+        LittleStar.cleanScore()
 
         // start refresh score regularly
         updateScoreThread.run()
@@ -119,12 +122,16 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     fun onPause(view: View) {
         try {
-            if (findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.paused) {
+            if (state == State.Paused) {
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
                 findViewById<Button>(R.id.pauseButton).text = "PauseMe"
-            } else {
+                state = State.InGame
+            } else if (state == State.InGame) {
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
                 findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+                state = State.Paused
+            } else {
+                throw IllegalStateException("Trying to pause while not InGame.")
             }
         } catch (e: UninitializedPropertyAccessException) {
             // TODO: we should do something here
@@ -153,10 +160,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
         }
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).processingThread.isStarted = false
+        state = State.Crashed
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
-
+        state = State.PreGame
     }
     
     public override fun onStop() {
@@ -178,9 +185,19 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         try {
-            if (!hasFocus) {
-                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
-                findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+            when (state) {
+                State.InGame -> {
+                    if (!hasFocus) {
+                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+                        findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+                    }
+                }
+                State.PreGame -> {
+                    if (hasFocus)
+                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
+                    else
+                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+                }
             }
         } catch (e: UninitializedPropertyAccessException) {
             // so the app is just starting in the first time... do nothing
@@ -188,7 +205,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     override fun onBackPressed() {
-        onPause(findViewById<Button>(R.id.pauseButton))
+        when (state) {
+            State.PreGame ->
+                super.onBackPressed()
+            else ->
+                onPause(findViewById<Button>(R.id.pauseButton))
+        }
     }
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
@@ -291,7 +313,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {
-            return if (mRenderer.paused)
+            return if (state == State.Paused)
                 false
             else
                 processingThread.onTouchEvent(e)

@@ -41,7 +41,7 @@ abstract class Shape{
     
     open fun moveShape(dx: Float, dy: Float) {
         if (dx == 0f && dy == 0f) {
-            return
+            return // yeah i do that a lot
         }
         for (componentShape in componentShapes)
             componentShape.moveShape(dx, dy)
