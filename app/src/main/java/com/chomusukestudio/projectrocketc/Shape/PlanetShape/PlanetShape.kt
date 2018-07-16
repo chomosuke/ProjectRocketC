@@ -66,15 +66,14 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
     }
 
     private fun canBeSeen(): Boolean {
+        return canBeSeenIf(centerX, centerY) || canBeSeenIf(actualCenterX, actualCenterY)
+    }
+
+    fun canBeSeenIf(centerX: Float, centerY: Float): Boolean {
         return centerX < LEFT_END + maxWidth &&
                 centerX > RIGHT_END - maxWidth &&
                 centerY < TOP_END + maxWidth &&
-                centerY > BOTTOM_END - maxWidth ||
-                actualCenterX < LEFT_END + maxWidth &&
-                actualCenterX > RIGHT_END - maxWidth &&
-                actualCenterY < TOP_END + maxWidth &&
-                actualCenterY > BOTTOM_END - maxWidth
-//        return true
+                centerY > BOTTOM_END - maxWidth
     }
     
     fun removePlanet() {

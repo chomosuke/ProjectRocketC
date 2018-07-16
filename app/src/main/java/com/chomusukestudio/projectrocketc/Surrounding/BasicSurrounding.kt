@@ -90,8 +90,8 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
 
         this.rocket = rocket
-        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - (rocket.width / 2 + flybyDistance), java.lang.Float.MAX_VALUE / 100f,
-                centerOfRotationX + (rocket.width / 2 + flybyDistance), java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
+        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - (rocket.width / 2 + flybyDistance), 1000000f,
+                centerOfRotationX + (rocket.width / 2 + flybyDistance), 1000000f, // max value is bad because it causes overflow
                 centerOfRotationX + (rocket.width / 2 + flybyDistance), centerOfRotationY,
                 centerOfRotationX - (rocket.width / 2 + flybyDistance), centerOfRotationY,
                 0f, 1f, 0f, 1f, 10f, false) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
@@ -105,19 +105,27 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                     (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, 11f, true))
         }
 
+        val avoidDistanceX = 110f // to avoid constant change of visibility
+        startingPathOfRocket.moveShape(avoidDistanceX, 0f) // i'll move it back later
         newPlanet = getRandomPlanetShape()
         // initialize surrounding
-        for (i in 0..2048) {
+        for (i in 0..256) {
             // randomly reposition the new planet
-            newPlanet.resetPosition((random() * (leftEnd * 1.5f - rightEnd * 1.5f) + rightEnd * 1.5f).toFloat(), (random() * (topEnd * (1.5f + topMarginForLittleStar) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat())
+            val centerX = (random() * (leftEnd * 1.5f - rightEnd * 1.5f) + rightEnd * 1.5f).toFloat() + avoidDistanceX // + avoidDistanceX as to avoid constant change of visibility
+            val centerY = (random() * (topEnd * (1.5f/*/* + topMarginForLittleStar*/*/) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat()
+            newPlanet.resetPosition(centerX, centerY)
 
             if (isGoodPlanet(newPlanet)) {// it is not too close to any other planet
+
                 boundaries.add(newPlanet)// use the random new planet
+
                 // create another random new planet for next use
                 newPlanet = getRandomPlanetShape()
             }
         }
-        // leave it for next makeNewTriangleAndDeleteTheOldOne()
+        for (boundary in boundaries)
+            boundary.moveShape(-avoidDistanceX, 0f) // move planets back
+        startingPathOfRocket.moveShape(-avoidDistanceX, 0f) // move startingPathOfRocket back
 
         // initialize this for flyby
         rectangleForFlyby = QuadrilateralShape(centerOfRotationX + (rocket.width / 2 + flybyDistance),
@@ -165,13 +173,13 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         }
         
         // to create
-            if (random() < abs(displacementX * (topEnd * (1.5f + topMarginForLittleStar) - bottomEnd * 1.5f) / (displacementY * (leftEnd * 1.5f - rightEnd * 1.5f))) /
-                    (1 + abs(displacementX * (topEnd * (1.5f + topMarginForLittleStar) - bottomEnd * 1.5f) / (displacementY * (leftEnd * 1.5f - rightEnd * 1.5f))))) {
+            if (random() < abs(displacementX * (topEnd * (1.5f/*/* + topMarginForLittleStar*/*/) - bottomEnd * 1.5f) / (displacementY * (leftEnd * 1.5f - rightEnd * 1.5f))) /
+                    (1 + abs(displacementX * (topEnd * (1.5f/* + topMarginForLittleStar*/) - bottomEnd * 1.5f) / (displacementY * (leftEnd * 1.5f - rightEnd * 1.5f))))) {
                 
                 if (displacementX < 0) {
                     // if need to create on positive side
                     // put the random planet on the positive side
-                    newPlanet.resetPosition((leftEnd * 1.5f + random() * displacementX).toFloat(), (random() * (topEnd * (1.5f + topMarginForLittleStar) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat())
+                    newPlanet.resetPosition((leftEnd * 1.5f + random() * displacementX).toFloat(), (random() * (topEnd * (1.5f/* + topMarginForLittleStar*/) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat())
                     
                     if (isGoodPlanet(newPlanet)) {// it is not too close to any other planet
                         boundaries.add(newPlanet)// use the random new planet
@@ -181,7 +189,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 } else {
                     // if need to create on negative side
                     // put the random planet on the negative side
-                    newPlanet.resetPosition((rightEnd * 1.5f + random() * displacementX).toFloat(), (random() * (topEnd * (1.5f + topMarginForLittleStar) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat())
+                    newPlanet.resetPosition((rightEnd * 1.5f + random() * displacementX).toFloat(), (random() * (topEnd * (1.5f/* + topMarginForLittleStar*/) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat())
                     
                     if (isGoodPlanet(newPlanet)) {// it is not too close to any other planet
                         boundaries.add(newPlanet)// use the random new planet
@@ -193,7 +201,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 if (displacementY < 0) {
                     // if need to create on positive side
                     // put the random planet on the positive side
-                    newPlanet.resetPosition((random() * (leftEnd * 1.5f - rightEnd * 1.5f) + rightEnd * 1.5f).toFloat(), (topEnd * (1.5f + topMarginForLittleStar) + random() * displacementY).toFloat())
+                    newPlanet.resetPosition((random() * (leftEnd * 1.5f - rightEnd * 1.5f) + rightEnd * 1.5f).toFloat(), (topEnd * (1.5f/* + topMarginForLittleStar*/) + random() * displacementY).toFloat())
         
                     if (isGoodPlanet(newPlanet)) {// it is not too close to any other planet
                         boundaries.add(newPlanet) // use the random new planet
@@ -341,7 +349,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             numberOfYellowStarEatenSinceLastRedStar = 0;
             
            *//* float centerX = (float) random() * (leftEnd - rightEnd) + rightEnd;
-            float centerY = topEnd + topMarginForLittleStar * topEnd * (float) random();
+            float centerY = topEnd/* + topMarginForLittleStar*/ * topEnd * (float) random();
             LittleStar littleStar = new LittleStar(RED, centerX, centerY, 0f, (long) (distance(centerX, centerY, getCenterOfRotationX(), getCenterOfRotationY()) / rocket.getSpeed() * 1.33));
     
             boolean finished;
@@ -369,7 +377,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                     return littleStar;
                 } else {
                     centerX = (float) random() * (leftEnd - rightEnd) + rightEnd;
-                    centerY = topEnd + topMarginForLittleStar * topEnd * (float) random();
+                    centerY = topEnd/* + topMarginForLittleStar*/ * topEnd * (float) random();
                     littleStar.resetPosition(centerX, centerY);
                     littleStar.setDuration((long) (distance(centerX, centerY, getCenterOfRotationX(), getCenterOfRotationY()) / rocket.getSpeed() * 1.33));
                 }
@@ -422,7 +430,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             throw new IndexOutOfBoundsException("out of boundary while trying to add Red little star");
         } else */
         val centerX = random().toFloat() * (leftEnd - rightEnd) + rightEnd
-        val centerY = topEnd/* + topMarginForLittleStar * topEnd * (float) random()*/
+        val centerY = topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/
         val littleStar = LittleStar(YELLOW, centerX, centerY, minDistantBetweenPlanet / 8f,
                 (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / rocket.speed * 2).toLong())
     
@@ -439,7 +447,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 flybysInThisYellowStar = 0
                 return littleStar
             } else {
-                littleStar.resetPosition(random().toFloat() * (leftEnd - rightEnd) + rightEnd, topEnd + topMarginForLittleStar * topEnd * random().toFloat())
+                littleStar.resetPosition(random().toFloat() * (leftEnd - rightEnd) + rightEnd, topEnd/* + topMarginForLittleStar * topEnd * random().toFloat()*/)
             }
         }
     }

@@ -110,6 +110,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun startGame(view: View) {
+        if (state != State.PreGame)
+            throw IllegalStateException("Starting Game while not in PreGame")
         state = State.InGame // start game
         LittleStar.cleanScore()
 
@@ -150,6 +152,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     fun onCrashed() {
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
         updateScoreThread.pause()
+        state = State.Crashed
+        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
+        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
+        state = State.PreGame
         runOnUiThread {
 
             if (LittleStar.score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
@@ -165,10 +171,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
         }
-        state = State.Crashed
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
-        state = State.PreGame
     }
     
     public override fun onStop() {
