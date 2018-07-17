@@ -10,7 +10,8 @@ abstract class TraceShape : Shape() {
     protected var speedY: Float = 0.toFloat()
     protected var needToBeRemoved = false
     
-    override val isOverlapMethodLevel: Double = 0.0
+    override val isOverlapMethodLevel: Double
+        get() = throw IllegalAccessException("Trace can't overlap anything")
     
     protected fun changeSpeedMultiply(k: Double) {
         speedX *= k.toFloat()

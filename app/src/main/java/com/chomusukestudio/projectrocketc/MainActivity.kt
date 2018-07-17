@@ -13,7 +13,6 @@ import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.util.Log
 import android.view.animation.AnimationUtils
-import android.widget.ImageButton
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 
@@ -31,7 +30,6 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
-import com.chomusukestudio.projectrocketc.Joystick.OneFingerJoystick
 import com.chomusukestudio.projectrocketc.littleStar.putCommasInInt
 import java.util.concurrent.Executors
 import java.util.logging.Level
@@ -77,8 +75,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             // hide splash screen and show game
             this.runOnUiThread {
                 findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
-                findViewById<TextView>(R.id.pointTextView).visibility = View.VISIBLE
-                findViewById<TextView>(R.id.highestScoreTextView).visibility = View.VISIBLE
+                findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
@@ -149,30 +146,53 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     }
 
+    fun closeSetting(view: View) {
+
+    }
+
     fun onCrashed() {
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
         updateScoreThread.pause()
         state = State.Crashed
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
-        state = State.PreGame
-        runOnUiThread {
-
-            if (LittleStar.score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
-                // update highest score
-                with(sharedPreferences.edit()) {
-                    putInt(getString(R.string.highestScore), LittleStar.score)
-                    apply()
-                }
-                findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(LittleStar.score.toString())
+        if (LittleStar.score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
+            // update highest score
+            with(sharedPreferences.edit()) {
+                putInt(getString(R.string.highestScore), LittleStar.score)
+                apply()
             }
-            findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
-            findViewById<ConstraintLayout>(R.id.preGameLayout).bringToFront()
+        }
+        runOnUiThread {
+            findViewById<ConstraintLayout>(R.id.onCrash).visibility = View.VISIBLE
+            findViewById<ConstraintLayout>(R.id.onCrash).bringToFront()
+
+            findViewById<ConstraintLayout>(R.id.scores).visibility = View.INVISIBLE
 
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
         }
     }
-    
+
+    fun onRestart(view: View) {
+        runOnUiThread {
+            if (LittleStar.score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
+                // update highest score
+                findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(LittleStar.score.toString())
+            }
+            findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
+            findViewById<ConstraintLayout>(R.id.scores).bringToFront()
+
+            findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
+            findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
+
+            findViewById<ConstraintLayout>(R.id.onCrash).visibility = View.INVISIBLE
+        }
+        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
+
+        // start refresh score regularly
+        updateScoreThread.run()
+        LittleStar.cleanScore()
+
+        state = State.InGame
+    }
+
     public override fun onStop() {
         super.onStop()
         Log.i("", "\n\nonStop() called\n\n")
@@ -310,6 +330,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //        }
 
         fun resetGame() {
+//            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+            processingThread.removeAllShapes() // remove all previous shapes
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
             processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
                     TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
@@ -317,6 +339,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             processingThread.surrounding.initializeSurrounding(processingThread.rocket)
             processingThread.joystick = TwoFingersJoystick()
 //            processingThread.joystick = OneFingerJoystick()
+//            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {

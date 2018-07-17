@@ -90,8 +90,8 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
 
         this.rocket = rocket
-        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - (rocket.width / 2 + flybyDistance), 1000000f,
-                centerOfRotationX + (rocket.width / 2 + flybyDistance), 1000000f, // max value is bad because it causes overflow
+        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - (rocket.width / 2 + flybyDistance), 1000000000f,
+                centerOfRotationX + (rocket.width / 2 + flybyDistance), 1000000000f, // max value is bad because it causes overflow... twice
                 centerOfRotationX + (rocket.width / 2 + flybyDistance), centerOfRotationY,
                 centerOfRotationX - (rocket.width / 2 + flybyDistance), centerOfRotationY,
                 0f, 1f, 0f, 1f, 10f, false) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
@@ -109,7 +109,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         startingPathOfRocket.moveShape(avoidDistanceX, 0f) // i'll move it back later
         newPlanet = getRandomPlanetShape()
         // initialize surrounding
-        for (i in 0..256) {
+        for (i in 0..128) {
             // randomly reposition the new planet
             val centerX = (random() * (leftEnd * 1.5f - rightEnd * 1.5f) + rightEnd * 1.5f).toFloat() + avoidDistanceX // + avoidDistanceX as to avoid constant change of visibility
             val centerY = (random() * (topEnd * (1.5f/*/* + topMarginForLittleStar*/*/) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat()

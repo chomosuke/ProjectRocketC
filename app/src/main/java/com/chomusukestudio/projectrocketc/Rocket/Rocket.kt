@@ -5,6 +5,7 @@ package com.chomusukestudio.projectrocketc.Rocket
  */
 
 import android.support.annotation.CallSuper
+import com.chomusukestudio.projectrocketc.Shape.CircularShape
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
@@ -12,12 +13,10 @@ import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TraceShape.TraceShape
 import com.chomusukestudio.projectrocketc.state
 import com.chomusukestudio.projectrocketc.State
+import com.chomusukestudio.projectrocketc.upTimeMillis
+import java.lang.Math.*
 
 import java.util.ArrayList
-
-import java.lang.Math.cos
-import java.lang.Math.log
-import java.lang.Math.sin
 
 // TODO: both rocket and trace needs clean up, except I have no intention to do so
 abstract class Rocket(protected val surrounding: Surrounding) {
@@ -38,19 +37,30 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     protected var centerOfRotationY: Float = surrounding.centerOfRotationY
     // surrounding have to define center of rotation
     // constructor of subclasses need to reset components with its center of rotation at centerOfRotationY and centerOfRotationX and defined it's speed
-    
+
     fun isCrashed(surrounding: Surrounding): Boolean {
         // surrounding will handle this
         val crashedComponent = surrounding.isCrashed(components)
         if (crashedComponent != null) {
-            explosion()
             return true
         }
-        else
             return false
     }
-
-    open fun explosion() {
+//    protected open var explosionShape: ExplosionShape? = null
+//    protected open class ExplosionShape(centerX: Float, centerY: Float, approximateWholeSize: Float, approximateIndividualSize: Float) : Shape() {
+////        override val isOverlapMethodLevel: Double
+////            get() = throw IllegalAccessException("explosionShape can't overlap anything")
+////        override var componentShapes = Array<Shape>(24) { i ->
+////            if (i < 8)
+////                CircularShape(random().toFloat() + centerX, random().toFloat() + centerY, 0, )
+////            else
+////        }
+////        val explodedTime = upTimeMillis()
+////        fun drawExplosion() {
+////
+////        }
+//    }
+    open fun drawExplosion() {
 
     }
     

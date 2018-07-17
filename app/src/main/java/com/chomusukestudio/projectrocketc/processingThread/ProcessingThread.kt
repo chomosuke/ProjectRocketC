@@ -26,7 +26,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         removeAllShapes()
     }
 
-    private fun removeAllShapes() {
+    fun removeAllShapes() {
         surrounding.removeAllShape()
         rocket.removeAllShape()
         joystick.removeAllShape()
@@ -38,23 +38,27 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
     private val condition = lock.newCondition()
 
     fun generateNextFrame(now: Long, previousFrameTime: Long) {
+        finished = false // haven't started
         nextFrameThread.submit {
             try {
-                finished = false
 
                 if (state == State.InGame) {
 
                     // see if crashed
                     if (rocket.isCrashed(surrounding)) {
-                        removeAllShapes()// removing shapes
+                        state = State.Crashed
                         mainActivity.onCrashed()
                     }
                     surrounding.anyLittleStar()
                 }
-                rocket.moveRocket(joystick.getTurningDirection(rocket.currentRotation), now, previousFrameTime)
-                surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime)
-
-                joystick.drawJoystick()
+                if (state == State.PreGame || state == State.InGame) {
+                    rocket.moveRocket(joystick.getTurningDirection(rocket.currentRotation), now, previousFrameTime)
+                    surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime)
+                    joystick.drawJoystick()
+                }
+                if (state == State.Crashed) {
+                    rocket.drawExplosion()
+                }
 
                 if (upTimeMillis() - now > 1000 / refreshRate) {
                     if (CircularShape.dynamicPerformanceIndex > 0.3) {
@@ -73,8 +77,9 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                 }
                 //            Log.v("processing thread", "" + (upTimeMillis() - now));
 
+                // finished
                 finished = true
-
+                // notify waitForLastFrame
                 lock.lock()
                 condition.signal()
                 //                Log.v("Thread", "nextFrameThread notified lockObject");
@@ -105,5 +110,5 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         lock.unlock()
     }
 
-    var finished = true // last frame that doesn't exist has finish
+    @Volatile var finished = true // last frame that doesn't exist has finish
 }
