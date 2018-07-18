@@ -74,8 +74,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             // hide splash screen and show game
             this.runOnUiThread {
+                // cross fade them
                 findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
+                findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
                 findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
+                findViewById<ConstraintLayout>(R.id.scores).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
@@ -88,7 +91,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                                 findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
                             }
                         })
-                findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
             }
         }
     }
@@ -219,7 +221,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                         findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
                     }
                 }
-                State.PreGame -> {
+                else -> {
                     if (hasFocus)
                         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
                     else
@@ -235,8 +237,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         when (state) {
             State.PreGame ->
                 super.onBackPressed()
-            else ->
+            State.InGame, State.Paused ->
                 onPause(findViewById<Button>(R.id.pauseButton))
+            State.Crashed ->
+                TODO("to home")
         }
     }
     
@@ -330,7 +334,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //        }
 
         fun resetGame() {
-//            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
             processingThread.removeAllShapes() // remove all previous shapes
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
             processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
@@ -339,7 +343,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             processingThread.surrounding.initializeSurrounding(processingThread.rocket)
             processingThread.joystick = TwoFingersJoystick()
 //            processingThread.joystick = OneFingerJoystick()
-//            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
+            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {

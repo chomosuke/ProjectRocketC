@@ -1,8 +1,8 @@
 package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.*
-import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
-import com.chomusukestudio.projectrocketc.Shape.point.square
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 import com.chomusukestudio.projectrocketc.heightInPixel
 import com.chomusukestudio.projectrocketc.widthInPixel
 import java.lang.Math.PI

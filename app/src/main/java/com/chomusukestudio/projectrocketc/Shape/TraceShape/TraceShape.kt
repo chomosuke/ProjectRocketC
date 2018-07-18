@@ -1,7 +1,7 @@
 package com.chomusukestudio.projectrocketc.Shape.TraceShape
 
 import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.point.square
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 
 import java.lang.Math.sqrt
 

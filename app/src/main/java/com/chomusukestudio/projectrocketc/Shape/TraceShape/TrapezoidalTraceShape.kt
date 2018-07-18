@@ -2,7 +2,7 @@ package com.chomusukestudio.projectrocketc.Shape.TraceShape
 
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.point.square
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 
 import java.lang.Math.atan2
 import java.lang.Math.cos

@@ -32,6 +32,14 @@ class QuadrilateralShape : Shape {
                 TriangularShape(coords2, red, green, blue, alpha, z, visibility))
     }// as no special isOverlapToOverride method is provided.
 
+    val x1 get() = getQuadrilateralShapeCoords(QX1)
+    val y1 get() = getQuadrilateralShapeCoords(QY1)
+    val x2 get() = getQuadrilateralShapeCoords(QX2)
+    val y2 get() = getQuadrilateralShapeCoords(QY2)
+    val x3 get() = getQuadrilateralShapeCoords(QX3)
+    val y3 get() = getQuadrilateralShapeCoords(QY3)
+    val x4 get() = getQuadrilateralShapeCoords(QX4)
+    val y4 get() = getQuadrilateralShapeCoords(QY4)
     fun getQuadrilateralShapeCoords(coord: Int): Float {
         return if (coord < 6)
             (componentShapes[0] as TriangularShape).getTriangularShapeCoords(coord)

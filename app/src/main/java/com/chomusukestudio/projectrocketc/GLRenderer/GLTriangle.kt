@@ -1,6 +1,6 @@
 package com.chomusukestudio.projectrocketc.GLRenderer
 
-import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import java.util.*
 
 class GLTriangle (z: Float) : Triangle() {

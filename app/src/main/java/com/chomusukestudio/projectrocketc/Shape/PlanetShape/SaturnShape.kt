@@ -3,7 +3,7 @@ package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TopHalfRingShape
-import com.chomusukestudio.projectrocketc.Shape.point.distance
+import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
 
 import java.util.ArrayList
 

@@ -16,7 +16,7 @@ import com.chomusukestudio.projectrocketc.Shape.Shape
 
 import java.util.ArrayList
 
-import com.chomusukestudio.projectrocketc.Shape.point.distance
+import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
 import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText

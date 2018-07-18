@@ -4,8 +4,8 @@ import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
-import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
-import com.chomusukestudio.projectrocketc.Shape.point.square
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 
 abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, val radius: Float) : Shape() {
     var centerX: Float = 0f

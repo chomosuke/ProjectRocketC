@@ -41,7 +41,6 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         finished = false // haven't started
         nextFrameThread.submit {
             try {
-
                 if (state == State.InGame) {
 
                     // see if crashed
@@ -57,7 +56,9 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                     joystick.drawJoystick()
                 }
                 if (state == State.Crashed) {
-                    rocket.drawExplosion()
+                    rocket.fadeMoveAndRemoveTraces(now, previousFrameTime, 0f)
+                    rocket.drawExplosion(now, previousFrameTime)
+                    rocket.waitForFadeMoveAndRemoveTraces()
                 }
 
                 if (upTimeMillis() - now > 1000 / refreshRate) {

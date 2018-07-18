@@ -9,8 +9,8 @@ import com.chomusukestudio.projectrocketc.Shape.LittleStar.RADIUS_OF_LITTLE_STAR
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 
-import com.chomusukestudio.projectrocketc.Shape.point.distance
-import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
+import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText
 import com.chomusukestudio.projectrocketc.upTimeMillis
