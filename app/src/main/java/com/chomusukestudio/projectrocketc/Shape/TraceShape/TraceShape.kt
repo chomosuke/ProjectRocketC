@@ -1,7 +1,7 @@
 package com.chomusukestudio.projectrocketc.Shape.TraceShape
 
 import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.point.square
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 
 import java.lang.Math.sqrt
 
@@ -10,7 +10,8 @@ abstract class TraceShape : Shape() {
     protected var speedY: Float = 0.toFloat()
     protected var needToBeRemoved = false
     
-    override val isOverlapMethodLevel: Double = 0.0
+    override val isOverlapMethodLevel: Double
+        get() = throw IllegalAccessException("Trace can't overlap anything")
     
     protected fun changeSpeedMultiply(k: Double) {
         speedX *= k.toFloat()

@@ -4,7 +4,6 @@ import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Shape.Shape
 
 abstract class Surrounding {
-    abstract var isStarted: Boolean
     abstract val centerOfRotationX: Float
     abstract val centerOfRotationY: Float
     abstract val rotation: Float

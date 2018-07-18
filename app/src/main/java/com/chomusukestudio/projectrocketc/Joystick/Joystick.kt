@@ -30,8 +30,8 @@ abstract class Joystick {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN ->
                 if (!pointers.contains(e.getPointerId(e.actionIndex))) // add the new pointer
                     pointers.add(e.getPointerId(e.actionIndex))
-                else
-                    throw RuntimeException("New pointer is already in pointers.") // interesting
+//                else // this actually does happen for some reason
+//                    throw RuntimeException("New pointer is already in pointers.") // interesting
 
             MotionEvent.ACTION_UP -> {
                 // last pointer is up

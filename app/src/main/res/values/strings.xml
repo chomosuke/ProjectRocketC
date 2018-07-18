@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Project Rocket C</string>
-    <string name="highestScore">highestScore</string>
+    <string name="highestScore">highestScore</string><!--highest score log speed-->
+    <!--<string name="highestScore">highestScoreLinearSpeed</string>-->
 </resources>

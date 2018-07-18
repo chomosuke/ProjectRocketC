@@ -2,8 +2,8 @@ package com.chomusukestudio.projectrocketc.processingThread
 
 import android.util.Log
 import android.view.MotionEvent
+import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.Joystick.Joystick
-import com.chomusukestudio.projectrocketc.MainActivity
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
@@ -12,13 +12,10 @@ import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import java.util.logging.Level
 import java.util.logging.Logger
-import com.chomusukestudio.projectrocketc.transformToMatrixX
-import com.chomusukestudio.projectrocketc.transformToMatrixY
-import com.chomusukestudio.projectrocketc.upTimeMillis
 
 class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) {
     fun onTouchEvent(e: MotionEvent): Boolean {
-        return if (isStarted) {
+        return if (state == State.InGame) {
             joystick.onTouchEvent(e)
             true
         } else
@@ -29,7 +26,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         removeAllShapes()
     }
 
-    private fun removeAllShapes() {
+    fun removeAllShapes() {
         surrounding.removeAllShape()
         rocket.removeAllShape()
         joystick.removeAllShape()
@@ -41,23 +38,28 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
     private val condition = lock.newCondition()
 
     fun generateNextFrame(now: Long, previousFrameTime: Long) {
+        finished = false // haven't started
         nextFrameThread.submit {
             try {
-                finished = false
-
-                if (isStarted) {
+                if (state == State.InGame) {
 
                     // see if crashed
                     if (rocket.isCrashed(surrounding)) {
-                        removeAllShapes()// removing shapes
+                        state = State.Crashed
                         mainActivity.onCrashed()
                     }
                     surrounding.anyLittleStar()
                 }
-                rocket.moveRocket(joystick.getTurningDirection(rocket.currentRotation), now, previousFrameTime)
-                surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime)
-
-                joystick.drawJoystick()
+                if (state == State.PreGame || state == State.InGame) {
+                    rocket.moveRocket(joystick.getTurningDirection(rocket.currentRotation), now, previousFrameTime)
+                    surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime)
+                    joystick.drawJoystick()
+                }
+                if (state == State.Crashed) {
+                    rocket.fadeMoveAndRemoveTraces(now, previousFrameTime, 0f)
+                    rocket.drawExplosion(now, previousFrameTime)
+                    rocket.waitForFadeMoveAndRemoveTraces()
+                }
 
                 if (upTimeMillis() - now > 1000 / refreshRate) {
                     if (CircularShape.dynamicPerformanceIndex > 0.3) {
@@ -76,8 +78,9 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                 }
                 //            Log.v("processing thread", "" + (upTimeMillis() - now));
 
+                // finished
                 finished = true
-
+                // notify waitForLastFrame
                 lock.lock()
                 condition.signal()
                 //                Log.v("Thread", "nextFrameThread notified lockObject");
@@ -108,13 +111,5 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         lock.unlock()
     }
 
-    var finished = true // last frame that doesn't exist has finish
-
-    var isStarted
-        get() = surrounding.isStarted
-        set(isStarted) {
-            surrounding.isStarted = isStarted
-            if (isStarted)
-                LittleStar.cleanScore()
-        }
+    @Volatile var finished = true // last frame that doesn't exist has finish
 }

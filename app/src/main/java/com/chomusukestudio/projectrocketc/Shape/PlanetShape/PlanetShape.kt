@@ -1,12 +1,11 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
+import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
-import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
-import com.chomusukestudio.projectrocketc.Shape.point.square
-
-
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 
 abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, val radius: Float) : Shape() {
     var centerX: Float = 0f
@@ -28,7 +27,18 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
     
     private var actualCenterX: Float = 0f
     private var actualCenterY: Float = 0f
-    
+
+    open val maxWidth: Float = radius
+
+    // for debugging
+    override var visibility: Boolean
+        get() = super.visibility
+        set(value) {
+            if (visibility != value)
+                Log.d("PlanetShape", "visibility changed to $value")
+            super.visibility = value
+        }
+
     init {
         this.centerX = centerX
         actualCenterX = this.centerX
@@ -45,14 +55,7 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
         }
         centerX += dx
         centerY += dy
-        if (centerX < LEFT_END &&
-                centerX > RIGHT_END &&
-                centerY < TOP_END &&
-                centerY > BOTTOM_END ||  // if can be seen
-                actualCenterX < LEFT_END &&
-                actualCenterX > RIGHT_END &&
-                actualCenterY < TOP_END &&
-                actualCenterY > BOTTOM_END) {
+        if (canBeSeen()) {
             setActual(centerX, centerY)
             visibility = true
         }
@@ -60,6 +63,17 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
             // if can't be seen
             visibility = false
         }
+    }
+
+    private fun canBeSeen(): Boolean {
+        return canBeSeenIf(centerX, centerY) || canBeSeenIf(actualCenterX, actualCenterY)
+    }
+
+    fun canBeSeenIf(centerX: Float, centerY: Float): Boolean {
+        return centerX < LEFT_END + maxWidth &&
+                centerX > RIGHT_END - maxWidth &&
+                centerY < TOP_END + maxWidth &&
+                centerY > BOTTOM_END - maxWidth
     }
     
     fun removePlanet() {
@@ -127,14 +141,7 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
         val result = rotatePoint(centerX, centerY, centerOfRotationX, centerOfRotationY, angle)
         centerX = result[0]
         centerY = result[1]
-        if (centerX < LEFT_END &&
-                centerX > RIGHT_END &&
-                centerY < TOP_END &&
-                centerY > BOTTOM_END ||  // if can be seen
-                actualCenterX < LEFT_END &&
-                actualCenterX > RIGHT_END &&
-                actualCenterY < TOP_END &&
-                actualCenterY > BOTTOM_END)
+        if (canBeSeen())
             setActual(centerX, centerY)
         else {
             // if can't be seen

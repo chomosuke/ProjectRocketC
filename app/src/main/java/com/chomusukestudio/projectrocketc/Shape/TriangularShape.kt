@@ -1,8 +1,7 @@
 package com.chomusukestudio.projectrocketc.Shape
 
-import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.*
-import com.chomusukestudio.projectrocketc.Shape.point.rotatePoint
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 
 class TriangularShape(x1: Float, y1: Float,
                       x2: Float, y2: Float,
@@ -130,6 +129,12 @@ class TriangularShape(x1: Float, y1: Float,
             (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
     }
 
+    val x1 get() = getTriangularShapeCoords(X1)
+    val y1 get() = getTriangularShapeCoords(Y1)
+    val x2 get() = getTriangularShapeCoords(X2)
+    val y2 get() = getTriangularShapeCoords(Y2)
+    val x3 get() = getTriangularShapeCoords(X3)
+    val y3 get() = getTriangularShapeCoords(Y3)
     fun getTriangularShapeCoords(coord: Int): Float {
         return if (visibility)
             triangle!!.triangleCoords[coord]

@@ -49,8 +49,6 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
     private lateinit var startingPathOfRocket: QuadrilateralShape
     override lateinit var rocket: Rocket
     @Volatile
-    override var isStarted = false
-    @Volatile
     private var crashedShape: Shape? = null
     private val parallelForIForIsCrashed = ParallelForI(8, "is crashed")
     

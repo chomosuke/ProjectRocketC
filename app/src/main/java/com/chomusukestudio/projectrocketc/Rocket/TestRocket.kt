@@ -3,14 +3,17 @@ package com.chomusukestudio.projectrocketc.Rocket
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.Shape.TraceShape.RegularPolygonalTraceShape
+import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
 
 import java.util.ArrayList
 
-import com.chomusukestudio.projectrocketc.Shape.point.distance
+import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import java.lang.Math.cos
-import java.lang.Math.random
-import java.lang.Math.sin
+import com.chomusukestudio.projectrocketc.state
+import java.lang.Math.*
+import kotlin.math.PI
 
 /**
  * Created by Shuang Li on 11/03/2018.
@@ -26,10 +29,8 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
     private val parallelForIForTraces = ParallelForI(8, "traces thread")
     
     override val width = 0.3f
-    
-    
-    // initialize for surrounding to set centerOfRotation
-    override val components: Array<Shape> = Array(4) { i ->
+
+    final override val components: Array<Shape> = Array(4) { i ->
         when (i) {
         // defined components of rocket around centerOfRotation set by surrounding
             0 ->
@@ -53,7 +54,8 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
             }
         }
     }
-    
+
+    // initialize for surrounding to set centerOfRotation
     init {
         // initialize trace
         traces = ArrayList(NUMBER_OF_TRACES)
@@ -75,7 +77,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         //                    -0.5 * speed * sin(currentRotation), -0.5 * speed * cos(currentRotation), 0.9, 0.9, 0.1, 1, 1.01));
         
         ds += unfilledDs // finish last frame unfinished work
-        if (surrounding.isStarted) {
+        if (state == State.InGame) {
             val sinCurrentRotation = sin(currentRotation.toDouble()).toFloat()
             val cosCurrentRotation = cos(currentRotation.toDouble()).toFloat()
             val I_MAX = ds / 128f * 1000f - random().toFloat()
@@ -152,6 +154,61 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
             if ((trace as RegularPolygonalTraceShape).showing)
                 if (trace.needToBeRemoved())
                     trace.makeInvisible()
+    }
+
+    private val explosionCoordinates = arrayOf(
+            Coordinate(with(components[0] as TriangularShape) { (x1 + x2 + x3) / 3 }, with(components[0] as TriangularShape) { (y1 + y2 + y3) / 3 }),
+            Coordinate(with(components[1] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[0] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }),
+            Coordinate((components[2] as CircularShape).centerX, (components[2] as CircularShape).centerY),
+            Coordinate(with(components[3] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[3] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }))
+
+    protected open var explosionShape: ExplosionShape? = null
+    protected open class ExplosionShape(centerX: Float, centerY: Float, approximateWholeSize: Float, approximateIndividualSize: Float, private val duration: Long) : Shape() {
+        override val isOverlapMethodLevel: Double
+            get() = throw IllegalAccessException("explosionShape can't overlap anything")
+
+        final override var componentShapes = Array<Shape>(24) { i ->
+            if (i < 8) {
+                val distantToCenter = random().toFloat()*approximateWholeSize*0.6f
+                val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (i*PI/4).toFloat())
+                CircularShape(centers[0], centers[1], 0f, 99.6f, 87.5f, 31.4f, 1f, -10f, true)
+            }
+            else {
+                val distantToCenter = random().toFloat()*approximateWholeSize*1.1f
+                val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (i*PI/8).toFloat())
+                CircularShape(centers[0], centers[1], 0f, 1f, 1f, 1f, 1f, -10f, true)
+            }
+        }
+
+        val individualRadius = FloatArray(componentShapes.size) { approximateIndividualSize * (0.5 + 1 * random()).toFloat() }
+
+        private val alphaEveryMiniSecond = pow(1.0 / 256, 1.0 / duration).toFloat()
+
+        private var timeSinceExplosion = 0L
+        fun drawExplosion(timePassed: Long) {
+            timeSinceExplosion += timePassed
+
+            for (i in componentShapes.indices) {
+                val color = componentShapes[i].shapeColor
+                    componentShapes[i].resetAlpha(color[3] * Math.pow(alphaEveryMiniSecond.toDouble(), timePassed.toDouble()).toFloat())
+                val radius = individualRadius[i] * Math.sqrt((timeSinceExplosion / duration).toDouble()).toFloat()
+                (componentShapes[i] as RegularPolygonalShape).resetParameter((componentShapes[0] as RegularPolygonalShape).centerX,
+                        (componentShapes[0] as RegularPolygonalShape).centerY, radius)
+            }
+        }
+    }
+    override fun drawExplosion(now: Long, previousFrameTime: Long) {
+        if (explosionShape == null) {
+            val explosionCoordinate = this.explosionCoordinates[components.indexOf(crashedComponent)]
+            explosionShape = ExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 1f, 0.3f, 1000)
+        } else {
+            explosionShape!!.drawExplosion(now - previousFrameTime)
+        }
+    }
+
+    override fun removeAllShape() {
+        super.removeAllShape()
+        explosionShape?.removeShape()
     }
 }
 
