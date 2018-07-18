@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.ThreadClasses
 
+import com.chomusukestudio.projectrocketc.runWithExceptionChecked
 import java.util.concurrent.Executors
 
 class ScheduledThread(private val periodInMillisecond: Long, private val task: () -> Unit) {
@@ -14,9 +15,11 @@ class ScheduledThread(private val periodInMillisecond: Long, private val task: (
             running = true
         }
         singleThread.submit {
-            while (running) {
-                task()
-                Thread.sleep(periodInMillisecond)
+            runWithExceptionChecked {
+                while (running) {
+                    task()
+                    Thread.sleep(periodInMillisecond)
+                }
             }
         }
     }

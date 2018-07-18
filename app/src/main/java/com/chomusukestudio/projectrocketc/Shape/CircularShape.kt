@@ -23,7 +23,6 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
         private set
     var radius: Float = 0f
         private set // parameters needed for isOverlapToOverride method.
-    // getters
     
     constructor(centerX: Float, centerY: Float, radius: Float, red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean) : this(centerX, centerY, radius, 1.0, red, green, blue, alpha, z, visibility)
     
@@ -34,21 +33,21 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
         this.radius = radius
     }
     
-    //    public CircularShape(double centerX, double centerY, double radius) { // an empty circularShape for planetShape
-    //
-    //        super(1); // as no special isOverlapToOverride method is provided.
-    //
+    //    internal constructor(double centerX, double centerY, double radius) { // an empty circularShape for planetShape
     //        // set parameters
     //        this.centerX = centerX;
     //        this.centerY = centerY;
     //        this.radius = radius;
     //    }
+
+    private var lastChangeOfNumberOfEdgesRadius = radius
     fun resetParameter(centerX: Float, centerY: Float, radius: Float) {
         //        if (componentShapes != null)
         // this circularShape is not empty
-        if (abs(radius) <= abs(this.radius * 1.25) && abs(radius) >= abs(this.radius * 0.8))
+        if (abs(radius) <= abs(lastChangeOfNumberOfEdgesRadius * 1.25) && abs(radius) >= abs(lastChangeOfNumberOfEdgesRadius * 0.8)) {
             (componentShapes[0] as RegularPolygonalShape).resetParameter(centerX, centerY, radius)
-        else {
+        } else {
+            lastChangeOfNumberOfEdgesRadius = radius
             val color = FloatArray(4)
             System.arraycopy(shapeColor, 0, color, 0, color.size)
             componentShapes[0].removeShape()

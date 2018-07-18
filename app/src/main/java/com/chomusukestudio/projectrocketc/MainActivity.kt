@@ -68,29 +68,31 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
-            BasicSurrounding.fillUpPlanetShapes()
+            runWithExceptionChecked {
+                BasicSurrounding.fillUpPlanetShapes()
 
-            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).initializeRenderer()
+                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).initializeRenderer()
 
-            // hide splash screen and show game
-            this.runOnUiThread {
-                // cross fade them
-                findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
-                findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-                findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
-                findViewById<ConstraintLayout>(R.id.scores).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
-                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                // hide splash screen and show game
+                this.runOnUiThread {
+                    // cross fade them
+                    findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
+                    findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                    findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
+                    findViewById<ConstraintLayout>(R.id.scores).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
+                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
-                findViewById<ImageView>(R.id.chomusukeView).bringToFront()
-                findViewById<ImageView>(R.id.chomusukeView).animate()
-                        .alpha(0f)
-                        .setDuration(250)
-                        .setListener(object : AnimatorListenerAdapter() {
-                            override fun onAnimationEnd(animation: Animator?) {
-                                findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
-                            }
-                        })
+                    findViewById<ImageView>(R.id.chomusukeView).bringToFront()
+                    findViewById<ImageView>(R.id.chomusukeView).animate()
+                            .alpha(0f)
+                            .setDuration(250)
+                            .setListener(object : AnimatorListenerAdapter() {
+                                override fun onAnimationEnd(animation: Animator?) {
+                                    findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
+                                }
+                            })
+                }
             }
         }
     }
@@ -410,4 +412,15 @@ class TouchableView<out V : View>(val view: V, val activity: Activity) {
 @Volatile var pausedTime: Long = 0L
 fun upTimeMillis(): Long {
     return SystemClock.uptimeMillis() - pausedTime
+}
+
+fun <R>runWithExceptionChecked(runnable: () -> R): R {
+    try {
+        return runnable()
+    } catch (e: Exception) {
+        val logger = Logger.getAnonymousLogger()
+        logger.log(Level.SEVERE, "an exception was thrown in nextFrameThread", e)
+        Log.e("exception", "in processingThread" + e)
+        throw e
+    }
 }

@@ -40,7 +40,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
     fun generateNextFrame(now: Long, previousFrameTime: Long) {
         finished = false // haven't started
         nextFrameThread.submit {
-            try {
+            runWithExceptionChecked {
                 if (state == State.InGame) {
 
                     // see if crashed
@@ -85,11 +85,6 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                 condition.signal()
                 //                Log.v("Thread", "nextFrameThread notified lockObject");
                 lock.unlock() // wakes up GLThread
-            } catch (e: Exception) {
-                val logger = Logger.getAnonymousLogger()
-                logger.log(Level.SEVERE, "an exception was thrown in nextFrameThread", e)
-                Log.e("exception", "in processingThread" + e)
-                throw e
             }
         }
     }

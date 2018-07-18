@@ -158,7 +158,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
 
     private val explosionCoordinates = arrayOf(
             Coordinate(with(components[0] as TriangularShape) { (x1 + x2 + x3) / 3 }, with(components[0] as TriangularShape) { (y1 + y2 + y3) / 3 }),
-            Coordinate(with(components[1] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[0] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }),
+            Coordinate(with(components[1] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[1] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }),
             Coordinate((components[2] as CircularShape).centerX, (components[2] as CircularShape).centerY),
             Coordinate(with(components[3] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[3] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }))
 
@@ -190,17 +190,17 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
 
             for (i in componentShapes.indices) {
                 val color = componentShapes[i].shapeColor
-                    componentShapes[i].resetAlpha(color[3] * Math.pow(alphaEveryMiniSecond.toDouble(), timePassed.toDouble()).toFloat())
-                val radius = individualRadius[i] * Math.sqrt((timeSinceExplosion / duration).toDouble()).toFloat()
-                (componentShapes[i] as RegularPolygonalShape).resetParameter((componentShapes[0] as RegularPolygonalShape).centerX,
-                        (componentShapes[0] as RegularPolygonalShape).centerY, radius)
+                componentShapes[i].resetAlpha(color[3] * Math.pow(alphaEveryMiniSecond.toDouble(), timePassed.toDouble()).toFloat())
+                val radius = individualRadius[i] * Math.sqrt(timeSinceExplosion.toDouble() / duration.toDouble()).toFloat()
+                (componentShapes[i] as CircularShape).resetParameter((componentShapes[0] as CircularShape).centerX,
+                        (componentShapes[0] as CircularShape).centerY, radius)
             }
         }
     }
     override fun drawExplosion(now: Long, previousFrameTime: Long) {
         if (explosionShape == null) {
             val explosionCoordinate = this.explosionCoordinates[components.indexOf(crashedComponent)]
-            explosionShape = ExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 1f, 0.3f, 1000)
+            explosionShape = ExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 1f, 0.5f, 1000)
         } else {
             explosionShape!!.drawExplosion(now - previousFrameTime)
         }
