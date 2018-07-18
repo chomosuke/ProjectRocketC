@@ -1,4 +1,7 @@
-package com.chomusukestudio.projectrocketc.Shape.point
+package com.chomusukestudio.projectrocketc.Shape.coordinate
+
+import kotlin.math.cos
+import kotlin.math.sin
 
 fun rotatePoint(pointX: Float, pointY: Float, centerOfRotationX: Float, centerOfRotationY: Float, angle: Float): FloatArray {
     if (angle == 0f) {
@@ -29,3 +32,26 @@ fun rotatePoint(pointX: Float, pointY: Float, centerOfRotationX: Float, centerOf
 fun distance(x1: Float, y1: Float, x2: Float, y2: Float) = Math.sqrt(square((x1 - x2).toDouble()) + square((y1 - y2).toDouble())).toFloat()
 
 fun square(input: Double) = input * input
+
+class Coordinate(var x: Float, var y: Float) {
+    fun rotateCoordinate(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
+        if (angle == 0f)
+            // yeah, I do zero angle a lot
+            return
+
+        val sinAngle = sin(-angle)
+        val cosAngle = cos(-angle)
+
+        // translate score back to origin:
+        x -= centerOfRotationX
+        y -= centerOfRotationY
+
+        // rotate score
+        val xNew = x * cosAngle - y * sinAngle
+        val yNew = x * sinAngle + y * cosAngle
+
+        // translate score back:
+        x = xNew + centerOfRotationX
+        y = yNew + centerOfRotationY
+    }
+}
