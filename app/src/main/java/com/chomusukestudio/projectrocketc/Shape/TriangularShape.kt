@@ -207,6 +207,7 @@ class TriangularShape(x1: Float, y1: Float,
         }
     }
 
+    override var removed = false
     override fun removeShape() {
         if (visibility) {
             triangle!!.removeTriangle()
@@ -223,6 +224,7 @@ class TriangularShape(x1: Float, y1: Float,
             RGBA[2] = UNUSED
             RGBA[3] = UNUSED
         }
+        removed = true
     }
 
     override fun getZs(): ArrayList<Float> {

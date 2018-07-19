@@ -33,18 +33,17 @@ class Layer(val z: Float) { // depth for the drawing order
     var colors: FloatArray // colors of triangles
 
     private var lastUsedCoordIndex = 0 // should increase performance by ever so slightly, isn't really necessary.
-    @Synchronized
-    fun getCoordPointer(): Int {
+    @Synchronized fun getCoordPointer(): Int {
 //        if (!Thread.currentThread().name.equals("nextFrameThread"))
 //            Log.d("currentThread", Thread.currentThread().name)
         var i = 0
         while (true) {
             // if lastUsedCoordIndex has reached vertexCount then bring it back to 0
-            if (lastUsedCoordIndex >= vertexCount * COORDS_PER_VERTEX)
+            if (lastUsedCoordIndex == vertexCount * COORDS_PER_VERTEX)
                 lastUsedCoordIndex = 0
 
             if (i >= vertexCount * COORDS_PER_VERTEX / 2) {
-                // if all before vertexCount does not have unused triangle left
+                // if half of all before vertexCount does not have unused triangle left
                 lastUsedCoordIndex = incrementVertexCountAndGiveNewCoordsPointer()
                 return lastUsedCoordIndex
             }
@@ -145,6 +144,8 @@ class Layer(val z: Float) { // depth for the drawing order
 
         // size buffers with new arrays' sizes
         setupBuffers()
+        // passArraysToBuffers
+        passArraysToBuffers()
 
         // log it
         if (vertexCount % 50 == 0)

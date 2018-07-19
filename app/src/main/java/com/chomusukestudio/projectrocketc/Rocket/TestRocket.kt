@@ -13,7 +13,6 @@ import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.state
 import java.lang.Math.*
-import kotlin.math.PI
 
 /**
  * Created by Shuang Li on 11/03/2018.
@@ -171,7 +170,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
             if (i < 8) {
                 val distantToCenter = random().toFloat()*approximateWholeSize*0.6f
                 val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (i*PI/4).toFloat())
-                CircularShape(centers[0], centers[1], 0f, 99.6f, 87.5f, 31.4f, 1f, -10f, true)
+                CircularShape(centers[0], centers[1], 0f, 0.996f, 0.875f, 0.314f, 1f, -11f, true)
             }
             else {
                 val distantToCenter = random().toFloat()*approximateWholeSize*1.1f
@@ -189,25 +188,35 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
             timeSinceExplosion += timePassed
 
             for (i in componentShapes.indices) {
-                val color = componentShapes[i].shapeColor
-                componentShapes[i].resetAlpha(color[3] * Math.pow(alphaEveryMiniSecond.toDouble(), timePassed.toDouble()).toFloat())
+//                val color = componentShapes[i].shapeColor
+//                componentShapes[i].resetAlpha(color[3] * Math.pow(alphaEveryMiniSecond.toDouble(), timePassed.toDouble()).toFloat())
                 val radius = individualRadius[i] * Math.sqrt(timeSinceExplosion.toDouble() / duration.toDouble()).toFloat()
-                (componentShapes[i] as CircularShape).resetParameter((componentShapes[0] as CircularShape).centerX,
-                        (componentShapes[0] as CircularShape).centerY, radius)
+                (componentShapes[i] as CircularShape).resetParameter((componentShapes[i] as CircularShape).centerX,
+                        (componentShapes[i] as CircularShape).centerY, radius)
             }
         }
     }
     override fun drawExplosion(now: Long, previousFrameTime: Long) {
         if (explosionShape == null) {
             val explosionCoordinate = this.explosionCoordinates[components.indexOf(crashedComponent)]
+            explosionCoordinate.rotateCoordinate(centerOfRotationX, centerOfRotationY, currentRotation)
             explosionShape = ExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 1f, 0.5f, 1000)
         } else {
+            // rocket already blown up
+            for (component in components)
+                if (!component.removed)
+                    component.removeShape()
+
             explosionShape!!.drawExplosion(now - previousFrameTime)
         }
     }
 
     override fun removeAllShape() {
-        super.removeAllShape()
+        for (component in components)
+            if (!component.removed)
+                component.removeShape()
+        for (trace in traces)
+            trace.removeShape()
         explosionShape?.removeShape()
     }
 }

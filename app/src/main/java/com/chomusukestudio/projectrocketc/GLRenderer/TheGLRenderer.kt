@@ -47,8 +47,8 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         if (!paused) { // if this is called when paused for some reason don't do anything as nothing suppose to change
             countingFrames++
 
-//            now = upTimeMillis()// so you access SystemClock.uptimeMillis() less
-                            previousFrameTime = now - 16; // for break point
+            now = upTimeMillis()// so you access upTimeMillis() less
+//                            previousFrameTime = now - 16; // for break point
 
             if (now - previousTime >= 1000) {// just to get frame rates
                 Log.i("Frame rate", "" + countingFrames + " and dynamic performance index " + CircularShape.dynamicPerformanceIndex)

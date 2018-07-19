@@ -82,9 +82,9 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                 finished = true
                 // notify waitForLastFrame
                 lock.lock()
-                condition.signal()
+                condition.signal() // wakes up GLThread
                 //                Log.v("Thread", "nextFrameThread notified lockObject");
-                lock.unlock() // wakes up GLThread
+                lock.unlock()
             }
         }
     }

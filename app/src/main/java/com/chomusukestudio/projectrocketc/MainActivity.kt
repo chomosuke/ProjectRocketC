@@ -7,6 +7,7 @@ import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
+import android.media.Image
 import android.opengl.GLES20
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
@@ -176,10 +177,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     fun onRestart(view: View) {
         runOnUiThread {
-            if (LittleStar.score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
-                // update highest score
-                findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(LittleStar.score.toString())
-            }
+            // update highest score
+            findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+
             findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.scores).bringToFront()
 
@@ -224,10 +224,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     }
                 }
                 else -> {
-                    if (hasFocus)
-                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
-                    else
+                    if (!hasFocus)
                         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+                    else
+                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
                 }
             }
         } catch (e: UninitializedPropertyAccessException) {

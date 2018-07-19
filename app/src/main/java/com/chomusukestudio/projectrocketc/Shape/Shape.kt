@@ -95,10 +95,13 @@ abstract class Shape{
                 return true
         return false
     }
-    
+
+    open var removed = false
+        protected set
     open fun removeShape() {
         for (componentShape in componentShapes)
             componentShape.removeShape()
+        removed = true
     }
 
     open fun getZs(): ArrayList<Float> {

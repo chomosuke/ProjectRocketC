@@ -151,7 +151,6 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     
     protected abstract fun generateTraces(previousFrameTime: Long, now: Long, ds: Float)
 
-    @CallSuper
     open fun removeAllShape() {
         for (component in components)
             component.removeShape()

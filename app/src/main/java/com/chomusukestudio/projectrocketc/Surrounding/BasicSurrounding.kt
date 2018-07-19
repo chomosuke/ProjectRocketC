@@ -59,7 +59,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
 
     private val boundaries = ArrayList<PlanetShape>() // this defines where the plane can't go
     // boundaries should have z value of 10 while background should have a z value higher than 10, like 11.
-    private var backgrounds = ArrayList<Shape>() // backGrounds doesn't effect plane
+    private lateinit var backgrounds: ArrayList<Shape> // backGrounds doesn't effect plane
     private val littleStars = ArrayList<LittleStar>()
     private lateinit var startingPathOfRocket: QuadrilateralShape
     override lateinit var rocket: Rocket
@@ -98,11 +98,18 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
 
         // initialize all those stars in the backgrounds
-        backgrounds = ArrayList(NUMBER_OF_STARS)
-        for (i in 0 until NUMBER_OF_STARS) {
-            backgrounds.add(StarShape(random().toFloat() * (leftEnd - rightEnd) + rightEnd,
-                    random().toFloat() * (topEnd - bottomEnd) + bottomEnd,
-                    (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, 11f, true))
+        if (starsBackground == null) { // first time initialize
+            backgrounds = ArrayList(NUMBER_OF_STARS)
+            for (i in 0 until NUMBER_OF_STARS) {
+                backgrounds.add(StarShape(random().toFloat() * (leftEnd - rightEnd) + rightEnd,
+                        random().toFloat() * (topEnd - bottomEnd) + bottomEnd,
+                        (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, 11f, true))
+            }
+            starsBackground = backgrounds
+        } else {
+            backgrounds = starsBackground as ArrayList<Shape>
+            // move backgrounds so people can't recognize it's the same stars
+            moveSurrounding(100f, 100f, upTimeMillis(), upTimeMillis())
         }
 
         val avoidDistanceX = 110f // to avoid constant change of visibility
@@ -232,13 +239,17 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     }
     
     override fun removeAllShape() {
+
         for (boundary in boundaries) {
             boundary.removePlanet()
         }
         newPlanet.removePlanet()
-        for (background in backgrounds) {
-            background.removeShape()
-        }
+
+        // leave background for next use
+//        for (background in backgrounds) {
+//            background.removeShape()
+//        }
+
         for (littleStar in littleStars) {
             littleStar.removeLittleStarShape()
         }
@@ -541,6 +552,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     companion object {
         
         private val NUMBER_OF_STARS = 6000
+        private var starsBackground: ArrayList<Shape>? = null
         
         private val NUMBER_OF_PLANET = 1000
         private var planetShapes: Array<PlanetShape>? = null
