@@ -16,7 +16,6 @@ const val CPT = COORDS_PER_VERTEX * 3 // number of coordinates per vertex in thi
 
 class Layer(val z: Float) { // depth for the drawing order
 
-
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
 
     private var vertexBuffer: FloatBuffer
@@ -85,6 +84,12 @@ class Layer(val z: Float) { // depth for the drawing order
     }
 
     private fun setupBuffers() {
+//        while (changingBuffer || drawing); // don't change buffer while changing buffer or drawing
+
+        changingBuffer = true
+
+        newBufferPassedToArray = false
+
         // initialize vertex byte buffer for shape coordinates
         val bb = ByteBuffer.allocateDirect(
                 // (number of coordinate values * 4 bytes per float)
@@ -104,9 +109,16 @@ class Layer(val z: Float) { // depth for the drawing order
 
         // create a floating score buffer from the ByteBuffer
         colorBuffer = bb2.asFloatBuffer()
-    }
 
+        changingBuffer = false
+    }
+    @Volatile private var changingBuffer = false
+    @Volatile private var newBufferPassedToArray = false
     fun passArraysToBuffers() {
+//        while (changingBuffer || drawing); // don't change buffer while changing buffer or drawing
+
+        changingBuffer = true
+
         // add the coordinates to the FloatBuffer
         vertexBuffer.put(triangleCoords)
         // set the buffer to read the first coordinate
@@ -115,6 +127,10 @@ class Layer(val z: Float) { // depth for the drawing order
         colorBuffer.put(colors)
         // set the buffer to read the first coordinate
         colorBuffer.position(0)
+
+        newBufferPassedToArray = true
+
+        changingBuffer = false
     }
 
     fun getColorPointer(coordPointer: Int): Int {
@@ -144,7 +160,7 @@ class Layer(val z: Float) { // depth for the drawing order
 
         // size buffers with new arrays' sizes
         setupBuffers()
-        // passArraysToBuffers
+        // pass arrays to the new setup buffer
         passArraysToBuffers()
 
         // log it
@@ -242,7 +258,12 @@ class Layer(val z: Float) { // depth for the drawing order
                         "}"
     }
 
+    @Volatile private var drawing = false
     fun drawLayer() {
+//        while (changingBuffer || !newBufferPassedToArray);
+
+        drawing = true
+
         // Add program to OpenGL ES environment
         GLES20.glUseProgram(mProgram)
 
@@ -284,5 +305,7 @@ class Layer(val z: Float) { // depth for the drawing order
         // Disable vertex array
         GLES20.glDisableVertexAttribArray(mPositionHandle)
         GLES20.glDisableVertexAttribArray(mColorHandle)
+
+        drawing = false
     }
 }

@@ -75,7 +75,7 @@ class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float, visibility: Boole
     fun makeInvisible() {
         showing = false
         (componentShapes[0] as RegularPolygonalShape).resetParameter(0f, 0f, 0f)
-        componentShapes[0].resetShapeColor(0f, 0f, 0f, 0f)
+//        componentShapes[0].resetShapeColor(0f, 0f, 0f, 0f) // no need to do this
         numberOfTraceInUse--
     }
     

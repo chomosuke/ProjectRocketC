@@ -108,8 +108,6 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             starsBackground = backgrounds
         } else {
             backgrounds = starsBackground as ArrayList<Shape>
-            // move backgrounds so people can't recognize it's the same stars
-            moveSurrounding(100f, 100f, upTimeMillis(), upTimeMillis())
         }
 
         val avoidDistanceX = 110f // to avoid constant change of visibility
@@ -153,7 +151,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 return false
         }
         // it is not too close to any other planet
-        if (state != State.InGame)
+//        if (state != State.InGame)
             if (planetShape.isOverlap(startingPathOfRocket))
                 return false// if it blocks the rocket before start
         return true
@@ -245,6 +243,22 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         }
         newPlanet.removePlanet()
 
+        // move backgrounds so people can't recognize it's the same stars parallelForIForBackgroundStars.waitForLastRun()
+        parallelForIForBackgroundStars.run({ i ->
+            val starShape = backgrounds[i] as StarShape
+
+            starShape.moveShape(0f, 2f)
+            // those that got out of screen, make them appear on the opposite side
+            if (starShape.centerY < bottomEnd)
+                starShape.resetPosition(starShape.centerX, starShape.centerY + (topEnd - bottomEnd))
+            if (starShape.centerY > topEnd)
+                starShape.resetPosition(starShape.centerX, starShape.centerY - (topEnd - bottomEnd))
+            if (starShape.centerX < rightEnd)
+                starShape.resetPosition(starShape.centerX + (leftEnd - rightEnd), starShape.centerY)
+            if (starShape.centerX > leftEnd)
+                starShape.resetPosition(starShape.centerX - (leftEnd - rightEnd), starShape.centerY)
+        }, backgrounds.size)
+        parallelForIForBackgroundStars.waitForLastRun()
         // leave background for next use
 //        for (background in backgrounds) {
 //            background.removeShape()
@@ -279,6 +293,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
 
 //    private val parallelForIForMoveBoundaries = ParallelForI(8, "parallelForIForMoveBoundaries")
     override fun moveSurrounding(dx: Float, dy: Float, now: Long, previousFrameTime: Long) {
+        parallelForIForBackgroundStars.waitForLastRun()
 
         // move background
         parallelForIForBackgroundStars.run({ i ->
@@ -296,7 +311,6 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 starShape.resetPosition(starShape.centerX - (leftEnd - rightEnd), starShape.centerY)
         }, backgrounds.size)
 
-//        parallelForIForMoveBoundaries.waitForLastRun()
 //        val visibleBoundaries = ArrayList<Shape>()
 //        for (boundary in boundaries) {
 //            if (boundary.visibility)

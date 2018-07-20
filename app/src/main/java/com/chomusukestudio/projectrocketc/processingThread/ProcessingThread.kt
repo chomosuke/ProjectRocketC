@@ -90,7 +90,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
     }
 
     fun waitForLastFrame() {
-// wait for the last nextFrameThread
+        // wait for the last nextFrameThread
         lock.lock()
         // synchronized outside the loop so other thread can't notify when it's not waiting
         while (!finished) {

@@ -99,7 +99,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibil
         }
         val rComponentShapes = arrayOfNulls<Shape>(componentShapes.size - 1)
         System.arraycopy(componentShapes, 1, rComponentShapes, 0, rComponentShapes.size)
-        Collections.shuffle(Arrays.asList<Shape>(*rComponentShapes))
+        Arrays.asList<Shape>(*rComponentShapes).shuffle()
         for (i in rComponentShapes.indices) {
             rComponentShapes[i]!!.rotateShape(centerX, centerY, (2 * PI / rComponentShapes.size * i).toFloat())
         }
