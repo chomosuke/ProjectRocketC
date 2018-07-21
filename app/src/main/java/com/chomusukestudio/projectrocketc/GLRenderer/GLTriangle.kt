@@ -1,6 +1,7 @@
 package com.chomusukestudio.projectrocketc.GLRenderer
 
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 
@@ -186,9 +187,14 @@ class GLTriangle (z: Float) : Triangle() {
             }
             lockOnArrayList.unlock()
         }
-        
+
+//        private val parallelForIForPassArraysToBuffers = ParallelForI(20, "passArraysToBuffers")
         fun passArraysToBuffers() {
             lockOnArrayList.lock()
+//            parallelForIForPassArraysToBuffers.run({ i ->
+//                layers[i].passArraysToBuffers()
+//            }, layers.size)
+//            parallelForIForPassArraysToBuffers.waitForLastRun()
             for (layer in layers)
                 layer.passArraysToBuffers()
             lockOnArrayList.unlock()

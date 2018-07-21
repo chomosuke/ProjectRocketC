@@ -60,7 +60,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         traces = ArrayList(NUMBER_OF_TRACES)
         val numberOfEdges = CircularShape.getNumberOfEdges(0.5f) // to give 8 ish
         for (i in 0 until NUMBER_OF_TRACES) {
-            traces.add(RegularPolygonalTraceShape(numberOfEdges, 1.01f, true))
+            traces.add(RegularPolygonalTraceShape(numberOfEdges, 1.01f/* + 0.001f * (4 * random()*//*split trace to 4 layers*//*).toInt()*/, true))
         }
         
         setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)
@@ -197,4 +197,4 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
     }
 }
 
-private const val NUMBER_OF_TRACES = 1000
+private const val NUMBER_OF_TRACES = 350

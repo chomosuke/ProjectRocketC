@@ -7,7 +7,6 @@ import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
-import android.media.Image
 import android.opengl.GLES20
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
@@ -79,8 +78,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     // cross fade them
                     findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
                     findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-                    findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
-                    findViewById<ConstraintLayout>(R.id.scores).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                    findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+                    findViewById<ConstraintLayout>(R.id.scoresLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
                     findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
                     findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
@@ -108,7 +107,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
-        this.runOnUiThread { findViewById<TextView>(R.id.pointTextView).text = putCommasInInt(LittleStar.score.toString()) }
+        this.runOnUiThread { findViewById<TextView>(R.id.scoreTextView).text = putCommasInInt(LittleStar.score.toString()) }
     }
 
     fun startGame(view: View) {
@@ -166,10 +165,13 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             }
         }
         runOnUiThread {
-            findViewById<ConstraintLayout>(R.id.onCrash).visibility = View.VISIBLE
-            findViewById<ConstraintLayout>(R.id.onCrash).bringToFront()
+            findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.VISIBLE
+            findViewById<ConstraintLayout>(R.id.onCrashLayout).bringToFront()
 
-            findViewById<ConstraintLayout>(R.id.scores).visibility = View.INVISIBLE
+            findViewById<TextView>(R.id.highestScoreOnCrash).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+            findViewById<TextView>(R.id.previousScoreOnCrash).text = findViewById<TextView>(R.id.scoreTextView).text
+
+            findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.INVISIBLE
 
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
         }
@@ -180,13 +182,13 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             // update highest score
             findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
-            findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
-            findViewById<ConstraintLayout>(R.id.scores).bringToFront()
+            findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+            findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
 
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
 
-            findViewById<ConstraintLayout>(R.id.onCrash).visibility = View.INVISIBLE
+            findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.INVISIBLE
         }
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
 
@@ -221,6 +223,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     if (!hasFocus) {
                         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
                         findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+                        state = State.Paused
                     }
                 }
                 else -> {
