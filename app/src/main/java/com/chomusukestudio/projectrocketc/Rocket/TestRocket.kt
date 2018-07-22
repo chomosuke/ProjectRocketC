@@ -158,7 +158,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
 
     private val explosionCoordinates = arrayOf(
             Coordinate(with(components[0] as TriangularShape) { (x1 + x2 + x3) / 3 }, with(components[0] as TriangularShape) { (y1 + y2 + y3) / 3 }),
-            Coordinate(with(components[1] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[0] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }),
+            Coordinate(with(components[1] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[1] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }),
             Coordinate((components[2] as CircularShape).centerX, (components[2] as CircularShape).centerY),
             Coordinate(with(components[3] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[3] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }))
 
