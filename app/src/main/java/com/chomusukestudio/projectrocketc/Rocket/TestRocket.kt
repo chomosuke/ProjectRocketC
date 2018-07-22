@@ -146,6 +146,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
             if (trace.showing) {
                 // give it refreshFactor amount of time since it only move one out of refreshFactor of frames
                 if (i % refreshFactor == lastChanged)
+                    // moveTraceShape with RegularPolygonalTraceShape will remove itself
                     trace.moveTraceShape(now, now - ((now - previousFrameTime) * refreshFactor))
                 // move traces with surrounding
                 trace.moveShape(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat())
@@ -160,7 +161,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
     override fun removeTrace() {
         for (trace in traces)
             if ((trace as RegularPolygonalTraceShape).showing)
-                if (trace.needToBeRemoved())
+                if (trace.needToBeRemoved)
                     trace.makeInvisible()
     }
 
