@@ -2,6 +2,7 @@ package com.chomusukestudio.projectrocketc.ThreadClasses
 
 
 import android.util.Log
+import com.chomusukestudio.projectrocketc.runWithExceptionChecked
 
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -41,16 +42,12 @@ class ParallelForI(val __numberOfThread: Int, val __name: String) {
     fun waitForLastRun() {
         __lock.lock()
         // synchronized outside the loop so other thread can't notify when it's not waiting
-        var i = 0
         try {
-            while (i < __numberOfThread) {
-                if (!__finished[i].get()) {
-                    i = -1
+            while (!isFinished()) {
                     //                        Log.v(__name, "waiting");
                     __condition.await() //
                     //                        Log.v(__name, "waked");
-                }
-                i++
+
             }
         } catch (e: InterruptedException) {
             Log.e(__name, "How?! Why?!", e)
@@ -62,32 +59,27 @@ class ParallelForI(val __numberOfThread: Int, val __name: String) {
     inline fun run(crossinline functionForI: (Int) -> Unit, MAX_I: Int) {
         for (finished in __finished)
             finished.set(false) // just started
-        for (i in 0 until __numberOfThread) {
-            __executorService.submit {
-                val iInitial = i * MAX_I / __numberOfThread
-                val iSmallerThan: Int
-                if (i == __numberOfThread - 1)
+        runWithExceptionChecked {
+            for (i in 0 until __numberOfThread) {
+                __executorService.submit {
+                    val iInitial = i * MAX_I / __numberOfThread
+                    val iSmallerThan: Int
+                    if (i == __numberOfThread - 1)
                     // last thread
-                    iSmallerThan = MAX_I
-                else
-                    iSmallerThan = (i + 1) * MAX_I / __numberOfThread
-                for (i1 in iInitial until iSmallerThan) {
-                    try {
+                        iSmallerThan = MAX_I
+                    else
+                        iSmallerThan = (i + 1) * MAX_I / __numberOfThread
+                    for (i1 in iInitial until iSmallerThan) {
                         functionForI(i1)
-                    } catch (e: Exception) {
-                        val logger = Logger.getAnonymousLogger()
-                        logger.log(Level.SEVERE, "an exception was thrown in $__name", e)
-                        throw e
                     }
-                    
-                }
-                __finished[i].set(true)
-                try {
-                    __lock.lock()
-                    __condition.signal()
-                    //                    Log.v(__name, "notified");
-                } finally {
-                    __lock.unlock()
+                    __finished[i].set(true)
+                    try {
+                        __lock.lock()
+                        __condition.signal()
+                        //                    Log.v(__name, "notified");
+                    } finally {
+                        __lock.unlock()
+                    }
                 }
             }
         }

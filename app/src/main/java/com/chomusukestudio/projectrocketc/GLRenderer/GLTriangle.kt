@@ -1,7 +1,9 @@
 package com.chomusukestudio.projectrocketc.GLRenderer
 
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import java.util.*
+import java.util.concurrent.locks.ReentrantLock
 
 class GLTriangle (z: Float) : Triangle() {
 
@@ -69,13 +71,17 @@ class GLTriangle (z: Float) : Triangle() {
         while (true) {
             if (i == layers.size) {
                 // already the last one
+                lockOnArrayList.lock()
                 layers.add(newLayer)
+                lockOnArrayList.unlock()
                 break
             }
             if (newLayer.z > layers[i].z) {
                 // if the new z is just bigger than this z
                 // put it before this layer
+                lockOnArrayList.lock()
                 layers.add(i, newLayer)
+                lockOnArrayList.unlock()
                 break
             }
             i++
@@ -170,18 +176,28 @@ class GLTriangle (z: Float) : Triangle() {
 //            for (layer in layers)
 //                layer.offsetLayer(dOffsetX, dOffsetY)
 //        }
+
+        val lockOnArrayList = ReentrantLock()
         
         fun drawAllTriangles() {
             // no need to sort, already in order
-            for (i in layers.indices) { // draw layers in order
-                // keep for loop instead foreach to enforce the idea of order
-                layers[i].drawLayer()
+            lockOnArrayList.lock() // for preventing concurrent modification
+            for (layer in layers) { // draw layers in order
+                layer.drawLayer()
             }
+            lockOnArrayList.unlock()
         }
-        
+
+//        private val parallelForIForPassArraysToBuffers = ParallelForI(20, "passArraysToBuffers")
         fun passArraysToBuffers() {
+            lockOnArrayList.lock()
+//            parallelForIForPassArraysToBuffers.run({ i ->
+//                layers[i].passArraysToBuffers()
+//            }, layers.size)
+//            parallelForIForPassArraysToBuffers.waitForLastRun()
             for (layer in layers)
                 layer.passArraysToBuffers()
+            lockOnArrayList.unlock()
         }
     }
 }

@@ -8,7 +8,8 @@ import java.lang.Math.sqrt
 abstract class TraceShape : Shape() {
     protected var speedX: Float = 0.toFloat()
     protected var speedY: Float = 0.toFloat()
-    protected var needToBeRemoved = false
+    var needToBeRemoved = false
+        protected set
     
     override val isOverlapMethodLevel: Double
         get() = throw IllegalAccessException("Trace can't overlap anything")
@@ -21,10 +22,6 @@ abstract class TraceShape : Shape() {
     fun setSpeed(speedX: Float, speedY: Float) {
         this.speedX = speedX
         this.speedY = speedY
-    }
-    
-    fun needToBeRemoved(): Boolean {
-        return needToBeRemoved
     }
     
     abstract fun fadeTraceShape(ds: Float, now: Long, previousFrameTime: Long)

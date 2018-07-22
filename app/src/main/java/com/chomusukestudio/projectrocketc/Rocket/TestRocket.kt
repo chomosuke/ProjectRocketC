@@ -13,7 +13,6 @@ import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.state
 import java.lang.Math.*
-import kotlin.math.PI
 
 /**
  * Created by Shuang Li on 11/03/2018.
@@ -59,9 +58,9 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
     init {
         // initialize trace
         traces = ArrayList(NUMBER_OF_TRACES)
-        val numberOfEdges = CircularShape.getNumberOfEdges(0.6f) // to give 8 ish
+        val numberOfEdges = CircularShape.getNumberOfEdges(0.5f) // to give 8 ish
         for (i in 0 until NUMBER_OF_TRACES) {
-            traces.add(RegularPolygonalTraceShape(numberOfEdges, 1.01f, true))
+            traces.add(RegularPolygonalTraceShape(numberOfEdges, 1.01f/* + 0.001f * (4 * random()*//*split trace to 4 layers*//*).toInt()*/, true))
         }
         
         setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)
@@ -80,7 +79,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         if (state == State.InGame) {
             val sinCurrentRotation = sin(currentRotation.toDouble()).toFloat()
             val cosCurrentRotation = cos(currentRotation.toDouble()).toFloat()
-            val I_MAX = ds / 128f * 1000f - random().toFloat()
+            val I_MAX = ds / 64f * 1000f - random().toFloat()
             if (I_MAX <= 0) { // if we are not adding any trace this frame
                 // let the next frame know
                 unfilledDs = ds // there is unfinished work
@@ -132,13 +131,23 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         }
         throw IndexOutOfBoundsException("not enough traces")
     }
-    
+
+    /* only change one third of the trace each frame to maintain frame rate */
+    private var lastChanged = 0
+    private val refreshFactor = 3
     override fun fadeMoveAndRemoveTraces(now: Long, previousFrameTime: Long, ds: Float) {
+        lastChanged++
+        if (lastChanged == refreshFactor)
+            lastChanged = 0
+
         parallelForIForTraces.run({ i ->
             val trace = traces[i] as RegularPolygonalTraceShape
             
             if (trace.showing) {
-                trace.moveTraceShape(now, previousFrameTime)
+                // give it refreshFactor amount of time since it only move one out of refreshFactor of frames
+                if (i % refreshFactor == lastChanged)
+                    // moveTraceShape with RegularPolygonalTraceShape will remove itself
+                    trace.moveTraceShape(now, now - ((now - previousFrameTime) * refreshFactor))
                 // move traces with surrounding
                 trace.moveShape(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat())
             }
@@ -152,7 +161,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
     override fun removeTrace() {
         for (trace in traces)
             if ((trace as RegularPolygonalTraceShape).showing)
-                if (trace.needToBeRemoved())
+                if (trace.needToBeRemoved)
                     trace.makeInvisible()
     }
 
@@ -163,53 +172,30 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
             Coordinate(with(components[3] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[3] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }))
 
     protected open var explosionShape: ExplosionShape? = null
-    protected open class ExplosionShape(centerX: Float, centerY: Float, approximateWholeSize: Float, approximateIndividualSize: Float, private val duration: Long) : Shape() {
-        override val isOverlapMethodLevel: Double
-            get() = throw IllegalAccessException("explosionShape can't overlap anything")
-
-        final override var componentShapes = Array<Shape>(24) { i ->
-            if (i < 8) {
-                val distantToCenter = random().toFloat()*approximateWholeSize*0.6f
-                val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (i*PI/4).toFloat())
-                CircularShape(centers[0], centers[1], 0f, 99.6f, 87.5f, 31.4f, 1f, -10f, true)
-            }
-            else {
-                val distantToCenter = random().toFloat()*approximateWholeSize*1.1f
-                val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (i*PI/8).toFloat())
-                CircularShape(centers[0], centers[1], 0f, 1f, 1f, 1f, 1f, -10f, true)
-            }
-        }
-
-        val individualRadius = FloatArray(componentShapes.size) { approximateIndividualSize * (0.5 + 1 * random()).toFloat() }
-
-        private val alphaEveryMiniSecond = pow(1.0 / 256, 1.0 / duration).toFloat()
-
-        private var timeSinceExplosion = 0L
-        fun drawExplosion(timePassed: Long) {
-            timeSinceExplosion += timePassed
-
-            for (i in componentShapes.indices) {
-                val color = componentShapes[i].shapeColor
-                    componentShapes[i].resetAlpha(color[3] * Math.pow(alphaEveryMiniSecond.toDouble(), timePassed.toDouble()).toFloat())
-                val radius = individualRadius[i] * Math.sqrt((timeSinceExplosion / duration).toDouble()).toFloat()
-                (componentShapes[i] as RegularPolygonalShape).resetParameter((componentShapes[0] as RegularPolygonalShape).centerX,
-                        (componentShapes[0] as RegularPolygonalShape).centerY, radius)
-            }
-        }
-    }
     override fun drawExplosion(now: Long, previousFrameTime: Long) {
         if (explosionShape == null) {
-            val explosionCoordinate = this.explosionCoordinates[components.indexOf(crashedComponent)]
-            explosionShape = ExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 1f, 0.3f, 1000)
+            val explosionCoordinate = Coordinate(centerOfRotationX, centerOfRotationY)
+//                    this.explosionCoordinates[components.indexOf(crashedComponent)]
+//            explosionCoordinate.rotateCoordinate(centerOfRotationX, centerOfRotationY, currentRotation)
+            explosionShape = RedExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 0.75f, 1000)
         } else {
+            // rocket already blown up
+            for (component in components)
+                if (!component.removed)
+                    component.removeShape()
+
             explosionShape!!.drawExplosion(now - previousFrameTime)
         }
     }
 
     override fun removeAllShape() {
-        super.removeAllShape()
+        for (component in components)
+            if (!component.removed)
+                component.removeShape()
+        for (trace in traces)
+            trace.removeShape()
         explosionShape?.removeShape()
     }
 }
 
-private const val NUMBER_OF_TRACES = 300
+private const val NUMBER_OF_TRACES = 350

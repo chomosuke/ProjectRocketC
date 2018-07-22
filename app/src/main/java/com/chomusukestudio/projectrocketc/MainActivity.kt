@@ -28,9 +28,11 @@ import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 import android.util.DisplayMetrics
 import android.view.*
+import android.view.animation.Animation
 import android.widget.Button
 import android.widget.ImageView
 import com.chomusukestudio.projectrocketc.littleStar.putCommasInInt
+import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -46,6 +48,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     private lateinit var sharedPreferences: SharedPreferences
 
+    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,6 +57,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // set height and width of the screen
         val displayMetrics = DisplayMetrics()
@@ -68,29 +75,31 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
-            BasicSurrounding.fillUpPlanetShapes()
+            runWithExceptionChecked {
+                BasicSurrounding.fillUpPlanetShapes()
 
-            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).initializeRenderer()
+                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).initializeRenderer()
 
-            // hide splash screen and show game
-            this.runOnUiThread {
-                // cross fade them
-                findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
-                findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-                findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
-                findViewById<ConstraintLayout>(R.id.scores).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
-                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                // hide splash screen and show game
+                this.runOnUiThread {
+                    // cross fade them
+                    findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
+                    findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                    findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+                    findViewById<ConstraintLayout>(R.id.scoresLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
+                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
-                findViewById<ImageView>(R.id.chomusukeView).bringToFront()
-                findViewById<ImageView>(R.id.chomusukeView).animate()
-                        .alpha(0f)
-                        .setDuration(250)
-                        .setListener(object : AnimatorListenerAdapter() {
-                            override fun onAnimationEnd(animation: Animator?) {
-                                findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
-                            }
-                        })
+                    findViewById<ImageView>(R.id.chomusukeView).bringToFront()
+                    findViewById<ImageView>(R.id.chomusukeView).animate()
+                            .alpha(0f)
+                            .setDuration(250)
+                            .setListener(object : AnimatorListenerAdapter() {
+                                override fun onAnimationEnd(animation: Animator?) {
+                                    findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
+                                }
+                            })
+                }
             }
         }
     }
@@ -105,7 +114,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
-        this.runOnUiThread { findViewById<TextView>(R.id.pointTextView).text = putCommasInInt(LittleStar.score.toString()) }
+        this.runOnUiThread { findViewById<TextView>(R.id.scoreTextView).text = putCommasInInt(LittleStar.score.toString()) }
     }
 
     fun startGame(view: View) {
@@ -117,13 +126,20 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // start refresh score regularly
         updateScoreThread.run()
 
-        // Now Set your animation
-        findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_animation))
+        // fade away pregame layout with animation
+        val animation = AnimationUtils.loadAnimation(this, R.anim.fade_out_animation)
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationEnd(animation: Animation?) {
+                findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.INVISIBLE
+            }
+        })
+        findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(animation)
 
         findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.inGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
-        findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.INVISIBLE
     }
 
     fun onPause(view: View) {
@@ -161,12 +177,20 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 putInt(getString(R.string.highestScore), LittleStar.score)
                 apply()
             }
+            val bundle = Bundle()
+            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
+            bundle.putString("leaderboard_id", "mLeaderboard")
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
+
         }
         runOnUiThread {
-            findViewById<ConstraintLayout>(R.id.onCrash).visibility = View.VISIBLE
-            findViewById<ConstraintLayout>(R.id.onCrash).bringToFront()
+            findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.VISIBLE
+            findViewById<ConstraintLayout>(R.id.onCrashLayout).bringToFront()
 
-            findViewById<ConstraintLayout>(R.id.scores).visibility = View.INVISIBLE
+            findViewById<TextView>(R.id.highestScoreOnCrash).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+            findViewById<TextView>(R.id.previousScoreOnCrash).text = findViewById<TextView>(R.id.scoreTextView).text
+
+            findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.INVISIBLE
 
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
         }
@@ -174,17 +198,16 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     fun onRestart(view: View) {
         runOnUiThread {
-            if (LittleStar.score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
-                // update highest score
-                findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(LittleStar.score.toString())
-            }
-            findViewById<ConstraintLayout>(R.id.scores).visibility = View.VISIBLE
-            findViewById<ConstraintLayout>(R.id.scores).bringToFront()
+            // update highest score
+            findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+
+            findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+            findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
 
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
 
-            findViewById<ConstraintLayout>(R.id.onCrash).visibility = View.INVISIBLE
+            findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.INVISIBLE
         }
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
 
@@ -219,13 +242,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     if (!hasFocus) {
                         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
                         findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+                        state = State.Paused
                     }
                 }
                 else -> {
-                    if (hasFocus)
-                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
-                    else
+                    if (!hasFocus)
                         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+                    else
+                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
                 }
             }
         } catch (e: UninitializedPropertyAccessException) {
@@ -410,4 +434,15 @@ class TouchableView<out V : View>(val view: V, val activity: Activity) {
 @Volatile var pausedTime: Long = 0L
 fun upTimeMillis(): Long {
     return SystemClock.uptimeMillis() - pausedTime
+}
+
+fun <R>runWithExceptionChecked(runnable: () -> R): R {
+    try {
+        return runnable()
+    } catch (e: Exception) {
+        val logger = Logger.getAnonymousLogger()
+        logger.log(Level.SEVERE, "an exception was thrown in nextFrameThread", e)
+        Log.e("exception", "in processingThread" + e)
+        throw e
+    }
 }
