@@ -144,16 +144,21 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     fun onPause(view: View) {
         try {
-            if (state == State.Paused) {
-                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
-                findViewById<Button>(R.id.pauseButton).text = "PauseMe"
-                state = State.InGame
-            } else if (state == State.InGame) {
-                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
-                findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
-                state = State.Paused
-            } else {
-                throw IllegalStateException("Trying to pause while not InGame.")
+            when (state) {
+                State.Paused -> {
+                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
+                    findViewById<Button>(R.id.pauseButton).text = "PauseMe"
+                    state = State.InGame
+                }
+                State.InGame -> {
+                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+                    findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+                    state = State.Paused
+                }
+                State.Crashed -> {
+                    // Crashed, do nothing
+                }
+                else -> throw IllegalStateException("Trying to pause while not InGame.")
             }
         } catch (e: UninitializedPropertyAccessException) {
             // TODO: we should do something here
