@@ -114,7 +114,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         startingPathOfRocket.moveShape(avoidDistanceX, 0f) // i'll move it back later
         newPlanet = getRandomPlanetShape()
         // initialize surrounding
-        for (i in 0..128) {
+        for (i in 0..256) {
             // randomly reposition the new planet
             val centerX = (random() * (leftEnd * 1.5f - rightEnd * 1.5f) + rightEnd * 1.5f).toFloat() + avoidDistanceX // + avoidDistanceX as to avoid constant change of visibility
             val centerY = (random() * (topEnd * (1.5f/*/* + topMarginForLittleStar*/*/) - bottomEnd * 1.5f) + bottomEnd * 1.5f).toFloat()
@@ -151,7 +151,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 return false
         }
         // it is not too close to any other planet
-//        if (state != State.InGame)
+        if (state != State.InGame)
             if (planetShape.isOverlap(startingPathOfRocket))
                 return false// if it blocks the rocket before start
         return true

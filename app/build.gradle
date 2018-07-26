@@ -7,8 +7,8 @@ android {
         applicationId "com.chomusukestudio.projectrocketc"
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 36
-        versionName "BT25"
+        versionCode 38
+        versionName "BT26"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

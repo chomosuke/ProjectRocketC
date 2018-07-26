@@ -170,7 +170,7 @@
             app:layout_constraintVertical_bias="0.5" />
     
         <Button
-            android:id="@+id/button"
+            android:id="@+id/restartButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -184,6 +184,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.75"
             android:onClick="onRestart"/>
+    
+        <Button
+            android:id="@+id/toHomeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:text="Home"
+            android:onClick="toHome"/>
 
     </android.support.constraint.ConstraintLayout>
 

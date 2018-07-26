@@ -127,15 +127,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         updateScoreThread.run()
 
         // fade away pregame layout with animation
-        val animation = AnimationUtils.loadAnimation(this, R.anim.fade_out_animation)
-        animation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationRepeat(animation: Animation?) {}
-            override fun onAnimationStart(animation: Animation?) {}
-            override fun onAnimationEnd(animation: Animation?) {
-                findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.INVISIBLE
-            }
-        })
-        findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(animation)
+        fadeOut(findViewById(R.id.preGameLayout))
 
         findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.inGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
@@ -212,7 +204,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
 
-            findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.INVISIBLE
+            fadeOut(findViewById(R.id.onCrashLayout))
         }
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
 
@@ -221,6 +213,29 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         LittleStar.cleanScore()
 
         state = State.InGame
+    }
+
+    private fun fadeOut(view: View) {
+        val animation = AnimationUtils.loadAnimation(this, R.anim.fade_out_animation)
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationEnd(animation: Animation?) {
+                view.visibility = View.INVISIBLE
+            }
+        })
+        view.startAnimation(animation)
+    }
+
+    private fun fadeIn(view: View) {
+        val animation = AnimationUtils.loadAnimation(this, R.anim.fade_in_animation)
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationStart(animation: Animation?) { view.visibility = View.VISIBLE }
+            override fun onAnimationEnd(animation: Animation?) {}
+        })
+        view.startAnimation(animation)
+        view.bringToFront()
     }
 
     public override fun onStop() {
@@ -262,6 +277,21 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
+    fun toHome(view: View) {
+        // update highest score
+        findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+
+        findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
+
+        fadeOut(findViewById(R.id.onCrashLayout))
+        fadeIn(findViewById(R.id.preGameLayout))
+
+        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
+
+        state = State.PreGame
+    }
+
     override fun onBackPressed() {
         when (state) {
             State.PreGame ->
@@ -269,7 +299,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             State.InGame, State.Paused ->
                 onPause(findViewById<Button>(R.id.pauseButton))
             State.Crashed ->
-                TODO("to home")
+                toHome(findViewById<Button>(R.id.toHomeButton))
         }
     }
     
