@@ -34,6 +34,7 @@ import android.widget.ImageView
 import com.chomusukestudio.projectrocketc.littleStar.putCommasInInt
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
+import java.util.concurrent.locks.ReentrantLock
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -138,18 +139,51 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         try {
             when (state) {
                 State.Paused -> {
+//                    findViewById<Button>(R.id.pauseButton).visibility = View.INVISIBLE
+//
+//                    val textView = findViewById<TextView>(R.id.visualText)
+//                    textView.visibility = View.VISIBLE
+//
+//                    val lock = ReentrantLock()
+//                    val condition = lock.newCondition() // something to wait to wake
+//                    var finished: Boolean
+//                    val visualEffectAnimation = AnimationUtils.loadAnimation(this, R.anim.visual_text_effect)
+//                    visualEffectAnimation.setAnimationListener(object : Animation.AnimationListener {
+//                        override fun onAnimationRepeat(animation: Animation?) {}
+//                        override fun onAnimationStart(animation: Animation?) {}
+//                        override fun onAnimationEnd(animation: Animation?) {
+//                            lock.lock()
+//                            finished = true
+//                            condition.signal() // wake as animation has ended
+//                            lock.unlock()
+//                        }
+//                    })
+//                    lock.lock()
+//                    try {
+//                        for (i in 3 downTo 1) {
+//                            textView.text = i.toString()
+//                            finished = false
+//                            // Now Set your animation
+//                            textView.startAnimation(visualEffectAnimation)
+//                            while (!finished)
+//                                condition.await() // wait for animation to end
+//                        }
+//                    } finally {
+//                        lock.unlock()
+//                    }
+//                    textView.visibility = View.INVISIBLE
+
                     findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
                     findViewById<Button>(R.id.pauseButton).text = "PauseMe"
                     state = State.InGame
+                    findViewById<Button>(R.id.pauseButton).visibility = View.VISIBLE
                 }
                 State.InGame -> {
                     findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
                     findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
                     state = State.Paused
                 }
-                State.Crashed -> {
-                    // Crashed, do nothing
-                }
+                State.Crashed -> { /* Crashed, do nothing */ }
                 else -> throw IllegalStateException("Trying to pause while not InGame.")
             }
         } catch (e: UninitializedPropertyAccessException) {
