@@ -45,6 +45,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     init {
         // when a new activity start, static field will be cleaned
         GLTriangle.layers.removeAll { true }
+//
+//        ScheduledThread(100) {
+//            System.gc()
+//        }
     }
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -56,23 +60,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         setContentView(R.layout.activity_main)
 
-        // initialize sharedPreference
-        sharedPreferences = getPreferences(Context.MODE_PRIVATE)
-
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        // display splashScreen
+        findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
 
         // set height and width of the screen
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         heightInPixel = displayMetrics.heightPixels.toFloat()
         widthInPixel = displayMetrics.widthPixels.toFloat()
-
-        // display splashScreen
-        findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
-
-        // update highest score
-        findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
@@ -83,6 +78,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
                 // hide splash screen and show game
                 this.runOnUiThread {
+                    // initialize sharedPreference
+                    sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+                    // update highest score
+                    findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+
+                    // Obtain the FirebaseAnalytics instance.
+                    mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
                     // cross fade them
                     findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
                     findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
