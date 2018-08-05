@@ -566,7 +566,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     companion object {
         
         private val NUMBER_OF_STARS = 6000
-        private var starsBackground: ArrayList<Shape>? = null
+        var starsBackground: ArrayList<Shape>? = null // so it can be reinitialized in MainActivity
         
         private val NUMBER_OF_PLANET = 1000
         private var planetShapes: Array<PlanetShape>? = null

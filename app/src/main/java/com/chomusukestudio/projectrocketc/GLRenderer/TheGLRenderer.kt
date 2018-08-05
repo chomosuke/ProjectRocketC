@@ -21,7 +21,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
     // so you calculate the how many milliseconds have passed since last frame
     private var previousFrameTime: Long = 0
-    private var countingFrames: Long = 0
+    private var countingFrames = 0
     private var previousTime: Long = 0
     private var now: Long = 0
     
@@ -42,7 +42,8 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         Log.i(TAG, "onSurfaceCreated() called")
         
     }
-    
+
+    val allFrameRate = ArrayList<Int>()
     override fun onDrawFrame(unused: GL10) {
         if (!paused) { // if this is called when paused for some reason don't do anything as nothing suppose to change
             countingFrames++
@@ -50,8 +51,13 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             now = upTimeMillis()// so you access upTimeMillis() less
 //                            previousFrameTime = now - 16; // for break point
 
+            if (previousTime == 0L) {
+                // initialize it
+                previousTime = now
+            }
             if (now - previousTime >= 1000) {// just to get frame rates
-                Log.i("Frame rate", "" + countingFrames + " and dynamic performance index " + CircularShape.dynamicPerformanceIndex)
+                Log.i("Frame rate", "" + countingFrames + " and dynamic performance index " + CircularShape.performanceIndex)
+                allFrameRate.add(countingFrames)
                 countingFrames = 0
                 previousTime = now
             }

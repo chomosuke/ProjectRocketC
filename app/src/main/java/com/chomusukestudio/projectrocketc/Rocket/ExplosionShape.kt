@@ -33,7 +33,7 @@ class RedWhiteExplosionShape(centerX: Float, centerY: Float, approximateRadius: 
 }
 
 class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float, duration: Long) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
-    private val componentShapesSize = 8
+    private val componentShapesSize = 5
 
     private val timeSinceMade = LongArray(componentShapesSize)
     override lateinit var componentShapes: Array<Shape>

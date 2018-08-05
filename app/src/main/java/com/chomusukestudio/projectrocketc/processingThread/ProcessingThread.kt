@@ -61,19 +61,23 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                     rocket.waitForFadeMoveAndRemoveTraces()
                 }
 
-                if (upTimeMillis() - now > 1000 / refreshRate) {
-                    if (CircularShape.dynamicPerformanceIndex > 0.3) {
-                        CircularShape.dynamicPerformanceIndex /= 1.001
-                    }
-                }
+////                if (upTimeMillis() - now > 1000 / refreshRate) {
+//                if (upTimeMillis() - now > 16) { // target 60 fps
+//                    if (CircularShape.performanceIndex > 0.3) {
+//                        CircularShape.performanceIndex /= 1.001
+//                    }
+//                }
+//
+////                if (upTimeMillis() - now < 1000 / refreshRate) {
+//                if (upTimeMillis() - now < 16) { // increase imageQuality by increasing number of edges
+//                    if (CircularShape.performanceIndex < 1) {
+//                        CircularShape.performanceIndex *= 1.001
+//                    }
+//                }
+                // let's do this at the end
 
-                if (upTimeMillis() - now < 1000 / refreshRate) { // increase imageQuality by increasing number of edges
-                    if (CircularShape.dynamicPerformanceIndex < 1) {
-                        CircularShape.dynamicPerformanceIndex *= 1.001
-                    }
-                }
-
-                if (upTimeMillis() - now > 1000 / refreshRate) {
+//                    if (upTimeMillis() - now > 1000 / refreshRate) {
+                if (upTimeMillis() - now > 16) {
                     Log.i("processing thread", "" + (upTimeMillis() - now))
                 }
                 //            Log.v("processing thread", "" + (upTimeMillis() - now));

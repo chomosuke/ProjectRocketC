@@ -158,12 +158,12 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
                 ((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2).toDouble()
         }
         
-        var dynamicPerformanceIndex = 1.0
+        var performanceIndex = 1f
 
         fun getNumberOfEdges(radius: Float, dynamicPerformanceIndex: Double = 1.0): Int {
             val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)
             val pixelOnRadius = (radius / abs(leftRightBottomTop[0] - leftRightBottomTop[1]) * widthInPixel + 0.5).toInt() // +0.5 for rounding
-            val numberOfEdges = (PI / acos(1.0 - 0.2 / pixelOnRadius / (dynamicPerformanceIndex * CircularShape.dynamicPerformanceIndex)) / 2.0 + 0.5).toInt() * 2 /*
+            val numberOfEdges = (PI / acos(1.0 - 0.2 / pixelOnRadius / (dynamicPerformanceIndex * CircularShape.performanceIndex)) / 2.0 + 0.5).toInt() * 2 /*
          /2*2 to make it even +0.5 for rounding */
             return if (numberOfEdges > 64)
                 64

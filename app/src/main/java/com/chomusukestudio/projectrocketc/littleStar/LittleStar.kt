@@ -32,10 +32,9 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         RED(1f, 0f, 0f), YELLOW(	242f/256f, 187f/256f, 26f/256f)
     }
     
-    private val birthTime: Long
+    private val birthTime: Long = upTimeMillis()
+
     init {
-        birthTime = upTimeMillis()
-        
         // circle color for arrowToLittleStarShape is star color
         // arrow color is circle color for littleStarShape
         littleStarShape = LittleStarShape(centerX, centerY, RADIUS_OF_LITTLE_STAR, COLOR.red, COLOR.green, COLOR.blue, 1f, 1f, 1f, -10f, true)

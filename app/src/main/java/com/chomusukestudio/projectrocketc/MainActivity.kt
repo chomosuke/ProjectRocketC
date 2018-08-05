@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
 import android.opengl.GLES20
-import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.util.Log
@@ -31,6 +30,7 @@ import android.view.*
 import android.view.animation.Animation
 import android.widget.Button
 import android.widget.ImageView
+import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.littleStar.putCommasInInt
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
@@ -44,6 +44,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     init {
         // when a new activity start, static field will be cleaned
         GLTriangle.layers.removeAll { true }
+        BasicSurrounding.starsBackground = null
     }
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -66,6 +67,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         heightInPixel = displayMetrics.heightPixels.toFloat()
         widthInPixel = displayMetrics.widthPixels.toFloat()
+
+        CircularShape.performanceIndex = sharedPreferences.getFloat(getString(R.string.performanceIndex), 1f)
 
         // display splashScreen
         findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
@@ -251,8 +254,34 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     public override fun onDestroy() {
         super.onDestroy()
         Log.i("", "\n\nonDestroy() called\n\n")
+        // onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).shutDown()
-    }// onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+//        // update performanceIndex
+//        val allFrameRate = findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.allFrameRate
+//        allFrameRate.sort()
+//        val ninetyPercentFrameRate = allFrameRate[allFrameRate.size / 10]
+//        if (ninetyPercentFrameRate < 60) {
+//            // target %90 frame rate at 60
+//            if (CircularShape.performanceIndex > 0.3)
+//            // make it smaller
+//                CircularShape.performanceIndex /= 1.1f
+//        } else {
+//            if (CircularShape.performanceIndex < 1f)
+//            // make it bigger
+//                CircularShape.performanceIndex *= 1.1f
+//        }
+//        // update sharedPreference
+//        with(sharedPreferences.edit()) {
+//            putFloat(getString(R.string.performanceIndex), CircularShape.performanceIndex)
+//            apply()
+//        }
+        // I will put this in the setting
+    }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -411,73 +440,5 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             else
                 processingThread.onTouchEvent(e)
         }
-    }
-}
-
-@Volatile var widthInPixel: Float = 0f
-@Volatile var heightInPixel: Float = 0f
-
-fun transformToMatrixX(x: Float): Float {
-    var resultX = x
-    // transformation
-    resultX -= widthInPixel / 2
-    resultX /= widthInPixel / 2
-    val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel/ heightInPixel)
-    resultX *= leftRightBottomTop[0]
-    // assuming left == - right is true
-    // need improvement to obey OOP principles by getting rid of the assumption above
-    if (!(leftRightBottomTop[0] == -leftRightBottomTop[1]))
-        throw RuntimeException("need improvement to obey OOP principles by not assuming left == - right is true.\n" +
-                "or you can ignore the above and just twist the code to get it work and not give a fuck about OOP principles.\n" +
-                "which is what i did when i wrote those code.  :)")
-    return resultX
-}
-
-fun transformToMatrixY(y: Float): Float {
-    var resultY = y
-    // transformation
-    resultY -= heightInPixel / 2
-    resultY /= heightInPixel / 2
-    val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel/ heightInPixel)
-    resultY *= leftRightBottomTop[2]
-    // assuming top == - bottom is true
-    // need improvement to obey OOP principles by getting rid of the assumption above
-    if (!(leftRightBottomTop[3] == -leftRightBottomTop[2]))
-        throw RuntimeException("need improvement to obey OOP principles by not assuming top == - bottom is true.\n" +
-                "or you can ignore the above and just twist the code to get it work and not give a fuck about OOP principles.\n" +
-                "which is what i did when i wrote those code.  :)")
-    return resultY
-}
-
-fun giveVisualText(string: String, visualTextView: TouchableView<TextView>) {
-    visualTextView.touchView { textView ->
-        textView.visibility = View.VISIBLE
-        textView.text = string
-        val visualEffectAnimation = AnimationUtils.loadAnimation(visualTextView.activity, R.anim.visual_text_effect)
-        // Now Set your animation
-        textView.startAnimation(visualEffectAnimation)
-        textView.visibility = View.INVISIBLE
-    }
-}
-
-class TouchableView<out V : View>(val view: V, val activity: Activity) {
-    fun touchView(touch: (V) -> Unit) {
-        activity.runOnUiThread { touch(view) }
-    }
-}
-
-@Volatile var pausedTime: Long = 0L
-fun upTimeMillis(): Long {
-    return SystemClock.uptimeMillis() - pausedTime
-}
-
-fun <R>runWithExceptionChecked(runnable: () -> R): R {
-    try {
-        return runnable()
-    } catch (e: Exception) {
-        val logger = Logger.getAnonymousLogger()
-        logger.log(Level.SEVERE, "an exception was thrown in nextFrameThread", e)
-        Log.e("exception", "in processingThread" + e)
-        throw e
     }
 }
