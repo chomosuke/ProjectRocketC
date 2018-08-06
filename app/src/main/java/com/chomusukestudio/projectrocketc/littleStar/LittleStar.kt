@@ -1,5 +1,8 @@
 package com.chomusukestudio.projectrocketc.littleStar
 
+import android.app.Activity
+import android.content.Context
+import android.media.MediaPlayer
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.FullRingShape
@@ -17,6 +20,14 @@ import com.chomusukestudio.projectrocketc.upTimeMillis
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
+import android.media.SoundPool
+import android.media.AudioManager
+import android.content.Context.AUDIO_SERVICE
+import android.os.Environment
+import android.os.Environment.getExternalStorageDirectory
+import com.chomusukestudio.projectrocketc.R
+import java.lang.Math.pow
+
 
 /**
  * Created by Shuang Li on 25/03/2018.
@@ -97,6 +108,19 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
             LittleStar.Color.YELLOW -> {
                 score += dScore
                 giveVisualText("+$dScore", visualTextView)
+//                littleStarSound.seekTo(0)
+//                littleStarSound.start()
+                if (soundPool != null)
+                    soundPool!!.release()
+
+                val playbackSpeed = pow(2.0, dScore.toDouble()/12).toFloat() / 2
+                soundPool = SoundPool(4, AudioManager.STREAM_MUSIC, 100)
+
+                val soundId = soundPool!!.load(visualTextView.activity, R.raw.eat_little_star, 1)
+                val mgr = visualTextView.activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                val volume = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
+
+                soundPool!!.setOnLoadCompleteListener { _, _, _ -> soundPool!!.play(soundId, volume, volume, 1, 0, playbackSpeed) }
             }
             LittleStar.Color.RED -> {
                 dScore *= 2
@@ -268,6 +292,8 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         }
     }
 }
+
+var soundPool: SoundPool? = null
 
 fun putCommasInInt(string: String): String {
     var string = string

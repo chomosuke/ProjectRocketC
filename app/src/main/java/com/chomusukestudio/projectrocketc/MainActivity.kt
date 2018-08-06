@@ -7,6 +7,7 @@ import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
+import android.media.MediaPlayer
 import android.opengl.GLES20
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
@@ -294,6 +295,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                         state = State.Paused
                     }
                 }
+                State.Paused -> { /*nothing, there is nothing can be done.*/ }
                 else -> {
                     if (!hasFocus)
                         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
@@ -369,6 +371,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
 
         fun initializeRenderer() {
+
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())

@@ -79,7 +79,7 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
         if (state == State.InGame) {
             val sinCurrentRotation = sin(currentRotation.toDouble()).toFloat()
             val cosCurrentRotation = cos(currentRotation.toDouble()).toFloat()
-            val I_MAX = ds / 64f * 1000f - 0.25f - (random().toFloat() * 0.5f)
+            val I_MAX = ds / 128f * 1000f - 0.25f - (random().toFloat() * 0.5f)
             if (I_MAX <= 0) { // if we are not adding any trace this frame
                 // let the next frame know
                 unfilledDs = ds // there is unfinished work
