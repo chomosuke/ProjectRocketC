@@ -40,7 +40,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     private var inScreen: Boolean
     
     enum class Color(val red: Float, val green: Float, val blue: Float) {
-        RED(1f, 0f, 0f), YELLOW(	242f/256f, 187f/256f, 26f/256f)
+        RED(1f, 0f, 0f), YELLOW(242f/256f, 187f/256f, 26f/256f)
     }
     
     private val birthTime: Long = upTimeMillis()

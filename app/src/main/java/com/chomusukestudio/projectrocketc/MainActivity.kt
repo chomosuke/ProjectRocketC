@@ -378,7 +378,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             val surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
                     TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
-            val rocket = TestRocket(surrounding)
+            val rocket = TestRocket(surrounding, MediaPlayer.create(context, R.raw.fx22))
 
             processingThread = ProcessingThread(
                     TwoFingersJoystick(),
@@ -430,7 +430,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
             processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
                     TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
-            processingThread.rocket = TestRocket(processingThread.surrounding)
+            processingThread.rocket = TestRocket(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22))
             processingThread.surrounding.initializeSurrounding(processingThread.rocket)
             processingThread.joystick = TwoFingersJoystick()
 //            processingThread.joystick = OneFingerJoystick()

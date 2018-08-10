@@ -1,5 +1,7 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
+import android.media.MediaPlayer
+import android.provider.MediaStore
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.Shape.TraceShape.RegularPolygonalTraceShape
@@ -18,7 +20,7 @@ import java.lang.Math.*
  * Created by Shuang Li on 11/03/2018.
  */
 
-open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
+open class TestRocket(surrounding: Surrounding, private val crashSound: MediaPlayer) : Rocket(surrounding) {
     override var radiusOfRotation = 2f
     final override val initialSpeed = 4f / 1000f
     override var speed = initialSpeed
@@ -186,6 +188,13 @@ open class TestRocket(surrounding: Surrounding) : Rocket(surrounding) {
 
             explosionShape!!.drawExplosion(now - previousFrameTime)
         }
+    }
+
+    override fun isCrashed(surrounding: Surrounding): Boolean {
+        return if (super.isCrashed(surrounding)) {
+            crashSound.start()
+            true
+        } else false
     }
 
     override fun removeAllShape() {
