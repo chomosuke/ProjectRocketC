@@ -110,17 +110,12 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
                 giveVisualText("+$dScore", visualTextView)
 //                littleStarSound.seekTo(0)
 //                littleStarSound.start()
-                if (soundPool != null)
-                    soundPool!!.release()
-
                 val playbackSpeed = pow(2.0, dScore.toDouble()/12).toFloat() / 2
-                soundPool = SoundPool(4, AudioManager.STREAM_MUSIC, 100)
 
-                val soundId = soundPool!!.load(visualTextView.activity, R.raw.eat_little_star, 1)
                 val mgr = visualTextView.activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
                 val volume = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
 
-                soundPool!!.setOnLoadCompleteListener { _, _, _ -> soundPool!!.play(soundId, volume, volume, 1, 0, playbackSpeed) }
+                soundPool.play(soundId, volume, volume, 1, 0, playbackSpeed)
             }
             LittleStar.Color.RED -> {
                 dScore *= 2
@@ -290,10 +285,12 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
             LittleStar.centerOfRocketX = centerOfRocketX
             LittleStar.centerOfRocketY = centerOfRocketY
         }
+
+        val soundId = soundPool.load("/raw/eat_little_star.m4a", 1)
     }
 }
 
-var soundPool: SoundPool? = null
+var soundPool: SoundPool = SoundPool(4, AudioManager.STREAM_MUSIC, 100)
 
 fun putCommasInInt(string: String): String {
     var string = string
