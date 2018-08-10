@@ -39,7 +39,7 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     // constructor of subclasses need to reset components with its center of rotation at centerOfRotationY and centerOfRotationX and defined it's speed
 
     protected var crashedComponent: Shape? = null
-    fun isCrashed(surrounding: Surrounding): Boolean {
+    open fun isCrashed(surrounding: Surrounding): Boolean {
         // surrounding will handle this
         crashedComponent = surrounding.isCrashed(components)
         if (crashedComponent != null) {
