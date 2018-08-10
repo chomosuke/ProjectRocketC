@@ -115,7 +115,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
                 val mgr = visualTextView.activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
                 val volume = mgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
 
-                soundPool.play(soundId, volume, volume, 1, 0, playbackSpeed)
+                soundPool.pl ay(soundId, volume, volume, 1, 0, playbackSpeed)
             }
             LittleStar.Color.RED -> {
                 dScore *= 2
