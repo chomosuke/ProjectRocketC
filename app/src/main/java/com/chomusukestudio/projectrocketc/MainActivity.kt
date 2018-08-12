@@ -60,6 +60,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
 
+        // load sound for eat little star soundPool
+        LittleStar.soundId = LittleStar.soundPool.load(this, R.raw.eat_little_star, 1)
+//        LittleStar.soundId = LittleStar.soundPool.load("res/raw/eat_little_star.m4a", 1) // this is not working
+
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
