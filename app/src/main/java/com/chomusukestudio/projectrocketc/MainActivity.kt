@@ -9,6 +9,7 @@ import android.app.Activity
 import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.opengl.GLES20
+import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.util.Log
@@ -139,7 +140,13 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         this.runOnUiThread { findViewById<TextView>(R.id.scoreTextView).text = putCommasInInt(LittleStar.score.toString()) }
     }
 
+    private var lastClickOnStart = 0L
     fun startGame(view: View) {
+        if (SystemClock.uptimeMillis() - lastClickOnStart < 1000) // no double clicking
+            return
+        else
+            lastClickOnStart = SystemClock.uptimeMillis()
+
         if (state != State.PreGame)
             throw IllegalStateException("Starting Game while not in PreGame")
         state = State.InGame // start game
@@ -153,7 +160,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.inGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-
     }
 
     fun onPause(view: View) {
@@ -215,7 +221,13 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
+    private var lastClickOnRestart = 0L
     fun onRestart(view: View) {
+        if (SystemClock.uptimeMillis() - lastClickOnRestart < 1000) // no double clicking
+            return
+        else
+            lastClickOnRestart = SystemClock.uptimeMillis()
+
         runOnUiThread {
             // update highest score
             findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
@@ -343,8 +355,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     override fun onBackPressed() {
         when (state) {
-            State.PreGame ->
+            State.PreGame -> {
                 super.onBackPressed()
+            }
             State.InGame, State.Paused ->
                 onPause(findViewById<Button>(R.id.pauseButton))
             State.Crashed ->
@@ -358,7 +371,15 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         lateinit var mRenderer: TheGLRenderer
         
         fun shutDown() {
-            processingThread.shutDown()
+            try {
+                processingThread.shutDown()
+            } catch (e: UninitializedPropertyAccessException) {
+                // processingThread have not yet being initialized
+                // just do some basic clean up
+                // actually not any clean up would be meaningful so yeah
+                // but i should log it
+                Log.w("shutDown()", e)
+            }
         } // for onStop() and onDestroy() to remove Layer
         
         internal inner class MyConfigChooser : GLSurfaceView.EGLConfigChooser {// this class is for antialiasing

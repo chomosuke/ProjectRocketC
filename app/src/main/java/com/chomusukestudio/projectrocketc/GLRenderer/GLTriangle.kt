@@ -165,8 +165,10 @@ class GLTriangle (z: Float) : Triangle() {
     }
     private var removed = false
     protected fun finalize() {
-        if (!removed)
+        if (!removed) {
+            removeTriangle()
             throw RuntimeException("triangle isn't removed")
+        }
     }
 
     companion object {
