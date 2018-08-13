@@ -22,10 +22,6 @@ import kotlin.math.cos
 import kotlin.math.sin
 import android.media.SoundPool
 import android.media.AudioManager
-import android.content.Context.AUDIO_SERVICE
-import android.os.Environment
-import android.os.Environment.getExternalStorageDirectory
-import com.chomusukestudio.projectrocketc.R
 import java.lang.Math.pow
 
 
@@ -112,7 +108,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
                 if (streamId != 0)
                     soundPool.stop(streamId)
 
-                val playbackSpeed = pow(2.0, dScore.toDouble()/12).toFloat() / 2
+                val playbackSpeed = pow(2.0, dScore.toDouble()/12).toFloat() / 3
 
                 streamId = soundPool.play(soundId, 1f, 1f, 1, 0, playbackSpeed)
             }

@@ -3,4 +3,5 @@
     <string name="highestScore">highestScore</string>
     <string name="performanceIndex">dynamicPerformanceIndex</string><!--highest score log speed-->
     <!--<string name="highestScore">highestScoreLinearSpeed</string>-->
+    <string name="firstTimeOpen">firstTimeOpen</string>
 </resources>
