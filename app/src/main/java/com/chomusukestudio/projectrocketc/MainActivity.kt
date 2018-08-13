@@ -88,20 +88,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).initializeRenderer()
 
-                // see if this is the first time the game open
-                if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
-                    // if it is show the tutorial
-
-
-                    // and set the firstTimeOpen to be false
-                    with(sharedPreferences.edit()) {
-                        putBoolean(getString(R.string.firstTimeOpen), false)
-                        apply()
-                    }
-                }
-
                 // hide splash screen and show game
                 this.runOnUiThread {
+
                     // cross fade them
                     findViewById<ConstraintLayout>(R.id.preGameLayout).visibility = View.VISIBLE
                     findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
@@ -119,6 +108,19 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                                     findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
                                 }
                             })
+
+                    // see if this is the first time the game open
+                    if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
+                        // if it is show the tutorial
+                        findViewById<ConstraintLayout>(R.id.tutorialLayout).visibility = View.VISIBLE
+                        findViewById<ConstraintLayout>(R.id.tutorialLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+
+                        // and set the firstTimeOpen to be false
+                        with(sharedPreferences.edit()) {
+                            putBoolean(getString(R.string.firstTimeOpen), false)
+                            apply()
+                        }
+                    }
                 }
             }
         }

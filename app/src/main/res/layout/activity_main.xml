@@ -128,17 +128,18 @@
         app:layout_constraintTop_toTopOf="parent">
 
     </android.support.constraint.ConstraintLayout>
-
+    
     <android.support.constraint.ConstraintLayout
         android:id="@+id/onCrashLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:theme="@style/AppTheme"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    
+        
         <TextView
             android:id="@+id/previousScoreOnCrash"
             android:layout_width="wrap_content"
@@ -153,7 +154,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.3" />
-    
+        
         <TextView
             android:id="@+id/highestScoreOnCrash"
             android:layout_width="wrap_content"
@@ -168,7 +169,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5" />
-    
+        
         <Button
             android:id="@+id/restartButton"
             android:layout_width="wrap_content"
@@ -177,22 +178,22 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:onClick="onRestart"
             android:text="Restart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"
-            android:onClick="onRestart"/>
-    
+            app:layout_constraintVertical_bias="0.75" />
+        
         <Button
             android:id="@+id/toHomeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:onClick="toHome"
             android:text="Home"
-            android:onClick="toHome"/>
-
+            android:visibility="invisible" />
+    
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -241,6 +242,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+    </android.support.constraint.ConstraintLayout>
+    
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/tutorialLayout"
+        android:visibility="invisible">
+    
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.75"
+            android:scaleType="centerCrop"
+            android:src="@drawable/black" />
+        
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
