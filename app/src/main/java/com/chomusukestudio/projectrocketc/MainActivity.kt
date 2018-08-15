@@ -65,7 +65,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //        LittleStar.soundId = LittleStar.soundPool.load("res/raw/eat_little_star.m4a", 1) // this is not working
 
         // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         // set height and width of the screen
         val displayMetrics = DisplayMetrics()
