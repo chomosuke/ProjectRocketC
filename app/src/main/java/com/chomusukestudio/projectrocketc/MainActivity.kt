@@ -140,12 +140,17 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         this.runOnUiThread { findViewById<TextView>(R.id.scoreTextView).text = putCommasInInt(LittleStar.score.toString()) }
     }
 
-    private var lastClickOnStart = 0L
+    private var lastClick = 0L
+    private val multiClick
+        get() = if (SystemClock.uptimeMillis() - lastClick < 500) {
+            true
+        } else {
+            lastClick = SystemClock.uptimeMillis()
+            false
+        }
+
     fun startGame(view: View) {
-        if (SystemClock.uptimeMillis() - lastClickOnStart < 1000) // no double clicking
-            return
-        else
-            lastClickOnStart = SystemClock.uptimeMillis()
+        if (multiClick) return
 
         if (state != State.PreGame)
             throw IllegalStateException("Starting Game while not in PreGame")
@@ -221,12 +226,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
-    private var lastClickOnRestart = 0L
     fun onRestart(view: View) {
-        if (SystemClock.uptimeMillis() - lastClickOnRestart < 1000) // no double clicking
-            return
-        else
-            lastClickOnRestart = SystemClock.uptimeMillis()
+        if (multiClick) return
 
         runOnUiThread {
             // update highest score
@@ -339,6 +340,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun toHome(view: View) {
+        if (multiClick) return
+
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
