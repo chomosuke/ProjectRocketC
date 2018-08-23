@@ -1,9 +1,7 @@
 package com.chomusukestudio.projectrocketc.Shape
 
-import com.chomusukestudio.projectrocketc.GLRenderer.X2
-import com.chomusukestudio.projectrocketc.GLRenderer.X3
-import com.chomusukestudio.projectrocketc.GLRenderer.Y2
-import com.chomusukestudio.projectrocketc.GLRenderer.Y3
+import com.chomusukestudio.projectrocketc.GLRenderer.*
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import java.lang.Math.PI
 import java.lang.Math.cos
 import java.lang.Math.sin
@@ -58,12 +56,15 @@ class RegularPolygonalShape(val numberOfEdges: Int, var centerX: Float, var cent
                 var x2 = centerX + factor * ((componentShapes[0] as TriangularShape).getTriangularShapeCoords(X2) - centerX)
                 var y2 = centerY + factor * ((componentShapes[0] as TriangularShape).getTriangularShapeCoords(Y2) - centerY)
 
+                val x1 = centerX + factor * ((componentShapes[0] as TriangularShape).getTriangularShapeCoords(X1) - centerX)
+                val y1 = centerY + factor * ((componentShapes[0] as TriangularShape).getTriangularShapeCoords(Y1) - centerY)
+
                 for (i in 0 until componentShapes.size) {
                     // new x3, y3 is old one change distance
                     val x3 = centerX + factor * ((componentShapes[i] as TriangularShape).getTriangularShapeCoords(X3) - centerX)
                     val y3 = centerY + factor * ((componentShapes[i] as TriangularShape).getTriangularShapeCoords(Y3) - centerY)
 
-                    (componentShapes[i] as TriangularShape).setTriangleCoords(centerX, centerY + radius,
+                    (componentShapes[i] as TriangularShape).setTriangleCoords(x1, y1,
                             x2, y2, x3, y3)
 
                     // x2, y2 is previous x3 and previous y3
@@ -99,6 +100,14 @@ class RegularPolygonalShape(val numberOfEdges: Int, var centerX: Float, var cent
         super.moveShape(dx, dy)
         this.centerX += dx
         this.centerY += dy
+    }
+
+    override fun rotateShape(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
+        super.rotateShape(centerOfRotationX, centerOfRotationY, angle)
+
+        val result = rotatePoint(centerX, centerY, centerOfRotationX, centerOfRotationY, angle)
+        centerX = result[0]
+        centerY = result[1]
     }
 }
 

@@ -18,7 +18,7 @@ import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
-import com.chomusukestudio.projectrocketc.Rocket.TestRocket
+import com.chomusukestudio.projectrocketc.Rocket.BasicRocket
 import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.ThreadClasses.ScheduledThread
 
@@ -57,6 +57,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
+        findViewById<Button>(R.id.restartButton).setOnClickListener { view -> onRestart(view) } // trying desperately to fix a crash on android 6
 
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
@@ -110,18 +112,18 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                                 }
                             })
 
-                    // see if this is the first time the game open
-                    if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
-                        // if it is show the tutorial
-                        findViewById<ConstraintLayout>(R.id.tutorialLayout).visibility = View.VISIBLE
-                        findViewById<ConstraintLayout>(R.id.tutorialLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-
-                        // and set the firstTimeOpen to be false
-                        with(sharedPreferences.edit()) {
-                            putBoolean(getString(R.string.firstTimeOpen), false)
-                            apply()
-                        }
-                    }
+//                    // see if this is the first time the game open
+//                    if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
+//                        // if it is show the tutorial
+//                        findViewById<ConstraintLayout>(R.id.tutorialLayout).visibility = View.VISIBLE
+//                        findViewById<ConstraintLayout>(R.id.tutorialLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+//
+//                        // and set the firstTimeOpen to be false
+//                        with(sharedPreferences.edit()) {
+//                            putBoolean(getString(R.string.firstTimeOpen), false)
+//                            apply()
+//                        }
+//                    }
                 }
             }
         }
@@ -420,7 +422,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             val surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
                     TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
-            val rocket = TestRocket(surrounding, MediaPlayer.create(context, R.raw.fx22))
+            val rocket = BasicRocket(surrounding, MediaPlayer.create(context, R.raw.fx22))
 
             processingThread = ProcessingThread(
                     TwoFingersJoystick(),
@@ -472,7 +474,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
             processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
                     TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
-            processingThread.rocket = TestRocket(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22))
+            processingThread.rocket = BasicRocket(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22))
             processingThread.surrounding.initializeSurrounding(processingThread.rocket)
             processingThread.joystick = TwoFingersJoystick()
 //            processingThread.joystick = OneFingerJoystick()
