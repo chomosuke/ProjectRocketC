@@ -3,12 +3,10 @@ package com.chomusukestudio.projectrocketc.Rocket
 import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
+import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
-import com.chomusukestudio.projectrocketc.Shape.TraceShape.RegularPolygonalTraceShape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
-
-import java.util.ArrayList
 
 import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
 import com.chomusukestudio.projectrocketc.State
@@ -21,13 +19,22 @@ import java.lang.Math.*
  */
 
 open class BasicRocket(surrounding: Surrounding, private val crashSound: MediaPlayer) : Rocket(surrounding) {
+    override val trace: Trace
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
+    override fun refreshTrace(now: Long, previousFrameTime: Long) {
+        val x1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4)
+        val y1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4)
+        val x2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3)
+        val y2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3)
+        val originX = (x1 + x2) / 2
+        val originY = (y1 + y2) / 2
+        trace.refreshTrace(now, previousFrameTime, originX, originY)
+    }
+
     override var radiusOfRotation = 2f
     final override val initialSpeed = 4f / 1000f
     override var speed = initialSpeed
-
-    private var unfilledDs = 0f
-    
-    private val parallelForIForTraces = ParallelForI(8, "traces thread")
     
     override val width = 0.3f
 
@@ -58,120 +65,7 @@ open class BasicRocket(surrounding: Surrounding, private val crashSound: MediaPl
 
     // initialize for surrounding to set centerOfRotation
     init {
-//        // as this has being inherited
-        // initialize trace
-        traces = ArrayList(NUMBER_OF_TRACES)
-        val numberOfEdges = 6/*CircularShape.getNumberOfEdges(0.25f) // to give 8 ish*/
-        for (i in 0 until NUMBER_OF_TRACES) {
-            traces.add(RegularPolygonalTraceShape(numberOfEdges, 1.01f/* + 0.001f * (4 * random()*//*split trace to 4 layers*//*).toInt()*/, true))
-        }
-        
         setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)
-    }
-    
-    public override fun generateTraces(previousFrameTime: Long, now: Long, ds: Float) {
-        var ds = ds
-        // lay down trace
-        
-        //        if (random() < 0.5)
-        //            traces.add(new TrapezoidalTraceShape(((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QX4), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QY4),
-        //                    ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QX3), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QY3), 2,
-        //                    -0.5 * speed * sin(currentRotation), -0.5 * speed * cos(currentRotation), 0.9, 0.9, 0.1, 1, 1.01));
-        
-        ds += unfilledDs // finish last frame unfinished work
-        if (state == State.InGame) {
-            val sinCurrentRotation = sin(currentRotation.toDouble()).toFloat()
-            val cosCurrentRotation = cos(currentRotation.toDouble()).toFloat()
-            val I_MAX = ds / 128f * 1000f - 0.25f - (random().toFloat() * 0.5f)
-            if (I_MAX <= 0) { // if we are not adding any trace this frame
-                // let the next frame know
-                unfilledDs = ds // there is unfinished work
-            } else {
-                unfilledDs = 0f // also update it so the next frame know there is no unfinished work
-                
-                var i = 0
-                while (i < I_MAX) {
-                    val initialRadius = (0.25f + 0.1f * random().toFloat()) * distance((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4), (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4),
-                            (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3), (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3))
-                    val x1 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4) - initialRadius * cosCurrentRotation)
-                    val y1 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4) + initialRadius * sinCurrentRotation)
-                    val x2 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3) + initialRadius * cosCurrentRotation)
-                    val y2 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3) - initialRadius * sinCurrentRotation).toDouble()
-                    
-                    var centerX: Double
-                    var centerY: Double
-                    //            if (random() < 0.4) {
-                    //                centerX = (x1 - x2) + x2; centerY = (y1 - y2) + y2;
-                    //            } else if (random() > 0.6){
-                    //                centerX = x2;             centerY = y2;
-                    //            } else {
-                    centerX = random() * (x1 - x2) + x2
-                    centerY = random() * (y1 - y2) + y2
-                    //            }
-                    
-                    val newTraceShape =
-//                            CircularTraceShape(centerX.toFloat(), centerY.toFloat(), initialRadius, initialRadius * 4,
-//                            0f, 0f, (16f / speed).toLong(), 1f, 1f, 0f, 1f, 1.01f, true)
-//                            traces.add(newTraceShape)
-                            newRegularPolygonalTraceShape(centerX.toFloat(), centerY.toFloat(), initialRadius, initialRadius * 4,
-                            /*-3 * speed * (float) sin(currentRotation)*/0f, /*-3 * speed * (float) cos(currentRotation)*/0f, (16f / speed).toLong(),
-                            1f, 1f, 0f, 3f)
-                    newTraceShape.rotateShape(centerX.toFloat(), centerY.toFloat(), (2 * PI * random()).toFloat())
-                    
-                    val random = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
-                    newTraceShape.moveTraceShape(now, previousFrameTime + ((1 - random) * (now - previousFrameTime) + random()).toInt()) // + 0.5 for rounding
-                    newTraceShape.moveShape(-ds * random * sinCurrentRotation, -ds * random * cosCurrentRotation)
-
-                    i++
-                }
-            }
-        }
-        
-    }
-    
-    private fun newRegularPolygonalTraceShape(centerX: Float, centerY: Float, initialRadius: Float, finalRadius: Float, speedX: Float, speedY: Float,
-                                              duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float): RegularPolygonalTraceShape {
-        for (trace in traces) {
-            if (!(trace as RegularPolygonalTraceShape).showing) {
-                trace.resetRegularPolygonalTraceShape(centerX, centerY, initialRadius, finalRadius,
-                        speedX, speedY, duration, initialRed, initialGreen, initialBlue, initialAlpha)
-                return trace
-            }
-        }
-        throw IndexOutOfBoundsException("not enough traces")
-    }
-
-//    /* only change one third of the trace each frame to maintain frame rate */
-//    private var lastChanged = 0
-//    private val refreshFactor = 3
-    override fun fadeMoveAndRemoveTraces(now: Long, previousFrameTime: Long, ds: Float) {
-//        lastChanged++
-//        if (lastChanged == refreshFactor)
-//            lastChanged = 0
-
-        parallelForIForTraces.run({ i ->
-            val trace = traces[i] as RegularPolygonalTraceShape
-            
-            if (trace.showing) {
-//                  // give it refreshFactor amount of time since it only move one out of refreshFactor of frames
-//                if (i % refreshFactor == lastChanged)
-                    // moveTraceShape with RegularPolygonalTraceShape will remove itself
-                    trace.moveTraceShape(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
-                // move traces with surrounding
-                trace.moveShape(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat())
-            }
-        }, traces.size)
-    }
-    
-    override fun waitForFadeMoveAndRemoveTraces() {
-        parallelForIForTraces.waitForLastRun()
-    }
-    
-    override fun removeTrace() {
-        for (trace in traces)
-            if ((trace as RegularPolygonalTraceShape).showing)
-                if (trace.needToBeRemoved)
-                    trace.makeInvisible()
     }
 
     private val explosionCoordinates = arrayOf(
@@ -180,7 +74,6 @@ open class BasicRocket(surrounding: Surrounding, private val crashSound: MediaPl
             Coordinate((components[2] as CircularShape).centerX, (components[2] as CircularShape).centerY),
             Coordinate(with(components[3] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[3] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }))
 
-    protected open var explosionShape: ExplosionShape? = null
     override fun drawExplosion(now: Long, previousFrameTime: Long) {
         if (explosionShape == null) {
             val explosionCoordinate = Coordinate(centerOfRotationX, centerOfRotationY)
@@ -208,10 +101,7 @@ open class BasicRocket(surrounding: Surrounding, private val crashSound: MediaPl
         for (component in components)
             if (!component.removed)
                 component.removeShape()
-        for (trace in traces)
-            trace.removeShape()
+        trace.removeTrace()
         explosionShape?.removeShape()
     }
 }
-
-private const val NUMBER_OF_TRACES = 400

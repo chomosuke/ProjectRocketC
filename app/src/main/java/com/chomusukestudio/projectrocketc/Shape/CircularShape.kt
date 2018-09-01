@@ -71,7 +71,7 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
     }
     
     override fun isInside(x: Float, y: Float): Boolean {
-        return square((x - centerX).toDouble()) + square((y - centerY).toDouble()) <= square(radius.toDouble())
+        return square(x - centerX) + square(y - centerY) <= square(radius)
     }
     
     override fun moveShape(dx: Float, dy: Float) {
@@ -96,7 +96,7 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
         
         fun isOverlap(anotherShape: Shape, centerX: Float, centerY: Float, radius: Float): Boolean {
             if (anotherShape is CircularShape) {
-                return square((centerX - anotherShape.centerX).toDouble()) + square((centerY - anotherShape.centerY).toDouble()) <= square((radius + anotherShape.radius).toDouble())
+                return square(centerX - anotherShape.centerX) + square(centerY - anotherShape.centerY) <= square(radius + anotherShape.radius)
             } else if (anotherShape is TriangularShape) {
                 val x1 = anotherShape.getTriangularShapeCoords(X1)
                 val y1 = anotherShape.getTriangularShapeCoords(Y1)
@@ -107,9 +107,9 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
                 //
                 // TEST 1: Vertex within circle
                 //
-                if (square((x1 - centerX).toDouble()) + square((y1 - centerY).toDouble()) <= square(radius.toDouble()) ||
-                        square((x2 - centerX).toDouble()) + square((y2 - centerY).toDouble()) <= square(radius.toDouble()) ||
-                        square((x3 - centerX).toDouble()) + square((y3 - centerY).toDouble()) <= square(radius.toDouble()))
+                if (square(x1 - centerX) + square(y1 - centerY) <= square(radius) ||
+                        square(x2 - centerX) + square(y2 - centerY) <= square(radius) ||
+                        square(x3 - centerX) + square(y3 - centerY) <= square(radius))
                     return true
                 //
                 // TEST 2: Circle centre within triangle
@@ -135,27 +135,28 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
         private fun circleOverlapWithLine(centerX: Float, centerY: Float, radius: Float,
                                           x1: Float, y1: Float, x2: Float, y2: Float): Boolean {
             // debugged, closed for modification
-            return ((square(getArea(centerX, centerY, x1, y1, x2, y2) * 2) / (square((x1 - x2).toDouble()) // square of distance from center to the edge of triangle.
-                    + square((y1 - y2).toDouble())) // calculated by divide the area by length of the edge of triangle.
-                    <= square(radius.toDouble())) // is overlap if it's smaller than square of radius.
-                    && ((square((x1 - x2).toDouble()) // the above will consider edge as a straight line without ends
-                    + square((y1 - y2).toDouble())) // that would be problematic as the edge of the triangle have ends.
-                    >= abs((square((centerX - x2).toDouble()) // this would determent if the angle between
-                    + square((centerY - y2).toDouble())) // the line from the center of circle to one of the end of the edge
-                    
-                    - square((centerX - x1).toDouble())// and the edge would be larger than 90 degree
-                    
-                    - square((centerY - y1).toDouble())))) // as pythagoras thingy.
+            return ((square(getArea(centerX, centerY, x1, y1, x2, y2) * 2) / (square(x1 - x2) // square of distance from center to the edge of triangle.
+                    + square(y1 - y2)) // calculated by divide the area by length of the edge of triangle.
+                    <=
+                    square(radius)) // is overlap if it's smaller than square of radius.
+                    &&
+                    ((square(x1 - x2) // the above will consider edge as a straight line without ends
+                    + square(y1 - y2)) // that would be problematic as the edge of the triangle have ends.
+                    >=
+                    abs((square(centerX - x2) // this would determent if the angle between
+                    + square(centerY - y2)) // the line from the center of circle to one of the end of the edge
+                    - square(centerX - x1)// and the edge would be larger than 90 degree
+                    - square(centerY - y1)))) // as pythagoras thingy.
             
             // another level of maintainability lol
             // this is pretty much the most unmaintainable code i ever wrote in this project
         }
         
-        private fun getArea(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float): Double {
+        private fun getArea(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float): Float {
             return if ((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2 < 0)
-                (-(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2).toDouble()
+                (-(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2)
             else
-                ((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2).toDouble()
+                ((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2)
         }
         
         var performanceIndex = 1f
