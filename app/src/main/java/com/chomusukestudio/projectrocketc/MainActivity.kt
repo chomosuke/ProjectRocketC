@@ -58,7 +58,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.restartButton).setOnClickListener { view -> onRestart(view) } // trying desperately to fix a crash on android 6
+        findViewById<Button>(R.id.restartButton).setOnClickListener { view -> restartGame(view) } // trying desperately to fix a crash on android 6
 
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
@@ -228,7 +228,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
-    fun onRestart(view: View) {
+    fun restartGame(view: View) {
         if (multiClick) return
 
         runOnUiThread {
