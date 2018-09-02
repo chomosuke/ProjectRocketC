@@ -1,8 +1,5 @@
 package com.chomusukestudio.projectrocketc.littleStar
 
-import android.app.Activity
-import android.content.Context
-import android.media.MediaPlayer
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.FullRingShape
@@ -288,21 +285,3 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
 }
 
 
-fun putCommasInInt(string: String): String {
-    var string = string
-    var numCounter = 0
-    for (i in string.length - 1 downTo 0) {
-        if (string[i].isDigit()) {
-            numCounter++
-            if (i - 1 >= 0) { // not last one
-                if (numCounter == 3 && string[i - 1].isDigit()) {
-                    string = string.substring(0, i) + "," + string.substring(i, string.length)
-                    numCounter = 0
-                }
-            }
-        } else {
-            numCounter = 0
-        }
-    }
-    return string
-}
