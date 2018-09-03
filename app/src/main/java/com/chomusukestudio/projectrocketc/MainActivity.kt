@@ -33,7 +33,6 @@ import android.view.animation.Animation
 import android.widget.Button
 import android.widget.ImageView
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.chomusukestudio.projectrocketc.littleStar.putCommasInInt
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
 import java.util.logging.Level
@@ -58,7 +57,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.restartButton).setOnClickListener { view -> onRestart(view) } // trying desperately to fix a crash on android 6
+        findViewById<Button>(R.id.restartButton).setOnClickListener { view -> restartGame(view) } // trying desperately to fix a crash on android 6
 
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
@@ -225,10 +224,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.INVISIBLE
 
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
+            // prevent any uncleaned visual effect
+            findViewById<TextView>(R.id.visualText).text = ""
         }
     }
 
-    fun onRestart(view: View) {
+    fun restartGame(view: View) {
         if (multiClick) return
 
         runOnUiThread {
