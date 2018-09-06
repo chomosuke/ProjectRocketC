@@ -3,6 +3,7 @@ package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 
 import java.util.Arrays
 import java.util.Collections
@@ -12,9 +13,10 @@ import java.lang.Math.asin
 import java.lang.Math.cos
 import java.lang.Math.random
 import java.lang.Math.sin
+import kotlin.math.sqrt
 
 class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibility: Boolean) : PlanetShape(centerX, centerY, radius) {
-    override val isOverlapMethodLevel: Double = 2.0
+    override val isOverlapMethodLevel: Double = 2.0 // one level higher circularShape
     override lateinit var componentShapes: Array<Shape>
     
     init {
@@ -51,6 +53,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibil
                 override val isOverlapMethodLevel: Double = 0.0
                 init {
                     val r = sin(sRadius).toFloat() * radius
+                    val centerX = sin(offsetRadius).toFloat() * radius // for circularCrater
                     
                     val numberOfEdges = CircularShape.getNumberOfEdges(r)
                     val componentShapes = arrayOfNulls<Shape>(numberOfEdges - 2)
@@ -64,23 +67,23 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibil
                                 mSin(offsetRadius + sRadius * sin(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat(),
                                 sin(sRadius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat() * radius,
                                 red, green, blue, 1f, z1, visibility) // close for modification
-                        // screw that low efficiency thingy
-                        //                    double x2 = centerX + (r * sin(2*PI*i/numberOfEdges));
-                        //                    double y2 = (r * cos(2*PI*i/numberOfEdges));
-                        //                    double x3 = centerX + (r * sin(2*PI*(i+1)/numberOfEdges));
-                        //                    double y3 = (r * cos(2*PI*(i+1)/numberOfEdges));
-                        //                    if (square(x2) >= square(radiusOfBall) - square(y2) && square(x3) >= square(radiusOfBall) - square(y3))
-                        //                        componentShapes[i - 1] = new TriangularShape(centerX, r, sqrt(square(radiusOfBall) - square(y2)), y2, sqrt(square(radiusOfBall) - square(y3)), y3,
-                        //                                Red, green, blue, alpha, z);
-                        //                    else if (square(x2) >= square(radiusOfBall) - square(y2))
-                        //                        componentShapes[i - 1] = new TriangularShape(centerX, r, sqrt(square(radiusOfBall) - square(y2)), y2, x3, y3,
-                        //                                Red, green, blue, alpha, z);
-                        //                    else if (square(x3) >= square(radiusOfBall) - square(y3))
-                        //                        componentShapes[i - 1] = new TriangularShape(centerX, r, x2, y2, sqrt(square(radiusOfBall) - square(y3)), y3,
-                        //                                Red, green, blue, alpha, z);
-                        //                    else
-                        //                        componentShapes[i - 1] = new TriangularShape(centerX, r, x2, y2, x3, y3,
-                        //                            Red, green, blue, alpha, z); // close for modification
+                        // below is circular crater
+//                        val x2 = centerX + (r * sin(2 * PI * i / numberOfEdges)).toFloat()
+//                        val y2 = (r * cos(2 * PI * i / numberOfEdges)).toFloat()
+//                        val x3 = centerX + (r * sin(2 * PI * (i + 1) / numberOfEdges)).toFloat()
+//                        val y3 = (r * cos(2 * PI * (i + 1) / numberOfEdges)).toFloat()
+//                        if (square(x2) >= square(radius) - square(y2) && square(x3) >= square(radius) - square(y3))
+//                            componentShapes[i - 1] = TriangularShape(centerX, r, sqrt(square(radius) - square(y2)), y2, sqrt(square(radius) - square(y3)), y3,
+//                                    red, green, blue, 1f, z1, true);
+//                        else if (square(x2) >= square(radius) - square(y2))
+//                            componentShapes[i - 1] = TriangularShape(centerX, r, sqrt(square(radius) - square(y2)), y2, x3, y3,
+//                                    red, green, blue, 1f, z1, true);
+//                        else if (square(x3) >= square(radius) - square(y3))
+//                            componentShapes[i - 1] = TriangularShape(centerX, r, x2, y2, sqrt(square(radius) - square(y3)), y3,
+//                                    red, green, blue, 1f, z1, true);
+//                        else
+//                            componentShapes[i - 1] = TriangularShape(centerX, r, x2, y2, x3, y3,
+//                                    red, green, blue, 1f, z1, true); // close for modification
                     }
                     this.componentShapes = componentShapes as Array<Shape>
 
@@ -105,5 +108,5 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibil
         }
         
         this.componentShapes = componentShapes as Array<Shape>
-    }// one level higher circularShape
-}// close for modification!!! this thing is terrible
+    }
+} // close for modification!!! this thing is terrible
