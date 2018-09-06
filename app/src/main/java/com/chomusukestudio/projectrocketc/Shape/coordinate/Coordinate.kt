@@ -32,6 +32,7 @@ fun rotatePoint(pointX: Float, pointY: Float, centerOfRotationX: Float, centerOf
 
 fun distance(x1: Float, y1: Float, x2: Float, y2: Float) = sqrt(square(x1 - x2) + square(y1 - y2))
 
+fun square(input: Double) = input * input
 fun square(input: Float) = input * input
 
 class Coordinate(var x: Float, var y: Float) {
