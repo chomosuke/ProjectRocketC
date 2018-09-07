@@ -6,7 +6,6 @@ import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 
 import java.util.Arrays
-import java.util.Collections
 
 import java.lang.Math.PI
 import java.lang.Math.asin
@@ -53,7 +52,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibil
                 override val isOverlapMethodLevel: Double = 0.0
                 init {
                     val r = sin(sRadius).toFloat() * radius
-                    val centerX = sin(offsetRadius).toFloat() * radius // for circularCrater
+                    val centerXOfCrater = sin(offsetRadius).toFloat() * radius // for circularCrater
                     
                     val numberOfEdges = CircularShape.getNumberOfEdges(r)
                     val componentShapes = arrayOfNulls<Shape>(numberOfEdges - 2)
@@ -68,21 +67,21 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibil
                                 sin(sRadius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat() * radius,
                                 red, green, blue, 1f, z1, visibility) // close for modification
                         // below is circular crater
-//                        val x2 = centerX + (r * sin(2 * PI * i / numberOfEdges)).toFloat()
+//                        val x2 = centerXOfCrater + (r * sin(2 * PI * i / numberOfEdges)).toFloat()
 //                        val y2 = (r * cos(2 * PI * i / numberOfEdges)).toFloat()
-//                        val x3 = centerX + (r * sin(2 * PI * (i + 1) / numberOfEdges)).toFloat()
+//                        val x3 = centerXOfCrater + (r * sin(2 * PI * (i + 1) / numberOfEdges)).toFloat()
 //                        val y3 = (r * cos(2 * PI * (i + 1) / numberOfEdges)).toFloat()
 //                        if (square(x2) >= square(radius) - square(y2) && square(x3) >= square(radius) - square(y3))
-//                            componentShapes[i - 1] = TriangularShape(centerX, r, sqrt(square(radius) - square(y2)), y2, sqrt(square(radius) - square(y3)), y3,
+//                            componentShapes[i - 1] = TriangularShape(centerXOfCrater, r, sqrt(square(radius) - square(y2)), y2, sqrt(square(radius) - square(y3)), y3,
 //                                    red, green, blue, 1f, z1, true);
 //                        else if (square(x2) >= square(radius) - square(y2))
-//                            componentShapes[i - 1] = TriangularShape(centerX, r, sqrt(square(radius) - square(y2)), y2, x3, y3,
+//                            componentShapes[i - 1] = TriangularShape(centerXOfCrater, r, sqrt(square(radius) - square(y2)), y2, x3, y3,
 //                                    red, green, blue, 1f, z1, true);
 //                        else if (square(x3) >= square(radius) - square(y3))
-//                            componentShapes[i - 1] = TriangularShape(centerX, r, x2, y2, sqrt(square(radius) - square(y3)), y3,
+//                            componentShapes[i - 1] = TriangularShape(centerXOfCrater, r, x2, y2, sqrt(square(radius) - square(y3)), y3,
 //                                    red, green, blue, 1f, z1, true);
 //                        else
-//                            componentShapes[i - 1] = TriangularShape(centerX, r, x2, y2, x3, y3,
+//                            componentShapes[i - 1] = TriangularShape(centerXOfCrater, r, x2, y2, x3, y3,
 //                                    red, green, blue, 1f, z1, true); // close for modification
                     }
                     this.componentShapes = componentShapes as Array<Shape>
