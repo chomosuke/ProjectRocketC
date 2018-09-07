@@ -43,7 +43,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         
     }
 
-    val allFrameRate = ArrayList<Int>()
+//    val allFrameRate = ArrayList<Int>()
     override fun onDrawFrame(unused: GL10) {
         if (!paused) { // if this is called when paused for some reason don't do anything as nothing suppose to change
             countingFrames++
@@ -57,7 +57,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             }
             if (now - previousTime >= 1000) {// just to get frame rates
                 Log.i("Frame rate", "" + countingFrames + " and dynamic performance index " + CircularShape.performanceIndex)
-                allFrameRate.add(countingFrames)
+//                allFrameRate.add(countingFrames)
                 countingFrames = 0
                 previousTime = now
             }
