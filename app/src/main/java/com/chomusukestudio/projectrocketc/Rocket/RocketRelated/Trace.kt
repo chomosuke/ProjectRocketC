@@ -7,9 +7,13 @@ import java.lang.Math.pow
 import java.util.ArrayList
 
 abstract class Trace {
-    private val traceShapes = ArrayList<Shape>()
-    abstract fun refreshTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float)
-    abstract fun moveTrace(dx: Float, dy: Float)
+    protected abstract val traceShapes: Collection<Shape>
+    abstract fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float)
+    abstract fun fadeTrace(now: Long, previousFrameTime: Long)
+    open fun moveTrace(dx: Float, dy: Float) {
+        for (traceShape in traceShapes)
+            traceShape.moveShape(dx, dy)
+    }
     open fun removeTrace() {
         for (traceShape in traceShapes)
             traceShape.removeShape()

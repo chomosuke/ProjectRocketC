@@ -14,8 +14,8 @@ import java.lang.Math.acos
  */
 
 class CircularShape(centerX: Float, centerY: Float, radius: Float, private val performanceIndex: Double, red: Float, green: Float, blue: Float, alpha: Float, private val z: Float, visibility: Boolean) : Shape() {
-    override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex), // + 0.5 for rounding
-    centerX, centerY, radius, red, green, blue, alpha, z, visibility))
+    override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
+            centerX, centerY, radius, red, green, blue, alpha, z, visibility))
     override val isOverlapMethodLevel: Double = 1.0
     var centerX: Float = 0f
         private set

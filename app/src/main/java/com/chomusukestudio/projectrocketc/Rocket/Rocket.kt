@@ -94,12 +94,18 @@ abstract class Rocket(protected val surrounding: Surrounding) {
             }
         }
 
-        refreshTrace(now, previousFrameTime)
+        generateTrace(now, previousFrameTime)
+        fadeTrace(now, previousFrameTime)
 
-        surrounding.moveSurrounding(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat(), now, previousFrameTime)
+        // move trace with surrounding
+        val dx = -ds * sin(currentRotation.toDouble()).toFloat()
+        val dy = -ds * cos(currentRotation.toDouble()).toFloat()
+        surrounding.moveSurrounding(dx, dy , now, previousFrameTime)
+        trace.moveTrace(dx, dy)
     }
 
-    protected abstract fun refreshTrace(now: Long, previousFrameTime: Long)
+    protected abstract fun generateTrace(now: Long, previousFrameTime: Long)
+    abstract fun fadeTrace(now: Long, previousFrameTime: Long)
 
     open fun removeAllShape() {
         for (component in components)

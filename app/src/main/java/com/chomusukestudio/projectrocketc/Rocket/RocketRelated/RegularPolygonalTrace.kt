@@ -6,31 +6,29 @@ import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.state
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.math.sqrt
 
 class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float) : Trace() {
-    private val numberOfTraces: Int
-            get() = TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    protected val traces = arrayOfNulls<RegularPolygonalTraceShape>(numberOfTraces)
+    private val numberOfTraces = 400
+    override val traceShapes = ArrayList<Shape>(numberOfTraces)
 
     private var lastOriginX = 0f
     private var lastOriginY = 0f
-    override fun refreshTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float) {
+    override fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float) {
         val dx = originX - lastOriginX
         val dy = originY - lastOriginY
-        generateTraces(previousFrameTime, now, dx, dy)
-        fadeTraces(now, previousFrameTime)
+        generateTraces(previousFrameTime, now, originX, originY, dx, dy)
+        lastOriginX = originX
+        lastOriginY = originY
     }
 
     private var unfilledDs = 0f
-    private fun generateTraces(previousFrameTime: Long, now: Long, dx: Float, dy: Float) {
+    private fun generateTraces(previousFrameTime: Long, now: Long, originX: Float, originY: Float, dx: Float, dy: Float) {
         var ds = sqrt(square(dx) + square(dy))
         // lay down trace
 
         //        if (random() < 0.5)
-        //            traces.add(new TrapezoidalTraceShape(((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QX4), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QY4),
+        //            traceShapes.add(new TrapezoidalTraceShape(((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QX4), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QY4),
         //                    ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QX3), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QY3), 2,
         //                    -0.5 * speed * sin(currentRotation), -0.5 * speed * cos(currentRotation), 0.9, 0.9, 0.1, 1, 1.01));
 
@@ -45,10 +43,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float) : Trace() {
 
                 var i = 0
                 while (i < I_MAX) {
-                    val initialRadius =
-                    /*(0.25f + 0.1f * Math.random().toFloat()) * distance((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4), (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4),
-                            (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3), (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3))
-                    val x1 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4) - initialRadius * cosCurrentRotation)
+                    /*val x1 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4) - initialRadius * cosCurrentRotation)
                     val y1 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4) + initialRadius * sinCurrentRotation)
                     val x2 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3) + initialRadius * cosCurrentRotation)
                     val y2 = ((components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3) - initialRadius * sinCurrentRotation).toDouble()*/
@@ -56,10 +51,10 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float) : Trace() {
 
 
                     val newTraceShape =
-                            newRegularPolygonalTraceShape(centerX.toFloat(), centerY.toFloat(), initialRadius, initialRadius * 4,
-                                    /*-3 * speed * (float) sin(currentRotation)*/0f, /*-3 * speed * (float) cos(currentRotation)*/0f, (16f / speed).toLong(),
+                            newRegularPolygonalTraceShape(originX, originY, 0f,  0.4f,
+                                    /*-3 * speed * (float) sin(currentRotation)*/0f, /*-3 * speed * (float) cos(currentRotation)*/0f, (16f / (ds / (now - previousFrameTime))/*<-speed*/).toLong(),
                                     1f, 1f, 0f, 3f)
-                    newTraceShape.rotateShape(centerX.toFloat(), centerY.toFloat(), (2 * Math.PI * Math.random()).toFloat())
+                    newTraceShape.rotateShape(originX, originY, (2 * Math.PI * Math.random()).toFloat())
 
                     val random = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
                     newTraceShape.fadeTrace(now, previousFrameTime + ((1 - random) * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
@@ -72,17 +67,17 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float) : Trace() {
     }
 
 
-    private val parallelForIForFadeTraces = ParallelForI(8, "fade traces thread")
+    private val parallelForIForFadeTraces = ParallelForI(8, "fade traceShapes thread")
 //    /* only change one third of the trace each frame to maintain frame rate */
 //    private var lastChanged = 0
 //    private val refreshFactor = 3
-    private fun fadeTraces(now: Long, previousFrameTime: Long) {
+    override fun fadeTrace(now: Long, previousFrameTime: Long) {
 //        lastChanged++
 //        if (lastChanged == refreshFactor)
 //            lastChanged = 0
 
         parallelForIForFadeTraces.run({ i ->
-            val trace = traces[i] as RegularPolygonalTraceShape
+            val trace = traceShapes[i] as RegularPolygonalTraceShape
 
             if (trace.showing) {
 //                  // give it refreshFactor amount of time since it only move one out of refreshFactor of frames
@@ -90,33 +85,35 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float) : Trace() {
                 // fadeTrace with RegularPolygonalTraceShape will mark itself as not showing
                 trace.fadeTrace(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
             }
-        }, traces.size)
+        }, traceShapes.size)
     }
 
-    private val parallelForIForMoveTraces = ParallelForI(8, "move traces thread")
+    private val parallelForIForMoveTraces = ParallelForI(8, "move traceShapes thread")
     override fun moveTrace(dx: Float, dy: Float) {
+        parallelForIForMoveTraces.run({ i ->
+            traceShapes[i].moveShape(dx, dy)
+        }, traceShapes.size)
         lastOriginX += dx
         lastOriginY += dy
     }
 
     init {
-        val numberOfEdges = 6
         for (i in 0 until numberOfTraces) {
-            traces[i] = (RegularPolygonalTraceShape(numberOfEdges, 1.01f/* + 0.001f * (4 * random()*//*split trace to 4 layers*//*).toInt()*/, true))
+            traceShapes.add(RegularPolygonalTraceShape(numberOfEdges, z/* + 0.001f * (4 * random()*//*split trace to 4 layers*//*).toInt()*/, true))
         }
     }
 
 
     private fun newRegularPolygonalTraceShape(centerX: Float, centerY: Float, initialRadius: Float, finalRadius: Float, speedX: Float, speedY: Float,
                                               duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float): RegularPolygonalTraceShape {
-        for (trace in traces) {
+        for (trace in traceShapes) {
             if (!(trace as RegularPolygonalTraceShape).showing) {
                 trace.resetRegularPolygonalTraceShape(centerX, centerY, initialRadius, finalRadius,
                         duration, initialRed, initialGreen, initialBlue, initialAlpha)
                 return trace
             }
         }
-        throw IndexOutOfBoundsException("not enough traces")
+        throw IndexOutOfBoundsException("not enough traceShapes")
     }
 }
 
