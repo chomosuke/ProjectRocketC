@@ -169,6 +169,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun onPause(view: View) {
+        if (multiClick) return // prevent cheating the game
+
         try {
             when (state) {
                 State.Paused -> {
@@ -483,10 +485,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {
-            return if (state == State.Paused)
-                false
-            else
-                processingThread.onTouchEvent(e)
+            return processingThread.onTouchEvent(e)
         }
     }
 }
