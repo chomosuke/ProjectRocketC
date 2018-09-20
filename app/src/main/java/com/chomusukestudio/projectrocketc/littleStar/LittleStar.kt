@@ -19,7 +19,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 import android.media.SoundPool
 import android.media.AudioManager
+import android.util.Log
+import java.lang.Math.abs
 import java.lang.Math.pow
+import kotlin.math.sqrt
 
 
 /**
@@ -102,12 +105,27 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
                 score += dScore
                 giveVisualText("+$dScore", visualTextView)
 
-                if (streamId != 0)
-                    soundPool.stop(streamId)
+                // stop all streams
+                while (starEatingStreamIds.isNotEmpty()) {
+                    soundPool.stop(starEatingStreamIds[0])
+                    starEatingStreamIds.removeAt(0)
+                }
 
-                val playbackSpeed = pow(2.0, dScore.toDouble()/12).toFloat() / 3
+                if (dScore > 48) {
+                    val playbackSpeed = pow(2.0, (dScore % 12 + 48).toDouble() / 12).toFloat() / 2
 
-                streamId = soundPool.play(soundId, 1f, 1f, 1, 0, playbackSpeed)
+                    val baseVolume = 1 - abs((12f - dScore % 12) / 12f)
+
+                    Log.v("eat star baseVolume", "" + baseVolume)
+
+                    starEatingStreamIds.add(soundPool.play(soundId, baseVolume, baseVolume, 1, 0, playbackSpeed / 2f))
+                    starEatingStreamIds.add(soundPool.play(soundId, 1 - baseVolume, 1 - baseVolume, 1, 0, playbackSpeed))
+                } else {
+
+                    val playbackSpeed = pow(2.0, dScore.toDouble() / 12).toFloat() / 2
+
+                    starEatingStreamIds.add(soundPool.play(soundId, 1f, 1f, 1, 0, playbackSpeed))
+                }
             }
             LittleStar.Color.RED -> {
                 dScore *= 2
@@ -280,7 +298,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
 
         var soundId: Int = 0
         var soundPool: SoundPool = SoundPool(4, AudioManager.STREAM_MUSIC, 100)
-        var streamId: Int = 0
+        var starEatingStreamIds = ArrayList<Int>()
     }
 }
 
