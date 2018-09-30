@@ -6,8 +6,7 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.support.annotation.CallSuper
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
-import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.Trace
-import com.chomusukestudio.projectrocketc.Shape.CircularShape
+import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar

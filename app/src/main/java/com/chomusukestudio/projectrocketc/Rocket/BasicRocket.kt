@@ -2,11 +2,9 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
-import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RegularPolygonalTrace
-import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.Trace
+import com.chomusukestudio.projectrocketc.Rocket.trace.RegularPolygonalTrace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
-import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 
@@ -15,7 +13,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
  */
 
 open class BasicRocket(surrounding: Surrounding, private val crashSound: MediaPlayer) : Rocket(surrounding) {
-    override val trace = RegularPolygonalTrace(6, 1.01f )
+    override val trace = RegularPolygonalTrace(6, 1.01f, 0f,  0.4f, 500, 1f, 1f, 0f, 3f)
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val x1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4)

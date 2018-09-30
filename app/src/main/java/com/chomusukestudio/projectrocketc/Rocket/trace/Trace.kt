@@ -1,4 +1,4 @@
-package com.chomusukestudio.projectrocketc.Rocket.RocketRelated
+package com.chomusukestudio.projectrocketc.Rocket.trace
 
 import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.RegularPolygonalShape
