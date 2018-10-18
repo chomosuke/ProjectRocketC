@@ -33,7 +33,7 @@ import android.view.animation.Animation
 import android.widget.Button
 import android.widget.ImageView
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.google.firebase.analytics.FirebaseAnalytics
+//import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -50,7 +50,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     private lateinit var sharedPreferences: SharedPreferences
 
-    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
+//    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,8 +66,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         LittleStar.soundId = LittleStar.soundPool.load(this, R.raw.eat_little_star, 1)
 //        LittleStar.soundId = LittleStar.soundPool.load("res/raw/eat_little_star.m4a", 1) // this is not working
 
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+//        // Obtain the FirebaseAnalytics instance.
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         // set height and width of the screen
         val displayMetrics = DisplayMetrics()
@@ -210,10 +210,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 putInt(getString(R.string.highestScore), LittleStar.score)
                 apply()
             }
-            val bundle = Bundle()
-            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
-            bundle.putString("leaderboard_id", "mLeaderboard")
-            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
+            // firebase stuff that i don't understand
+//            val bundle = Bundle()
+//            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
+//            bundle.putString("leaderboard_id", "mLeaderboard")
+//            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
 
         }
         runOnUiThread {
