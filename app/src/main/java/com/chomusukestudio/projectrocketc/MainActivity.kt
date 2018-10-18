@@ -33,7 +33,7 @@ import android.view.animation.Animation
 import android.widget.Button
 import android.widget.ImageView
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.google.firebase.analytics.FirebaseAnalytics
+//import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -210,10 +210,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 putInt(getString(R.string.highestScore), LittleStar.score)
                 apply()
             }
-            val bundle = Bundle()
-            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
-            bundle.putString("leaderboard_id", "mLeaderboard")
-            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
+            // firebase stuff that i don't understand
+//            val bundle = Bundle()
+//            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
+//            bundle.putString("leaderboard_id", "mLeaderboard")
+//            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
 
         }
         runOnUiThread {
