@@ -101,14 +101,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.45" />
 
-        <Button
+        <ImageButton
             android:id="@+id/pauseButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="centerCrop"
             android:onClick="onPause"
-            android:text="PauseMe"
+            android:src="@drawable/pause_button"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -126,7 +126,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
     </android.support.constraint.ConstraintLayout>
-    
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/onCrashLayout"
         android:layout_width="match_parent"
@@ -137,7 +137,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        
+
         <TextView
             android:id="@+id/previousScoreOnCrash"
             android:layout_width="wrap_content"
@@ -152,7 +152,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.3" />
-        
+
         <TextView
             android:id="@+id/highestScoreOnCrash"
             android:layout_width="wrap_content"
@@ -167,7 +167,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5" />
-        
+
         <Button
             android:id="@+id/restartButton"
             android:layout_width="wrap_content"
@@ -183,7 +183,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.75" />
-        
+
         <Button
             android:id="@+id/toHomeButton"
             android:layout_width="wrap_content"
@@ -212,45 +212,56 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
-            android:text=""
+            android:text="0"
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="24sp"
+            android:textSize="@dimen/textSize"
             android:typeface="normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/highestScoreIcon"
+            android:layout_width="@dimen/textSize"
+            android:layout_height="@dimen/textSize"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="2dp"
+            android:src="@drawable/highest_score_icon"
+            android:baselineAlignBottom="true"
+            app:layout_constraintStart_toEndOf="@id/highestScoreTextView"
+            app:layout_constraintBaseline_toBaselineOf="@id/highestScoreTextView"/>
+
         <TextView
             android:id="@+id/highestScoreTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
             android:fontFamily="sans-serif"
             android:text=""
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="24sp"
+            android:textSize="@dimen/textSize"
             android:typeface="normal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
-    
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/tutorialLayout"
+        android:id="@+id/tutorialGroup"
         android:visibility="invisible">
-    
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0.75"
             android:scaleType="centerCrop"
             android:src="@drawable/black" />
-        
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

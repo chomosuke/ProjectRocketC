@@ -31,6 +31,7 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.view.animation.Animation
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 //import com.google.firebase.analytics.FirebaseAnalytics
@@ -81,7 +82,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
 
         // update highest score
-        findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
@@ -138,7 +139,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
-        this.runOnUiThread { findViewById<TextView>(R.id.scoreTextView).text = putCommasInInt(LittleStar.score.toString()) }
+        this.runOnUiThread { findViewById<TextView>(R.id.scoreTextView).text = /*putCommasInInt*/(LittleStar.score.toString()) }
     }
 
     private var lastClick = 0L
@@ -175,12 +176,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             when (state) {
                 State.Paused -> {
                     findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
-                    findViewById<Button>(R.id.pauseButton).text = "PauseMe"
+                    findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.pause_button))
                     state = State.InGame
                 }
                 State.InGame -> {
                     findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
-                    findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+                    findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.play_button))
                     state = State.Paused
                 }
                 State.Crashed -> {
@@ -221,7 +222,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.onCrashLayout).bringToFront()
 
-            findViewById<TextView>(R.id.highestScoreOnCrash).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+            findViewById<TextView>(R.id.highestScoreOnCrash).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
             findViewById<TextView>(R.id.previousScoreOnCrash).text = findViewById<TextView>(R.id.scoreTextView).text
 
             findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.INVISIBLE
@@ -237,7 +238,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         runOnUiThread {
             // update highest score
-            findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+            findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
             findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
@@ -283,12 +284,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         super.onStop()
         Log.i("", "\n\nonStop() called\n\n")
     }
-    
+
     public override fun onPause() {
         super.onPause()
         Log.i("", "\n\nonPause() called\n\n")
     }
-    
+
     public override fun onDestroy() {
         super.onDestroy()
         Log.i("", "\n\nonDestroy() called\n\n")
@@ -328,7 +329,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 State.InGame -> {
                     if (!hasFocus) {
                         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
-                        findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+                        findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.play_button))
                         state = State.Paused
                     }
                 }
@@ -349,7 +350,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         if (multiClick) return
 
         // update highest score
-        findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
         findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
