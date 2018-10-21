@@ -45,8 +45,8 @@
             android:id="@+id/settingButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:alpha="0"
             android:onClick="openSetting"
             android:text="setting"
@@ -84,9 +84,9 @@
             android:id="@+id/visualText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:fontFamily="sans-serif"
             android:text=""
             android:textAlignment="center"
@@ -105,10 +105,11 @@
             android:id="@+id/pauseButton"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:scaleType="centerCrop"
-            android:onClick="onPause"
-            android:src="@drawable/pause_button"
             android:background="@android:color/transparent"
+            android:onClick="onPause"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/pause_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -142,10 +143,11 @@
             android:id="@+id/previousScoreOnCrash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/white"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -157,10 +159,11 @@
             android:id="@+id/highestScoreOnCrash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/white"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -168,16 +171,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5" />
 
-        <Button
+        <ImageButton
             android:id="@+id/restartButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
             android:onClick="restartGame"
-            android:text="Restart"
+            android:scaleType="centerInside"
+            android:src="@drawable/restart_icon"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -191,7 +196,7 @@
             android:onClick="toHome"
             android:text="Home"
             android:visibility="invisible" />
-    
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -208,9 +213,9 @@
             android:id="@+id/scoreTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:fontFamily="sans-serif"
             android:text="0"
             android:textAlignment="center"
@@ -225,19 +230,19 @@
             android:id="@+id/highestScoreIcon"
             android:layout_width="@dimen/textSize"
             android:layout_height="@dimen/textSize"
-            android:scaleType="fitCenter"
             android:layout_marginStart="2dp"
-            android:src="@drawable/highest_score_icon"
             android:baselineAlignBottom="true"
-            app:layout_constraintStart_toEndOf="@id/highestScoreTextView"
-            app:layout_constraintBaseline_toBaselineOf="@id/highestScoreTextView"/>
+            android:scaleType="fitCenter"
+            android:src="@drawable/highest_score_icon"
+            app:layout_constraintBaseline_toBaselineOf="@id/highestScoreTextView"
+            app:layout_constraintStart_toEndOf="@id/highestScoreTextView" />
 
         <TextView
             android:id="@+id/highestScoreTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
             android:text=""
             android:textAlignment="center"
@@ -250,9 +255,9 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/tutorialGroup"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/tutorialGroup"
         android:visibility="invisible">
 
         <ImageView
