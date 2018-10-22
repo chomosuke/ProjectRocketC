@@ -137,7 +137,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
-        this.runOnUiThread { findViewById<TextView>(R.id.scoreTextView).text = /*putCommasInInt*/(LittleStar.score.toString()) }
+        this.runOnUiThread {
+            findViewById<TextView>(R.id.scoreTextView).text = /*putCommasInInt*/(LittleStar.score.toString())
+        }
     }
 
     private var lastClick = 0L
@@ -179,7 +181,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 }
                 State.InGame -> {
                     findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
-                    findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.play_button))
+                    findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
                     state = State.Paused
                 }
                 State.Crashed -> {
@@ -327,7 +329,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 State.InGame -> {
                     if (!hasFocus) {
                         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
-                        findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.play_button))
+                        findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
                         state = State.Paused
                     }
                 }
