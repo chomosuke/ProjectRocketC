@@ -47,7 +47,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
                 while (i < I_MAX) {
 
                     val newTraceShape = newRegularPolygonalTraceShape(originX, originY, random().toFloat() * 0.1f, random().toFloat() * 0.1f,
-                            initialWidth, finalRadius, duration, initialRed, initialGreen, initialBlue, initialAlpha)
+                            initialWidth, finalWidth, duration, initialRed, initialGreen, initialBlue, initialAlpha)
                     newTraceShape.rotateShape(originX, originY, (2 * Math.PI * Math.random()).toFloat())
 
                     val random = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
@@ -59,7 +59,6 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
             }
         }
     }
-
 
     private val parallelForIForFadeTraces = ParallelForI(8, "fade traceShapes thread")
 //    /* only change one third of the trace each frame to maintain frame rate */
@@ -89,6 +88,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
         }, traceShapes.size)
         lastOriginX += dx
         lastOriginY += dy
+        Log.i("moveTrace", "dx: $dx, dy: $dy")
     }
 
     init {
@@ -96,7 +96,6 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
             traceShapes.add(RegularPolygonalTraceShape(numberOfEdges, z/* + 0.001f * (4 * random()*//*split trace to 4 layers*//*).toInt()*/, true))
         }
     }
-
 
     private fun newRegularPolygonalTraceShape(centerX: Float, centerY: Float, dx: Float, dy: Float, initialRadius: Float, finalRadius: Float,
                                               duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float): RegularPolygonalTraceShape {
