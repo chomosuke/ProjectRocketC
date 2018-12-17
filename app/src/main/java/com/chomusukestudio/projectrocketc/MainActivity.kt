@@ -31,10 +31,10 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.view.animation.Animation
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.chomusukestudio.projectrocketc.littleStar.putCommasInInt
-import com.google.firebase.analytics.FirebaseAnalytics
+//import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -51,14 +51,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     private lateinit var sharedPreferences: SharedPreferences
 
-    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
+//    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-
-        findViewById<Button>(R.id.restartButton).setOnClickListener { view -> restartGame(view) } // trying desperately to fix a crash on android 6
 
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
@@ -67,8 +65,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         LittleStar.soundId = LittleStar.soundPool.load(this, R.raw.eat_little_star, 1)
 //        LittleStar.soundId = LittleStar.soundPool.load("res/raw/eat_little_star.m4a", 1) // this is not working
 
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+//        // Obtain the FirebaseAnalytics instance.
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
         // set height and width of the screen
         val displayMetrics = DisplayMetrics()
@@ -82,7 +80,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
 
         // update highest score
-        findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
@@ -139,7 +137,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
-        this.runOnUiThread { findViewById<TextView>(R.id.scoreTextView).text = putCommasInInt(LittleStar.score.toString()) }
+        this.runOnUiThread {
+            findViewById<TextView>(R.id.scoreTextView).text = /*putCommasInInt*/(LittleStar.score.toString())
+        }
     }
 
     private var lastClick = 0L
@@ -170,16 +170,18 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun onPause(view: View) {
+        if (multiClick) return // prevent cheating the game
+
         try {
             when (state) {
                 State.Paused -> {
                     findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
-                    findViewById<Button>(R.id.pauseButton).text = "PauseMe"
+                    findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.pause_button))
                     state = State.InGame
                 }
                 State.InGame -> {
                     findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
-                    findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+                    findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
                     state = State.Paused
                 }
                 State.Crashed -> {
@@ -209,22 +211,25 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 putInt(getString(R.string.highestScore), LittleStar.score)
                 apply()
             }
-            val bundle = Bundle()
-            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
-            bundle.putString("leaderboard_id", "mLeaderboard")
-            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
+            // firebase stuff that i don't understand
+//            val bundle = Bundle()
+//            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
+//            bundle.putString("leaderboard_id", "mLeaderboard")
+//            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
 
         }
         runOnUiThread {
             findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.onCrashLayout).bringToFront()
 
-            findViewById<TextView>(R.id.highestScoreOnCrash).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+            findViewById<TextView>(R.id.highestScoreOnCrash).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
             findViewById<TextView>(R.id.previousScoreOnCrash).text = findViewById<TextView>(R.id.scoreTextView).text
 
             findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.INVISIBLE
 
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
+            // prevent any uncleaned visual effect
+            findViewById<TextView>(R.id.visualText).text = ""
         }
     }
 
@@ -233,7 +238,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         runOnUiThread {
             // update highest score
-            findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+            findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
             findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
@@ -279,12 +284,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         super.onStop()
         Log.i("", "\n\nonStop() called\n\n")
     }
-    
+
     public override fun onPause() {
         super.onPause()
         Log.i("", "\n\nonPause() called\n\n")
     }
-    
+
     public override fun onDestroy() {
         super.onDestroy()
         Log.i("", "\n\nonDestroy() called\n\n")
@@ -324,7 +329,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 State.InGame -> {
                     if (!hasFocus) {
                         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
-                        findViewById<Button>(R.id.pauseButton).text = "ResumeMe"
+                        findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
                         state = State.Paused
                     }
                 }
@@ -345,7 +350,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         if (multiClick) return
 
         // update highest score
-        findViewById<TextView>(R.id.highestScoreTextView).text = putCommasInInt(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
         findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
@@ -482,10 +487,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
         
         override fun onTouchEvent(e: MotionEvent): Boolean {
-            return if (state == State.Paused)
-                false
-            else
-                processingThread.onTouchEvent(e)
+            return processingThread.onTouchEvent(e)
         }
     }
 }

@@ -1,35 +1,32 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
-import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
-import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.Trace
+import com.chomusukestudio.projectrocketc.Rocket.trace.RegularPolygonalTrace
 import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
 
-import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
-import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import com.chomusukestudio.projectrocketc.state
-import java.lang.Math.*
 
 /**
  * Created by Shuang Li on 11/03/2018.
  */
 
 open class BasicRocket(surrounding: Surrounding, private val crashSound: MediaPlayer) : Rocket(surrounding) {
-    override val trace: Trace
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val trace = RegularPolygonalTrace(6, 1.01f, 0f,  0.4f, 500, 1f, 1f, 0f, 3f)
 
-    override fun refreshTrace(now: Long, previousFrameTime: Long) {
+    override fun generateTrace(now: Long, previousFrameTime: Long) {
         val x1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4)
         val y1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4)
         val x2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3)
         val y2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3)
         val originX = (x1 + x2) / 2
         val originY = (y1 + y2) / 2
-        trace.refreshTrace(now, previousFrameTime, originX, originY)
+        trace.generateTrace(now, previousFrameTime, originX, originY)
+    }
+
+    override fun fadeTrace(now: Long, previousFrameTime: Long) {
+        trace.fadeTrace(now, previousFrameTime)
     }
 
     override var radiusOfRotation = 2f

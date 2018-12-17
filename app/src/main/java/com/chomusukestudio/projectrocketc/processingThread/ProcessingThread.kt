@@ -15,7 +15,7 @@ import java.util.logging.Logger
 
 class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) {
     fun onTouchEvent(e: MotionEvent): Boolean {
-        return if (state == State.InGame) {
+        return if (state == State.InGame || state == State.Paused) {
             joystick.onTouchEvent(e)
             true
         } else
@@ -56,9 +56,8 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                     joystick.drawJoystick()
                 }
                 if (state == State.Crashed) {
-                    rocket.fadeMoveAndRemoveTraces(now, previousFrameTime, 0f)
+                    rocket.fadeTrace(now, previousFrameTime)
                     rocket.drawExplosion(now, previousFrameTime)
-                    rocket.waitForFadeMoveAndRemoveTraces()
                 }
 
 ////                if (upTimeMillis() - now > 1000 / refreshRate) {

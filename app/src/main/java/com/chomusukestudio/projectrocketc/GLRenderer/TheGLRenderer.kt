@@ -43,7 +43,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         
     }
 
-    val allFrameRate = ArrayList<Int>()
+//    val allFrameRate = ArrayList<Int>()
     override fun onDrawFrame(unused: GL10) {
         if (!paused) { // if this is called when paused for some reason don't do anything as nothing suppose to change
             countingFrames++
@@ -57,7 +57,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             }
             if (now - previousTime >= 1000) {// just to get frame rates
                 Log.i("Frame rate", "" + countingFrames + " and dynamic performance index " + CircularShape.performanceIndex)
-                allFrameRate.add(countingFrames)
+//                allFrameRate.add(countingFrames)
                 countingFrames = 0
                 previousTime = now
             }
@@ -92,28 +92,26 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
         Layer.refreshMatrix()
 
-        if (!paused) // if paused that means surfaceView is being redrawn (most likely)
-            // so this will likely to ruin the time so don't do it
+//        if (!paused) // if paused that means surfaceView is being redrawn (most likely)
+//            // so this will likely to ruin the time so don't do it
             previousFrameTime = upTimeMillis()// just to set this as close to draw as possible
     }
 
-    @Volatile private var paused = false
     fun pauseGLRenderer() {
         if (!paused) {
-            lastPausedTime = SystemClock.uptimeMillis()
             myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
-            Log.d("upTimeMillis", "" + upTimeMillis())
+            lastpausedTime = SystemClock.uptimeMillis()
+            Log.d("upTimeMillisFromPause", "" + upTimeMillis())
             paused = true
         }
     }
-    private var lastPausedTime = 0L
     fun resumeGLRenderer() {
         if (paused) {
-            pausedTime += SystemClock.uptimeMillis() - lastPausedTime
+            pausedTime += SystemClock.uptimeMillis() - lastpausedTime
             // pausedTime have to be set before changing renderMode as change of renderMode will trigger
             // onDrawFrame which will cause upTimeMillis to be accessed before pauseTime being set
             myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
-            Log.d("upTimeMillis", "" + upTimeMillis())
+            Log.d("upTimeMillisFromResume", "" + upTimeMillis())
             paused = false
 
 //            // if something happened with time try uncomment this

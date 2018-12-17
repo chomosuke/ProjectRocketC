@@ -1,8 +1,5 @@
 package com.chomusukestudio.projectrocketc.littleStar
 
-import android.app.Activity
-import android.content.Context
-import android.media.MediaPlayer
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.FullRingShape
@@ -22,7 +19,10 @@ import kotlin.math.cos
 import kotlin.math.sin
 import android.media.SoundPool
 import android.media.AudioManager
+import android.util.Log
+import java.lang.Math.abs
 import java.lang.Math.pow
+import kotlin.math.sqrt
 
 
 /**
@@ -105,12 +105,27 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
                 score += dScore
                 giveVisualText("+$dScore", visualTextView)
 
-                if (streamId != 0)
-                    soundPool.stop(streamId)
+                // stop all streams
+                while (starEatingStreamIds.isNotEmpty()) {
+                    soundPool.stop(starEatingStreamIds[0])
+                    starEatingStreamIds.removeAt(0)
+                }
 
-                val playbackSpeed = pow(2.0, dScore.toDouble()/12).toFloat() / 3
+                if (dScore > 48) {
+                    val playbackSpeed = pow(2.0, (dScore % 12 + 48).toDouble() / 12).toFloat() / 2
 
-                streamId = soundPool.play(soundId, 1f, 1f, 1, 0, playbackSpeed)
+                    val baseVolume = 1 - abs((12f - dScore % 12) / 12f)
+
+                    Log.v("eat star baseVolume", "" + baseVolume)
+
+                    starEatingStreamIds.add(soundPool.play(soundId, baseVolume, baseVolume, 1, 0, playbackSpeed / 2f))
+                    starEatingStreamIds.add(soundPool.play(soundId, 1 - baseVolume, 1 - baseVolume, 1, 0, playbackSpeed))
+                } else {
+
+                    val playbackSpeed = pow(2.0, dScore.toDouble() / 12).toFloat() / 2
+
+                    starEatingStreamIds.add(soundPool.play(soundId, 1f, 1f, 1, 0, playbackSpeed))
+                }
             }
             LittleStar.Color.RED -> {
                 dScore *= 2
@@ -283,26 +298,8 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
 
         var soundId: Int = 0
         var soundPool: SoundPool = SoundPool(4, AudioManager.STREAM_MUSIC, 100)
-        var streamId: Int = 0
+        var starEatingStreamIds = ArrayList<Int>()
     }
 }
 
 
-fun putCommasInInt(string: String): String {
-    var string = string
-    var numCounter = 0
-    for (i in string.length - 1 downTo 0) {
-        if (string[i].isDigit()) {
-            numCounter++
-            if (i - 1 >= 0) { // not last one
-                if (numCounter == 3 && string[i - 1].isDigit()) {
-                    string = string.substring(0, i) + "," + string.substring(i, string.length)
-                    numCounter = 0
-                }
-            }
-        } else {
-            numCounter = 0
-        }
-    }
-    return string
-}

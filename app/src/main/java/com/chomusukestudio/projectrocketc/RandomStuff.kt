@@ -63,9 +63,12 @@ class TouchableView<out V : View>(val view: V, val activity: Activity) {
     }
 }
 
+@Volatile var paused = false
+@Volatile var lastpausedTime = 0L
 @Volatile var pausedTime: Long = 0L
 fun upTimeMillis(): Long {
-    return SystemClock.uptimeMillis() - pausedTime
+    return if (paused) lastpausedTime - pausedTime // if paused then apart of pausedTime is not recorded yet
+        else SystemClock.uptimeMillis() - pausedTime
 }
 
 fun <R>runWithExceptionChecked(runnable: () -> R): R {
@@ -77,4 +80,23 @@ fun <R>runWithExceptionChecked(runnable: () -> R): R {
         Log.e("exception", "in processingThread" + e)
         throw e
     }
+}
+
+fun putCommasInInt(string: String): String {
+    var string = string
+    var numCounter = 0
+    for (i in string.length - 1 downTo 0) {
+        if (string[i].isDigit()) {
+            numCounter++
+            if (i - 1 >= 0) { // not last one
+                if (numCounter == 3 && string[i - 1].isDigit()) {
+                    string = string.substring(0, i) + "," + string.substring(i, string.length)
+                    numCounter = 0
+                }
+            }
+        } else {
+            numCounter = 0
+        }
+    }
+    return string
 }
