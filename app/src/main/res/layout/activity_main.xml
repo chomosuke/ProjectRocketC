@@ -182,7 +182,7 @@
             android:background="@android:color/transparent"
             android:onClick="restartGame"
             android:scaleType="centerInside"
-            android:src="@drawable/restart_icon"
+            android:src="@drawable/restart_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/toHomeButton"
@@ -190,7 +190,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.75" />
 
-        <Button
+        <ImageButton
             android:id="@+id/toHomeButton"
             android:layout_width="64dp"
             android:layout_height="64dp"
@@ -200,7 +200,7 @@
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
             android:onClick="toHome"
-            android:text="Home"
+            android:src="@drawable/to_home_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/restartButton"
