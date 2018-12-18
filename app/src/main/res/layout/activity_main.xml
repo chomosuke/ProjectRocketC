@@ -200,6 +200,7 @@
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
             android:onClick="toHome"
+            android:scaleType="centerInside"
             android:src="@drawable/to_home_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
