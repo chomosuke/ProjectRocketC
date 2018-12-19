@@ -43,9 +43,8 @@ import java.util.logging.Logger
 enum class State { InGame, PreGame, Paused, Crashed }
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
-
-    private fun cleanField() {
-        // clean field from last game
+    init {
+        // when a new activity start, static field will be cleaned
         GLTriangle.layers.removeAll { true }
         BasicSurrounding.starsBackground = null
     }
@@ -55,10 +54,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     public override fun onCreate(savedInstanceState: Bundle?) {
-
-        // when a new activity start, static field will be cleaned
-        cleanField()
-
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
@@ -296,7 +291,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     public override fun onDestroy() {
-        cleanField()
         super.onDestroy()
         Log.i("", "\n\nonDestroy() called\n\n")
         // onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)

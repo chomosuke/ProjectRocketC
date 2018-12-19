@@ -5,21 +5,23 @@ package com.chomusukestudio.projectrocketc.Rocket
  */
 
 import android.support.annotation.CallSuper
-import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
-import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
+import com.chomusukestudio.projectrocketc.Shape.CircularShape
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.TraceShape.TraceShape
 import com.chomusukestudio.projectrocketc.state
 import com.chomusukestudio.projectrocketc.State
+import com.chomusukestudio.projectrocketc.upTimeMillis
 import java.lang.Math.*
 
+import java.util.ArrayList
+
+// TODO: both rocket and trace needs clean up, except I have no intention to do so
 abstract class Rocket(protected val surrounding: Surrounding) {
-
-    protected open var explosionShape: ExplosionShape? = null
-
-    protected abstract val trace: Trace
+    
+    protected var traces = ArrayList<TraceShape>()
     var currentRotation = surrounding.rotation
         protected set/* angle of rocket's current heading in radians
     angle between up and rocket current heading, positive is clockwise. */
@@ -93,23 +95,67 @@ abstract class Rocket(protected val surrounding: Surrounding) {
             }
         }
 
-        generateTrace(now, previousFrameTime)
-        fadeTrace(now, previousFrameTime)
+        fadeMoveAndRemoveTraces(now, previousFrameTime, ds)
 
-        // move trace with surrounding
-        val dx = -ds * sin(currentRotation.toDouble()).toFloat()
-        val dy = -ds * cos(currentRotation.toDouble()).toFloat()
-        surrounding.moveSurrounding(dx, dy , now, previousFrameTime)
-        trace.moveTrace(dx, dy)
+        surrounding.moveSurrounding(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat(), now, previousFrameTime)
+//        surrounding.moveSurrounding(0f,0f, now, previousFrameTime)
+        //        surrounding.moveSurrounding(0, -ds, now, previousFrameTime);
+
+//        // move rocket components
+//        for (component in components)
+//            component.moveShape(ds * sin(currentRotation.toDouble()).toFloat(), ds * cos(currentRotation.toDouble()).toFloat())
+//
+//        offsetCamera(ds * sin(currentRotation.toDouble()).toFloat(), ds * cos(currentRotation.toDouble()).toFloat())
+//
+//        // refresh ends of surrounding
+//        val leftRightBottomTopEnd = generateLeftRightBottomTop(widthInPixel / heightInPixel)
+//        surrounding.setLeftRightBottomTopEnd(leftRightBottomTopEnd[0], leftRightBottomTopEnd[1], leftRightBottomTopEnd[2], leftRightBottomTopEnd[3])
+
+        waitForFadeMoveAndRemoveTraces()
+        
+        generateTraces(previousFrameTime, now, ds)
+        
+    }
+    
+    open fun waitForFadeMoveAndRemoveTraces() {
+        // do nothing
     }
 
-    protected abstract fun generateTrace(now: Long, previousFrameTime: Long)
-    abstract fun fadeTrace(now: Long, previousFrameTime: Long)
+    
+    open fun fadeMoveAndRemoveTraces(now: Long, previousFrameTime: Long, ds: Float) {
+        for (trace in traces) {
+            // fade traces
+            trace.changeShapeColor(0f, 0f, 0f, -(now - previousFrameTime) / 5000f)
+        }
+        moveTraceWithSurrounding(ds)
+        removeTrace()
+    }
+    
+    protected fun moveTraceWithSurrounding(ds: Float) {
+        for (trace in traces)
+        // move traces
+            trace.moveShape(-ds * sin(currentRotation.toDouble()).toFloat(), -ds * cos(currentRotation.toDouble()).toFloat())
+    }
+    
+    protected open fun removeTrace() {
+        // remove faded traces
+        var i = 0
+        while (i < traces.size) {
+            if (1.0 / 256 >= traces[i].shapeColor[3]) {
+                traces.removeAt(i).removeShape()
+                i--
+            }
+            i++
+        }
+    }
+    
+    protected abstract fun generateTraces(previousFrameTime: Long, now: Long, ds: Float)
 
     open fun removeAllShape() {
         for (component in components)
             component.removeShape()
-        trace.removeTrace()
+        for (trace in traces)
+            trace.removeShape()
     }
     
     fun isEaten(littleStar: LittleStar): Boolean {

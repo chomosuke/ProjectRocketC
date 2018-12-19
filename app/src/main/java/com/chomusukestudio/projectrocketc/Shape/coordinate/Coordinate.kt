@@ -2,7 +2,6 @@ package com.chomusukestudio.projectrocketc.Shape.coordinate
 
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.math.sqrt
 
 fun rotatePoint(pointX: Float, pointY: Float, centerOfRotationX: Float, centerOfRotationY: Float, angle: Float): FloatArray {
     if (angle == 0f) {
@@ -30,7 +29,7 @@ fun rotatePoint(pointX: Float, pointY: Float, centerOfRotationX: Float, centerOf
     return floatArrayOf(resultX, resultY)
 }
 
-fun distance(x1: Float, y1: Float, x2: Float, y2: Float) = sqrt(square(x1 - x2) + square(y1 - y2))
+fun distance(x1: Float, y1: Float, x2: Float, y2: Float) = Math.sqrt(square((x1 - x2).toDouble()) + square((y1 - y2).toDouble())).toFloat()
 
 fun square(input: Double) = input * input
 fun square(input: Float) = input * input
