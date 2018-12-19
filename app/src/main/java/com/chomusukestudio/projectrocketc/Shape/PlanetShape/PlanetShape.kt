@@ -155,12 +155,12 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
     
     fun isTooClose(anotherPlanetShape: PlanetShape, distance: Float): Boolean {
         // if circle and circle are too close
-        return square((anotherPlanetShape.centerX - this.centerX).toDouble()) + square((anotherPlanetShape.centerY - this.centerY).toDouble()) <= square((anotherPlanetShape.radius + this.radius + distance).toDouble())
+        return square(anotherPlanetShape.centerX - this.centerX) + square(anotherPlanetShape.centerY - this.centerY) <= square(anotherPlanetShape.radius + this.radius + distance)
         // testing all pointsOutside is impractical because performance, subclass may override this method.
     }
     
     override fun isInside(x: Float, y: Float): Boolean {
-        return square((x - centerX).toDouble()) + square((y - centerY).toDouble()) <= square(radius.toDouble())
+        return square(x - centerX) + square(y - centerY) <= square(radius)
     }
     
     companion object {
