@@ -139,6 +139,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
         this.runOnUiThread {
             findViewById<TextView>(R.id.scoreTextView).text = /*putCommasInInt*/(LittleStar.score.toString())
+            findViewById<TextView>(R.id.deltaTextView).text = "δ" + (LittleStar.dScore).toString()
         }
     }
 

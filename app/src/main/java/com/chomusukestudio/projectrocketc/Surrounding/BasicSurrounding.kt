@@ -535,7 +535,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             LittleStar.dScore = (LittleStar.dScore + (flybysInThisYellowStar * 5))
             //            LittleStar.Companion.setDScore(1000000);
 //            if ((1 + flybysInThisYellowStar * 0.5) % 1 == 0.0) { // display an integer
-                giveVisualText("next +" + (flybysInThisYellowStar * 5), visualTextView)
+                giveVisualText("δ+" + (flybysInThisYellowStar * 5), visualTextView)
 //            } else {
 //                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5), visualTextView)
 //            }
