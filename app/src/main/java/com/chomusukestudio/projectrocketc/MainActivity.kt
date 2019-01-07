@@ -45,9 +45,10 @@ enum class State { InGame, PreGame, Paused, Crashed }
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
 
     private fun cleanField() {
-        // clean field from last game
+        // when a new activity start, static field will be cleaned
         GLTriangle.layers.removeAll { true }
         BasicSurrounding.starsBackground = null
+        paused = false // unpause the lose focus pause
     }
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -60,6 +61,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         cleanField()
 
         super.onCreate(savedInstanceState)
+
+        cleanField()
 
         setContentView(R.layout.activity_main)
 
@@ -115,6 +118,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                                 }
                             })
 
+                    if (state != State.PreGame) {
+                        Log.i("game launching", "state not in PreGame but $state")
+                        state = State.PreGame // this is pregame
+                    }
 //                    // see if this is the first time the game open
 //                    if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
 //                        // if it is show the tutorial
@@ -144,6 +151,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
         this.runOnUiThread {
             findViewById<TextView>(R.id.scoreTextView).text = /*putCommasInInt*/(LittleStar.score.toString())
+            findViewById<TextView>(R.id.deltaTextView).text = "δ " + (LittleStar.dScore).toString()
         }
     }
 

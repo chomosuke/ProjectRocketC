@@ -9,7 +9,7 @@
         android:pivotY="50%"
         android:toXScale="3.0"
         android:toYScale="3.0" />
-    <set android:ordering="sequentially">
+    <set android:ordering="together">
         <alpha
             android:duration="3000"
             android:fromAlpha="0.0"

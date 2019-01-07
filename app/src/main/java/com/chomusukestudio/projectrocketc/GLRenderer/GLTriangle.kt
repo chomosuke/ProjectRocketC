@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.GLRenderer
 
+import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import java.util.*
@@ -167,7 +168,7 @@ class GLTriangle (z: Float) : Triangle() {
     protected fun finalize() {
         if (!removed) {
             removeTriangle()
-            throw RuntimeException("triangle isn't removed")
+            Log.v("triangle finalizer", "triangle isn't removed")
         }
     }
 
