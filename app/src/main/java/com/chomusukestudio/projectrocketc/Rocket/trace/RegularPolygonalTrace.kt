@@ -36,27 +36,26 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
         //                    -0.5 * speed * sin(currentRotation), -0.5 * speed * cos(currentRotation), 0.9, 0.9, 0.1, 1, 1.01));
 
         ds += unfilledDs // finish last frame unfinished work
-        if (state == State.InGame) {
-            val I_MAX = ds / 128f * 1000f - 0.25f - (Math.random().toFloat() * 0.5f)
-            if (I_MAX <= 0) { // if we are not adding any trace this frame
-                // let the next frame know
-                unfilledDs = ds // there is unfinished work
-            } else {
-                unfilledDs = 0f // also update it so the next frame know there is no unfinished work
 
-                var i = 0
-                while (i < I_MAX) {
+        val I_MAX = ds / 128f * 1000f - 0.25f - (Math.random().toFloat() * 0.5f)
+        if (I_MAX <= 0) { // if we are not adding any trace this frame
+            // let the next frame know
+            unfilledDs = ds // there is unfinished work
+        } else {
+            unfilledDs = 0f // also update it so the next frame know there is no unfinished work
 
-                    val newTraceShape = newRegularPolygonalTraceShape(originX, originY, random().toFloat() * 0.1f, random().toFloat() * 0.1f,
-                            initialWidth, finalWidth, duration, initialRed, initialGreen, initialBlue, initialAlpha)
-                    newTraceShape.rotateShape(originX, originY, (2 * Math.PI * Math.random()).toFloat())
+            var i = 0
+            while (i < I_MAX) {
 
-                    val random = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
-                    newTraceShape.fadeAndMoveTrace(now, previousFrameTime + ((1 - random) * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
-                    newTraceShape.moveShape(dx * random, -dy * random)
+                val newTraceShape = newRegularPolygonalTraceShape(originX, originY, random().toFloat() * 0.1f, random().toFloat() * 0.1f,
+                        initialWidth, finalWidth, duration, initialRed, initialGreen, initialBlue, initialAlpha)
+                newTraceShape.rotateShape(originX, originY, (2 * Math.PI * Math.random()).toFloat())
 
-                    i++
-                }
+                val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
+                newTraceShape.fadeAndMoveTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
+                newTraceShape.moveShape(dx * margin, -dy * margin)
+
+                i++
             }
         }
     }
@@ -89,7 +88,6 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
         }, traceShapes.size)
         lastOriginX += dx
         lastOriginY += dy
-        Log.i("moveTrace", "dx: $dx, dy: $dy")
     }
 
     init {

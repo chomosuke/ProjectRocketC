@@ -93,8 +93,10 @@ abstract class Rocket(protected val surrounding: Surrounding) {
             }
         }
 
-        generateTrace(now, previousFrameTime)
-        fadeTrace(now, previousFrameTime)
+        if (state == State.InGame) { // only generate trace when in game
+            generateTrace(now, previousFrameTime)
+            fadeTrace(now, previousFrameTime)
+        }
 
         // move trace with surrounding
         val dx = -ds * sin(currentRotation.toDouble()).toFloat()
