@@ -84,7 +84,11 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
     private val parallelForIForMoveTraces = ParallelForI(8, "move traceShapes thread")
     override fun moveTrace(dx: Float, dy: Float) {
         parallelForIForMoveTraces.run({ i ->
-            traceShapes[i].moveShape(dx, dy)
+            val traceShape = traceShapes[i] as RegularPolygonalTraceShape
+            if (traceShape.showing) {
+                traceShape.moveShape(dx, dy)
+                Log.v("moveTrace", "dx: $dx, dy: $dy")
+            }
         }, traceShapes.size)
         lastOriginX += dx
         lastOriginY += dy
