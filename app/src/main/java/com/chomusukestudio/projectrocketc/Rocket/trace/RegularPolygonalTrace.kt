@@ -3,10 +3,9 @@ package com.chomusukestudio.projectrocketc.Rocket.trace
 
 import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.*
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
-import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
-import com.chomusukestudio.projectrocketc.state
 import java.lang.Math.random
 import kotlin.math.sqrt
 
@@ -52,7 +51,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
                 newTraceShape.rotateShape(originX, originY, (2 * Math.PI * Math.random()).toFloat())
 
                 val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
-                newTraceShape.fadeAndMoveTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
+                newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
                 newTraceShape.moveShape(dx * margin, -dy * margin)
 
                 i++
@@ -75,8 +74,8 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
             if (trace.showing) {
 //                  // give it refreshFactor amount of time since it only move one out of refreshFactor of frames
 //                if (i % refreshFactor == lastChanged)
-                // fadeAndMoveTrace with RegularPolygonalTraceShape will mark itself as not showing
-                trace.fadeAndMoveTrace(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
+                // fadeTrace with RegularPolygonalTraceShape will mark itself as not showing
+                trace.fadeTrace(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
             }
         }, traceShapes.size)
     }
@@ -87,9 +86,9 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
             val traceShape = traceShapes[i] as RegularPolygonalTraceShape
             if (traceShape.showing) {
                 traceShape.moveShape(dx, dy)
-                Log.v("moveTrace", "dx: $dx, dy: $dy")
             }
         }, traceShapes.size)
+        Log.v("moveTrace", "dx: $dx, dy: $dy")
         lastOriginX += dx
         lastOriginY += dy
     }
@@ -163,7 +162,20 @@ private class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float, visibilit
         }
     }
 
-    fun fadeAndMoveTrace(now: Long, previousFrameTime: Long) {
+    override fun moveShape(dx: Float, dy: Float) {
+        super.moveShape(dx, dy)
+        centerX += dx
+        centerY += dy
+    }
+
+    override fun rotateShape(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
+        super.rotateShape(centerOfRotationX, centerOfRotationY, angle)
+        val result = rotatePoint(centerX, centerY, centerOfRotationX, centerOfRotationY, angle)
+        centerX = result[0]
+        centerY = result[1]
+    }
+
+    fun fadeTrace(now: Long, previousFrameTime: Long) {
         val color = componentShapes[0].shapeColor
         if (color[0] > 250f / 256f
                 && color[1] > 250f / 256f
