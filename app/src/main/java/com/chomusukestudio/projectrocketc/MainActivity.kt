@@ -18,7 +18,7 @@ import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
-import com.chomusukestudio.projectrocketc.Rocket.BasicRocket
+import com.chomusukestudio.projectrocketc.Rocket.BeginnerRocket
 import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.ThreadClasses.ScheduledThread
 
@@ -61,8 +61,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         cleanField()
 
         super.onCreate(savedInstanceState)
-
-        cleanField()
 
         setContentView(R.layout.activity_main)
 
@@ -441,7 +439,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             val surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
                     TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
-            val rocket = BasicRocket(surrounding, MediaPlayer.create(context, R.raw.fx22))
+            val rocket = BeginnerRocket(surrounding, MediaPlayer.create(context, R.raw.fx22))
 
             processingThread = ProcessingThread(
                     TwoFingersJoystick(),
@@ -493,7 +491,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
             processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
                     TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
-            processingThread.rocket = BasicRocket(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22))
+            processingThread.rocket = BeginnerRocket(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22))
             processingThread.surrounding.initializeSurrounding(processingThread.rocket)
             processingThread.joystick = TwoFingersJoystick()
 //            processingThread.joystick = OneFingerJoystick()

@@ -47,7 +47,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
             while (i < I_MAX) {
 
                 val newTraceShape = newRegularPolygonalTraceShape(originX, originY, random().toFloat() * 0.1f, random().toFloat() * 0.1f,
-                        initialWidth, finalWidth, duration, initialRed, initialGreen, initialBlue, initialAlpha)
+                        initialWidth / 2, finalWidth / 2, duration, initialRed, initialGreen, initialBlue, initialAlpha)
                 newTraceShape.rotateShape(originX, originY, (2 * Math.PI * Math.random()).toFloat())
 
                 val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
@@ -88,7 +88,6 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
                 traceShape.moveShape(dx, dy)
             }
         }, traceShapes.size)
-        Log.v("moveTrace", "dx: $dx, dy: $dy")
         lastOriginX += dx
         lastOriginY += dy
     }
