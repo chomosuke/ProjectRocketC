@@ -13,7 +13,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
  * Created by Shuang Li on 11/03/2018.
  */
 
-open class BeginnerRocket(surrounding: Surrounding, private val crashSound: MediaPlayer) : Rocket(surrounding) {
+open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer) : Rocket(surrounding) {
     override val trace = RegularPolygonalTrace(6, 1.01f, 0.24f,  0.4f, 1000, 1f, 1f, 0f, 3f)
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
