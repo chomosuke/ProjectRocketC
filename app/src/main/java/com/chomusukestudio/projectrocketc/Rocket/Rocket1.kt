@@ -26,11 +26,7 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
         trace.generateTrace(now, previousFrameTime, originX, originY)
     }
 
-    override fun fadeTrace(now: Long, previousFrameTime: Long) {
-        trace.fadeTrace(now, previousFrameTime)
-    }
-
-    override var radiusOfRotation = 2f
+    override val radiusOfRotation = 2f
     final override val initialSpeed = 4f / 1000f
     override var speed = initialSpeed
     
@@ -61,45 +57,11 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
         }
     }
 
-    // initialize for surrounding to set centerOfRotation
-    init {
-        setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)
-    }
-
-    private val explosionCoordinates = arrayOf(
-            Coordinate(with(components[0] as TriangularShape) { (x1 + x2 + x3) / 3 }, with(components[0] as TriangularShape) { (y1 + y2 + y3) / 3 }),
-            Coordinate(with(components[1] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[1] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }),
-            Coordinate((components[2] as CircularShape).centerX, (components[2] as CircularShape).centerY),
-            Coordinate(with(components[3] as QuadrilateralShape) { (x1 + x2 + x3 + x4) / 4 }, with(components[3] as QuadrilateralShape) { (y1 + y2 + y3 + y4) / 4 }))
-
-    override fun drawExplosion(now: Long, previousFrameTime: Long) {
-        if (explosionShape == null) {
-            val explosionCoordinate = Coordinate(centerOfRotationX, centerOfRotationY)
-//                    this.explosionCoordinates[components.indexOf(crashedComponent)]
-//            explosionCoordinate.rotateCoordinate(centerOfRotationX, centerOfRotationY, currentRotation)
-            explosionShape = RedExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 0.75f, 1000)
-        } else {
-            // rocket already blown up
-            for (component in components)
-                if (!component.removed)
-                    component.removeShape()
-
-            explosionShape!!.drawExplosion(now - previousFrameTime)
-        }
-    }
-
+    // make the crash sound
     override fun isCrashed(surrounding: Surrounding): Boolean {
         return if (super.isCrashed(surrounding)) {
             crashSound.start()
             true
         } else false
-    }
-
-    override fun removeAllShape() {
-        for (component in components)
-            if (!component.removed)
-                component.removeShape()
-        trace.removeTrace()
-        explosionShape?.removeShape()
     }
 }

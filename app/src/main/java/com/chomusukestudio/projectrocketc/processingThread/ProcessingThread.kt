@@ -14,7 +14,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) {
-    fun onTouchEvent(e: MotionEvent): Boolean {
+    fun onTouchEvent(e: MotionEvent, state: State): Boolean {
         return if (state == State.InGame || state == State.Paused) {
             joystick.onTouchEvent(e)
             true
@@ -37,7 +37,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
     private val lock = ReentrantLock()
     private val condition = lock.newCondition()
 
-    fun generateNextFrame(now: Long, previousFrameTime: Long) {
+    fun generateNextFrame(now: Long, previousFrameTime: Long, state: State) {
         finished = false // haven't started
         nextFrameThread.submit {
             runWithExceptionChecked {
@@ -45,14 +45,13 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
 
                     // see if crashed
                     if (rocket.isCrashed(surrounding)) {
-                        state = State.Crashed
                         mainActivity.onCrashed()
                     }
                     surrounding.anyLittleStar()
                 }
                 if (state == State.PreGame || state == State.InGame) {
-                    rocket.moveRocket(joystick.getTurningDirection(rocket.currentRotation), now, previousFrameTime)
-                    surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime)
+                    rocket.moveRocket(joystick.getTurningDirection(rocket.currentRotation), now, previousFrameTime, state)
+                    surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime, state)
                     joystick.drawJoystick()
                 }
                 if (state == State.Crashed) {

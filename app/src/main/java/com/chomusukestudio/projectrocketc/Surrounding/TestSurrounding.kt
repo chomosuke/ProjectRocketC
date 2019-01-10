@@ -14,6 +14,7 @@ import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
+import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 
@@ -30,7 +31,7 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
         this.topEnd = topEnd
     }
 
-    override fun initializeSurrounding(rocket: Rocket) {
+    override fun initializeSurrounding(rocket: Rocket, state: State) {
         this.rocket = rocket
         startingPathOfRocket = QuadrilateralShape(centerOfRotationX - rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f,
                 centerOfRotationX + rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
@@ -89,7 +90,7 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
         boundaries.add(previousTriangles[1])
     }
     
-    override fun makeNewTriangleAndRemoveTheOldOne(now: Long, previousFrameTime: Long) {
+    override fun makeNewTriangleAndRemoveTheOldOne(now: Long, previousFrameTime: Long, state: State) {
         
         if (8.1 >= previousTriangles[0].getTriangularShapeCoords(Y1)) {// only go though the entire thing when need to
             // to remove

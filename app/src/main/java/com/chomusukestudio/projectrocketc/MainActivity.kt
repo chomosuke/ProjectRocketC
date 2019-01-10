@@ -39,7 +39,6 @@ import java.util.concurrent.Executors
 import java.util.logging.Level
 import java.util.logging.Logger
 
-@Volatile var state: State = State.PreGame
 enum class State { InGame, PreGame, Paused, Crashed }
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
@@ -54,6 +53,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     private lateinit var sharedPreferences: SharedPreferences
 
 //    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
+
+    @Volatile var state: State = State.PreGame
 
     public override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -135,15 +136,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 }
             }
         }
-    }
-
-    private fun disableClipOnParents(v: View) {
-        if (v.parent == null)
-            return
-        if (v is ViewGroup)
-            v.clipChildren = false
-        if (v.parent is View)
-            disableClipOnParents(v.parent as View)
     }
 
     private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
@@ -389,9 +381,15 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
 
+        val mainActivity = context as MainActivity
+        init {
+            // Create an OpenGL ES 2.0 context
+            setEGLContextClientVersion(2)
+        }
+
         lateinit var processingThread: ProcessingThread
         lateinit var mRenderer: TheGLRenderer
-        
+
         fun shutDown() {
             try {
                 processingThread.shutDown()
@@ -403,9 +401,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 Log.w("shutDown()", e)
             }
         } // for onStop() and onDestroy() to remove Layer
-        
+
         internal inner class MyConfigChooser : GLSurfaceView.EGLConfigChooser {// this class is for antialiasing
-            
+
             override fun chooseConfig(egl: EGL10, display: EGLDisplay): EGLConfig? {
 
                 val attribs = intArrayOf(EGL10.EGL_LEVEL, 0, EGL10.EGL_RENDERABLE_TYPE, 4, // EGL_OPENGL_ES2_BIT
@@ -416,7 +414,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 val configs = arrayOfNulls<EGLConfig>(1)
                 val configCounts = IntArray(1)
                 egl.eglChooseConfig(display, attribs, configs, 1, configCounts)
-                
+
                 return if (configCounts[0] == 0) {
                     // Failed! Error handling.
                     null
@@ -424,11 +422,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     configs[0]
                 }
             }
-        }
-        
-        init {
-            // Create an OpenGL ES 2.0 context
-            setEGLContextClientVersion(2)
         }
 
         fun initializeRenderer() {
@@ -438,7 +431,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
 
             val surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
-                    TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
+                    TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
             val rocket = Rocket1(surrounding, MediaPlayer.create(context, R.raw.fx22))
 
             processingThread = ProcessingThread(
@@ -447,10 +440,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     surrounding,
                     rocket,
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
-                    context as MainActivity) // we know that the context is MainActivity
+                    mainActivity) // we know that the context is MainActivity
 //            processingThread = TestingProcessingThread()
             mRenderer = TheGLRenderer(processingThread, this)
-            processingThread.surrounding.initializeSurrounding(processingThread.rocket)
+            processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(mRenderer)
@@ -492,14 +485,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
                     TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
             processingThread.rocket = Rocket1(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22))
-            processingThread.surrounding.initializeSurrounding(processingThread.rocket)
+            processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
             processingThread.joystick = TwoFingersJoystick()
 //            processingThread.joystick = OneFingerJoystick()
             findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
         }
-        
+
         override fun onTouchEvent(e: MotionEvent): Boolean {
-            return processingThread.onTouchEvent(e)
+            return processingThread.onTouchEvent(e, mainActivity.state) // we know that the context is MainActivity
         }
     }
 }

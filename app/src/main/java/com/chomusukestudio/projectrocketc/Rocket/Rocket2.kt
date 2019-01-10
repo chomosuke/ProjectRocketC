@@ -61,37 +61,10 @@ open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer
         }
     }
 
-    // initialize for surrounding to set centerOfRotation
-    init {
-        setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)
-    }
-
-    override fun drawExplosion(now: Long, previousFrameTime: Long) {
-        if (explosionShape == null) {
-            val explosionCoordinate = Coordinate(centerOfRotationX, centerOfRotationY)
-            explosionShape = RedExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 0.75f, 1000)
-        } else {
-            // rocket already blown up
-            for (component in components)
-                if (!component.removed)
-                    component.removeShape()
-
-            explosionShape!!.drawExplosion(now - previousFrameTime)
-        }
-    }
-
     override fun isCrashed(surrounding: Surrounding): Boolean {
         return if (super.isCrashed(surrounding)) {
             crashSound.start()
             true
         } else false
-    }
-
-    override fun removeAllShape() {
-        for (component in components)
-            if (!component.removed)
-                component.removeShape()
-        trace.removeTrace()
-        explosionShape?.removeShape()
     }
 }

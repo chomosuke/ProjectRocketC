@@ -6,16 +6,22 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.support.annotation.CallSuper
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
+import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.state
+import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
 import com.chomusukestudio.projectrocketc.State
 import java.lang.Math.*
 
 abstract class Rocket(protected val surrounding: Surrounding) {
+
+    // initialize for surrounding to set centerOfRotation
+    init {
+        setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)
+    }
 
     protected open var explosionShape: ExplosionShape? = null
 
@@ -25,8 +31,7 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     angle between up and rocket current heading, positive is clockwise. */
     abstract var speed: Float
         protected set // ds/dt
-    abstract var radiusOfRotation: Float
-        protected set
+    abstract val radiusOfRotation: Float
     
     protected abstract val initialSpeed: Float
     protected abstract val components: Array<Shape>
@@ -46,7 +51,19 @@ abstract class Rocket(protected val surrounding: Surrounding) {
             return false
     }
 
-    abstract fun drawExplosion(now: Long, previousFrameTime: Long)
+    open val explosionCoordinate = Coordinate(centerOfRotationX, centerOfRotationY)
+    fun drawExplosion(now: Long, previousFrameTime: Long) {
+        if (explosionShape == null) {
+            explosionShape = RedExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 0.75f, 1000)
+        } else {
+            // rocket already blown up
+            for (component in components)
+                if (!component.removed)
+                    component.removeShape()
+
+            explosionShape!!.drawExplosion(now - previousFrameTime)
+        }
+    }
 
     abstract val width: Float
     
@@ -61,7 +78,7 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     }
     
     @CallSuper // allow rocket to have moving component
-    open fun moveRocket(rotationNeeded: Float, now: Long, previousFrameTime: Long) {
+    open fun moveRocket(rotationNeeded: Float, now: Long, previousFrameTime: Long, state: State) {
         
         if (state == State.InGame) { // only make it faster if it's already started
             // when 0 score, 1 times as fast, when 1024 score, 2 times as fast
@@ -109,12 +126,16 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     }
 
     protected abstract fun generateTrace(now: Long, previousFrameTime: Long)
-    abstract fun fadeTrace(now: Long, previousFrameTime: Long)
+    open fun fadeTrace(now: Long, previousFrameTime: Long) {
+        trace.fadeTrace(now, previousFrameTime)
+    }
 
     open fun removeAllShape() {
         for (component in components)
-            component.removeShape()
+            if (!component.removed)
+                component.removeShape()
         trace.removeTrace()
+        explosionShape?.removeShape()
     }
     
     fun isEaten(littleStar: LittleStar): Boolean {

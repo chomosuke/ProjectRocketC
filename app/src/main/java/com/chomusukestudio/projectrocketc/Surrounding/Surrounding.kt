@@ -2,14 +2,15 @@ package com.chomusukestudio.projectrocketc.Surrounding
 
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.State
 
 abstract class Surrounding {
     abstract val centerOfRotationX: Float
     abstract val centerOfRotationY: Float
     abstract val rotation: Float
     abstract var rocket: Rocket
-    abstract fun initializeSurrounding(rocket: Rocket)
-    abstract fun makeNewTriangleAndRemoveTheOldOne(now: Long, previousFrameTime: Long)
+    abstract fun initializeSurrounding(rocket: Rocket, state: State)
+    abstract fun makeNewTriangleAndRemoveTheOldOne(now: Long, previousFrameTime: Long, state: State)
     abstract fun removeAllShape()
     abstract fun moveSurrounding(dx: Float, dy: Float, now: Long, previousFrameTime: Long)
     abstract fun anyLittleStar()
