@@ -57,6 +57,11 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
         }
     }
 
+    // initialize for surrounding to set centerOfRotation
+    init {
+        setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)
+    }
+
     // make the crash sound
     override fun isCrashed(surrounding: Surrounding): Boolean {
         return if (super.isCrashed(surrounding)) {

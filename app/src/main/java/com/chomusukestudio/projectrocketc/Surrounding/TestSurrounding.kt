@@ -186,7 +186,7 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
         }
     }
     
-    override fun anyLittleStar() {
+    override fun checkAndAddLittleStar(now: Long) {
         for (littleStar in littleStars) {
             if (rocket.isEaten(littleStar));
 //                littleStar.eatLittleStar(TODO("put some ViewWithActivity<TextView> here"))

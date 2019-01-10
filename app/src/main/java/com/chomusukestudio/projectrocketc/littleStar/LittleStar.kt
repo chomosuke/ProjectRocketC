@@ -13,7 +13,6 @@ import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText
-import com.chomusukestudio.projectrocketc.upTimeMillis
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -29,7 +28,7 @@ import kotlin.math.sqrt
  * Created by Shuang Li on 25/03/2018.
  */
 
-class LittleStar(val COLOR: Color, private var centerX: Float, private var centerY: Float, private val range: Float, var duration: Long) {
+class LittleStar(val COLOR: Color, private var centerX: Float, private var centerY: Float, private val range: Float, var duration: Long, now: Long) {
     private var littleStarShape: LittleStarShape
     private var arrowToLittleStarShape: ArrowToLittleStarShape
     private var rangeCircleThingy: FullRingShape? = null
@@ -39,7 +38,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         RED(1f, 0f, 0f), YELLOW(242f/256f, 187f/256f, 26f/256f)
     }
     
-    private val birthTime: Long = upTimeMillis()
+    private val birthTime: Long = now
 
     init {
         // circle color for arrowToLittleStarShape is star color
@@ -69,19 +68,19 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     
     private var lastFlash: Long = 0
     private val flashDuration = 100
-    fun timeOut(): Boolean {
-        if (upTimeMillis() - birthTime > duration * 0.75f) {
-            if (upTimeMillis() - lastFlash > flashDuration) {
+    fun isTimeOut(now: Long): Boolean {
+        if (now - birthTime > duration * 0.75f) {
+            if (now - lastFlash > flashDuration) {
                 // need to flash again
                 if (inScreen) {
                     littleStarShape.visibility = !littleStarShape.visibility
                 } else {
                     arrowToLittleStarShape.visibility = !arrowToLittleStarShape.visibility
                 }
-                lastFlash = upTimeMillis()
+                lastFlash = now
             }
         }
-        val isTimeOut = upTimeMillis() - birthTime > duration
+        val isTimeOut = now - birthTime > duration
 //        if (isTimeOut) {
 //            if (dScore > 1 && COLOR == Color.RED) {
 //                dScore /= 2

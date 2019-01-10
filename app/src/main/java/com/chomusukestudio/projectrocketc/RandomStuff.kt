@@ -63,12 +63,33 @@ class TouchableView<out V : View>(val view: V, val activity: Activity) {
     }
 }
 
-@Volatile var paused = false
-@Volatile var lastpausedTime = 0L
-@Volatile var pausedTime: Long = 0L
-fun upTimeMillis(): Long {
-    return if (paused) lastpausedTime - pausedTime // if paused then apart of pausedTime is not recorded yet
+class PauseableTimer {
+    @Volatile var paused = false
+        private set(value) {
+            if (field && !value) { // paused to unpaused
+                pausedTime += SystemClock.uptimeMillis() - lastpausedTime
+                Log.d("upTimeMillisFromResume", "" + timeMillis())
+                field = false
+            } else if (!field && value) { // unpaused to paused
+                lastpausedTime = SystemClock.uptimeMillis()
+                Log.d("upTimeMillisFromPause", "" + timeMillis())
+                field = true
+            }
+        }
+    @Volatile var lastpausedTime = 0L
+    @Volatile var pausedTime: Long = 0L
+
+    fun pause() {
+        paused = true
+    }
+    fun resume() {
+        paused = false
+    }
+
+    fun timeMillis(): Long {
+        return if (paused) lastpausedTime - pausedTime // if paused then apart of pausedTime is not recorded yet
         else SystemClock.uptimeMillis() - pausedTime
+    }
 }
 
 fun <R>runWithExceptionChecked(runnable: () -> R): R {

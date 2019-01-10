@@ -1,6 +1,6 @@
 package com.chomusukestudio.projectrocketc.Surrounding
 
-import android.media.MediaPlayer
+import android.os.SystemClock
 import android.util.Log
 import android.widget.TextView
 
@@ -22,7 +22,6 @@ import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar.Color.YELLOW
-import com.chomusukestudio.projectrocketc.upTimeMillis
 import java.lang.Math.PI
 import java.lang.Math.abs
 import java.lang.Math.random
@@ -340,9 +339,9 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         
     }
     
-    override fun anyLittleStar() { // this get called every frame
+    override fun checkAndAddLittleStar(now: Long) { // this get called every frame
         if (littleStars.size == 0) { // you trust state will be inGame or processing thread won't check
-            littleStars.add(oneNewLittleStar(true)) // if started and there is no little star in surrounding, then add one.
+            littleStars.add(oneNewLittleStar(true, now)) // if started and there is no little star in surrounding, then add one.
         }
         for (i in littleStars.indices) {
             if (rocket.isEaten(littleStars[i])) {
@@ -355,10 +354,10 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                     LittleStar.Color.RED -> numberOfRedStar--
                 }
                 littleStars.removeAt(i)
-            } else if (littleStars[i].timeOut()) {
+            } else if (littleStars[i].isTimeOut(now)) {
                 when (littleStars[i].COLOR) {
                     YELLOW -> {
-                        littleStars.add(oneNewLittleStar(false))
+                        littleStars.add(oneNewLittleStar(false, now))
                         LittleStar.dScore = 1
                     }
                     LittleStar.Color.RED -> numberOfRedStar--
@@ -369,7 +368,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         }
     }
     
-    private fun oneNewLittleStar(canBeRed: Boolean): LittleStar {
+    private fun oneNewLittleStar(canBeRed: Boolean, now: Long): LittleStar {
         /* if (random() < (numberOfYellowStarEatenSinceLastRedStar + 1f) / 11f && canBeRed) {
             numberOfYellowStarEatenSinceLastRedStar = 0;
             
@@ -457,7 +456,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         val centerX = random().toFloat() * (leftEnd - rightEnd) + rightEnd
         val centerY = topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/
         val littleStar = LittleStar(YELLOW, centerX, centerY, minDistantBetweenPlanet / 8f,
-                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / rocket.speed * 2).toLong())
+                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / rocket.speed * 2).toLong(), now)
     
         var finished: Boolean
         while (true) {
@@ -586,19 +585,19 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         private fun generateRandomPlanetShape(centerX: Float, centerY: Float, radius: Float, z: Float): PlanetShape {
             val randomPlanetShape: PlanetShape
             if (radius < AVERAGE_RADIUS) {
-                val timeStarted = upTimeMillis()
+                val timeStarted = SystemClock.uptimeMillis()
                 randomPlanetShape = MarsShape(centerX, centerY, radius, z, false)
-                Log.v("time take for newPlanet", "mars " + (upTimeMillis() - timeStarted))
+                Log.v("time take for newPlanet", "mars " + (SystemClock.uptimeMillis() - timeStarted))
             } else if (radius < AVERAGE_RADIUS + RADIUS_MARGIN / 3) {
-                val timeStarted = upTimeMillis()
+                val timeStarted = SystemClock.uptimeMillis()
                 val ringA = ((1.5 + random() * 0.2) * radius).toFloat()
                 randomPlanetShape = SaturnShape(ringA, (0.1 + 0.5 * random()).toFloat() * ringA, 1.2f * radius, (3 * random() + 3).toInt(), centerX, centerY, radius, z, false)
                 //            randomPlanetShape = new SaturnShape(ringA, (float) (0.1 + 0.5 * random()) * ringA, (0.67f + 0.2f*(float)random()) * ringA, (int) (3 * random() + 3), centerX, centerY, radius, z);
-                Log.v("time take for newPlanet", "saturn " + (upTimeMillis() - timeStarted))
+                Log.v("time take for newPlanet", "saturn " + (SystemClock.uptimeMillis() - timeStarted))
             } else {
-                val timeStarted = upTimeMillis()
+                val timeStarted = SystemClock.uptimeMillis()
                 randomPlanetShape = JupiterShape(centerX, centerY, radius, z, false)
-                Log.v("time take for newPlanet", "jupiter " + (upTimeMillis() - timeStarted))
+                Log.v("time take for newPlanet", "jupiter " + (SystemClock.uptimeMillis() - timeStarted))
             }
             randomPlanetShape.rotateShape(centerX, centerY, (random() * 2.0 * PI).toFloat())
             return randomPlanetShape

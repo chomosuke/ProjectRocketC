@@ -47,7 +47,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // when a new activity start, static field will be cleaned
         GLTriangle.layers.removeAll { true }
         BasicSurrounding.starsBackground = null
-        paused = false // unpause the lose focus pause
     }
 
     private lateinit var sharedPreferences: SharedPreferences

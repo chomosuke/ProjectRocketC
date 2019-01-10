@@ -13,7 +13,6 @@ import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
 import android.opengl.GLES20
-import android.os.SystemClock
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 
@@ -24,6 +23,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     private var countingFrames = 0
     private var previousTime: Long = 0
     private var now: Long = 0
+    private val timer = PauseableTimer()
     
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         //enable transparency
@@ -45,10 +45,10 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
 //    val allFrameRate = ArrayList<Int>()
     override fun onDrawFrame(unused: GL10) {
-        if (!paused) { // if this is called when paused for some reason don't do anything as nothing suppose to change
+        if (!timer.paused) { // if this is called when paused for some reason don't do anything as nothing suppose to change
             countingFrames++
 
-            now = upTimeMillis()// so you access upTimeMillis() less
+            now = timer.timeMillis()// so you access timeMillis() less
 //                            previousFrameTime = now - 16; // for break point
 
             if (previousTime == 0L) {
@@ -92,31 +92,25 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
         Layer.refreshMatrix()
 
-//        if (!paused) // if paused that means surfaceView is being redrawn (most likely)
-//            // so this will likely to ruin the time so don't do it
-            previousFrameTime = upTimeMillis()// just to set this as close to draw as possible
+        previousFrameTime = timer.timeMillis()// just to set this as close to draw as possible
     }
 
     fun pauseGLRenderer() {
-        if (!paused) {
+        if (!timer.paused) {
             myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
-            lastpausedTime = SystemClock.uptimeMillis()
-            Log.d("upTimeMillisFromPause", "" + upTimeMillis())
-            paused = true
+            timer.pause()
         }
     }
     fun resumeGLRenderer() {
-        if (paused) {
-            pausedTime += SystemClock.uptimeMillis() - lastpausedTime
+        if (timer.paused) {
             // pausedTime have to be set before changing renderMode as change of renderMode will trigger
-            // onDrawFrame which will cause upTimeMillis to be accessed before pauseTime being set
+            // onDrawFrame which will cause timeMillis to be accessed before pauseTime being set
             myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
-            Log.d("upTimeMillisFromResume", "" + upTimeMillis())
-            paused = false
 
+            timer.resume()
 //            // if something happened with time try uncomment this
-//            now = upTimeMillis()
-//            previousFrameTime = upTimeMillis()
+//            now = timeMillis()
+//            previousFrameTime = timeMillis()
         }
     }
     

@@ -18,11 +18,6 @@ import java.lang.Math.*
 
 abstract class Rocket(protected val surrounding: Surrounding) {
 
-    // initialize for surrounding to set centerOfRotation
-    init {
-        setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)
-    }
-
     protected open var explosionShape: ExplosionShape? = null
 
     protected abstract val trace: Trace

@@ -1,17 +1,14 @@
 package com.chomusukestudio.projectrocketc.processingThread
 
+import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.Joystick.Joystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
-import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
-import java.util.logging.Level
-import java.util.logging.Logger
 
 class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) {
     fun onTouchEvent(e: MotionEvent, state: State): Boolean {
@@ -41,13 +38,15 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         finished = false // haven't started
         nextFrameThread.submit {
             runWithExceptionChecked {
+                val startTime = SystemClock.uptimeMillis()
+
                 if (state == State.InGame) {
 
                     // see if crashed
                     if (rocket.isCrashed(surrounding)) {
                         mainActivity.onCrashed()
                     }
-                    surrounding.anyLittleStar()
+                    surrounding.checkAndAddLittleStar(now)
                 }
                 if (state == State.PreGame || state == State.InGame) {
                     rocket.moveRocket(joystick.getTurningDirection(rocket.currentRotation), now, previousFrameTime, state)
@@ -59,26 +58,24 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                     rocket.drawExplosion(now, previousFrameTime)
                 }
 
-////                if (upTimeMillis() - now > 1000 / refreshRate) {
-//                if (upTimeMillis() - now > 16) { // target 60 fps
+////                if (SystemClock.uptimeMillis() - startTime > 1000 / refreshRate) {
+//                if (SystemClock.uptimeMillis() - startTime > 16) { // target 60 fps
 //                    if (CircularShape.performanceIndex > 0.3) {
 //                        CircularShape.performanceIndex /= 1.001
 //                    }
 //                }
 //
-////                if (upTimeMillis() - now < 1000 / refreshRate) {
-//                if (upTimeMillis() - now < 16) { // increase imageQuality by increasing number of edges
+////                if (SystemClock.uptimeMillis() - startTime < 1000 / refreshRate) {
+//                if (SystemClock.uptimeMillis() - startTime < 16) { // increase imageQuality by increasing number of edges
 //                    if (CircularShape.performanceIndex < 1) {
 //                        CircularShape.performanceIndex *= 1.001
 //                    }
 //                }
                 // let's do this at the end
 
-//                    if (upTimeMillis() - now > 1000 / refreshRate) {
-                if (upTimeMillis() - now > 16) {
-                    Log.i("processing thread", "" + (upTimeMillis() - now))
+                if (SystemClock.uptimeMillis() - startTime > 16) {
+                    Log.i("processing thread", "" + (SystemClock.uptimeMillis() - startTime))
                 }
-                //            Log.v("processing thread", "" + (upTimeMillis() - now));
 
                 // finished
                 finished = true
