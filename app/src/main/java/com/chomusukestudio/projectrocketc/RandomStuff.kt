@@ -1,6 +1,8 @@
 package com.chomusukestudio.projectrocketc
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
@@ -120,4 +122,12 @@ fun putCommasInInt(string: String): String {
         }
     }
     return string
+}
+
+fun scanForActivity(cont: Context): Activity {
+    if (cont is Activity)
+        return cont
+    else if (cont is ContextWrapper)
+        return scanForActivity(cont.baseContext)
+    throw java.lang.Exception("I have no idea what is happening")
 }

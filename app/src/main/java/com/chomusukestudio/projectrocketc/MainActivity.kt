@@ -390,7 +390,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
 
-        val mainActivity = context as MainActivity
+        val mainActivity = scanForActivity(context) as MainActivity
         init {
             // Create an OpenGL ES 2.0 context
             setEGLContextClientVersion(2)
@@ -492,7 +492,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             processingThread.removeAllShapes() // remove all previous shapes
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
             processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
-                    TouchableView((context as Activity).findViewById(R.id.visualText), context as Activity))
+                    TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
             processingThread.rocket = Rocket1(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22))
             processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
             processingThread.joystick = TwoFingersJoystick()
