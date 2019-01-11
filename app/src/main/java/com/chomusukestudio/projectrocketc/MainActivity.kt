@@ -245,7 +245,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun restartGame(view: View) {
-        if (state == State.InGame) return // already started, must've been lag
+        if (multiClick) return
+        if (state == State.InGame) return // already started, must've been lag so big that multiClick check failed
 
         if (state != State.Crashed)
             throw IllegalStateException("reStarting Game while not Crashed")
