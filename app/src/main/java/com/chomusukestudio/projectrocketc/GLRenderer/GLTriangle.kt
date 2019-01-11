@@ -168,7 +168,7 @@ class GLTriangle (z: Float) : Triangle() {
     protected fun finalize() {
         if (!removed) {
             removeTriangle()
-            Log.v("triangle finalizer", "triangle isn't removed")
+            Log.e("triangle finalizer", "triangle isn't removed")
         }
     }
 

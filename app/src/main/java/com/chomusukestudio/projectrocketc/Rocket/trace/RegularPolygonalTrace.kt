@@ -71,6 +71,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
             val trace = traceShapes[i] as RegularPolygonalTraceShape
 
             if (trace.needToBeRemoved) {
+                trace.removeShape()
                 traceShapes.remove(trace)
             } else {
 //                  // give it refreshFactor amount of time since it only move one out of refreshFactor of frames
