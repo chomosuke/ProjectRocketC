@@ -163,7 +163,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
 
     fun startGame(view: View) {
-        if (multiClick) return
+        if (state == State.InGame) return // already started, must've been lag
 
         if (state != State.PreGame)
             throw IllegalStateException("Starting Game while not in PreGame")
@@ -245,7 +245,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun restartGame(view: View) {
-        if (multiClick) return
+        if (state == State.InGame) return // already started, must've been lag
+
+        if (state != State.Crashed)
+            throw IllegalStateException("reStarting Game while not Crashed")
+
 
         runOnUiThread {
             // update highest score
@@ -359,7 +363,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun toHome(view: View) {
-        if (multiClick) return
+        if (state == State.PreGame) return // already at home, must've been lag
 
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())

@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.ThreadClasses
 
+import android.os.SystemClock
 import com.chomusukestudio.projectrocketc.runWithExceptionChecked
 import java.util.concurrent.Executors
 
@@ -16,8 +17,10 @@ class ScheduledThread(private val periodInMillisecond: Long, private val task: (
         singleThread.submit {
             runWithExceptionChecked {
                 while (running) {
+                    val startTime = SystemClock.uptimeMillis()
                     task()
-                    Thread.sleep(periodInMillisecond)
+                    val timeTaken = SystemClock.uptimeMillis() - startTime
+                    Thread.sleep(periodInMillisecond - timeTaken)
                 }
             }
         }
