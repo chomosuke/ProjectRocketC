@@ -26,10 +26,6 @@ open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer
         trace.generateTrace(now, previousFrameTime, originX, originY)
     }
 
-    override fun fadeTrace(now: Long, previousFrameTime: Long) {
-        trace.fadeTrace(now, previousFrameTime)
-    }
-
     override var radiusOfRotation = 2f
     final override val initialSpeed = 4f / 1000f
     override var speed = initialSpeed

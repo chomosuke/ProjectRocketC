@@ -11,8 +11,7 @@ import kotlin.math.sqrt
 
 class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long,
                             private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float) : Trace() {
-    private val numberOfTraces = 400
-    override val traceShapes = ArrayList<Shape>(numberOfTraces)
+    override val traceShapes = ArrayList<Shape>()
 
     private var lastOriginX = 0f
     private var lastOriginY = 0f
@@ -71,7 +70,9 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
         parallelForIForFadeTraces.run({ i ->
             val trace = traceShapes[i] as RegularPolygonalTraceShape
 
-            if (trace.showing) {
+            if (trace.needToBeRemoved) {
+                traceShapes.remove(trace)
+            } else {
 //                  // give it refreshFactor amount of time since it only move one out of refreshFactor of frames
 //                if (i % refreshFactor == lastChanged)
                 // fadeTrace with RegularPolygonalTraceShape will mark itself as not showing
@@ -84,34 +85,23 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
     override fun moveTrace(dx: Float, dy: Float) {
         parallelForIForMoveTraces.run({ i ->
             val traceShape = traceShapes[i] as RegularPolygonalTraceShape
-            if (traceShape.showing) {
                 traceShape.moveShape(dx, dy)
-            }
         }, traceShapes.size)
         lastOriginX += dx
         lastOriginY += dy
     }
 
-    init {
-        for (i in 0 until numberOfTraces) {
-            traceShapes.add(RegularPolygonalTraceShape(numberOfEdges, z/* + 0.001f * (4 * random()*//*split trace to 4 layers*//*).toInt()*/, true))
-        }
-    }
-
     private fun newRegularPolygonalTraceShape(centerX: Float, centerY: Float, dx: Float, dy: Float, initialRadius: Float, finalRadius: Float,
                                               duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float): RegularPolygonalTraceShape {
-        for (trace in traceShapes) {
-            if (!(trace as RegularPolygonalTraceShape).showing) {
-                trace.resetRegularPolygonalTraceShape(centerX, centerY, dx, dy, initialRadius, finalRadius,
-                        duration, initialRed, initialGreen, initialBlue, initialAlpha)
-                return trace
-            }
-        }
-        throw IndexOutOfBoundsException("not enough traceShapes")
+        val trace = RegularPolygonalTraceShape(numberOfEdges, z, true, centerX, centerY, dx, dy, initialRadius, finalRadius,
+                duration, initialRed, initialGreen, initialBlue, initialAlpha)
+        traceShapes.add(trace)
+        return trace
     }
 }
 
-private class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float, visibility: Boolean) : Shape() {
+private class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float, visibility: Boolean, centerX: Float, centerY: Float, dx: Float, dy: Float, initialRadius: Float, finalRadius: Float,
+                                         duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float) : Shape() {
     override val isOverlapMethodLevel: Double
         get() = throw IllegalAccessException("trace can't overlap anything")
     override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(numberOfEdges, 0f, 0f, 0f, 0f, 0f, 0f, 0f, z, visibility))
@@ -127,18 +117,11 @@ private class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float, visibilit
     private var initialRadius: Float = 0f
     private var deltaRadius: Float = 0f
     private var AlphaEveryMiniSecond: Float = 0f
-    private var needToBeRemoved = true
+    var needToBeRemoved = true
 
     private var timeSinceReset: Float = 0f
-    var showing = false
-        private set
 
     init {
-        numberOfTraceInUse = 0
-    }
-
-    fun resetRegularPolygonalTraceShape(centerX: Float, centerY: Float, dx: Float, dy: Float, initialRadius: Float, finalRadius: Float, duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float) {
-        showing = true
         needToBeRemoved = false
         this.centerX = centerX
         this.centerY = centerY
@@ -155,10 +138,6 @@ private class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float, visibilit
         componentShapes[0].resetShapeColor(initialRed, initialGreen, initialBlue, initialAlpha)
         AlphaEveryMiniSecond = Math.pow(1.0 / 256 / initialAlpha, 1.0 / duration).toFloat()
         timeSinceReset = 0f
-        numberOfTraceInUse++
-        if (numberOfTraceInUse % 10 == 0) {
-            Log.v("numberOfTraceInUse", "" + numberOfTraceInUse);
-        }
     }
 
     override fun moveShape(dx: Float, dy: Float) {
@@ -193,22 +172,9 @@ private class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float, visibilit
                 centerY + sqrt(timeSinceReset / duration) * dy, deltaRadius + initialRadius)
         if (color[3] <= 1f / 256f) {
             needToBeRemoved = true
-            makeInvisible()
         }
 
         timeSinceReset += now - previousFrameTime
         //        changeSpeedMultiply(1f - (now - previousFrameTime) / duration * 200);
-    }
-
-    fun makeInvisible() {
-        showing = false
-        (componentShapes[0] as RegularPolygonalShape).resetParameter(0f, 0f, 0f)
-//        componentShapes[0].resetShapeColor(0f, 0f, 0f, 0f) // no need to do this
-        numberOfTraceInUse--
-    }
-
-    companion object {
-
-        private var numberOfTraceInUse: Int = 0
     }
 }
