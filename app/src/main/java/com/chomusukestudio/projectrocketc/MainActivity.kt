@@ -153,15 +153,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
-    private var lastClick = 0L
-    private val multiClick
-        get() = if (SystemClock.uptimeMillis() - lastClick < 500) {
-            true
-        } else {
-            lastClick = SystemClock.uptimeMillis()
-            false
-        }
-
     fun startGame(view: View) {
         if (state == State.InGame) return // already started, must've been lag
 
@@ -179,6 +170,15 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.inGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
     }
+
+    private var lastClick = 0L
+    private val multiClick
+        get() = if (SystemClock.uptimeMillis() - lastClick < 500) {
+            true
+        } else {
+            lastClick = SystemClock.uptimeMillis()
+            false
+        }
 
     fun onPause(view: View) {
         if (multiClick) return // prevent cheating the game
