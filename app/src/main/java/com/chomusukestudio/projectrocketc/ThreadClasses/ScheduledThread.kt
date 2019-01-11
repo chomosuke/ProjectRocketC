@@ -20,7 +20,8 @@ class ScheduledThread(private val periodInMillisecond: Long, private val task: (
                     val startTime = SystemClock.uptimeMillis()
                     task()
                     val timeTaken = SystemClock.uptimeMillis() - startTime
-                    Thread.sleep(periodInMillisecond - timeTaken)
+                    if (periodInMillisecond - timeTaken > 0)
+                        Thread.sleep(periodInMillisecond - timeTaken)
                 }
             }
         }
