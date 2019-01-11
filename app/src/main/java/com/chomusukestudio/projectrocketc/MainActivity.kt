@@ -162,17 +162,15 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ConstraintLayout>(R.id.inGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
     }
 
-    private var lastClick = 0L
-    private val multiClick
-        get() = if (SystemClock.uptimeMillis() - lastClick < 500) {
-            true
-        } else {
-            lastClick = SystemClock.uptimeMillis()
-            false
-        }
-
+    private var lastClickOnPause = 0L
     fun onPause(view: View) {
-        if (multiClick) return // prevent cheating the game
+        if (if (SystemClock.uptimeMillis() - lastClickOnPause < 500) {
+                    true
+                } else {
+                    lastClickOnPause = SystemClock.uptimeMillis()
+                    false
+                })
+            return // prevent cheating the game
 
         try {
             when (state) {
@@ -235,9 +233,16 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
+    private var lastClickRestartGame = 0L
     fun restartGame(view: View) {
-        if (multiClick) return
-        if (state == State.InGame) return // already started, must've been lag so big that multiClick check failed
+        if (if (SystemClock.uptimeMillis() - lastClickRestartGame < 1000) {
+                    true
+                } else {
+                    lastClickRestartGame = SystemClock.uptimeMillis()
+                    false
+                })
+            return // multi click check
+        if (state == State.InGame) return // already started, must've been lag so big that multi click check failed
 
         if (state != State.Crashed)
             throw IllegalStateException("reStarting Game while not Crashed")
