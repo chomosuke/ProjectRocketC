@@ -117,7 +117,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                             })
 
                     if (state != State.PreGame) {
-                        Log.i("game launching", "state not in PreGame but $state")
+                        Log.e("game launching", "state not in PreGame but $state")
                         state = State.PreGame // this is pregame
                     }
 //                    // see if this is the first time the game open
