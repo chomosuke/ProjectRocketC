@@ -108,19 +108,16 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
             }
         }
 
+        val dx = -ds * sin(currentRotation.toDouble()).toFloat()
+        val dy = -ds * cos(currentRotation.toDouble()).toFloat()
+
         if (state == State.InGame) { // only generate trace when in game
+            trace.moveTrace(dx, dy)
             generateTrace(now, previousFrameTime)
             fadeTrace(now, previousFrameTime)
         }
 
-        // move trace with surrounding
-        val dx = -ds * sin(currentRotation.toDouble()).toFloat()
-        val dy = -ds * cos(currentRotation.toDouble()).toFloat()
         surrounding.moveSurrounding(dx, dy , now, previousFrameTime)
-
-        if (state == State.InGame) { // only move trace when in game
-            trace.moveTrace(dx, dy)
-        }
     }
 
     protected abstract fun generateTrace(now: Long, previousFrameTime: Long)
