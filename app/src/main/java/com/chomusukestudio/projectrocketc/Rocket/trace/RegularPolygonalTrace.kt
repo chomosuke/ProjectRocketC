@@ -59,32 +59,27 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
         }
     }
 
+    private var numberOfRemovedTrace = 0
     private val parallelForIForFadeTraces = ParallelForI(8, "fade traceShapes thread")
-//    /* only change one third of the trace each frame to maintain frame rate */
-//    private var lastChanged = 0
-//    private val refreshFactor = 3
     override fun fadeTrace(now: Long, previousFrameTime: Long) {
-//        lastChanged++
-//        if (lastChanged == refreshFactor)
-//            lastChanged = 0
-
+//        parallelForIForFadeTraces.waitForLastRun()
+        numberOfRemovedTrace = 0 // for concurrent modifying while removing trace from traceShapes
         parallelForIForFadeTraces.run({ i ->
-            val trace = traceShapes[i] as RegularPolygonalTraceShape
+            val trace = traceShapes[i - numberOfRemovedTrace] as RegularPolygonalTraceShape
 
+            trace.fadeTrace(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
+            // fadeTrace will mark itself if needs to be removed
             if (trace.needToBeRemoved) {
                 trace.removeShape()
                 traceShapes.remove(trace)
-            } else {
-//                  // give it refreshFactor amount of time since it only move one out of refreshFactor of frames
-//                if (i % refreshFactor == lastChanged)
-                // fadeTrace with RegularPolygonalTraceShape will mark itself as not showing
-                trace.fadeTrace(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
+                numberOfRemovedTrace++
             }
         }, traceShapes.size)
     }
 
     private val parallelForIForMoveTraces = ParallelForI(8, "move traceShapes thread")
     override fun moveTrace(dx: Float, dy: Float) {
+//        parallelForIForMoveTraces.waitForLastRun()
         parallelForIForMoveTraces.run({ i ->
             val traceShape = traceShapes[i] as RegularPolygonalTraceShape
                 traceShape.moveShape(dx, dy)
@@ -179,4 +174,5 @@ private class RegularPolygonalTraceShape(numberOfEdges: Int, centerX: Float, cen
         timeSinceReset += now - previousFrameTime
         //        changeSpeedMultiply(1f - (now - previousFrameTime) / duration * 200);
     }
+
 }
