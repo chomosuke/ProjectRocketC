@@ -52,7 +52,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
 
                 val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
                 newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
-                newTraceShape.moveShape(dx * margin, -dy * margin)
+                newTraceShape.moveShape(-dx * margin, -dy * margin)
 
                 i++
             }
