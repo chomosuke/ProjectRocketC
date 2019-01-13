@@ -1,7 +1,6 @@
 
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
-import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
@@ -59,27 +58,29 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
         }
     }
 
-    private var numberOfRemovedTrace = 0
     private val parallelForIForFadeTraces = ParallelForI(8, "fade traceShapes thread")
     override fun fadeTrace(now: Long, previousFrameTime: Long) {
-//        parallelForIForFadeTraces.waitForLastRun()
-        numberOfRemovedTrace = 0 // for concurrent modifying while removing trace from traceShapes
-        parallelForIForFadeTraces.run({ i ->
-            val trace = traceShapes[i - numberOfRemovedTrace] as RegularPolygonalTraceShape
+        parallelForIForFadeTraces.waitForLastRun()
+        parallelForIForMoveTraces.waitForLastRun()
+        // to avoid concurrent modification
 
-            trace.fadeTrace(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
-            // fadeTrace will mark itself if needs to be removed
-            if (trace.needToBeRemoved) {
-                trace.removeShape()
-                traceShapes.remove(trace)
-                numberOfRemovedTrace++
+        var index = 0
+        while (index < traceShapes.size) {
+            if ((traceShapes[index] as RegularPolygonalTraceShape).needToBeRemoved) {
+                traceShapes[index].removeShape()
+                traceShapes.removeAt(index)
+            } else {
+                index++
             }
+        }
+        
+        parallelForIForFadeTraces.run({ i ->
+            (traceShapes[i] as RegularPolygonalTraceShape).fadeTrace(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
         }, traceShapes.size)
     }
 
     private val parallelForIForMoveTraces = ParallelForI(8, "move traceShapes thread")
     override fun moveTrace(dx: Float, dy: Float) {
-//        parallelForIForMoveTraces.waitForLastRun()
         parallelForIForMoveTraces.run({ i ->
             val traceShape = traceShapes[i] as RegularPolygonalTraceShape
                 traceShape.moveShape(dx, dy)
