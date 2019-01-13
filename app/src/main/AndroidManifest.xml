@@ -15,8 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:resizeableActivity="false"
-        android:allowClearUserData="true"
-        android:hardwareAccelerated="true" >
+        android:isGame="true" >
         <activity
             android:name=".MainActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
