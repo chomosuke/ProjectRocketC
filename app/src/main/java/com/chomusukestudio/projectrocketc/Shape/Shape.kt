@@ -29,7 +29,7 @@ abstract class Shape{
                 numberOfTriangularShape += componentShape.size
             return numberOfTriangularShape
         }
-    
+
     open var visibility: Boolean
         set(value) {
             if (value != visibility) {
@@ -102,24 +102,5 @@ abstract class Shape{
         for (componentShape in componentShapes)
             componentShape.removeShape()
         removed = true
-    }
-
-    open fun getZs(): ArrayList<Float> {
-        val zs = ArrayList<Float>()
-        for (componentShape in componentShapes) {
-            val componentShapeZs = componentShape.getZs()
-            var isDifferentZ = true
-            for (componentShapeZ in componentShapeZs) {
-                for (z in zs) {
-                    if (z == componentShapeZ) {
-                        isDifferentZ = false
-                        break
-                    }
-                }
-                if (isDifferentZ)
-                    zs.add(componentShapeZ)
-            }
-        }
-        return zs
     }
 }

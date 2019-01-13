@@ -1,12 +1,13 @@
 package com.chomusukestudio.projectrocketc.Joystick
 
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 
 import java.lang.Math.PI
 import java.lang.Math.atan2
 
-class ArrowJoystick(private val centerOfRotationX: Float, private val centerOfRotationY: Float) : Joystick() {
+class ArrowJoystick(private val centerOfRotationX: Float, private val centerOfRotationY: Float, buildShapeAttr: BuildShapeAttr) : Joystick() {
     @Volatile
     private var centerOfJoystickX: Float = 0f
     @Volatile
@@ -16,8 +17,8 @@ class ArrowJoystick(private val centerOfRotationX: Float, private val centerOfRo
     val intendedDirection: Float
         get() = atan2((nowX - centerOfJoystickX).toDouble(), (nowY - centerOfJoystickY).toDouble()).toFloat()
     
-    private val triangularShape = TriangularShape(0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, -10f, true)
-    private val quadrilateralShape = QuadrilateralShape(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, -10f, true)
+    private val triangularShape = TriangularShape(0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, buildShapeAttr)
+    private val quadrilateralShape = QuadrilateralShape(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, buildShapeAttr)
     private fun actionDown() {
         this.centerOfJoystickX = nowX
         this.centerOfJoystickY = nowY

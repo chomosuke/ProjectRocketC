@@ -13,9 +13,9 @@ import java.lang.Math.acos
  * Created by Shuang Li on 12/03/2018.
  */
 
-class CircularShape(centerX: Float, centerY: Float, radius: Float, private val performanceIndex: Double, red: Float, green: Float, blue: Float, alpha: Float, private val z: Float, visibility: Boolean) : Shape() {
+class CircularShape(centerX: Float, centerY: Float, radius: Float, private val performanceIndex: Double, red: Float, green: Float, blue: Float, alpha: Float, private val buildShapeAttr: BuildShapeAttr) : Shape() {
     override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
-            centerX, centerY, radius, red, green, blue, alpha, z, visibility))
+            centerX, centerY, radius, red, green, blue, alpha, buildShapeAttr))
     override val isOverlapMethodLevel: Double = 1.0
     var centerX: Float = 0f
         private set
@@ -24,7 +24,7 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
     var radius: Float = 0f
         private set // parameters needed for isOverlapToOverride method.
     
-    constructor(centerX: Float, centerY: Float, radius: Float, red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean) : this(centerX, centerY, radius, 1.0, red, green, blue, alpha, z, visibility)
+    constructor(centerX: Float, centerY: Float, radius: Float, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) : this(centerX, centerY, radius, 1.0, red, green, blue, alpha, buildShapeAttr)
     
     init {
         // set parameters
@@ -52,7 +52,7 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
             System.arraycopy(shapeColor, 0, color, 0, color.size)
             componentShapes[0].removeShape()
             componentShapes[0] = RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
-                    centerX, centerY, radius, color[0], color[1], color[2], color[3], this.z, visibility)
+                    centerX, centerY, radius, color[0], color[1], color[2], color[3], buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
         }
         
         this.centerX = centerX

@@ -1,6 +1,7 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
+import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.trace.RegularPolygonalTrace
 import com.chomusukestudio.projectrocketc.Shape.*
@@ -13,8 +14,8 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
  * Created by Shuang Li on 11/03/2018.
  */
 
-open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer) : Rocket(surrounding) {
-    override val trace = RegularPolygonalTrace(6, 1.01f, 0.24f,  0.4f, 1000, 1f, 1f, 0f, 3f)
+open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer, layers: Layers) : Rocket(surrounding, layers) {
+    override val trace = RegularPolygonalTrace(6, 1.01f, 0.24f,  0.4f, 1000, 1f, 1f, 0f, 3f, layers)
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val x1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4)
@@ -39,18 +40,18 @@ open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer
                 TriangularShape(centerOfRotationX, centerOfRotationY + 0.5f,
                         centerOfRotationX + 0.15f, centerOfRotationY + 0.3f,
                         centerOfRotationX - 0.15f, centerOfRotationY + 0.3f,
-                        1f, 1f, 1f, 1f, 1f, true)
+                        1f, 1f, 1f, 1f, BuildShapeAttr(1f, true, layers))
             1 ->
                 QuadrilateralShape(centerOfRotationX + 0.15f, centerOfRotationY + 0.3f,
                         centerOfRotationX - 0.15f, centerOfRotationY + 0.3f, centerOfRotationX - 0.15f, centerOfRotationY - 0.3f,
-                        centerOfRotationX + 0.15f, centerOfRotationY - 0.3f, 1f, 1f, 1f, 1f, 1f, true)
+                        centerOfRotationX + 0.15f, centerOfRotationY - 0.3f, 1f, 1f, 1f, 1f, BuildShapeAttr(1f, true, layers))
             2 ->
                 CircularShape(centerOfRotationX, centerOfRotationY /*+ 0.38*/, 0.07f,
-                        0.1f, 0.1f, 0.1f, 1f, 0.9999f, true)
+                        0.1f, 0.1f, 0.1f, 1f, BuildShapeAttr(0.9999f, true, layers))
             3 ->
                 QuadrilateralShape(centerOfRotationX + 0.1f, centerOfRotationY - 0.3f,
                         centerOfRotationX - 0.1f, centerOfRotationY - 0.3f, centerOfRotationX - 0.12f, centerOfRotationY - 0.4f,
-                        centerOfRotationX + 0.12f, centerOfRotationY - 0.4f, 1f, 1f, 1f, 1f, 1f, true)
+                        centerOfRotationX + 0.12f, centerOfRotationY - 0.4f, 1f, 1f, 1f, 1f, BuildShapeAttr(1f, true, layers))
             else -> {
                 throw IndexOutOfBoundsException()
             }

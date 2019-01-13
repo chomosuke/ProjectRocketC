@@ -1,14 +1,12 @@
 package com.chomusukestudio.projectrocketc.GLRenderer
 
 import android.util.Log
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
-import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
-import java.util.*
-import java.util.concurrent.locks.ReentrantLock
 
-class GLTriangle (z: Float) : Triangle() {
+class GLTriangle (buildShapeAttr: BuildShapeAttr) : Triangle() {
 
-    val layer: Layer = getLayer(z) // the layer this triangle belong
+    val layer: Layer = getLayer(buildShapeAttr.z, buildShapeAttr.layers) // the layer this triangle belong
 
     override val z: Float
         get() = layer.z
@@ -59,52 +57,54 @@ class GLTriangle (z: Float) : Triangle() {
         }
     }
 
-    private fun getLayer(z: Float): Layer {
-        for (i in layers.indices) {
-            if (layers[i].z == z) {
-                return layers[i] // find the layer with that z
+    private fun getLayer(z: Float, layers: Layers): Layer {
+        with(layers) {
+            for (i in arrayList.indices) {
+                if (arrayList[i].z == z) {
+                    return arrayList[i] // find the layer with that z
+                }
             }
-        }
 
-        // there is no layer with that z so create one and return index of that layer
-        val newLayer = Layer(z)
-        var i = 0
-        while (true) {
-            if (i == layers.size) {
-                // already the last one
-                lockOnArrayList.lock()
-                layers.add(newLayer)
-                lockOnArrayList.unlock()
-                break
+            // there is no layer with that z so create one and return index of that layer
+            val newLayer = Layer(z)
+            var i = 0
+            while (true) {
+                if (i == arrayList.size) {
+                    // already the last one
+                    lockOnArrayList.lock()
+                    arrayList.add(newLayer)
+                    lockOnArrayList.unlock()
+                    break
+                }
+                if (newLayer.z > arrayList[i].z) {
+                    // if the new z is just bigger than this z
+                    // put it before this layer
+                    lockOnArrayList.lock()
+                    arrayList.add(i, newLayer)
+                    lockOnArrayList.unlock()
+                    break
+                }
+                i++
             }
-            if (newLayer.z > layers[i].z) {
-                // if the new z is just bigger than this z
-                // put it before this layer
-                lockOnArrayList.lock()
-                layers.add(i, newLayer)
-                lockOnArrayList.unlock()
-                break
-            }
-            i++
+            return newLayer
         }
-        return newLayer
     }
 
     constructor(x1: Float, y1: Float,
                 x2: Float, y2: Float,
                 x3: Float, y3: Float,
-                red: Float, green: Float, blue: Float, alpha: Float, z: Float) : this(z) {
+                red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) : this(buildShapeAttr) {
         setTriangleCoords(x1, y1, x2, y2, x3, y3)
 
         setTriangleRGBA(red, green, blue, alpha)
     }// as no special isOverlapToOverride method is provided.
 
-    constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, z: Float) : this(z) {
+    constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) : this(buildShapeAttr) {
         System.arraycopy(coords, 0, layer.triangleCoords, coordPointer, coords.size)
         setTriangleRGBA(red, green, blue, alpha)
     }
 
-    constructor(coords: FloatArray, color: FloatArray, z: Float) : this(z) {
+    constructor(coords: FloatArray, color: FloatArray, buildShapeAttr: BuildShapeAttr) : this(buildShapeAttr) {
         System.arraycopy(coords, 0, layer.triangleCoords, coordPointer, coords.size)
         System.arraycopy(color, 0, layer.colors, colorPointer, color.size)
         System.arraycopy(color, 0, layer.colors, colorPointer + 4, color.size)
@@ -169,38 +169,6 @@ class GLTriangle (z: Float) : Triangle() {
         if (!removed) {
             removeTriangle()
             Log.e("triangle finalizer", "triangle isn't removed")
-        }
-    }
-
-    companion object {
-        val layers = ArrayList<Layer>()
-
-//        fun offsetAllLayers(dOffsetX: Float, dOffsetY: Float) {
-//            for (layer in layers)
-//                layer.offsetLayer(dOffsetX, dOffsetY)
-//        }
-
-        val lockOnArrayList = ReentrantLock()
-        
-        fun drawAllTriangles() {
-            // no need to sort, already in order
-            lockOnArrayList.lock() // for preventing concurrent modification
-            for (layer in layers) { // draw layers in order
-                layer.drawLayer()
-            }
-            lockOnArrayList.unlock()
-        }
-
-//        private val parallelForIForPassArraysToBuffers = ParallelForI(20, "passArraysToBuffers")
-        fun passArraysToBuffers() {
-            lockOnArrayList.lock()
-//            parallelForIForPassArraysToBuffers.run({ i ->
-//                layers[i].passArraysToBuffers()
-//            }, layers.size)
-//            parallelForIForPassArraysToBuffers.waitForLastRun()
-            for (layer in layers)
-                layer.passArraysToBuffers()
-            lockOnArrayList.unlock()
         }
     }
 }

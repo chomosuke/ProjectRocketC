@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
+import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Shape.Shape
 
 abstract class Trace {

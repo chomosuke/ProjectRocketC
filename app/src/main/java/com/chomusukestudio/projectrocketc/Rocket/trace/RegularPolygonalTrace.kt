@@ -2,6 +2,7 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
 import android.util.Log
+import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
@@ -10,7 +11,7 @@ import java.lang.Math.random
 import kotlin.math.sqrt
 
 class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long,
-                            private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float) : Trace() {
+                            private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float, private val layers: Layers) : Trace() {
     override val traceShapes = ArrayList<Shape>()
 
     private var lastOriginX = 0f
@@ -94,18 +95,18 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
 
     private fun newRegularPolygonalTraceShape(centerX: Float, centerY: Float, dx: Float, dy: Float, initialRadius: Float, finalRadius: Float,
                                               duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float): RegularPolygonalTraceShape {
-        val trace = RegularPolygonalTraceShape(numberOfEdges, z, true, centerX, centerY, dx, dy, initialRadius, finalRadius,
-                duration, initialRed, initialGreen, initialBlue, initialAlpha)
+        val trace = RegularPolygonalTraceShape(numberOfEdges, centerX, centerY, dx, dy, initialRadius, finalRadius,
+                duration, initialRed, initialGreen, initialBlue, initialAlpha, BuildShapeAttr(z, true, layers))
         traceShapes.add(trace)
         return trace
     }
 }
 
-private class RegularPolygonalTraceShape(numberOfEdges: Int, z: Float, visibility: Boolean, centerX: Float, centerY: Float, dx: Float, dy: Float, initialRadius: Float, finalRadius: Float,
-                                         duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float) : Shape() {
+private class RegularPolygonalTraceShape(numberOfEdges: Int, centerX: Float, centerY: Float, dx: Float, dy: Float, initialRadius: Float, finalRadius: Float,
+                                         duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float, buildShapeAttr: BuildShapeAttr) : Shape() {
     override val isOverlapMethodLevel: Double
         get() = throw IllegalAccessException("trace can't overlap anything")
-    override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(numberOfEdges, 0f, 0f, 0f, 0f, 0f, 0f, 0f, z, visibility))
+    override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(numberOfEdges, 0f, 0f, 0f, 0f, 0f, 0f, 0f, buildShapeAttr))
     private var centerX: Float = 0f
     private var centerY: Float = 0f
     private var dx: Float = 0f

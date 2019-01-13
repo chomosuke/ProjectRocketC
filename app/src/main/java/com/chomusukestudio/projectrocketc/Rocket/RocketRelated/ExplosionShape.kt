@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.Rocket.RocketRelated
 
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
@@ -20,10 +21,10 @@ abstract class ExplosionShape(centerX: Float, centerY: Float, approximateRadius:
     }
 }
 
-class RedWhiteExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float, duration: Long) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
+class RedWhiteExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float, duration: Long, buildShapeAttr: BuildShapeAttr) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
 
-    override var componentShapes: Array<Shape> = arrayOf(RedExplosionShape(centerX, centerY, approximateRadius, duration),
-            WhiteExplosionShape(centerX, centerY, approximateRadius, duration))
+    override var componentShapes: Array<Shape> = arrayOf(RedExplosionShape(centerX, centerY, approximateRadius, duration, buildShapeAttr),
+            WhiteExplosionShape(centerX, centerY, approximateRadius, duration, buildShapeAttr))
 
     override fun drawExplosion(timePassed: Long) {
         (componentShapes[0] as ExplosionShape).drawExplosion(timePassed)
@@ -31,7 +32,7 @@ class RedWhiteExplosionShape(centerX: Float, centerY: Float, approximateRadius: 
     }
 }
 
-class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float, duration: Long) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
+class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float, duration: Long, buildShapeAttr: BuildShapeAttr) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
     private val componentShapesSize = 5
 
     private val timeSinceMade = LongArray(componentShapesSize)
@@ -41,11 +42,11 @@ class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float
         val rotationOrder = IntArray(componentShapesSize) { i -> i }.asList().shuffled().toIntArray() // randomOrder
         componentShapes = Array(componentShapesSize) { i ->
             if (i == 0) {
-                CircularShape(centerX, centerY, approximateRadius, 1f, 0.675f, 0.114f, 1f, -11f - 0.1f * i, true)
+                CircularShape(centerX, centerY, approximateRadius, 1f, 0.675f, 0.114f, 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             } else {
                 val distantToCenter = Math.random().toFloat() * approximateRadius * 1.25f
                 val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (rotationOrder[i] * PI / 4).toFloat())
-                CircularShape(centers[0], centers[1], 0f, 1f, 0.675f + 0.3f*random().toFloat(), 0.114f + 0.4f*random().toFloat(), 1f, -11f - 0.1f * i, true)
+                CircularShape(centers[0], centers[1], 0f, 1f, 0.675f + 0.3f*random().toFloat(), 0.114f + 0.4f*random().toFloat(), 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             }
         }
     }
@@ -85,7 +86,7 @@ class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float
     }
 }
 
-class WhiteExplosionShape(private val centerX: Float, private val centerY: Float, private val approximateRadius: Float, duration: Long) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
+class WhiteExplosionShape(private val centerX: Float, private val centerY: Float, private val approximateRadius: Float, duration: Long, buildShapeAttr: BuildShapeAttr) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
 
     private var timeSinceMade = 0L
     override fun drawExplosion(timePassed: Long) {
@@ -119,11 +120,11 @@ class WhiteExplosionShape(private val centerX: Float, private val centerY: Float
         val rotationOrder = IntArray(componentShapesSize) { i -> i }.asList().shuffled().toIntArray() // randomOrder
         componentShapes = Array(componentShapesSize) { i ->
             if (i == 0) {
-                CircularShape(centerX, centerY, approximateRadius, 0.996f, 0.675f, 0.114f, 1f, -11f - 0.1f * i, true)
+                CircularShape(centerX, centerY, approximateRadius, 0.996f, 0.675f, 0.114f, 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             } else {
                 val distantToCenter = Math.random().toFloat() * approximateRadius * 1.25f
                 val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (rotationOrder[i] * 2*PI / componentShapesSize).toFloat())
-                CircularShape(centers[0], centers[1], 0f, 0.996f, 0.875f, 0.314f, 1f, -11f - 0.1f * i, true)
+                CircularShape(centers[0], centers[1], 0f, 0.996f, 0.875f, 0.314f, 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             }
         }
     }

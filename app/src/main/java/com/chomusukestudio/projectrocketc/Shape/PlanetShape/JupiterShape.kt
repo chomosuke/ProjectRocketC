@@ -3,13 +3,14 @@ package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 
 import java.lang.Math.PI
 import java.lang.Math.cos
 import java.lang.Math.random
 import java.lang.Math.sin
 
-class JupiterShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibility: Boolean) : PlanetShape(centerX, centerY, radius) {
+class JupiterShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(centerX, centerY, radius) {
     override val isOverlapMethodLevel: Double = 2.0
     override lateinit var componentShapes: Array<Shape>
     
@@ -41,7 +42,7 @@ class JupiterShape(centerX: Float, centerY: Float, radius: Float, z: Float, visi
                     centerY + radius * cos(2.0 * PI * i.toDouble() / numberOfEdges).toFloat(),
                     centerX + radius * sin(2.0 * PI * (i + 1).toDouble() / numberOfEdges).toFloat(),
                     centerY + radius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges).toFloat(),
-                    colorUsing[0], colorUsing[1], colorUsing[2], 1f, z, visibility) // close for modification
+                    colorUsing[0], colorUsing[1], colorUsing[2], 1f, buildShapeAttr) // close for modification
         }
         
         this.componentShapes = componentShapes as Array<Shape>

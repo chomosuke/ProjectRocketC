@@ -6,12 +6,12 @@ import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 class TriangularShape(x1: Float, y1: Float,
                       x2: Float, y2: Float,
                       x3: Float, y3: Float,
-                      red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean) : Shape() {
-    constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean): this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], red, green, blue, alpha, z, visibility)
+                      red: Float, green: Float, blue: Float, alpha: Float, val buildShapeAttr: BuildShapeAttr) : Shape() {
+    constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr): this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], red, green, blue, alpha, buildShapeAttr)
 
     override val isOverlapMethodLevel: Double = 0.0
     
-    private var triangle: Triangle? = if (visibility) GLTriangle(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, z) else null
+    private var triangle: Triangle? = if (buildShapeAttr.visibility) GLTriangle(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, buildShapeAttr) else null
     // nullable because sometimes invisible
     
     private var triangleCoords = /*if (visibility) FloatArray(6) else */floatArrayOf(x1, y1, x2, y2, x3, y3)
@@ -58,11 +58,11 @@ class TriangularShape(x1: Float, y1: Float,
         triangleCoords
     }
 
-    override var visibility: Boolean = visibility
+    override var visibility: Boolean = buildShapeAttr.visibility
         set(value) {
             if (field != value) {
                 if (value) {
-                    triangle = GLTriangle(triangleCoords, RGBA, z)
+                    triangle = GLTriangle(triangleCoords, RGBA, buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
                 } else {
                     triangleCoords = triangle!!.triangleCoords.floatArray
                     RGBA = triangle!!.RGBA.floatArray
@@ -73,7 +73,7 @@ class TriangularShape(x1: Float, y1: Float,
             }
         }
 
-    val z: Float = z
+    val z: Float = buildShapeAttr.z
         get() = if (visibility) triangle!!.z else field
 
     public override fun isOverlapToOverride(anotherShape: Shape): Boolean {
@@ -225,11 +225,5 @@ class TriangularShape(x1: Float, y1: Float,
             RGBA[3] = UNUSED
         }
         removed = true
-    }
-
-    override fun getZs(): ArrayList<Float> {
-        val z = ArrayList<Float>()
-        z.add(this.z)
-        return z
     }
 }

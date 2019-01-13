@@ -43,12 +43,6 @@ enum class State { InGame, PreGame, Paused, Crashed }
 
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
 
-    private fun cleanField() {
-        // when a new activity start, static field will be cleaned
-        GLTriangle.layers.removeAll { true }
-        BasicSurrounding.starsBackground = null
-    }
-
     private lateinit var sharedPreferences: SharedPreferences
 
 //    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
@@ -56,9 +50,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     @Volatile var state: State = State.PreGame
 
     public override fun onCreate(savedInstanceState: Bundle?) {
-
-        // when a new activity start, static field will be cleaned
-        cleanField()
 
         super.onCreate(savedInstanceState)
 
@@ -91,7 +82,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
             runWithExceptionChecked {
-                BasicSurrounding.fillUpPlanetShapes()
 
                 findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).initializeRenderer()
 
@@ -303,7 +293,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     public override fun onDestroy() {
-        cleanField()
         super.onDestroy()
         Log.i("", "\n\nonDestroy() called\n\n")
         // onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)
@@ -390,6 +379,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
 
+        private val layers = Layers()
         val mainActivity = scanForActivity(context) as MainActivity
         init {
             // Create an OpenGL ES 2.0 context
@@ -440,8 +430,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
 
             val surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
-                    TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
-            val rocket = Rocket1(surrounding, MediaPlayer.create(context, R.raw.fx22))
+                    TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, null)
+            val rocket = Rocket1(surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
 
             processingThread = ProcessingThread(
                     TwoFingersJoystick(),
@@ -451,7 +441,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
                     mainActivity) // we know that the context is MainActivity
 //            processingThread = TestingProcessingThread()
-            mRenderer = TheGLRenderer(processingThread, this)
+            mRenderer = TheGLRenderer(processingThread, this, layers)
             processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
 
             // Set the Renderer for drawing on the GLSurfaceView
@@ -491,9 +481,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
             processingThread.removeAllShapes() // remove all previous shapes
             val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
+            val surroundingResources = processingThread.surrounding.trashAndGetResources()
             processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
-                    TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
-            processingThread.rocket = Rocket1(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22))
+                    TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
+            processingThread.rocket = Rocket1(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
             processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
             processingThread.joystick = TwoFingersJoystick()
 //            processingThread.joystick = OneFingerJoystick()

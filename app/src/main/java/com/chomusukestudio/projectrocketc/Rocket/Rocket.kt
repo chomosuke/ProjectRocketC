@@ -5,9 +5,12 @@ package com.chomusukestudio.projectrocketc.Rocket
  */
 
 import android.support.annotation.CallSuper
+import com.chomusukestudio.projectrocketc.GLRenderer.Layer
+import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
@@ -16,7 +19,7 @@ import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
 import com.chomusukestudio.projectrocketc.State
 import java.lang.Math.*
 
-abstract class Rocket(protected val surrounding: Surrounding) {
+abstract class Rocket(protected val surrounding: Surrounding, private val layers: Layers) {
 
     protected open var explosionShape: ExplosionShape? = null
 
@@ -49,7 +52,7 @@ abstract class Rocket(protected val surrounding: Surrounding) {
     open val explosionCoordinate = Coordinate(centerOfRotationX, centerOfRotationY)
     fun drawExplosion(now: Long, previousFrameTime: Long) {
         if (explosionShape == null) {
-            explosionShape = RedExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 0.75f, 1000)
+            explosionShape = RedExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 0.75f, 1000, BuildShapeAttr(-11f, true, layers))
         } else {
             // rocket already blown up
             for (component in components)

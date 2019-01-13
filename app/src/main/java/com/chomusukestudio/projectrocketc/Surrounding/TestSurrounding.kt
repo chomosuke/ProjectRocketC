@@ -2,15 +2,10 @@ package com.chomusukestudio.projectrocketc.Surrounding
 
 
 import android.support.annotation.CallSuper
-import android.support.annotation.PluralsRes
-import com.chomusukestudio.projectrocketc.GLRenderer.Y2
-import com.chomusukestudio.projectrocketc.GLRenderer.Y3
-import com.chomusukestudio.projectrocketc.GLRenderer.X1
-import com.chomusukestudio.projectrocketc.GLRenderer.Y1
-import com.chomusukestudio.projectrocketc.GLRenderer.X2
+import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
-import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
@@ -22,7 +17,7 @@ import java.util.ArrayList
 
 import java.lang.Math.random
 
-class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, private var rightEnd: Float, private var leftEnd: Float): Surrounding() {
+class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, private var rightEnd: Float, private var leftEnd: Float, private val layers: Layers): Surrounding() {
 
     override fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
         this.leftEnd = leftEnd
@@ -37,7 +32,7 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
                 centerOfRotationX + rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
                 centerOfRotationX + rocket.width / 2f, centerOfRotationY,
                 centerOfRotationX - rocket.width / 2f, centerOfRotationY,
-                0f, 1f, 0f, 1f, 10f, true) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
+                0f, 1f, 0f, 1f, BuildShapeAttr(10f, true, layers)) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
         startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
         startingPathOfRocket.visibility = false //  this shape will only be used in isOverlapToOverride.
     } // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
@@ -63,11 +58,11 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
     private val previousTriangles = arrayOf(TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //top left
             2f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //top right
             2f, -13f, //bottom right
-            random().toFloat(), 1f, 1f, 1f, 10f, true),//left top
+            random().toFloat(), 1f, 1f, 1f, BuildShapeAttr(10f, true, layers)),//left top
             TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //top left
                     6f, -13f, // bottom left
                     2f, -13f, //bottom right
-                    random().toFloat(), 1f, 1f, 1f, 10f, true))//left bottom
+                    random().toFloat(), 1f, 1f, 1f, BuildShapeAttr(10f, true, layers)))//left bottom
     
     init {
         if (rightEnd > leftEnd) {
@@ -108,28 +103,29 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
             }
             // to create
             val randomPoint = (random() * 5 - 2.5).toFloat()
-            
+
+            val buildBoundryShapesAttr = BuildShapeAttr(10f, true, layers)
             // complicated calculation done to ensure triangle meet up with each other and there ain't any overlapping or gap
             boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //top left
                     randomPoint + 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //top right
                     previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottom right (previous top right)
-                    random().toFloat(), 1f, 1f, 1f, 10f, true))//left top
+                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//left top
             // refresh previous triangle so other can follow
             boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //top left
                     previousTriangles[0].getTriangularShapeCoords(X1), previousTriangles[0].getTriangularShapeCoords(Y1), // bottom left (previous top left)
                     previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottom right (previous top right)
-                    random().toFloat(), 1f, 1f, 1f, 10f, true))//left bottom
+                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//left bottom
             previousTriangles[0] = boundaries[boundaries.size - 2] as TriangularShape
             
             boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //top right
                     randomPoint - 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //top left
                     previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottom left (previous top left)
-                    random().toFloat(), 1f, 1f, 1f, 10f, true))//right top
+                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//right top
             // refresh previous triangle so other can follow
             boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //top right
                     previousTriangles[1].getTriangularShapeCoords(X1), previousTriangles[1].getTriangularShapeCoords(Y1), // bottom right (previous top right)
                     previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottom left (previous top left)
-                    random().toFloat(), 1f, 1f, 1f, 10f, true))//right bottom
+                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//right bottom
             previousTriangles[1] = boundaries[boundaries.size - 2] as TriangularShape
         }
     }

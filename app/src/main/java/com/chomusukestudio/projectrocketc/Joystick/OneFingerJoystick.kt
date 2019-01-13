@@ -1,11 +1,13 @@
 package com.chomusukestudio.projectrocketc.Joystick
 
+import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 
-class OneFingerJoystick : Joystick() {
-    private val circularShape = CircularShape(0f, -4f, 1f, 1f, 1f, 1f, 0.4f, -10f, true)
-    private val quadrilateralShape = QuadrilateralShape(-1f, -4.1f, -1f, -3.9f, 1f, -3.9f, 1f, -4.1f, 1f, 1f, 1f, 0.4f, -10f, true)
+class OneFingerJoystick(layers: Layers) : Joystick() {
+    private val circularShape = CircularShape(0f, -4f, 1f, 1f, 1f, 1f, 0.4f, BuildShapeAttr(-10f, true, layers))
+    private val quadrilateralShape = QuadrilateralShape(-1f, -4.1f, -1f, -3.9f, 1f, -3.9f, 1f, -4.1f, 1f, 1f, 1f, 0.4f, BuildShapeAttr(-10f, true, layers))
 
     override fun drawJoystick() {
         if (actionDown)

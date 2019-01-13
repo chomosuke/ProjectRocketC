@@ -2,8 +2,8 @@ package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
-import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 
 import java.util.Arrays
 
@@ -12,9 +12,8 @@ import java.lang.Math.asin
 import java.lang.Math.cos
 import java.lang.Math.random
 import java.lang.Math.sin
-import kotlin.math.sqrt
 
-class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibility: Boolean) : PlanetShape(centerX, centerY, radius) {
+class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(centerX, centerY, radius) {
     override val isOverlapMethodLevel: Double = 2.0 // one level higher circularShape
     override lateinit var componentShapes: Array<Shape>
     
@@ -31,7 +30,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibil
         val darkerColor = floatArrayOf(randomDarker * mainColor[0], randomDarker * mainColor[1], randomDarker * mainColor[2])
         
         // the planet itself
-        componentShapes[0] = CircularShape(centerX, centerY, radius, mainColor[0], mainColor[1], mainColor[2], 1f, z, visibility)
+        componentShapes[0] = CircularShape(centerX, centerY, radius, mainColor[0], mainColor[1], mainColor[2], 1f, buildShapeAttr)
         
         // generate some Crater on the planet
         for (i in 1 until componentShapes.size) {
@@ -46,7 +45,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibil
             val red = darkerColor[0]
             val green = darkerColor[1]
             val blue = darkerColor[2]
-            val z1 = z - 0.01f
+            val shapeAttributes1 = buildShapeAttr.newAttrWithChangedZ(-0.01f)
             componentShapes[i] = object : Shape() {
                 override var componentShapes: Array<Shape>
                 override val isOverlapMethodLevel: Double = 0.0
@@ -65,7 +64,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, z: Float, visibil
                                 sin(sRadius * cos(2.0 * PI * i.toDouble() / numberOfEdges)).toFloat() * radius,
                                 mSin(offsetRadius + sRadius * sin(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat(),
                                 sin(sRadius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat() * radius,
-                                red, green, blue, 1f, z1, visibility) // close for modification
+                                red, green, blue, 1f, shapeAttributes1) // close for modification
                         // below is circular crater
 //                        val x2 = centerXOfCrater + (r * sin(2 * PI * i / numberOfEdges)).toFloat()
 //                        val y2 = (r * cos(2 * PI * i / numberOfEdges)).toFloat()

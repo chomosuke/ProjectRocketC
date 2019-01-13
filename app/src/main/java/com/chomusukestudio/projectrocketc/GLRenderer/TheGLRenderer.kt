@@ -15,8 +15,11 @@ import android.content.ContentValues.TAG
 import android.opengl.GLES20
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
+import java.util.ArrayList
+import java.util.concurrent.locks.ReentrantLock
 
-class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MainActivity.MyGLSurfaceView) : GLSurfaceView.Renderer {
+class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MainActivity.MyGLSurfaceView, private val layers: Layers) : GLSurfaceView.Renderer {
+
 
     // so you calculate the how many milliseconds have passed since last frame
     private var previousFrameTime: Long = 0
@@ -65,7 +68,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             processingThread.waitForLastFrame()
 
             // can't refresh buffers when processingThread is running or when drawing all triangles
-            GLTriangle.passArraysToBuffers()
+            layers.passArraysToBuffers()
 
             processingThread.generateNextFrame(now, previousFrameTime, myGLSurfaceView.mainActivity.state)
 
@@ -76,7 +79,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         // Redraw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         // Draw all!
-        GLTriangle.drawAllTriangles()
+        layers.drawAllTriangles()
     }
     
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
@@ -152,7 +155,7 @@ fun generateLeftRightBottomTop(widthOverHeight: Float): Array<Float> {
         bottom = -8f
         top = 8f
     }
-//    return arrayOf(left - GLTriangle.layers[0].offsetX, right - GLTriangle.layers[0].offsetX, bottom - GLTriangle.layers[0].offsetY, top - GLTriangle.layers[0].offsetY)
+//    return arrayOf(left - GLTriangle.arrayList[0].offsetX, right - GLTriangle.arrayList[0].offsetX, bottom - GLTriangle.arrayList[0].offsetY, top - GLTriangle.arrayList[0].offsetY)
     return arrayOf(left + offsetX, right + offsetX, bottom + offsetY, top + offsetY)
 }
 

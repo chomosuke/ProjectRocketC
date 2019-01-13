@@ -10,7 +10,7 @@ import java.lang.Math.sin
  * Created by Shuang Li on 22/03/2018.
  */
 
-class RegularPolygonalShape(val numberOfEdges: Int, var centerX: Float, var centerY: Float, var radius: Float, red: Float, green: Float, blue: Float, alpha: Float, z: Float, visibility: Boolean) : Shape() {
+class RegularPolygonalShape(val numberOfEdges: Int, var centerX: Float, var centerY: Float, var radius: Float, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) : Shape() {
     override val isOverlapMethodLevel: Double = 0.0
     override lateinit var componentShapes: Array<Shape>
     
@@ -31,7 +31,7 @@ class RegularPolygonalShape(val numberOfEdges: Int, var centerX: Float, var cent
                     centerY + radius * previousCos,
                     centerX + radius * thisSin,
                     centerY + radius * thisCos,
-                    red, green, blue, alpha, z, visibility) // close for modification
+                    red, green, blue, alpha, buildShapeAttr) // close for modification
             previousCos = thisCos
             previousSin = thisSin
         }

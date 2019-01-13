@@ -8,6 +8,8 @@ import com.chomusukestudio.projectrocketc.widthInPixel
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.util.ArrayList
+import java.util.concurrent.locks.ReentrantLock
 
 // if any layer.triangleCoords[i1] or layer.colors[i2] contain this value then it's unused
 const val UNUSED = -107584485858583778999908789293009999999f
@@ -307,5 +309,37 @@ class Layer(val z: Float) { // depth for the drawing order
         GLES20.glDisableVertexAttribArray(mColorHandle)
 
         drawing = false
+    }
+}
+
+class Layers { // a group of arrayList
+    val arrayList = ArrayList<Layer>()
+
+//        fun offsetAllLayers(dOffsetX: Float, dOffsetY: Float) {
+//            for (layer in arrayList)
+//                layer.offsetLayer(dOffsetX, dOffsetY)
+//        }
+
+    val lockOnArrayList = ReentrantLock()
+
+    fun drawAllTriangles() {
+        // no need to sort, already in order
+        lockOnArrayList.lock() // for preventing concurrent modification
+        for (layer in arrayList) { // draw arrayList in order
+            layer.drawLayer()
+        }
+        lockOnArrayList.unlock()
+    }
+
+    //        private val parallelForIForPassArraysToBuffers = ParallelForI(20, "passArraysToBuffers")
+    fun passArraysToBuffers() {
+        lockOnArrayList.lock()
+//            parallelForIForPassArraysToBuffers.run({ i ->
+//                arrayList[i].passArraysToBuffers()
+//            }, arrayList.size)
+//            parallelForIForPassArraysToBuffers.waitForLastRun()
+        for (layer in arrayList)
+            layer.passArraysToBuffers()
+        lockOnArrayList.unlock()
     }
 }

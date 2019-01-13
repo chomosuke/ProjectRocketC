@@ -19,6 +19,8 @@ import kotlin.math.sin
 import android.media.SoundPool
 import android.media.AudioManager
 import android.util.Log
+import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import java.lang.Math.abs
 import java.lang.Math.pow
 import kotlin.math.sqrt
@@ -28,7 +30,7 @@ import kotlin.math.sqrt
  * Created by Shuang Li on 25/03/2018.
  */
 
-class LittleStar(val COLOR: Color, private var centerX: Float, private var centerY: Float, private val range: Float, var duration: Long, now: Long) {
+class LittleStar(val COLOR: Color, private var centerX: Float, private var centerY: Float, private val range: Float, var duration: Long, now: Long, layers: Layers) {
     private var littleStarShape: LittleStarShape
     private var arrowToLittleStarShape: ArrowToLittleStarShape
     private var rangeCircleThingy: FullRingShape? = null
@@ -43,8 +45,9 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     init {
         // circle color for arrowToLittleStarShape is star color
         // arrow color is circle color for littleStarShape
-        littleStarShape = LittleStarShape(centerX, centerY, RADIUS_OF_LITTLE_STAR, COLOR.red, COLOR.green, COLOR.blue, 1f, 1f, 1f, -10f, true)
-        arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, 1f, 1f, 1f, COLOR.red, COLOR.green, COLOR.blue, -10f, true)
+        val buildShapeAttr = BuildShapeAttr(-10f, true, layers)
+        littleStarShape = LittleStarShape(centerX, centerY, RADIUS_OF_LITTLE_STAR, COLOR.red, COLOR.green, COLOR.blue, 1f, 1f, 1f, buildShapeAttr)
+        arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, 1f, 1f, 1f, COLOR.red, COLOR.green, COLOR.blue, buildShapeAttr)
 
         if (centerX + RADIUS_OF_LITTLE_STAR + range > RIGHT_END &&
                         centerX - RADIUS_OF_LITTLE_STAR + range < LEFT_END &&
