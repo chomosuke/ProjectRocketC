@@ -22,7 +22,7 @@ class StarShape(centerX: Float, centerY: Float, brightness: Float, private val S
     
     init { this.brightness = brightness }
     
-    override fun moveShape(dx: Float, dy: Float) {
+    fun moveStarShape(dx: Float, dy: Float) {
         super.moveShape(SPEED * dx, SPEED * dy)
     }
     

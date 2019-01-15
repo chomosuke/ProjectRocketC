@@ -30,14 +30,14 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
 
     open val maxWidth: Float = radius
 
-    // for debugging
-    override var visibility: Boolean
-        get() = super.visibility
-        set(value) {
-            if (visibility != value)
-                Log.d("PlanetShape", "visibility changed to $value")
-            super.visibility = value
-        }
+//    // for debugging
+//    override var visibility: Boolean
+//        get() = super.visibility
+//        set(value) {
+//            if (visibility != value)
+//                Log.d("PlanetShape", "visibility changed to $value")
+//            super.visibility = value
+//        }
 
     init {
         this.centerX = centerX

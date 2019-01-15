@@ -99,19 +99,19 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     private fun generateRandomPlanetShape(centerX: Float, centerY: Float, radius: Float, z: Float, layers: Layers): PlanetShape {
         val randomPlanetShape: PlanetShape
         if (radius < AVERAGE_RADIUS) {
-            val timeStarted = SystemClock.uptimeMillis()
+//            val timeStarted = SystemClock.uptimeMillis()
             randomPlanetShape = MarsShape(centerX, centerY, radius, BuildShapeAttr(z, false, layers))
-            Log.v("time take for newPlanet", "mars " + (SystemClock.uptimeMillis() - timeStarted))
+//            Log.v("time take for newPlanet", "mars " + (SystemClock.uptimeMillis() - timeStarted))
         } else if (radius < AVERAGE_RADIUS + RADIUS_MARGIN / 3) {
-            val timeStarted = SystemClock.uptimeMillis()
+//            val timeStarted = SystemClock.uptimeMillis()
             val ringA = ((1.5 + random() * 0.2) * radius).toFloat()
             randomPlanetShape = SaturnShape(ringA, (0.1 + 0.5 * random()).toFloat() * ringA, 1.2f * radius, (3 * random() + 3).toInt(), centerX, centerY, radius, BuildShapeAttr(z, false, layers))
             //            randomPlanetShape = new SaturnShape(ringA, (float) (0.1 + 0.5 * random()) * ringA, (0.67f + 0.2f*(float)random()) * ringA, (int) (3 * random() + 3), centerX, centerY, radius, z);
-            Log.v("time take for newPlanet", "saturn " + (SystemClock.uptimeMillis() - timeStarted))
+//            Log.v("time take for newPlanet", "saturn " + (SystemClock.uptimeMillis() - timeStarted))
         } else {
-            val timeStarted = SystemClock.uptimeMillis()
+//            val timeStarted = SystemClock.uptimeMillis()
             randomPlanetShape = JupiterShape(centerX, centerY, radius, BuildShapeAttr(z, false, layers))
-            Log.v("time take for newPlanet", "jupiter " + (SystemClock.uptimeMillis() - timeStarted))
+//            Log.v("time take for newPlanet", "jupiter " + (SystemClock.uptimeMillis() - timeStarted))
         }
         randomPlanetShape.rotateShape(centerX, centerY, (random() * 2.0 * PI).toFloat())
         return randomPlanetShape
@@ -286,7 +286,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         parallelForIForBackgroundStars.run({ i ->
             val starShape = backgrounds[i] as StarShape
 
-            starShape.moveShape(0f, 2f)
+            starShape.moveStarShape(3.1415926535f, 3.1415926535897932354626f)
             // those that got out of screen, make them appear on the opposite side
             if (starShape.centerY < bottomEnd)
                 starShape.resetPosition(starShape.centerX, starShape.centerY + (topEnd - bottomEnd))
@@ -342,7 +342,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         parallelForIForBackgroundStars.run({ i ->
             val starShape = backgrounds[i] as StarShape
 
-            starShape.moveShape(dx, dy)
+            starShape.moveStarShape(dx, dy)
             // those that got out of screen, make them appear on the opposite side
             if (starShape.centerY < bottomEnd)
                 starShape.resetPosition(starShape.centerX, starShape.centerY + (topEnd - bottomEnd))
@@ -359,10 +359,10 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
 //            if (boundary.visibility)
 //                visibleBoundaries.add(boundary)
 //            else
-//                boundary.moveShape(dx, dy)
+//                boundary.moveStarShape(dx, dy)
 //        }
 //        parallelForIForMoveBoundaries.run({ i ->
-//            visibleBoundaries[i].moveShape(dx, dy)
+//            visibleBoundaries[i].moveStarShape(dx, dy)
 //        }, visibleBoundaries.size)
 //        parallelForIForBackgroundStars.waitForLastRun()
 
@@ -370,10 +370,6 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
             boundaries[i].moveShape(dx, dy)
         for (littleStar in littleStars)
             littleStar.moveLittleStar(dx, dy)
-//    for (i in boundaries.indices)
-//        boundaries[i].moveShape(0f, 0f)
-//    for (littleStar in littleStars)
-//        littleStar.moveLittleStar(0f, 0f)
 
         displacementX += dx.toDouble()
         displacementY += dy.toDouble()
@@ -612,10 +608,10 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
 
     private var lastUsedPlanet: Int = 0
     private fun getRandomPlanetShape(): PlanetShape {
-        for (i in planetShapes!!.indices) {
+        for (i in planetShapes.indices) {
             lastUsedPlanet++// get the next random planet
-            lastUsedPlanet %= planetShapes!!.size
-            val planetShape = planetShapes!![lastUsedPlanet]
+            lastUsedPlanet %= planetShapes.size
+            val planetShape = planetShapes[lastUsedPlanet]
             if (!planetShape.isInUse) {
                 // if it's not in use then use it
                 planetShape.usePlanet()
