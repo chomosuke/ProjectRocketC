@@ -24,9 +24,7 @@ import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar.Color.YELLOW
-import java.lang.Math.PI
-import java.lang.Math.abs
-import java.lang.Math.random
+import java.lang.Math.*
 
 /**
  * Created by Shuang Li on 31/03/2018.
@@ -495,7 +493,8 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         } else */
         val centerX = random().toFloat() * (leftEnd - rightEnd) + rightEnd
         val centerY = topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/
-        val littleStar = LittleStar(YELLOW, centerX, centerY, minDistantBetweenPlanet / 8f,
+        val range = 0.75f - LittleStar.dScore * 0.02f
+        val littleStar = LittleStar(YELLOW, centerX, centerY, if (range > 0) range else 0f,
                 (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / rocket.speed * 2).toLong(), now, layers)
 
         var finished: Boolean
@@ -522,7 +521,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     @Volatile
     private var closeThisFrame = false
     private var distanceThisFrame: Float = 0f
-    private val flybyDistance = 0.35f
+    private var flybyDistance = 0.5f
     private lateinit var rectangleForFlyby: QuadrilateralShape
     private var flybysInThisYellowStar = 0
     private var flybyPlanetShape: PlanetShape? = null
@@ -538,7 +537,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
                 boundariesNeedToBeChecked.add(boundary)
             }
         }
-//        flybyDistance = minDistantBetweenPlanet / 10f
+        flybyDistance = pow(0.99, LittleStar.score.toDouble()).toFloat() * 0.5f
         rectangleForFlyby.setQuadrilateralShapeCoords(centerOfRotationX + (rocket.width / 2 + flybyDistance),
                 centerOfRotationY + 0.5f,
                 centerOfRotationX + (rocket.width / 2 + flybyDistance),

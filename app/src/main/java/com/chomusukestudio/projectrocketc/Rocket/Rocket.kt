@@ -80,8 +80,8 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
         
         if (state == State.InGame) { // only make it faster if it's already started
             // when 0 score, 1 times as fast, when 1024 score, 2 times as fast
-            speed = initialSpeed * (log((LittleStar.score + 1).toDouble()) / log(64.0) + 1).toFloat()
-            //            speed = initialSpeed * (LittleStar.Companion.getScore() / 64f + 1);
+            speed = initialSpeed * (log((LittleStar.score + 1).toDouble()) / log(32.0) + 1).toFloat()
+//                        speed = initialSpeed * (LittleStar.score / 64f + 1);
         }
         val speedOfRotation = speed / radiusOfRotation // dr/dt = ds/dt / radiusOfRotation
         val ds = speed * (now - previousFrameTime) // ds/dt * dt
