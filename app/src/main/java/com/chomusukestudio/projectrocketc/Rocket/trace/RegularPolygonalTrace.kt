@@ -11,10 +11,7 @@ import kotlin.math.sqrt
 
 class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long,
                             private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float, private val layers: Layers) : Trace() {
-    override val traceShapes = ArrayList<Shape>()
 
-    private var lastOriginX = 0f
-    private var lastOriginY = 0f
     override fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float) {
         val dx = originX - lastOriginX
         val dy = originY - lastOriginY
@@ -58,37 +55,6 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
         }
     }
 
-    private val parallelForIForFadeTraces = ParallelForI(8, "fade traceShapes thread")
-    override fun fadeTrace(now: Long, previousFrameTime: Long) {
-        parallelForIForFadeTraces.waitForLastRun()
-        parallelForIForMoveTraces.waitForLastRun()
-        // to avoid concurrent modification
-
-        var index = 0
-        while (index < traceShapes.size) {
-            if ((traceShapes[index] as RegularPolygonalTraceShape).needToBeRemoved) {
-                traceShapes[index].removeShape()
-                traceShapes.removeAt(index)
-            } else {
-                index++
-            }
-        }
-
-        parallelForIForFadeTraces.run({ i ->
-            (traceShapes[i] as RegularPolygonalTraceShape).fadeTrace(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
-        }, traceShapes.size)
-    }
-
-    private val parallelForIForMoveTraces = ParallelForI(8, "move traceShapes thread")
-    override fun moveTrace(dx: Float, dy: Float) {
-        parallelForIForMoveTraces.run({ i ->
-            val traceShape = traceShapes[i] as RegularPolygonalTraceShape
-                traceShape.moveShape(dx, dy)
-        }, traceShapes.size)
-        lastOriginX += dx
-        lastOriginY += dy
-    }
-
     private fun newRegularPolygonalTraceShape(centerX: Float, centerY: Float, dx: Float, dy: Float, initialRadius: Float, finalRadius: Float,
                                               duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float): RegularPolygonalTraceShape {
         val trace = RegularPolygonalTraceShape(numberOfEdges, centerX, centerY, dx, dy, initialRadius, finalRadius,
@@ -99,13 +65,12 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
 }
 
 private class RegularPolygonalTraceShape(numberOfEdges: Int, private var centerX: Float, private var centerY: Float, private var dx: Float, private var dy: Float, private var initialRadius: Float, finalRadius: Float,
-                                         private var duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float, buildShapeAttr: BuildShapeAttr) : Shape() {
+                                         private var duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float, buildShapeAttr: BuildShapeAttr) : TraceShape() {
     override val isOverlapMethodLevel: Double
         get() = throw IllegalAccessException("trace can't overlap anything")
     override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(numberOfEdges, centerX, centerY, initialRadius, initialRed, initialGreen, initialBlue, initialAlpha, buildShapeAttr))
     private var deltaRadius: Float = finalRadius - initialRadius
     private var alphaEveryMiniSecond: Float = Math.pow(1.0 / 256 / initialAlpha, 1.0 / duration).toFloat()
-    var needToBeRemoved = false
 
     private var timeSinceBorn: Float = 0f
 
@@ -122,7 +87,7 @@ private class RegularPolygonalTraceShape(numberOfEdges: Int, private var centerX
         centerY = result[1]
     }
 
-    fun fadeTrace(now: Long, previousFrameTime: Long) {
+    override fun fadeTrace(now: Long, previousFrameTime: Long) {
         val color = componentShapes[0].shapeColor
         if (color[0] > 250f / 256f
                 && color[1] > 250f / 256f
@@ -146,5 +111,4 @@ private class RegularPolygonalTraceShape(numberOfEdges: Int, private var centerX
         timeSinceBorn += now - previousFrameTime
         //        changeSpeedMultiply(1f - (now - previousFrameTime) / duration * 200);
     }
-
 }

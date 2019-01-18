@@ -59,14 +59,15 @@
             android:layout_height="64dp"
             android:background="@android:color/transparent"
             android:cropToPadding="false"
-            android:onClick="startGame"
             android:scaleType="centerCrop"
             android:src="@drawable/play_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75" />
+            app:layout_constraintVertical_bias="0.75"
+            android:clickable="true"
+            android:focusable="true" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -106,13 +107,14 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:background="@android:color/transparent"
-            android:onClick="onPause"
             android:padding="8dp"
             android:scaleType="centerInside"
             android:src="@drawable/pause_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:clickable="true"
+            android:focusable="true" />
     
         <TextView
             android:id="@+id/deltaTextView"

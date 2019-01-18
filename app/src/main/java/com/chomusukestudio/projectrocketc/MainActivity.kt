@@ -64,6 +64,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             apply()
         }
 
+        // a safer way to set listener
+        findViewById<ImageButton>(R.id.playButton).setOnClickListener { view -> startGame(view) }
+        findViewById<ImageButton>(R.id.pauseButton).setOnClickListener { view -> onPause(view) }
         findViewById<ImageButton>(R.id.restartButton).setOnClickListener { view -> restartGame(view) }
         findViewById<ImageButton>(R.id.toHomeButton).setOnClickListener { view -> toHome(view) }
 
