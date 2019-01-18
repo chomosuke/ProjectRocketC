@@ -209,7 +209,6 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
-            android:onClick="restartGame"
             android:scaleType="centerInside"
             android:src="@drawable/restart_button"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -217,7 +216,9 @@
             app:layout_constraintStart_toEndOf="@id/toHomeButton"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75" />
+            app:layout_constraintVertical_bias="0.75"
+            android:clickable="true"
+            android:focusable="true" />
 
         <ImageButton
             android:id="@+id/toHomeButton"
@@ -228,14 +229,15 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
-            android:onClick="toHome"
             android:scaleType="centerInside"
             android:src="@drawable/to_home_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/restartButton"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75" />
+            app:layout_constraintVertical_bias="0.75"
+            android:clickable="true"
+            android:focusable="true" />
 
     </android.support.constraint.ConstraintLayout>
 

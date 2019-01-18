@@ -7,6 +7,7 @@ import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
+import android.media.Image
 import android.media.MediaPlayer
 import android.opengl.GLES20
 import android.os.SystemClock
@@ -57,6 +58,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+
+        with(sharedPreferences.edit()) {
+            putInt(getString(R.string.highestScore), 0)
+            apply()
+        }
+
+        findViewById<ImageButton>(R.id.restartButton).setOnClickListener { view -> restartGame(view) }
+        findViewById<ImageButton>(R.id.toHomeButton).setOnClickListener { view -> toHome(view) }
 
         // load sound for eat little star soundPool
         LittleStar.soundId = LittleStar.soundPool.load(this, R.raw.eat_little_star, 1)
@@ -184,6 +193,57 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
+    private var lastClickRestartGame = 0L
+    fun restartGame(view: View) {
+        if (if (SystemClock.uptimeMillis() - lastClickRestartGame < 1000) {
+                    true
+                } else {
+                    lastClickRestartGame = SystemClock.uptimeMillis()
+                    false
+                })
+            return // multi click check
+        if (state == State.InGame) return // already started, must've been lag so big that multi click check failed
+
+        if (state != State.Crashed)
+            throw IllegalStateException("reStarting Game while not Crashed")
+
+        // update highest score
+        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+
+        findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
+
+        findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
+
+        fadeOut(findViewById(R.id.onCrashLayout))
+
+        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
+
+        // start refresh score regularly
+        updateScoreThread.run()
+        LittleStar.cleanScore()
+
+        state = State.InGame
+    }
+
+    fun toHome(view: View) {
+        if (state == State.PreGame) return // already at home, must've been lag
+
+        // update highest score
+        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+
+        findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
+
+        fadeOut(findViewById(R.id.onCrashLayout))
+        fadeIn(findViewById(R.id.preGameLayout))
+
+        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
+
+        state = State.PreGame
+    }
+
     fun openSetting(view: View) {
 
     }
@@ -221,42 +281,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             // prevent any uncleaned visual effect
             findViewById<TextView>(R.id.visualText).text = ""
         }
-    }
-
-    private var lastClickRestartGame = 0L
-    fun restartGame(view: View) {
-        if (if (SystemClock.uptimeMillis() - lastClickRestartGame < 1000) {
-                    true
-                } else {
-                    lastClickRestartGame = SystemClock.uptimeMillis()
-                    false
-                })
-            return // multi click check
-        if (state == State.InGame) return // already started, must've been lag so big that multi click check failed
-
-        if (state != State.Crashed)
-            throw IllegalStateException("reStarting Game while not Crashed")
-
-
-        runOnUiThread {
-            // update highest score
-            findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
-
-            findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
-            findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
-
-            findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
-            findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
-
-            fadeOut(findViewById(R.id.onCrashLayout))
-        }
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
-
-        // start refresh score regularly
-        updateScoreThread.run()
-        LittleStar.cleanScore()
-
-        state = State.InGame
     }
 
     private fun fadeOut(view: View) {
@@ -346,23 +370,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         } catch (e: UninitializedPropertyAccessException) {
             // so the app is just starting in the first time... do nothing
         }
-    }
-
-    fun toHome(view: View) {
-        if (state == State.PreGame) return // already at home, must've been lag
-
-        // update highest score
-        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
-
-        findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
-        findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
-
-        fadeOut(findViewById(R.id.onCrashLayout))
-        fadeIn(findViewById(R.id.preGameLayout))
-
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
-
-        state = State.PreGame
     }
 
     override fun onBackPressed() {

@@ -1,7 +1,5 @@
 package com.chomusukestudio.projectrocketc.Surrounding
 
-import android.os.SystemClock
-import android.util.Log
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 
@@ -270,7 +268,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
 
     private fun attractLittleStar(now: Long, previousFrameTime: Long) {
         for (littleStar in littleStars)
-            littleStar.attractLittleStar(centerOfRotationX, centerOfRotationY, now, previousFrameTime, 0.008f * rocket.speed)
+            littleStar.attractLittleStar(centerOfRotationX, centerOfRotationY, now, previousFrameTime, 0.00002f)
     }
 
     override fun removeAllShape() {
@@ -493,8 +491,7 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
         } else */
         val centerX = random().toFloat() * (leftEnd - rightEnd) + rightEnd
         val centerY = topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/
-        val range = 0.75f - LittleStar.dScore * 0.02f
-        val littleStar = LittleStar(YELLOW, centerX, centerY, if (range > 0) range else 0f,
+        val littleStar = LittleStar(YELLOW, centerX, centerY, 1f,
                 (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / rocket.speed * 2).toLong(), now, layers)
 
         var finished: Boolean
