@@ -16,36 +16,39 @@ import java.lang.Math.acos
 class CircularShape(centerX: Float, centerY: Float, radius: Float, private val performanceIndex: Double, red: Float, green: Float, blue: Float, alpha: Float, private val buildShapeAttr: BuildShapeAttr) : Shape() {
     override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
             centerX, centerY, radius, red, green, blue, alpha, buildShapeAttr))
+    private var regularPolygonalShape
+        set(value) { componentShapes[0] = value }
+        get() = componentShapes[0] as RegularPolygonalShape
+
     override val isOverlapMethodLevel: Double = 1.0
     // parameters needed for isOverlapToOverride method.
     val centerX
-        get() = (componentShapes[0] as RegularPolygonalShape).centerX
+        get() = regularPolygonalShape.centerX
     val centerY
-        get() = (componentShapes[0] as RegularPolygonalShape).centerY
+        get() = regularPolygonalShape.centerY
 
     var radius
-        set(value) { (componentShapes[0] as RegularPolygonalShape).radius = value }
-        get() = (componentShapes[0] as RegularPolygonalShape).radius
+        set(value) {
+            if (abs(radius) > abs(lastChangeOfNumberOfEdgesRadius * 1.25) || abs(radius) < abs(lastChangeOfNumberOfEdgesRadius * 0.8)
+                    && getNumberOfEdges(radius, performanceIndex) != regularPolygonalShape.numberOfEdges) {
+                lastChangeOfNumberOfEdgesRadius = radius
+                val color = FloatArray(4)
+                System.arraycopy(shapeColor, 0, color, 0, color.size)
+                regularPolygonalShape.removeShape()
+                regularPolygonalShape = RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
+                        centerX, centerY, radius, color[0], color[1], color[2], color[3], buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
+            } else
+                regularPolygonalShape.radius = value
+        }
+        get() = regularPolygonalShape.radius
 
     
     constructor(centerX: Float, centerY: Float, radius: Float, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) : this(centerX, centerY, radius, 1.0, red, green, blue, alpha, buildShapeAttr)
 
     private var lastChangeOfNumberOfEdgesRadius = radius
     fun resetParameter(centerX: Float, centerY: Float, radius: Float) {
-        //        if (componentShapes != null)
-        // this circularShape is not empty
-        if (abs(radius) <= abs(lastChangeOfNumberOfEdgesRadius * 1.25) && abs(radius) >= abs(lastChangeOfNumberOfEdgesRadius * 0.8)) {
-            (componentShapes[0] as RegularPolygonalShape).resetParameter(centerX, centerY, radius)
-        } else {
-            lastChangeOfNumberOfEdgesRadius = radius
-            val color = FloatArray(4)
-            System.arraycopy(shapeColor, 0, color, 0, color.size)
-            componentShapes[0].removeShape()
-            componentShapes[0] = RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
-                    centerX, centerY, radius, color[0], color[1], color[2], color[3], buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
-        }
-
         this.radius = radius
+        regularPolygonalShape.resetCenter(centerX, centerY)
     }
     
     public override// isOverlapMethodLevel is 1 now!

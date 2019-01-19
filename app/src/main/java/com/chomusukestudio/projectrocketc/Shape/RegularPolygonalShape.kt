@@ -45,14 +45,18 @@ class RegularPolygonalShape(val numberOfEdges: Int, centerX: Float, centerY: Flo
     }
 
     fun resetParameter(centerX: Float, centerY: Float, radius: Float) {
+        resetCenter(centerX, centerY)
+
+        // and change radius
+        this.radius = radius
+    }
+
+    fun resetCenter(centerX: Float, centerY: Float) {
         val dx = centerX - this.centerX
         val dy = centerY - this.centerY
         moveShape(dx, dy)
         this.centerX = centerX
         this.centerY = centerY
-
-        // and change radius
-        this.radius = radius
     }
 
     var radius = radius
