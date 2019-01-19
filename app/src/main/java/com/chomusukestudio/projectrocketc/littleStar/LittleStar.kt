@@ -263,7 +263,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
             val angle = atan2(centerOfRotationY - centerY, centerOfRotationX - centerX)
             speed += acceleration * (now -  previousFrameTime)
             moveLittleStar(speed * cos(angle) * (now -  previousFrameTime), speed * sin(angle) * (now - previousFrameTime))
-            littleStarShape.visibility = true;
+            littleStarShape.visibility = true
         } else {
             // reset speed
             speed = 0f

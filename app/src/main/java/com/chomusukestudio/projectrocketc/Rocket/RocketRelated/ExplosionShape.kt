@@ -66,20 +66,17 @@ class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float
                 timeSinceMade[i] += timePassed
 
                 if (!componentShapes[i].removed) { // if it is still not removed
-                    val radius = initialRadius[i] * (-square(timeSinceMade[i].toFloat() / duration) + 1)
 
-                    (componentShapes[i] as CircularShape).resetParameter((componentShapes[i] as CircularShape).centerX,
-                            (componentShapes[i] as CircularShape).centerY, radius)
+                    (componentShapes[i] as CircularShape).radius = initialRadius[i] * (-square(timeSinceMade[i].toFloat() / duration) + 1)
 
-                    if (radius <= 0f)
+                    if ((componentShapes[i] as CircularShape).radius <= 0f)
                         componentShapes[i].removeShape()
                 }
             } else { // not yet showing
 
                 if (timeSinceMade[i - 1] > 128 * random()) {
                     // one per 128 * random() second
-                    (componentShapes[i] as CircularShape).resetParameter((componentShapes[i] as CircularShape).centerX,
-                            (componentShapes[i] as CircularShape).centerY, initialRadius[i])
+                    (componentShapes[i] as CircularShape).radius = initialRadius[i]
                 }
             }
         }

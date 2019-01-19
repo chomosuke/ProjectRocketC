@@ -376,7 +376,8 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     }
 
     override fun checkAndAddLittleStar(now: Long) { // this get called every frame
-        if (littleStars.size == 0) { // you trust state will be inGame or processing thread won't check
+        // you trust state will be inGame or processing thread won't check
+        if (littleStars.size == 0) {
             littleStars.add(oneNewLittleStar(true, now)) // if started and there is no little star in surrounding, then add one.
         }
         for (i in littleStars.indices) {

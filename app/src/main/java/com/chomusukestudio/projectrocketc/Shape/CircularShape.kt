@@ -17,28 +17,18 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
     override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
             centerX, centerY, radius, red, green, blue, alpha, buildShapeAttr))
     override val isOverlapMethodLevel: Double = 1.0
-    var centerX: Float = 0f
-        private set
-    var centerY: Float = 0f
-        private set
-    var radius: Float = 0f
-        private set // parameters needed for isOverlapToOverride method.
+    // parameters needed for isOverlapToOverride method.
+    val centerX
+        get() = (componentShapes[0] as RegularPolygonalShape).centerX
+    val centerY
+        get() = (componentShapes[0] as RegularPolygonalShape).centerY
+
+    var radius
+        set(value) { (componentShapes[0] as RegularPolygonalShape).radius = value }
+        get() = (componentShapes[0] as RegularPolygonalShape).radius
+
     
     constructor(centerX: Float, centerY: Float, radius: Float, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) : this(centerX, centerY, radius, 1.0, red, green, blue, alpha, buildShapeAttr)
-    
-    init {
-        // set parameters
-        this.centerX = centerX
-        this.centerY = centerY
-        this.radius = radius
-    }
-    
-    //    internal constructor(double centerX, double centerY, double radius) { // an empty circularShape for planetShape
-    //        // set parameters
-    //        this.centerX = centerX;
-    //        this.centerY = centerY;
-    //        this.radius = radius;
-    //    }
 
     private var lastChangeOfNumberOfEdgesRadius = radius
     fun resetParameter(centerX: Float, centerY: Float, radius: Float) {
@@ -54,14 +44,8 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
             componentShapes[0] = RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
                     centerX, centerY, radius, color[0], color[1], color[2], color[3], buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
         }
-        
-        this.centerX = centerX
-        this.centerY = centerY
+
         this.radius = radius
-    }
-    
-    fun changeRadius(dr: Float) {
-        resetParameter(centerX, centerY, radius + dr)
     }
     
     public override// isOverlapMethodLevel is 1 now!
@@ -73,25 +57,7 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
     override fun isInside(x: Float, y: Float): Boolean {
         return square(x - centerX) + square(y - centerY) <= square(radius)
     }
-    
-    override fun moveShape(dx: Float, dy: Float) {
-        super.moveShape(dx, dy)
-        
-        // and change the center as well to keep record
-        centerX += dx
-        centerY += dy
-    }
-    
-    override fun rotateShape(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
-        super.rotateShape(centerOfRotationX, centerOfRotationY, angle)
-        
-        // and change the center as well to keep record
-        
-        val points = rotatePoint(centerX, centerY, centerOfRotationX, centerOfRotationY, angle)
-        centerX = points[0]
-        centerY = points[1]
-    }
-    
+
     companion object {
         
         fun isOverlap(anotherShape: Shape, centerX: Float, centerY: Float, radius: Float): Boolean {

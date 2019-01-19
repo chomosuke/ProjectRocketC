@@ -9,7 +9,7 @@ class NPointsStarShape(n: Int, centerX: Float, centerY: Float, radius: Float, re
     override lateinit var componentShapes: Array<Shape>
     
     init {
-        val componentShapes = arrayOfNulls<Shape>(n + 1);
+        val componentShapes = arrayOfNulls<Shape>(n + 1)
         componentShapes[0] = RegularPolygonalShape(n, centerX, centerY, radius * (sin(PI / 2f / n) / sin(PI - PI / 2f / n - PI / n)).toFloat(),
                 red, green, blue, alpha, buildShapeAttr) // central RegularPolygonalShape
         componentShapes[0]!!.rotateShape(centerX, centerY, PI.toFloat() / n)
