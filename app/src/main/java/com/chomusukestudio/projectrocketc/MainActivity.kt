@@ -59,10 +59,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // initialize sharedPreference
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
 
-        with(sharedPreferences.edit()) {
-            putInt(getString(R.string.highestScore), 0)
-            apply()
-        }
+//        with(sharedPreferences.edit()) {
+//            putInt(getString(R.string.highestScore), 0)
+//            apply()
+//        }
 
         // a safer way to set listener
         findViewById<ImageButton>(R.id.playButton).setOnClickListener { view -> startGame(view) }
