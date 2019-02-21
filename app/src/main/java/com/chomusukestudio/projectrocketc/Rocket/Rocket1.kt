@@ -70,4 +70,9 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
             true
         } else false
     }
+
+    override fun removeAllShape() {
+        super.removeAllShape()
+        crashSound.release()
+    }
 }

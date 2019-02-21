@@ -14,24 +14,9 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
     override fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float) {
         val dx = originX - lastOriginX
         val dy = originY - lastOriginY
-        generateTraces(previousFrameTime, now, originX, originY, dx, dy)
-        lastOriginX = originX
-        lastOriginY = originY
-    }
-
-    private var unfilledDs = 0f
-    private fun generateTraces(previousFrameTime: Long, now: Long, originX: Float, originY: Float, dx: Float, dy: Float) {
         var ds = sqrt(square(dx) + square(dy))
-        // lay down trace
-
-        //        if (random() < 0.5)
-        //            traceShapes.add(new TrapezoidalTraceShape(((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QX4), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QY4),
-        //                    ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QX3), ((QuadrilateralShape) components[3]).getQuadrilateralShapeCoords(QY3), 2,
-        //                    -0.5 * speed * sin(currentRotation), -0.5 * speed * cos(currentRotation), 0.9, 0.9, 0.1, 1, 1.01));
-
-        ds += unfilledDs // finish last frame unfinished work
-
-        val I_MAX = ds / 128f * 1000f - 0.25f - (Math.random().toFloat() * 0.5f)
+        ds += unfilledDs
+        val I_MAX = ds / 128f * 1000f - 0.25f - (random().toFloat() * 0.5f)
         if (I_MAX <= 0) { // if we are not adding any trace this frame
             // let the next frame know
             unfilledDs = ds // there is unfinished work
@@ -43,16 +28,20 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
 
                 val newTraceShape = newRegularPolygonalTraceShape(originX, originY, random().toFloat() * 0.1f - 0.05f, random().toFloat() * 0.1f - 0.05f,
                         initialWidth / 2, finalWidth / 2, duration, initialRed, initialGreen, initialBlue, initialAlpha)
-                newTraceShape.rotateShape(originX, originY, (2 * Math.PI * Math.random()).toFloat())
+                newTraceShape.rotateShape(originX, originY, (2 * Math.PI * random()).toFloat())
 
                 val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
-                newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
+                newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + random()).toInt()) // + 0.5 for rounding
                 newTraceShape.moveShape(-dx * margin, -dy * margin)
 
                 i++
             }
         }
+        lastOriginX = originX
+        lastOriginY = originY
     }
+
+    private var unfilledDs = 0f
 
     private fun newRegularPolygonalTraceShape(centerX: Float, centerY: Float, dx: Float, dy: Float, initialRadius: Float, finalRadius: Float,
                                               duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float): RegularPolygonalTraceShape {
