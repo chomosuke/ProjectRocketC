@@ -5,13 +5,46 @@ import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.Shape.RegularPolygonalShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import java.lang.Math.random
+import kotlin.math.atan2
 import kotlin.math.sqrt
 
 class SquareTrace(private val initialWidth: Float, private val finalWidth: Float, private val duration: Long,
-                  private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float, val z: Float, private val layers: Layers) : Trace() {
+                  private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float,
+                  val z: Float, private val layers: Layers) : Trace() {
+
+    private var unfilledDs = 0f
     override fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float) {
-        
+        val dx = originX - lastOriginX
+        val dy = originY - lastOriginY
+        var ds = sqrt(square(dx) + square(dy))
+        ds += unfilledDs
+        val I_MAX = ds / 128f * 1000f - 0.25f - (random().toFloat() * 0.5f)
+        if (I_MAX <= 0) { // if we are not adding any trace this frame
+            // let the next frame know
+            unfilledDs = ds // there is unfinished work
+        } else {
+            unfilledDs = 0f // also update it so the next frame know there is no unfinished work
+
+            var i = 0
+            while (i < I_MAX) {
+
+                val newTraceShape = SquareTraceShape(originX, originY, random().toFloat() * 0.1f - 0.05f, random().toFloat() * 0.1f - 0.05f,
+                        initialWidth, finalWidth, duration, initialRed, initialGreen, initialBlue, initialAlpha, BuildShapeAttr(z, true, layers))
+                newTraceShape.rotateShape(originX, originY, atan2(dx, dy))
+
+                val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
+                newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + random()).toInt()) // + 0.5 for rounding
+                newTraceShape.moveShape(-dx * margin, -dy * margin)
+
+                i++
+            }
+        }
+        lastOriginX = originX
+        lastOriginY = originY
     }
+
 }
 
 class SquareTraceShape(centerX: Float, centerY: Float, private var speedX: Float, private var speedY: Float, private val initialSize: Float, finalSize: Float,
