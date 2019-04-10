@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
+import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
@@ -7,6 +8,7 @@ import com.chomusukestudio.projectrocketc.Shape.RegularPolygonalShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 import java.lang.Math.random
+import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
@@ -30,13 +32,14 @@ class SquareTrace(private val initialWidth: Float, private val finalWidth: Float
             var i = 0
             while (i < I_MAX) {
 
-                val newTraceShape = SquareTraceShape(originX, originY, random().toFloat() * 0.1f - 0.05f, random().toFloat() * 0.1f - 0.05f,
+                val newTraceShape = SquareTraceShape(originX, originY, 0f, 0f,
                         initialWidth, finalWidth, duration, initialRed, initialGreen, initialBlue, initialAlpha, BuildShapeAttr(z, true, layers))
-                newTraceShape.rotateShape(originX, originY, atan2(dx, dy))
+                newTraceShape.rotateShape(originX, originY, atan2(-dx, -dy) + PI.toFloat() / 4)
 
                 val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
                 newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + random()).toInt()) // + 0.5 for rounding
                 newTraceShape.moveShape(-dx * margin, -dy * margin)
+                traceShapes.add(newTraceShape)
 
                 i++
             }
@@ -49,12 +52,7 @@ class SquareTrace(private val initialWidth: Float, private val finalWidth: Float
 
 class SquareTraceShape(centerX: Float, centerY: Float, private var speedX: Float, private var speedY: Float, private val initialSize: Float, finalSize: Float,
                        private val duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float, buildShapeAttr: BuildShapeAttr): TraceShape() {
-    override var componentShapes: Array<Shape> = arrayOf(QuadrilateralShape(
-            centerX + initialSize / 2, centerY + initialSize / 2,
-            centerX + initialSize / 2, centerY - initialSize / 2,
-            centerX - initialSize / 2, centerY - initialSize / 2,
-            centerX - initialSize / 2, centerY + initialSize / 2,
-            initialRed, initialGreen, initialBlue, initialAlpha, buildShapeAttr))
+    override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(4, centerX, centerY, initialSize / 2, initialRed, initialGreen, initialBlue, initialAlpha, buildShapeAttr))
     private var deltaSize: Float = finalSize - initialSize
     private var alphaEveryMiniSecond: Float = Math.pow(1.0 / 256 / initialAlpha, 1.0 / duration).toFloat()
 
@@ -75,9 +73,8 @@ class SquareTraceShape(centerX: Float, centerY: Float, private var speedX: Float
                     color[2] + (1 - color[2]) * dt * 20f / duration,
                     color[3] * Math.pow(alphaEveryMiniSecond.toDouble(), dt.toDouble()).toFloat())
         }
-        // move trace and change radius
         moveShape(speedX * dt, speedY * dt)
-        (componentShapes[0] as RegularPolygonalShape).radius = deltaSize * sqrt(timeSinceBorn / duration) + initialSize
+        (componentShapes[0] as RegularPolygonalShape).radius = (deltaSize * sqrt(timeSinceBorn / duration) + initialSize) / 2
         if (color[3] <= 1f / 256f) {
             needToBeRemoved = true
         }
