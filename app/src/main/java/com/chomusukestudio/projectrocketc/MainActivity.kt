@@ -7,6 +7,7 @@ import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
+import android.graphics.Point
 import android.media.Image
 import android.media.MediaPlayer
 import android.opengl.GLES20
@@ -54,6 +55,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         super.onCreate(savedInstanceState)
 
+        // initialize width and height in pixel
+        val size = Point()
+        windowManager.defaultDisplay.getSize(size)
+        widthInPixel = size.x.toFloat()
+        heightInPixel = size.y.toFloat()
+
         setContentView(R.layout.activity_main)
 
         // initialize sharedPreference
@@ -76,12 +83,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
 //        // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-
-        // set height and width of the screen
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-        heightInPixel = displayMetrics.heightPixels.toFloat()
-        widthInPixel = displayMetrics.widthPixels.toFloat()
 
         CircularShape.performanceIndex = sharedPreferences.getFloat(getString(R.string.performanceIndex), 1f)
 
