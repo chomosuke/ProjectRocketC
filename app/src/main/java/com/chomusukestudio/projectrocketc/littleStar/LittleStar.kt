@@ -19,11 +19,10 @@ import kotlin.math.sin
 import android.media.SoundPool
 import android.media.AudioManager
 import android.util.Log
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.GLRenderer.*
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import java.lang.Math.abs
 import java.lang.Math.pow
-import kotlin.math.sqrt
 
 
 /**
@@ -49,10 +48,10 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         littleStarShape = LittleStarShape(centerX, centerY, RADIUS_OF_LITTLE_STAR, COLOR.red, COLOR.green, COLOR.blue, 1f, 1f, 1f, buildShapeAttr)
         arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, 1f, 1f, 1f, COLOR.red, COLOR.green, COLOR.blue, buildShapeAttr)
 
-        if (centerX + RADIUS_OF_LITTLE_STAR + range > RIGHT_END &&
-                        centerX - RADIUS_OF_LITTLE_STAR + range < LEFT_END &&
-                        centerY + RADIUS_OF_LITTLE_STAR + range > BOTTOM_END &&
-                        centerY - RADIUS_OF_LITTLE_STAR + range < TOP_END) { // if inScreen
+        if (centerX + RADIUS_OF_LITTLE_STAR + range > rightEnd &&
+                        centerX - RADIUS_OF_LITTLE_STAR + range < leftEnd &&
+                        centerY + RADIUS_OF_LITTLE_STAR + range > bottomEnd &&
+                        centerY - RADIUS_OF_LITTLE_STAR + range < topEnd) { // if inScreen
             inScreen = true
             arrowToLittleStarShape.visibility = false
         } else {
@@ -156,10 +155,10 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         littleStarShape.moveShape(dx, dy)
         rangeCircleThingy?.moveShape(dx, dy)
         if (inScreen) {
-            if (centerX + RADIUS_OF_LITTLE_STAR < RIGHT_END ||
-                    centerX - RADIUS_OF_LITTLE_STAR > LEFT_END ||
-                    centerY + RADIUS_OF_LITTLE_STAR < BOTTOM_END ||
-                    centerY - RADIUS_OF_LITTLE_STAR > TOP_END) {
+            if (centerX + RADIUS_OF_LITTLE_STAR < rightEnd ||
+                    centerX - RADIUS_OF_LITTLE_STAR > leftEnd ||
+                    centerY + RADIUS_OF_LITTLE_STAR < bottomEnd ||
+                    centerY - RADIUS_OF_LITTLE_STAR > topEnd) {
                 // if now it's out of screen
                 inScreen = false
                 arrowToLittleStarShape.visibility = true
@@ -167,10 +166,10 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
             }
         }
         if (!inScreen) {
-            if (centerX + RADIUS_OF_LITTLE_STAR > RIGHT_END &&
-                    centerX - RADIUS_OF_LITTLE_STAR < LEFT_END &&
-                    centerY + RADIUS_OF_LITTLE_STAR > BOTTOM_END &&
-                    centerY - RADIUS_OF_LITTLE_STAR < TOP_END) {
+            if (centerX + RADIUS_OF_LITTLE_STAR > rightEnd &&
+                    centerX - RADIUS_OF_LITTLE_STAR < leftEnd &&
+                    centerY + RADIUS_OF_LITTLE_STAR > bottomEnd &&
+                    centerY - RADIUS_OF_LITTLE_STAR < topEnd) {
                 // if inScreen now
                 inScreen = true
                 arrowToLittleStarShape.visibility = false
@@ -184,49 +183,49 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     private fun positionArrow() {
         // still out of screen
         // point the arrow to the LittleStar
-        val leftEnd = LEFT_END - RADIUS_OF_LITTLE_STAR
-        val rightEnd = RIGHT_END + RADIUS_OF_LITTLE_STAR
-        val topEnd = TOP_END - RADIUS_OF_LITTLE_STAR
-        val bottomEnd = BOTTOM_END + RADIUS_OF_LITTLE_STAR
+        val cLeftMax = leftEnd - RADIUS_OF_LITTLE_STAR
+        val cRightMax = rightEnd + RADIUS_OF_LITTLE_STAR
+        val cTopMax = topEnd - RADIUS_OF_LITTLE_STAR
+        val cBottomMax = bottomEnd + RADIUS_OF_LITTLE_STAR
         var arrowX: Float
         var arrowY: Float
         val m = (centerY - centerOfRocketY) / (centerX - centerOfRocketX) // gradient of arrow
     
-        if (centerY > centerOfRocketY) { // could be top
-            arrowY = topEnd
-            arrowX = (topEnd - centerOfRocketY) / m + centerOfRocketX // put arrow on top
+        if (centerY > centerOfRocketY) { // could be topEnd
+            arrowY = cTopMax
+            arrowX = (cTopMax - centerOfRocketY) / m + centerOfRocketX // put arrow on topEnd
             arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.UP)
         
-            if (arrowX < rightEnd) { // if not top but right
-                arrowX = rightEnd
-                arrowY = (rightEnd - centerOfRocketX) * m + centerOfRocketY// put arrow on right
+            if (arrowX < cRightMax) { // if not topEnd but rightEnd
+                arrowX = cRightMax
+                arrowY = (cRightMax - centerOfRocketX) * m + centerOfRocketY// put arrow on rightEnd
                 arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.RIGHT)
             
-            } else if (arrowX > leftEnd) { // if not top but left
+            } else if (arrowX > cLeftMax) { // if not topEnd but leftEnd
             
-                arrowX = leftEnd
-                arrowY = (leftEnd - centerOfRocketX) * m + centerOfRocketY // put arrow on left
+                arrowX = cLeftMax
+                arrowY = (cLeftMax - centerOfRocketX) * m + centerOfRocketY // put arrow on leftEnd
                 arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.LEFT)
             
-            } // else arrow is on top, don't have to change anything, already put it there
-        } else { // could be bottom
-            arrowY = bottomEnd
-            arrowX = (bottomEnd - centerOfRocketY) / m + centerOfRocketX // put arrow on bottom
+            } // else arrow is on topEnd, don't have to change anything, already put it there
+        } else { // could be bottomEnd
+            arrowY = cBottomMax
+            arrowX = (cBottomMax - centerOfRocketY) / m + centerOfRocketX // put arrow on bottomEnd
             arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.DOWN)
         
-            if (arrowX < rightEnd) { // if not bottom but right
+            if (arrowX < cRightMax) { // if not bottomEnd but rightEnd
             
-                arrowX = rightEnd
-                arrowY = (rightEnd - centerOfRocketX) * m + centerOfRocketY// put arrow on right
+                arrowX = cRightMax
+                arrowY = (cRightMax - centerOfRocketX) * m + centerOfRocketY// put arrow on rightEnd
                 arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.RIGHT)
             
-            } else if (arrowX > leftEnd) { // if not bottom but left
+            } else if (arrowX > cLeftMax) { // if not bottomEnd but leftEnd
             
-                arrowX = leftEnd
-                arrowY = (leftEnd - centerOfRocketX) * m + centerOfRocketY // put arrow on left
+                arrowX = cLeftMax
+                arrowY = (cLeftMax - centerOfRocketX) * m + centerOfRocketY // put arrow on leftEnd
                 arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.LEFT)
             
-            } // else arrow is on bottom, don't have to change anything, already put it there
+            } // else arrow is on bottomEnd, don't have to change anything, already put it there
         }
         arrowToLittleStarShape.setPosition(arrowX, arrowY)
     }
@@ -282,17 +281,6 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         fun cleanScore() {
             dScore = 1
             score = 0
-        }
-        
-        private var LEFT_END = 0f
-        private var RIGHT_END = 0f
-        private var TOP_END = 0f
-        private var BOTTOM_END = 0f
-        fun setENDs(LEFT_END: Float, RIGHT_END: Float, BOTTOM_END: Float, TOP_END: Float) {
-            LittleStar.LEFT_END = LEFT_END
-            LittleStar.RIGHT_END = RIGHT_END
-            LittleStar.TOP_END = TOP_END
-            LittleStar.BOTTOM_END = BOTTOM_END
         }
         
         private var centerOfRocketX = 0f

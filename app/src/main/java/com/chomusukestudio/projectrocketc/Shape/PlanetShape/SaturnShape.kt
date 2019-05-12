@@ -47,13 +47,13 @@ class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int,
                 if (alpha > 1) alpha = 1f // alpha can't be bigger than 1.
                 ringColor = floatArrayOf(((random() * 0.6 + 0.7) * mainColor[0]).toFloat(), ((random() * 0.6 + 0.7) * mainColor[1]).toFloat(), ((random() * 0.6 + 0.7) * mainColor[2]).toFloat(), alpha)
                 
-                // top half ring
+                // topEnd half ring
                 ringComponentShapes[i] = TopHalfRingShape(centerX, centerY, ringA, ringB, factor,
                         ringColor[0], ringColor[1], ringColor[2],
                         ringColor[3], buildShapeAttr.newAttrWithChangedZ(0.01f))
                 
             } else {
-                // bottom half ring
+                // bottomEnd half ring
                 ringComponentShapes[i] = TopHalfRingShape(centerX, centerY, ringA, ringB, factor,
                         ringColor[0], ringColor[1], ringColor[2],
                         ringColor[3], buildShapeAttr.newAttrWithChangedZ(-0.01f))

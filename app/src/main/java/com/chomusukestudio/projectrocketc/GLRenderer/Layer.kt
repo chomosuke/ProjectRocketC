@@ -44,7 +44,7 @@ class Layer(val z: Float) { // depth for the drawing order
                 lastUsedCoordIndex = 0
 
             if (i >= vertexCount * COORDS_PER_VERTEX / 2) {
-                // if half of all before vertexCount does not have unused triangle left
+                // if half of all before vertexCount does not have unused triangle leftEnd
                 lastUsedCoordIndex = incrementVertexCountAndGiveNewCoordsPointer()
                 return lastUsedCoordIndex
             }
@@ -193,14 +193,14 @@ class Layer(val z: Float) { // depth for the drawing order
         fun refreshMatrix() {
             // this projection matrix is applied to object coordinates
             // in the onDrawFrame() method
-            val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)
+            val leftRightBottomTop = generateLeftRightBottomTopEnd(widthInPixel / heightInPixel)
 
             // for debugging
-//        Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0] * 3, leftRightBottomTop[1] * 3,
-//                leftRightBottomTop[2] * 3, leftRightBottomTop[3] * 3, -1000f, 1000f)
-            Matrix.orthoM(mProjectionMatrix, 0, leftRightBottomTop[0], leftRightBottomTop[1],
-                    leftRightBottomTop[2], leftRightBottomTop[3], -1000f, 1000f)
-            // this game shall be optimised for any aspect ratio as now all left, right, bottom and top are visibility
+//        Matrix.orthoM(mProjectionMatrix, 0, leftEnd * 3, rightEnd * 3,
+//                bottomEnd * 3, topEnd * 3, -1000f, 1000f)
+            Matrix.orthoM(mProjectionMatrix, 0, leftEnd, rightEnd,
+                    bottomEnd, topEnd, -1000f, 1000f)
+            // this game shall be optimised for any aspect ratio as now all leftEnd, rightEnd, bottomEnd and topEnd are visibility
 
             // Set the camera position (View matrix)
             Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)

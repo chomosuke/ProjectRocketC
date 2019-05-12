@@ -1,7 +1,6 @@
 package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.*
-import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 import com.chomusukestudio.projectrocketc.heightInPixel
 import com.chomusukestudio.projectrocketc.widthInPixel
@@ -131,8 +130,8 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
         var performanceIndex = 1f
 
         fun getNumberOfEdges(radius: Float, dynamicPerformanceIndex: Double = 1.0): Int {
-            val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel / heightInPixel)
-            val pixelOnRadius = (radius / abs(leftRightBottomTop[0] - leftRightBottomTop[1]) * widthInPixel + 0.5).toInt() // +0.5 for rounding
+            val leftRightBottomTop = generateLeftRightBottomTopEnd(widthInPixel / heightInPixel)
+            val pixelOnRadius = (radius / abs(leftEnd - rightEnd) * widthInPixel + 0.5).toInt() // +0.5 for rounding
             val numberOfEdges = (PI / acos(1.0 - 0.2 / pixelOnRadius / (dynamicPerformanceIndex * CircularShape.performanceIndex)) / 2.0 + 0.5).toInt() * 2 /*
          /2*2 to make it even +0.5 for rounding */
             return if (numberOfEdges > 64)

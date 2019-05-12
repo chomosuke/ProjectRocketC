@@ -1,6 +1,9 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
-import android.util.Log
+import com.chomusukestudio.projectrocketc.GLRenderer.bottomEnd
+import com.chomusukestudio.projectrocketc.GLRenderer.leftEnd
+import com.chomusukestudio.projectrocketc.GLRenderer.rightEnd
+import com.chomusukestudio.projectrocketc.GLRenderer.topEnd
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
@@ -70,10 +73,10 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
     }
 
     fun canBeSeenIf(centerX: Float, centerY: Float): Boolean {
-        return centerX < LEFT_END + maxWidth &&
-                centerX > RIGHT_END - maxWidth &&
-                centerY < TOP_END + maxWidth &&
-                centerY > BOTTOM_END - maxWidth
+        return centerX < leftEnd + maxWidth &&
+                centerX > rightEnd - maxWidth &&
+                centerY < topEnd + maxWidth &&
+                centerY > bottomEnd - maxWidth
     }
     
     fun removePlanet() {
@@ -161,18 +164,5 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
     
     override fun isInside(x: Float, y: Float): Boolean {
         return square(x - centerX) + square(y - centerY) <= square(radius)
-    }
-    
-    companion object {
-        private var LEFT_END: Float = 0.toFloat()
-        private var RIGHT_END: Float = 0.toFloat()
-        private var BOTTOM_END: Float = 0.toFloat()
-        private var TOP_END: Float = 0.toFloat()
-        fun setENDs(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
-            LEFT_END = leftEnd
-            RIGHT_END = rightEnd
-            BOTTOM_END = bottomEnd
-            TOP_END = topEnd
-        }
     }
 }

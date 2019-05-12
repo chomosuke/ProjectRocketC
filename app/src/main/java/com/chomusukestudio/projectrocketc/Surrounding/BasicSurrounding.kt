@@ -1,7 +1,7 @@
 package com.chomusukestudio.projectrocketc.Surrounding
 
 import android.widget.TextView
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
@@ -28,32 +28,7 @@ import java.lang.Math.*
  * Created by Shuang Li on 31/03/2018.
  */
 
-class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
-                       private var bottomEnd: Float, private var topEnd: Float,
-                       private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources?) : Surrounding() {
-    override fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
-        this.leftEnd = leftEnd
-        this.rightEnd = rightEnd
-        this.bottomEnd = bottomEnd
-        this.topEnd = topEnd
-        if (this.rightEnd > this.leftEnd) {
-            val temp = this.rightEnd
-            this.rightEnd = this.leftEnd
-            this.leftEnd = temp
-        } // rightEnd smaller than leftEnd, topEnd bigger than bottomEnd
-        if (bottomEnd > topEnd) {
-            val temp = topEnd
-            this.topEnd = bottomEnd
-            this.bottomEnd = temp
-        } // basic surrounding (and maybe others) need it
-
-        LittleStar.setENDs(this.leftEnd, this.rightEnd, this.bottomEnd, this.topEnd)
-
-//        PlanetShape.setENDs(this.leftEnd * 1.5f - 0.1f, this.rightEnd * 1.5f + 0.1f, this.bottomEnd * 1.5f + 0.1f, this.topEnd * 1.5f - 0.1f)
-////         0.1f so newPlanet will not keep changing visibility
-        PlanetShape.setENDs(this.leftEnd, this.rightEnd, this.bottomEnd, this.topEnd)
-    }
-
+class BasicSurrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources?) : Surrounding() {
     private val boundaries = ArrayList<PlanetShape>() // this defines where the plane can't go
     // boundaries should have z value of 10 while background should have a z value higher than 10, like 11.
     private var backgrounds: ArrayList<Shape> // backGrounds doesn't effect plane
@@ -114,8 +89,6 @@ class BasicSurrounding(private var leftEnd: Float, private var rightEnd: Float,
     }
 
     init {
-        setLeftRightBottomTopEnd(leftEnd, rightEnd, bottomEnd, topEnd)
-
         if(resources is BasicSurroundingResources) {
             planetShapes = resources.planetShapes
             backgrounds = resources.background

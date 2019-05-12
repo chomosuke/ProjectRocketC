@@ -17,14 +17,7 @@ import java.util.ArrayList
 
 import java.lang.Math.random
 
-class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, private var rightEnd: Float, private var leftEnd: Float, private val layers: Layers): Surrounding() {
-
-    override fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float) {
-        this.leftEnd = leftEnd
-        this.rightEnd = rightEnd
-        this.bottomEnd = bottomEnd
-        this.topEnd = topEnd
-    }
+class TestSurrounding(private val layers: Layers): Surrounding() {
 
     override fun initializeSurrounding(rocket: Rocket, state: State) {
         this.rocket = rocket
@@ -54,30 +47,17 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
     
     private val numberOfTriangleOnScreen = 5
     
-    // reference to the previous top triangles
-    private val previousTriangles = arrayOf(TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //top left
-            2f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //top right
-            2f, -13f, //bottom right
-            random().toFloat(), 1f, 1f, 1f, BuildShapeAttr(10f, true, layers)),//left top
-            TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //top left
-                    6f, -13f, // bottom left
-                    2f, -13f, //bottom right
-                    random().toFloat(), 1f, 1f, 1f, BuildShapeAttr(10f, true, layers)))//left bottom
+    // reference to the previous topEnd triangles
+    private val previousTriangles = arrayOf(TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //topEnd leftEnd
+            2f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //topEnd rightEnd
+            2f, -13f, //bottomEnd rightEnd
+            random().toFloat(), 1f, 1f, 1f, BuildShapeAttr(10f, true, layers)),//leftEnd topEnd
+            TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //topEnd leftEnd
+                    6f, -13f, // bottomEnd leftEnd
+                    2f, -13f, //bottomEnd rightEnd
+                    random().toFloat(), 1f, 1f, 1f, BuildShapeAttr(10f, true, layers)))//leftEnd bottomEnd
     
     init {
-        if (rightEnd > leftEnd) {
-            val temp = rightEnd
-            rightEnd = leftEnd
-            leftEnd = temp
-        } // rightEnd smaller than leftEnd, topEnd bigger than bottomEnd
-        if (bottomEnd > topEnd) {
-            val temp = topEnd
-            topEnd = bottomEnd
-            bottomEnd = temp
-        } // basic surrounding (and maybe others) need it
-        
-        LittleStar.setENDs(this.leftEnd, this.rightEnd, this.bottomEnd, this.topEnd)
-        
         LittleStar.setCenterOfRocket(centerOfRotationX, centerOfRotationY)
     
         // so that previousTriangle can be not nullable
@@ -106,26 +86,26 @@ class TestSurrounding(private var topEnd: Float, private var bottomEnd: Float, p
 
             val buildBoundryShapesAttr = BuildShapeAttr(10f, true, layers)
             // complicated calculation done to ensure triangle meet up with each other and there ain't any overlapping or gap
-            boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //top left
-                    randomPoint + 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //top right
-                    previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottom right (previous top right)
-                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//left top
+            boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd leftEnd
+                    randomPoint + 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd rightEnd
+                    previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottomEnd rightEnd (previous topEnd rightEnd)
+                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//leftEnd topEnd
             // refresh previous triangle so other can follow
-            boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //top left
-                    previousTriangles[0].getTriangularShapeCoords(X1), previousTriangles[0].getTriangularShapeCoords(Y1), // bottom left (previous top left)
-                    previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottom right (previous top right)
-                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//left bottom
+            boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd leftEnd
+                    previousTriangles[0].getTriangularShapeCoords(X1), previousTriangles[0].getTriangularShapeCoords(Y1), // bottomEnd leftEnd (previous topEnd leftEnd)
+                    previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottomEnd rightEnd (previous topEnd rightEnd)
+                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//leftEnd bottomEnd
             previousTriangles[0] = boundaries[boundaries.size - 2] as TriangularShape
             
-            boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //top right
-                    randomPoint - 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //top left
-                    previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottom left (previous top left)
-                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//right top
+            boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd rightEnd
+                    randomPoint - 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd leftEnd
+                    previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottomEnd leftEnd (previous topEnd leftEnd)
+                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//rightEnd topEnd
             // refresh previous triangle so other can follow
-            boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //top right
-                    previousTriangles[1].getTriangularShapeCoords(X1), previousTriangles[1].getTriangularShapeCoords(Y1), // bottom right (previous top right)
-                    previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottom left (previous top left)
-                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//right bottom
+            boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd rightEnd
+                    previousTriangles[1].getTriangularShapeCoords(X1), previousTriangles[1].getTriangularShapeCoords(Y1), // bottomEnd rightEnd (previous topEnd rightEnd)
+                    previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottomEnd leftEnd (previous topEnd leftEnd)
+                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//rightEnd bottomEnd
             previousTriangles[1] = boundaries[boundaries.size - 2] as TriangularShape
         }
     }
