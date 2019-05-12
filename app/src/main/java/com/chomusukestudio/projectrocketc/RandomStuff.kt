@@ -1,6 +1,7 @@
 package com.chomusukestudio.projectrocketc
 
 import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.SystemClock
@@ -11,10 +12,17 @@ import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.generateLeftRightBottomTop
 import java.util.logging.Level
 import java.util.logging.Logger
+import android.view.Display
 
 
+
+// both need to be initialized in MainActivity.OnCreate()
 @Volatile var widthInPixel: Float = 0f
+    get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
+    set(value) { field = value
+    Log.d(TAG, field.toString())}
 @Volatile var heightInPixel: Float = 0f
+    get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
 
 fun transformToMatrixX(x: Float): Float {
     var resultX = x
