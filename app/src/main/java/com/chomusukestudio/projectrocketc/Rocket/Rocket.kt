@@ -14,7 +14,6 @@ import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
 import com.chomusukestudio.projectrocketc.State
 import java.lang.Math.*
@@ -37,8 +36,10 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
     protected abstract val initialSpeed: Float
     protected abstract val components: Array<Shape>
     
-    protected var centerOfRotationX: Float = surrounding.centerOfRotationX
-    protected var centerOfRotationY: Float = surrounding.centerOfRotationY
+    var centerOfRotationX: Float = surrounding.centerOfRotationX
+        protected set
+    var centerOfRotationY: Float = surrounding.centerOfRotationY
+        protected set
     // surrounding have to define center of rotation
     // constructor of subclasses need to reset components with its center of rotation at centerOfRotationY and centerOfRotationX and defined it's speed
 

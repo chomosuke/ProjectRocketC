@@ -281,9 +281,6 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         var score = 0
             private set
         var dScore = 1
-//            set(value) {
-//                field = if (value > 5) 5 else value
-//            }
         
         fun cleanScore() {
             dScore = 1

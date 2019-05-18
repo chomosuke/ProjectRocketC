@@ -42,7 +42,6 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
 
     private val minDistantBetweenPlanet = 4f
 
-    private val topMarginForLittleStar = 1f
     private lateinit var newPlanet: Planet
     private var numberOfRedStar = 0
 
@@ -333,7 +332,34 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         // refresh displacement since last makeNewTriangleAndRemoveTheOldOne()
 
         attractLittleStar(now, previousFrameTime)
+        checkFlyby(now - previousFrameTime)
+    }
 
+    private fun checkFlyby(frameDuration: Long) {
+        for (planet in planets) {
+            if (planet.visibility) // only check visible plane for flyby
+            if (planet.checkFlyby(rocket, frameDuration)) {
+                flybysInThisYellowStar++
+
+                LittleStar.dScore = (LittleStar.dScore + (flybysInThisYellowStar * 5))
+                //            LittleStar.Companion.setDScore(1000000);
+//            if ((1 + flybysInThisYellowStar * 0.5) % 1 == 0.0) { // display an integer
+                giveVisualText("δ+" + (flybysInThisYellowStar * 5), visualTextView)
+//            } else {
+//                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5), visualTextView)
+//            }
+                when (flybysInThisYellowStar) {
+                    1 -> {
+                    }
+                    2 -> {
+                    }
+                    3 -> {
+                    }
+                    else -> {
+                    }
+                }
+            }
+        }
     }
 
     override fun checkAndAddLittleStar(now: Long) { // this get called every frame
@@ -390,14 +416,9 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     }
 
     private val parallelForIForIsCrashed = ParallelForI(8, "is crashed")
-//    private var closeLastFrame = false
-//    private var distanceLastFrame: Float = 0f
     @Volatile
-//    private var closeThisFrame = false
-//    private var distanceThisFrame: Float = 0f
     private var flybyDistance = 0.5f
     private var flybysInThisYellowStar = 0
-    private var flybyPlanet: Planet? = null
 
     @Volatile
     private var crashedShape: Shape? = null
@@ -423,33 +444,6 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         }, planetsNeedToBeChecked.size)
         // no need for improvement for immediate return true, most of the time there will not be any overlap.
         parallelForIForIsCrashed.waitForLastRun()
-
-        // see if precision flyby is complete
-//        if (closeLastFrame && !flybyPlanet!!.flybyed && distanceThisFrame > distanceLastFrame) {
-//        if (flybyPlanet!!.checkFlyby(rocket)) {
-        if (false) {
-            flybysInThisYellowStar++
-
-            LittleStar.dScore = (LittleStar.dScore + (flybysInThisYellowStar * 5))
-            //            LittleStar.Companion.setDScore(1000000);
-//            if ((1 + flybysInThisYellowStar * 0.5) % 1 == 0.0) { // display an integer
-            giveVisualText("δ+" + (flybysInThisYellowStar * 5), visualTextView)
-//            } else {
-//                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5), visualTextView)
-//            }
-            when (flybysInThisYellowStar) {
-                1 -> {
-                }
-                2 -> {
-                }
-                3 -> {
-                }
-                else -> {
-                }
-            }
-        }
-//        closeLastFrame = closeThisFrame
-//        distanceLastFrame = distanceThisFrame
 
         return crashedShape
     }

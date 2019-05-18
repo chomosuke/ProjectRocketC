@@ -5,8 +5,11 @@ import com.chomusukestudio.projectrocketc.GLRenderer.leftEnd
 import com.chomusukestudio.projectrocketc.GLRenderer.rightEnd
 import com.chomusukestudio.projectrocketc.GLRenderer.topEnd
 import com.chomusukestudio.projectrocketc.IReusable
+import com.chomusukestudio.projectrocketc.Rocket.Rocket
+import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 
@@ -21,6 +24,19 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
     // at first the planet haven't been flybyed and the close time is zero
     override var flybyable = true
     override var closeTime = 0L
+    override fun checkFlyby(rocket: Rocket, frameDuration: Long): Boolean {
+        if (distance(rocket.centerOfRotationX, rocket.centerOfRotationY, centerX, centerY) <= radius + (rocket.width/2) + 0.5)
+            closeTime += frameDuration
+        if (flybyable) {
+            if (closeTime > 125) {
+                flybyable = false
+                // can't flyby the same planet twice
+                return true
+            }
+        }
+        return false
+    }
+
 
     var centerX: Float = planetShape.centerX
         private set
