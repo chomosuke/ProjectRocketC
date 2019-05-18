@@ -260,13 +260,19 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         val distance = distance(centerX, centerY, centerOfRotationX, centerOfRotationY)
         if (distance < RADIUS_OF_LITTLE_STAR + range){
             // accelerate it
-            val angle = atan2(centerOfRotationY - centerY, centerOfRotationX - centerX)
             speed += acceleration * (now -  previousFrameTime)
-            moveLittleStar(speed * cos(angle) * (now -  previousFrameTime), speed * sin(angle) * (now - previousFrameTime))
+            // so people can see if they had it or not
             littleStarShape.visibility = true
         } else {
-            // reset speed
-            speed = 0f
+            // slow down
+            if (speed > 0f)
+                speed -= acceleration * (now - previousFrameTime)
+            else
+                speed = 0f
+        }
+        if (speed != 0f) {
+            val angle = atan2(centerOfRotationY - centerY, centerOfRotationX - centerX)
+            moveLittleStar(speed * cos(angle) * (now - previousFrameTime), speed * sin(angle) * (now - previousFrameTime))
         }
     }
     
