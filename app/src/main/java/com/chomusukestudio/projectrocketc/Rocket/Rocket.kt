@@ -5,7 +5,6 @@ package com.chomusukestudio.projectrocketc.Rocket
  */
 
 import android.support.annotation.CallSuper
-import com.chomusukestudio.projectrocketc.GLRenderer.Layer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
@@ -15,6 +14,7 @@ import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
 import com.chomusukestudio.projectrocketc.State
 import java.lang.Math.*
@@ -22,6 +22,9 @@ import java.lang.Math.*
 abstract class Rocket(protected val surrounding: Surrounding, private val layers: Layers) {
 
     protected open var explosionShape: ExplosionShape? = null
+
+
+    protected abstract val shapeForCrashAppro: Shape
 
     protected abstract val trace: Trace
     var currentRotation = surrounding.rotation
@@ -42,11 +45,11 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
     protected var crashedComponent: Shape? = null
     open fun isCrashed(surrounding: Surrounding): Boolean {
         // surrounding will handle this
-        crashedComponent = surrounding.isCrashed(components)
+        crashedComponent = surrounding.isCrashed(shapeForCrashAppro, components)
         if (crashedComponent != null) {
             return true
         }
-            return false
+        return false
     }
 
     open val explosionCoordinate = Coordinate(centerOfRotationX, centerOfRotationY)
@@ -74,6 +77,14 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
             component.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
         currentRotation = rotation
     }
+
+    protected fun rotateRocket(angle: Float) {
+        currentRotation += angle
+        for (component in components)
+            component.rotateShape(centerOfRotationX, centerOfRotationY, angle)
+        //            surrounding.rotateSurrounding(dr, now, previousFrameTime);
+        shapeForCrashAppro.rotateShape(centerOfRotationX, centerOfRotationY, angle)
+    }
     
     @CallSuper // allow rocket to have moving component
     open fun moveRocket(rotationNeeded: Float, now: Long, previousFrameTime: Long, state: State) {
@@ -89,22 +100,13 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
     
         when {
             rotationNeeded < -dr -> {
-                currentRotation -= dr
-                for (component in components)
-                    component.rotateShape(centerOfRotationX, centerOfRotationY, -dr)
-                //            surrounding.rotateSurrounding(-dr, now, previousFrameTime);
+                rotateRocket(-dr)
             }
             rotationNeeded > dr -> {
-                currentRotation += dr
-                for (component in components)
-                    component.rotateShape(centerOfRotationX, centerOfRotationY, dr)
-                //            surrounding.rotateSurrounding(dr, now, previousFrameTime);
+                rotateRocket(dr)
             }
             else -> {
-                currentRotation += rotationNeeded
-                for (component in components)
-                    component.rotateShape(centerOfRotationX, centerOfRotationY, rotationNeeded)
-                //            surrounding.rotateSurrounding(rotationNeeded, now, previousFrameTime);
+                rotateRocket(rotationNeeded)
             }
         }
 

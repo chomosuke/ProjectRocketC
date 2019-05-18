@@ -21,6 +21,7 @@ import android.media.AudioManager
 import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
+import com.chomusukestudio.projectrocketc.Surrounding.Planet
 import java.lang.Math.abs
 import java.lang.Math.pow
 
@@ -138,8 +139,8 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         rangeCircleThingy?.removeShape()
     }
     
-    fun isTooCloseToAPlanet(planetShape: PlanetShape, margin: Float): Boolean {
-        return distance(planetShape.centerX, planetShape.centerY, centerX, centerY) <= RADIUS_OF_LITTLE_STAR + margin + planetShape.radius
+    fun isTooCloseToAPlanet(planet: Planet, margin: Float): Boolean {
+        return distance(planet.centerX, planet.centerY, centerX, centerY) <= RADIUS_OF_LITTLE_STAR + margin + planet.radius
     }
     
     fun isTooFarFromAPlanet(planetShape: PlanetShape, margin: Float): Boolean {

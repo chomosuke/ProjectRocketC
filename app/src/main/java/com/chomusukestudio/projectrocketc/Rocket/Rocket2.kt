@@ -57,6 +57,9 @@ open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer
             }
         }
     }
+    override val shapeForCrashAppro = QuadrilateralShape(centerOfRotationX + 0.15f, centerOfRotationY + 0.5f,
+            centerOfRotationX - 0.15f, centerOfRotationY + 0.5f, centerOfRotationX - 0.15f, centerOfRotationY - 0.4f,
+            centerOfRotationX + 0.15f, centerOfRotationY - 0.4f, 1f, 1f, 1f, 1f, BuildShapeAttr(1f, false, layers))
 
     override fun isCrashed(surrounding: Surrounding): Boolean {
         return if (super.isCrashed(surrounding)) {

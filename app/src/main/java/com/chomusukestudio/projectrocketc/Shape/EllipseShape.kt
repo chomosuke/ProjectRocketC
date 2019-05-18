@@ -14,7 +14,7 @@ class EllipseShape(centerX: Float, centerY: Float, a: Float, b: Float, red: Floa
         // just initialize it.
         val componentShapes = arrayOfNulls<TriangularShape>(numberOfEdges - 2)
         
-        // generate components triangularShape for EllipseShape using center and a and b
+        // generate components triangularShape for EllipseShape isInUse center and a and b
         for (i in 1 until numberOfEdges - 1)
             componentShapes[i - 1] = TriangularShape(centerX, centerY + b,
                     centerX + a * sin(2.0 * PI * i.toDouble() / numberOfEdges).toFloat(),

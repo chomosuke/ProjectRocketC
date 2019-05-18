@@ -129,7 +129,7 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
             littleStar.rotateLittleStar(centerOfRotationX, centerOfRotationY, angle)
     }
     
-    override fun isCrashed(components: Array<Shape>): Shape? {
+    override fun isCrashed(shapeForCrashAppro:Shape, components: Array<Shape>): Shape? {
         crashedShape = null
         val boundariesNeedToBeChecked = ArrayList<Shape>(100)
         for (boundary in boundaries) {
@@ -139,9 +139,12 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
         }
         parallelForIForIsCrashed.run({ i ->
             val boundary = boundariesNeedToBeChecked[i]
-            for (component in components) {
-                if (boundary.isOverlap(component)) { // if does overlap
-                    crashedShape = component
+            if (boundary.isOverlap(shapeForCrashAppro)) {
+                // only check it when it's close
+                for (component in components) {
+                    if (boundary.isOverlap(component)) { // if does overlap
+                        crashedShape = component
+                    }
                 }
             }
         }, boundariesNeedToBeChecked.size)

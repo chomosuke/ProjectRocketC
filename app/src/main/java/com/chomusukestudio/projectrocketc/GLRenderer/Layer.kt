@@ -196,8 +196,8 @@ class Layer(val z: Float) { // depth for the drawing order
             val leftRightBottomTop = generateLeftRightBottomTopEnd(widthInPixel / heightInPixel)
 
             // for debugging
-//        Matrix.orthoM(mProjectionMatrix, 0, leftEnd * 3, rightEnd * 3,
-//                bottomEnd * 3, topEnd * 3, -1000f, 1000f)
+//        Matrix.orthoM(mProjectionMatrix, 0, leftEnd * 2, rightEnd * 2,
+//                bottomEnd * 2, topEnd * 2, -1000f, 1000f)
             Matrix.orthoM(mProjectionMatrix, 0, leftEnd, rightEnd,
                     bottomEnd, topEnd, -1000f, 1000f)
             // this game shall be optimised for any aspect ratio as now all leftEnd, rightEnd, bottomEnd and topEnd are visibility

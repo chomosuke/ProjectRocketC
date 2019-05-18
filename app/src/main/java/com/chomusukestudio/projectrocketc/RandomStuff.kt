@@ -138,3 +138,7 @@ fun scanForActivity(cont: Context): Activity {
         return scanForActivity(cont.baseContext)
     throw java.lang.Exception("I have no idea what is happening")
 }
+
+interface IReusable { // stuff that can be stored in a place (e.g. an array) and be reused multiple times
+    var isInUse: Boolean
+}

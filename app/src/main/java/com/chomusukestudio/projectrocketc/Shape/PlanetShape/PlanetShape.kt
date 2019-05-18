@@ -1,111 +1,53 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
+import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.bottomEnd
 import com.chomusukestudio.projectrocketc.GLRenderer.leftEnd
 import com.chomusukestudio.projectrocketc.GLRenderer.rightEnd
 import com.chomusukestudio.projectrocketc.GLRenderer.topEnd
+import com.chomusukestudio.projectrocketc.IReusable
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import com.chomusukestudio.projectrocketc.Surrounding.IFlybyable
 
 abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, val radius: Float) : Shape() {
-    var centerX: Float = 0f
+    var centerX: Float = centerX
         private set
-    var centerY: Float = 0f
+    var centerY: Float = centerY
         private set
-    
-    var flybyed = false
-    
+
+    // part of isOverlap
     var pointsOutsideX: FloatArray? = null
         protected set
     var pointsOutsideY: FloatArray? = null
         protected set
-    
-    var isInUse: Boolean = false
-        private set
-    
-    private var angleRotated: Float = 0f
-    
-    private var actualCenterX: Float = 0f
-    private var actualCenterY: Float = 0f
 
     open val maxWidth: Float = radius
 
-//    // for debugging
-//    override var visibility: Boolean
-//        get() = super.visibility
-//        set(value) {
-//            if (visibility != value)
-//                Log.d("PlanetShape", "visibility changed to $value")
-//            super.visibility = value
-//        }
-
-    init {
-        this.centerX = centerX
-        actualCenterX = this.centerX
-        this.centerY = centerY
-        actualCenterY = this.centerY
-    }
+    // for debugging
+    override var visibility: Boolean
+        get() = super.visibility
+        set(value) {
+            if (visibility != value)
+                Log.d("PlanetShape", "visibility changed to $value")
+            super.visibility = value
+        }
     
     override fun moveShape(dx: Float, dy: Float) {
+        super.moveShape(dx, dy)
         if (pointsOutsideX != null) { // update special score as well
             for (i in pointsOutsideX!!.indices) {
                 pointsOutsideX!![i] += dx
                 pointsOutsideY!![i] += dy
             }
         }
+
         centerX += dx
         centerY += dy
-        if (canBeSeen()) {
-            setActual(centerX, centerY)
-            visibility = true
-        }
-        else {
-            // if can't be seen
-            visibility = false
-        }
     }
-
-    private fun canBeSeen(): Boolean {
-        return canBeSeenIf(centerX, centerY) || canBeSeenIf(actualCenterX, actualCenterY)
-    }
-
-    fun canBeSeenIf(centerX: Float, centerY: Float): Boolean {
-        return centerX < leftEnd + maxWidth &&
-                centerX > rightEnd - maxWidth &&
-                centerY < topEnd + maxWidth &&
-                centerY > bottomEnd - maxWidth
-    }
-    
-    fun removePlanet() {
-        visibility = false
-        isInUse = false
-        flybyed = false
-    }
-    
-    fun usePlanet() {
-        isInUse = true
-    }
-    
-    private fun setActual(actualCenterX: Float, actualCenterY: Float) {
-        val dx = actualCenterX - this.actualCenterX
-        val dy = actualCenterY - this.actualCenterY
-//        moveShapeMultiThreaded(dx, dy)
-        super.moveShape(dx, dy)
-        this.actualCenterX = actualCenterX
-        this.actualCenterY = actualCenterY
-        if (angleRotated != 0f) {
-            super.rotateShape(centerX, centerY, angleRotated)
-            angleRotated = 0f // reset angleRotated
-        }
-    }
-
-//    private fun moveShapeMultiThreaded(dx: Float, dy: Float) {
-//        val componentTriangularShapes = getComponentTriangularShapes(this)
-//        // turns out i don't really need this
-//    }
 
     private fun getComponentTriangularShapes(shape: Shape): Array<TriangularShape> {
         val componentTriangularShapes = arrayOfNulls<TriangularShape>(size)
@@ -130,9 +72,7 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
     }
     
     override fun rotateShape(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
-        if (angle == 0f) {
-            return
-        }
+        super.rotateShape(centerOfRotationX, centerOfRotationY, angle)
         if (pointsOutsideX != null) { // update special score as well
             for (i in pointsOutsideX!!.indices) {
                 val result = rotatePoint(pointsOutsideX!![i], pointsOutsideY!![i], centerOfRotationX, centerOfRotationY, angle)
@@ -140,26 +80,13 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
                 pointsOutsideY!![i] = result[1]
             }
         }
-        angleRotated += angle
         val result = rotatePoint(centerX, centerY, centerOfRotationX, centerOfRotationY, angle)
         centerX = result[0]
         centerY = result[1]
-        if (canBeSeen())
-            setActual(centerX, centerY)
-        else {
-            // if can't be seen
-            visibility = false
-        }
     }
     
     public override fun isOverlapToOverride(anotherShape: Shape): Boolean {
         return CircularShape.isOverlap(anotherShape, centerX, centerY, radius)
-    }
-    
-    fun isTooClose(anotherPlanetShape: PlanetShape, distance: Float): Boolean {
-        // if circle and circle are too close
-        return square(anotherPlanetShape.centerX - this.centerX) + square(anotherPlanetShape.centerY - this.centerY) <= square(anotherPlanetShape.radius + this.radius + distance)
-        // testing all pointsOutside is impractical because performance, subclass may override this method.
     }
     
     override fun isInside(x: Float, y: Float): Boolean {
