@@ -204,10 +204,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     false
                 })
             return // multi click check
-        if (state == State.InGame) return // already started, must've been lag so big that multi click check failed
 
-        if (state != State.Crashed)
-            throw IllegalStateException("reStarting Game while not Crashed")
+        if (state != State.Crashed) // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
+            return
 
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
