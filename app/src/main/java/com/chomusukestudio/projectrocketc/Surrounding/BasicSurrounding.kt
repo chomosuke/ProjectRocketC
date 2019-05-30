@@ -1,9 +1,12 @@
 package com.chomusukestudio.projectrocketc.Surrounding
 
+import android.util.Log
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.*
+import com.chomusukestudio.projectrocketc.IReusable
 
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
+import com.chomusukestudio.projectrocketc.Rocket.speedFormula
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
@@ -18,11 +21,16 @@ import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import java.util.ArrayList
 
 import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
+import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar.Color.YELLOW
-import java.lang.Math.*
+import java.lang.Math.random
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.sqrt
 
 /**
  * Created by Shuang Li on 31/03/2018.
@@ -61,16 +69,13 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         }
     }
 
-    private val RADIUS_MARGIN = 0.5f
-    private val AVERAGE_RADIUS = 0.75f// for planet shape to determent which type of planet suits the size best.
-
     private fun generateRandomPlanet(centerX: Float, centerY: Float, radius: Float, z: Float, layers: Layers): Planet {
         val randomPlanetShape: PlanetShape
-        if (radius < AVERAGE_RADIUS) {
+        if (radius < averageRadius) {
 //            val timeStarted = SystemClock.uptimeMillis()
             randomPlanetShape = MarsShape(centerX, centerY, radius, BuildShapeAttr(z, false, layers))
 //            Log.v("time take for newPlanet", "mars " + (SystemClock.uptimeMillis() - timeStarted))
-        } else if (radius < AVERAGE_RADIUS + RADIUS_MARGIN / 3) {
+        } else if (radius < averageRadius + radiusMargin / 3) {
 //            val timeStarted = SystemClock.uptimeMillis()
             val ringA = ((1.5 + random() * 0.2) * radius).toFloat()
             randomPlanetShape = SaturnShape(ringA, (0.1 + 0.5 * random()).toFloat() * ringA, 1.2f * radius, (3 * random() + 3).toInt(), centerX, centerY, radius, BuildShapeAttr(z, false, layers))
@@ -107,10 +112,12 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
 
         this.rocket = rocket
-        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - (rocket.width / 2 + flybyDistance), 1000000000f,
-                centerOfRotationX + (rocket.width / 2 + flybyDistance), 1000000000f, // max value is bad because it causes overflow... twice
-                centerOfRotationX + (rocket.width / 2 + flybyDistance), centerOfRotationY,
-                centerOfRotationX - (rocket.width / 2 + flybyDistance), centerOfRotationY,
+        val minCloseDist = 0.004f * timeLimit
+        val initialFlybyDistance = sqrt(square(flybyDistance + averageRadius) - square(minCloseDist))/*rocket.width / 2 + flybyDistance*/
+        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, 1000000000f,
+                centerOfRotationX + initialFlybyDistance, 1000000000f, // max value is bad because it causes overflow... twice
+                centerOfRotationX + initialFlybyDistance, centerOfRotationY,
+                centerOfRotationX - initialFlybyDistance, centerOfRotationY,
                 0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
         startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
 
@@ -416,8 +423,6 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     }
 
     private val parallelForIForIsCrashed = ParallelForI(8, "is crashed")
-    @Volatile
-    private var flybyDistance = 0.5f
     private var flybysInThisYellowStar = 0
 
     @Volatile
@@ -475,8 +480,122 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     }
 
     private fun generateRadius(): Float {
-        return random().toFloat() * RADIUS_MARGIN + AVERAGE_RADIUS - RADIUS_MARGIN / 2
+        return random().toFloat() * radiusMargin + averageRadius - radiusMargin / 2
     }
 }
 
 class BasicSurroundingResources(val background: ArrayList<Shape>, val planetsStore: Array<Planet>): SurroundingResources()
+
+private const val radiusMargin = 0.5f
+private const val averageRadius = 0.75f // for planet shape to determent which type of planet suits the size best.
+private const val flybyDistance = 1f
+private val maxCloseDist = kotlin.math.sqrt(square(flybyDistance) + 2 * (averageRadius + radiusMargin/2) * flybyDistance) * 2
+private val maxFlybySpeed = speedFormula(0.004f, 200)
+private val timeLimit = maxCloseDist / maxFlybySpeed
+
+// this class takes a planetShape and manage it, make it flybyable and reusable.
+// this is done to weaken the coupling between PlanetShapes and BasicSurrounding
+class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
+
+    var visibility: Boolean
+        get() = planetShape.visibility
+        set(value) { planetShape.visibility = value }
+
+    // at first the planet haven't been flybyed and the close time is zero
+    private var flybyable = true
+    private var closeTime = 0L
+    override fun checkFlyby(rocket: Rocket, frameDuration: Long): Boolean {
+        if (distance(rocket.centerOfRotationX, rocket.centerOfRotationY, centerX, centerY) <= radius + (rocket.width/2) + flybyDistance)
+            closeTime += frameDuration
+        if (flybyable) {
+            if (closeTime > timeLimit) {
+                flybyable = false
+                // can't flyby the same planet twice
+                Log.v("flyby time limit", "" + timeLimit)
+                return true
+            }
+        }
+        return false
+    }
+
+
+    var centerX: Float = planetShape.centerX
+        private set
+    var centerY: Float = planetShape.centerY
+        private set
+
+    val radius: Float
+        get() = planetShape.radius
+
+    private var angleRotated: Float = 0f
+
+    override var isInUse: Boolean = false
+        set(value) {
+            field = value
+            if (!value) {
+                visibility = false
+                flybyable = true
+                closeTime = 0L
+            }
+        }
+
+    private fun setActual(actualCenterX: Float, actualCenterY: Float) {
+        val dx = actualCenterX - planetShape.centerX
+        val dy = actualCenterY - planetShape.centerY
+        planetShape.moveShape(dx, dy)
+        if (angleRotated != 0f) {
+            planetShape.rotateShape(centerX, centerY, angleRotated)
+            angleRotated = 0f // reset angleRotated
+        }
+    }
+
+
+    fun resetPosition(centerX: Float, centerY: Float) {
+        planetShape.resetPosition(centerX, centerY)
+        this.centerX = centerX
+        this.centerY = centerY
+    }
+
+    fun rotatePlanet(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
+        if (angle == 0f) {
+            return
+        }
+        angleRotated += angle
+        val result = rotatePoint(centerX, centerY, centerOfRotationX, centerOfRotationY, angle)
+        centerX = result[0]
+        centerY = result[1]
+        visibility = canBeSeen()
+        if (visibility)
+            setActual(centerX, centerY)
+    }
+
+    private fun canBeSeen(): Boolean {
+        return canBeSeenIf(centerX, centerY) || canBeSeenIf(planetShape.centerX, planetShape.centerY)
+    }
+
+    fun canBeSeenIf(centerX: Float, centerY: Float): Boolean {
+        val maxWidth = planetShape.maxWidth
+        return centerX < leftEnd + maxWidth &&
+                centerX > rightEnd - maxWidth &&
+                centerY < topEnd + maxWidth &&
+                centerY > bottomEnd - maxWidth
+    }
+
+    fun movePlanet(dx: Float, dy: Float) {
+        centerX += dx
+        centerY += dy
+        visibility = canBeSeen()
+        if (visibility)
+            setActual(centerX, centerY)
+    }
+
+    fun isOverlap(anotherShape: Shape): Boolean {
+        return planetShape.isOverlap(anotherShape)
+    }
+
+    fun isTooClose(anotherPlanet: Planet, distance: Float): Boolean {
+        // if circle and circle are too close
+        return square(anotherPlanet.centerX - this.centerX) + square(anotherPlanet.centerY - this.centerY) <= square(anotherPlanet.planetShape.radius + planetShape.radius + distance)
+        // testing all pointsOutside is impractical because performance, subclass may override this method.
+    }
+}

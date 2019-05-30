@@ -229,7 +229,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun toHome(view: View) {
-        if (state == State.PreGame) return // already at home, must've been lag
+        if (state != State.Crashed && state != State.Paused) return // already at home, must've been lag
 
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())

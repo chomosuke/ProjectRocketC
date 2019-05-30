@@ -16,7 +16,7 @@ import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
 import com.chomusukestudio.projectrocketc.State
-import java.lang.Math.*
+import kotlin.math.*
 
 abstract class Rocket(protected val surrounding: Surrounding, private val layers: Layers) {
 
@@ -91,9 +91,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
     open fun moveRocket(rotationNeeded: Float, now: Long, previousFrameTime: Long, state: State) {
         
         if (state == State.InGame) { // only make it faster if it's already started
-            // when 0 score, 1 times as fast, when 1024 score, 2 times as fast
-            speed = initialSpeed * (log((LittleStar.score + 1).toDouble()) / log(32.0) + 1).toFloat()
-//                        speed = initialSpeed * (LittleStar.score / 64f + 1);
+            speed = speedFormula(initialSpeed, LittleStar.score)
         }
         val speedOfRotation = speed / radiusOfRotation // dr/dt = ds/dt / radiusOfRotation
         val ds = speed * (now - previousFrameTime) // ds/dt * dt
@@ -141,3 +139,8 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
     }
 }
 
+fun speedFormula(initialSpeed: Float, score: Int): Float {
+    // when 0 score, 1 times as fast, when speedLogBase^n score, (n+1) times as fast
+    return initialSpeed * (log(score + 1f, 32f) + 1)
+//                        speed = initialSpeed * (LittleStar.score / 64f + 1);
+}
