@@ -32,7 +32,7 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
     }
 
     override var radiusOfRotation = 2f
-    final override val initialSpeed = 4f / 1000f
+    final override val initialSpeed = 0f / 1000f
     override var speed = initialSpeed
 
     override val width = 0.3f
@@ -103,32 +103,31 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
                 fadeTrace(now, previousFrameTime)
             }
             Log.d("throttle", "on")
-        } else {
-            if (speedX != 0f || speedY != 0f) {
-                
-                // decelerate rocket
-                val dSpeed = acce * (now - previousFrameTime)
-                if (speed > dSpeed) speed -= dSpeed
-                else speed = 0f
-                when {
-                    speedX == 0f -> // calculation can be simplified
-                        speedY = if (speedY >= 0) speed else -speed
-                    speedY == 0f ->
-                        speedX = if (speedX >= 0) speed else -speed
-                    else -> {
-                        val ratio = speedY / speedX
-                        speedX = if (speedX >= 0) // preserve sign of speeds
-                            speed / sqrt(square(ratio) + 1)
-                        else
-                            -speed / sqrt(square(ratio) + 1)
-                        speedY = ratio * speedX
-                    }
-                }
-                
-                val dx = speedX * (now - previousFrameTime)
-                val dy = speedY * (now - previousFrameTime)
-                surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
-            }
         }
+        // friction
+        if (speed != 0f) {
+        
+            val dSpeed = acce * (now - previousFrameTime) / 2
+            if (speed > dSpeed) speed -= dSpeed
+            else speed = 0f
+            when {
+                speedX == 0f -> // calculation can be simplified
+                    speedY = if (speedY >= 0) speed else -speed
+                speedY == 0f ->
+                    speedX = if (speedX >= 0) speed else -speed
+                else -> {
+                    val ratio = speedY / speedX
+                    speedX = if (speedX >= 0) // preserve sign of speeds
+                        speed / sqrt(square(ratio) + 1)
+                    else
+                        -speed / sqrt(square(ratio) + 1)
+                    speedY = ratio * speedX
+                }
+            }
+            val dx = speedX * (now - previousFrameTime)
+            val dy = speedY * (now - previousFrameTime)
+            surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
+        }
+    
     }
 }

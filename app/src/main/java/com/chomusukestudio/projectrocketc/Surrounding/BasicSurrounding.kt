@@ -402,7 +402,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         val centerX = random().toFloat() * (leftEnd - rightEnd) + rightEnd
         val centerY = topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/
         val littleStar = LittleStar(YELLOW, centerX, centerY, 1f,
-                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / rocket.speed * 2).toLong(), now, layers)
+                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(1f / 1000f, LittleStar.score) * 2).toLong(), now, layers)
 
         var finished: Boolean
         while (true) {
