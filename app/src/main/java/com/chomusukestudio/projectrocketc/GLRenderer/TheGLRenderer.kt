@@ -15,8 +15,6 @@ import android.content.ContentValues.TAG
 import android.opengl.GLES20
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
-import java.util.ArrayList
-import java.util.concurrent.locks.ReentrantLock
 
 class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MainActivity.MyGLSurfaceView, private val layers: Layers) : GLSurfaceView.Renderer {
 
@@ -134,29 +132,33 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     }
 }
 
-fun generateLeftRightBottomTop(widthOverHeight: Float): Array<Float> {
-    val left: Float
-    val right: Float
-    val bottom: Float
-    val top: Float
+var leftEnd: Float = 0f
+    get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
+var rightEnd: Float = 0f
+    get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
+var bottomEnd: Float = 0f
+    get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
+var topEnd: Float = 0f
+    get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
+
+fun generateLeftRightBottomTopEnd(widthOverHeight: Float) {
     if (widthOverHeight > 9f / 16f) {// if the screen is wider than a 16:9 screen
-        left = widthOverHeight * 8f
-        right = widthOverHeight * -8f
-        bottom = -8f
-        top = 8f
+        leftEnd = widthOverHeight * 8f
+        rightEnd = widthOverHeight * -8f
+        bottomEnd = -8f
+        topEnd = 8f
     } else if (1 / widthOverHeight > 16f / 9f) {// if the screen is taller than a 16:9 screen
-        left = 4.5f
-        right = -4.5f
-        bottom = 1 / widthOverHeight * -4.5f
-        top = 1 / widthOverHeight * 4.5f
+        leftEnd = 4.5f
+        rightEnd = -4.5f
+        bottomEnd = 1 / widthOverHeight * -4.5f
+        topEnd = 1 / widthOverHeight * 4.5f
     } else {// if the screen is 16;9
-        left = 4.5f
-        right = -4.5f
-        bottom = -8f
-        top = 8f
+        leftEnd = 4.5f
+        rightEnd = -4.5f
+        bottomEnd = -8f
+        topEnd = 8f
     }
-//    return arrayOf(left - GLTriangle.arrayList[0].offsetX, right - GLTriangle.arrayList[0].offsetX, bottom - GLTriangle.arrayList[0].offsetY, top - GLTriangle.arrayList[0].offsetY)
-    return arrayOf(left + offsetX, right + offsetX, bottom + offsetY, top + offsetY)
+//    return arrayOf(leftEnd - GLTriangle.arrayList[0].offsetX, rightEnd - GLTriangle.arrayList[0].offsetX, bottomEnd - GLTriangle.arrayList[0].offsetY, topEnd - GLTriangle.arrayList[0].offsetY)
 }
 
 var offsetX = 0f

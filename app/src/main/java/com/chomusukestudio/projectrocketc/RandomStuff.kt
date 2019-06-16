@@ -9,32 +9,32 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.TextView
-import com.chomusukestudio.projectrocketc.GLRenderer.generateLeftRightBottomTop
 import java.util.logging.Level
 import java.util.logging.Logger
-import android.view.Display
-
+import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 
 // both need to be initialized in MainActivity.OnCreate()
 @Volatile var widthInPixel: Float = 0f
     get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
     set(value) { field = value
-    Log.d(TAG, field.toString())}
+        Log.d(TAG, field.toString())}
 @Volatile var heightInPixel: Float = 0f
     get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
+    set(value) { field = value
+        Log.d(TAG, field.toString())
+        generateLeftRightBottomTopEnd(widthInPixel / heightInPixel)}
 
 fun transformToMatrixX(x: Float): Float {
     var resultX = x
     // transformation
     resultX -= widthInPixel / 2
     resultX /= widthInPixel / 2
-    val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel/ heightInPixel)
-    resultX *= leftRightBottomTop[0]
-    // assuming left == - right is true
+    resultX *= leftEnd
+    // assuming leftEnd == - rightEnd is true
     // need improvement to obey OOP principles by getting rid of the assumption above
-    if (!(leftRightBottomTop[0] == -leftRightBottomTop[1]))
-        throw RuntimeException("need improvement to obey OOP principles by not assuming left == - right is true.\n" +
+    if (!(leftEnd == -rightEnd))
+        throw RuntimeException("need improvement to obey OOP principles by not assuming leftEnd == - rightEnd is true.\n" +
                 "or you can ignore the above and just twist the code to get it work and not give a fuck about OOP principles.\n" +
                 "which is what i did when i wrote those code.  :)")
     return resultX
@@ -45,12 +45,11 @@ fun transformToMatrixY(y: Float): Float {
     // transformation
     resultY -= heightInPixel / 2
     resultY /= heightInPixel / 2
-    val leftRightBottomTop = generateLeftRightBottomTop(widthInPixel/ heightInPixel)
-    resultY *= leftRightBottomTop[2]
-    // assuming top == - bottom is true
+    resultY *= bottomEnd
+    // assuming topEnd == - bottomEnd is true
     // need improvement to obey OOP principles by getting rid of the assumption above
-    if (!(leftRightBottomTop[3] == -leftRightBottomTop[2]))
-        throw RuntimeException("need improvement to obey OOP principles by not assuming top == - bottom is true.\n" +
+    if (!(topEnd == -bottomEnd))
+        throw RuntimeException("need improvement to obey OOP principles by not assuming topEnd == - bottomEnd is true.\n" +
                 "or you can ignore the above and just twist the code to get it work and not give a fuck about OOP principles.\n" +
                 "which is what i did when i wrote those code.  :)")
     return resultY
@@ -138,4 +137,8 @@ fun scanForActivity(cont: Context): Activity {
     else if (cont is ContextWrapper)
         return scanForActivity(cont.baseContext)
     throw java.lang.Exception("I have no idea what is happening")
+}
+
+interface IReusable { // stuff that can be stored in a place (e.g. an array) and be reused multiple times
+    var isInUse: Boolean
 }

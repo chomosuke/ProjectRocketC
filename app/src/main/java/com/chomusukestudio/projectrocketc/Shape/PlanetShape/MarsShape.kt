@@ -56,7 +56,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
                     val numberOfEdges = CircularShape.getNumberOfEdges(r)
                     val componentShapes = arrayOfNulls<Shape>(numberOfEdges - 2)
                     
-                    // generate components triangularShape for EllipseShape using center and a and b
+                    // generate components triangularShape for EllipseShape isInUse center and a and b
                     for (i in 1 until componentShapes.size + 1) {
                         componentShapes[i - 1] = TriangularShape(mSin(offsetRadius).toFloat() * radius * cos(sRadius).toFloat(),
                                 sin(sRadius).toFloat() * radius,

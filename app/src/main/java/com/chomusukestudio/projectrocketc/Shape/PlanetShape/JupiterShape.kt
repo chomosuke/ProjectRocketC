@@ -21,7 +21,7 @@ class JupiterShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr
         val componentShapes = arrayOfNulls<QuadrilateralShape>(numberOfEdges / 2)
         val mainColor = floatArrayOf((random() * 0.6 + 0.2).toFloat(), (random() * 0.6 + 0.2).toFloat(), (random() * 0.6 + 0.2).toFloat())
         
-        // generate components triangularShape for RegularPolygonalShape using center and radius
+        // generate components triangularShape for RegularPolygonalShape isInUse center and radius
         var colorUsing = mainColor
         var lastColorChange = 0
         for (i in componentShapes.indices) {

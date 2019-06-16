@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
 import android.graphics.Point
-import android.media.Image
 import android.media.MediaPlayer
 import android.opengl.GLES20
 import android.os.SystemClock
@@ -29,7 +28,6 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLDisplay
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
-import android.util.DisplayMetrics
 import android.view.*
 import android.view.animation.Animation
 import android.widget.Button
@@ -206,10 +204,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     false
                 })
             return // multi click check
-        if (state == State.InGame) return // already started, must've been lag so big that multi click check failed
 
-        if (state != State.Crashed)
-            throw IllegalStateException("reStarting Game while not Crashed")
+        if (state != State.Crashed) // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
+            return
 
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
@@ -232,7 +229,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun toHome(view: View) {
-        if (state == State.PreGame) return // already at home, must've been lag
+        if (state != State.Crashed && state != State.Paused) return // already at home, must've been lag
 
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
@@ -438,10 +435,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
-            val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
-
-            val surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
-                    TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, null)
+            val surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, null)
             val rocket = Rocket1(surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
 
             processingThread = ProcessingThread(
@@ -491,10 +485,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         fun resetGame() {
             findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
             processingThread.removeAllShapes() // remove all previous shapes
-            val leftRightBottomTop = generateLeftRightBottomTop(width.toFloat() / height.toFloat())
+            val leftRightBottomTop = generateLeftRightBottomTopEnd(width.toFloat() / height.toFloat())
             val surroundingResources = processingThread.surrounding.trashAndGetResources()
-            processingThread.surrounding = BasicSurrounding(leftRightBottomTop[0], leftRightBottomTop[1], leftRightBottomTop[2], leftRightBottomTop[3],
-                    TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
+            processingThread.surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
             processingThread.rocket = Rocket1(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
             processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
             processingThread.joystick = TwoFingersJoystick()

@@ -11,7 +11,7 @@ class GLTriangle (buildShapeAttr: BuildShapeAttr) : Triangle() {
     override val z: Float
         get() = layer.z
 
-    private val coordPointer: Int = layer.getCoordPointer() // point to the first of the six layer.triangleCoords[] this triangle is using
+    private val coordPointer: Int = layer.getCoordPointer() // point to the first of the six layer.triangleCoords[] this triangle is isInUse
     override val triangleCoords: Triangle.TriangleCoords = object : Triangle.TriangleCoords() {
 
         override var floatArray: FloatArray

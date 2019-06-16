@@ -14,9 +14,8 @@ abstract class Surrounding {
     abstract fun removeAllShape()
     abstract fun moveSurrounding(dx: Float, dy: Float, now: Long, previousFrameTime: Long)
     abstract fun checkAndAddLittleStar(now: Long)
-    abstract fun isCrashed(components: Array<Shape>): Shape? // null if no crash
+    abstract fun isCrashed(shapeForCrashAppro: Shape, components: Array<Shape>): Shape? // null if no crash
     abstract fun rotateSurrounding(angle: Float, now: Long, previousFrameTime: Long)
-    abstract fun setLeftRightBottomTopEnd(leftEnd: Float, rightEnd: Float, bottomEnd: Float, topEnd: Float)
     open fun trashAndGetResources(): SurroundingResources? = null
 }
 

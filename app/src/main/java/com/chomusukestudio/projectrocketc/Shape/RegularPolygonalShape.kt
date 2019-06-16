@@ -25,7 +25,7 @@ class RegularPolygonalShape(val numberOfEdges: Int, centerX: Float, centerY: Flo
         // just initialize it.
         val componentShapes = arrayOfNulls<TriangularShape>(numberOfEdges - 2)
     
-        // generate components triangularShape for RegularPolygonalShape using center and radius
+        // generate components triangularShape for RegularPolygonalShape isInUse center and radius
         var previousSin = sin(2.0 * PI * 1 / numberOfEdges).toFloat()
         var previousCos = cos(2.0 * PI * 1 / numberOfEdges).toFloat()
         for (i in 1 until numberOfEdges - 1) {
@@ -62,7 +62,7 @@ class RegularPolygonalShape(val numberOfEdges: Int, centerX: Float, centerY: Flo
     var radius = radius
         set(value) {
             if (value != field) {
-                // reset components triangularShape for RegularPolygonalShape using center and value
+                // reset components triangularShape for RegularPolygonalShape isInUse center and value
                 if (field != 0f) { // if field is 0 factor will be infinity, therefore not possible to use this method
                     val factor = value / field
 
