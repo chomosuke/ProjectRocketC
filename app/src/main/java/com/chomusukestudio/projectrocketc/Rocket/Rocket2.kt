@@ -1,17 +1,24 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
+import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Joystick.RocketMotion
 import com.chomusukestudio.projectrocketc.Rocket.trace.RegularPolygonalTrace
 import com.chomusukestudio.projectrocketc.Shape.*
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import com.chomusukestudio.projectrocketc.State
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Created by Shuang Li on 11/03/2018.
  */
 
-open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer, layers: Layers) : Rocket(surrounding, layers) {
+open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer, layers: Layers) : Rocket(surrounding, layers) {
     override val trace = RegularPolygonalTrace(6, 1.01f, 0.24f,  0.4f, 1000, 1f, 1f, 0f, 3f, layers)
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
@@ -63,5 +70,65 @@ open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer
             crashSound.start()
             true
         } else false
+    }
+    
+    private var speedX = 0f
+    private var speedY = 0f
+    private val acce = 0.000001f
+    override fun moveRocket(rocketMotion: RocketMotion, now: Long, previousFrameTime: Long, state: State) {
+        val rotationNeeded = rocketMotion.rotationNeeded
+        val speedOfRotation = 0.003f
+        val dr = speedOfRotation * (now - previousFrameTime) // dr/dt * dt
+        when {
+            rotationNeeded < -dr -> {
+                rotateRocket(-dr)
+            }
+            rotationNeeded > dr -> {
+                rotateRocket(dr)
+            }
+            else -> {
+                rotateRocket(rotationNeeded)
+            }
+        }
+        if (rocketMotion.throttleOn) {
+            speedX += acce * (now - previousFrameTime) * -sin(currentRotation)
+            speedY += acce * (now - previousFrameTime) * -cos(currentRotation)
+            val dx = speedX * (now - previousFrameTime)
+            val dy = speedY * (now - previousFrameTime)
+            surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
+            speed = sqrt(square(speedX) + square(speedY))
+            if (state == State.InGame) { // only generate trace when in game
+                trace.moveTrace(dx, dy)
+                generateTrace(now, previousFrameTime)
+                fadeTrace(now, previousFrameTime)
+            }
+            Log.d("throttle", "on")
+        } else {
+            if (speedX != 0f || speedY != 0f) {
+                
+                // decelerate rocket
+                val dSpeed = acce * (now - previousFrameTime)
+                if (speed > dSpeed) speed -= dSpeed
+                else speed = 0f
+                when {
+                    speedX == 0f -> // calculation can be simplified
+                        speedY = if (speedY >= 0) speed else -speed
+                    speedY == 0f ->
+                        speedX = if (speedX >= 0) speed else -speed
+                    else -> {
+                        val ratio = speedY / speedX
+                        speedX = if (speedX >= 0) // preserve sign of speeds
+                            speed / sqrt(square(ratio) + 1)
+                        else
+                            -speed / sqrt(square(ratio) + 1)
+                        speedY = ratio * speedX
+                    }
+                }
+                
+                val dx = speedX * (now - previousFrameTime)
+                val dy = speedY * (now - previousFrameTime)
+                surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
+            }
+        }
     }
 }

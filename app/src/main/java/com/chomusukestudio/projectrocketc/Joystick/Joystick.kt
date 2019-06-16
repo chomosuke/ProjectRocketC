@@ -60,9 +60,9 @@ abstract class Joystick {
         this.nowY = nowY
     }
 
-    abstract fun getTurningDirection(currentRotation: Float): Float
+    abstract fun getRocketMotion(currentRotation: Float): RocketMotion
 
-    abstract fun drawJoystick()
+    open fun drawJoystick() {}
 
-    abstract fun removeAllShape()
+    open fun removeAllShape() {}
 }

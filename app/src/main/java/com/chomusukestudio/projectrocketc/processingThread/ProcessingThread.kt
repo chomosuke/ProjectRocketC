@@ -4,12 +4,9 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import com.chomusukestudio.projectrocketc.*
-import com.chomusukestudio.projectrocketc.GLRenderer.Layer
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.Joystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import java.util.ArrayList
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 
@@ -52,7 +49,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                     surrounding.checkAndAddLittleStar(now)
                 }
                 if (state == State.PreGame || state == State.InGame) {
-                    rocket.moveRocket(joystick.getTurningDirection(rocket.currentRotation), now, previousFrameTime, state)
+                    rocket.moveRocket(joystick.getRocketMotion(rocket.currentRotation), now, previousFrameTime, state)
                     surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime, state)
                     joystick.drawJoystick()
                 }

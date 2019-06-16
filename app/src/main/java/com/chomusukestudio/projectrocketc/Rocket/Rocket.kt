@@ -6,6 +6,7 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.support.annotation.CallSuper
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Joystick.RocketMotion
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
@@ -87,9 +88,9 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
         shapeForCrashAppro.rotateShape(centerOfRotationX, centerOfRotationY, angle)
     }
     
-    @CallSuper // allow rocket to have moving component
-    open fun moveRocket(rotationNeeded: Float, now: Long, previousFrameTime: Long, state: State) {
-        
+//    @CallSuper // allow rocket to have moving component
+    open fun moveRocket(rocketMotion: RocketMotion, now: Long, previousFrameTime: Long, state: State) {
+        val rotationNeeded = rocketMotion.rotationNeeded
         if (state == State.InGame) { // only make it faster if it's already started
             speed = speedFormula(initialSpeed, LittleStar.score)
         }

@@ -33,6 +33,7 @@ import android.view.animation.Animation
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 //import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
@@ -439,8 +440,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             val rocket = Rocket1(surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
 
             processingThread = ProcessingThread(
-                    TwoFingersJoystick(),
+//                    TwoFingersJoystick(),
 //                    OneFingerJoystick(),
+                    InertiaJoystick(),
                     surrounding,
                     rocket,
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
@@ -490,8 +492,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             processingThread.surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
             processingThread.rocket = Rocket1(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
             processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
-            processingThread.joystick = TwoFingersJoystick()
+//            processingThread.joystick = TwoFingersJoystick()
 //            processingThread.joystick = OneFingerJoystick()
+            processingThread.joystick = InertiaJoystick()
             findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
         }
 
