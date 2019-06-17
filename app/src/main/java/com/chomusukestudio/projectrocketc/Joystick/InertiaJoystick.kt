@@ -52,14 +52,14 @@ class InertiaJoystick: Joystick() {
 	}
 	override fun getRocketMotion(currentRotation: Float): RocketMotion {
 		return RocketMotion((if (actionDown) {
-			if (nowX > 2 && nowX < 4)
+			if (nowX > 0)
 				1f
-			else if (nowX < 2 && nowX > 0)
+			else if (nowX < 0)
 				-1f
 			else
 				0f
 		} else
 			0f
-		), (actionDown && nowX2 < 0))
+		), (actionDown && ((nowX2 > 0 && nowX < 0) || (nowX > 0 && nowX2 < 0))))
 	}
 }
