@@ -74,7 +74,7 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
     
     private var speedX = 0f
     private var speedY = 0f
-    private val acce = 0.000001f
+    private val acce = 0.000002f
     override fun moveRocket(rocketMotion: RocketMotion, now: Long, previousFrameTime: Long, state: State) {
         val rotationNeeded = rocketMotion.rotationNeeded
         val speedOfRotation = 0.003f
@@ -93,9 +93,6 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
         if (rocketMotion.throttleOn) {
             speedX += acce * (now - previousFrameTime) * -sin(currentRotation)
             speedY += acce * (now - previousFrameTime) * -cos(currentRotation)
-            val dx = speedX * (now - previousFrameTime)
-            val dy = speedY * (now - previousFrameTime)
-            surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
             speed = sqrt(square(speedX) + square(speedY))
             if (state == State.InGame) { // only generate trace when in game
                 trace.moveTrace(dx, dy)
@@ -124,10 +121,9 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
                     speedY = ratio * speedX
                 }
             }
-            val dx = speedX * (now - previousFrameTime)
-            val dy = speedY * (now - previousFrameTime)
-            surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
         }
-    
+        val dx = speedX * (now - previousFrameTime)
+        val dy = speedY * (now - previousFrameTime)
+        surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
     }
 }
