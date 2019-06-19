@@ -12,6 +12,8 @@ import android.widget.TextView
 import java.util.logging.Level
 import java.util.logging.Logger
 import com.chomusukestudio.projectrocketc.GLRenderer.*
+import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import kotlin.math.sqrt
 
 
 // both need to be initialized in MainActivity.OnCreate()
@@ -141,4 +143,30 @@ fun scanForActivity(cont: Context): Activity {
 
 interface IReusable { // stuff that can be stored in a place (e.g. an array) and be reused multiple times
     var isInUse: Boolean
+}
+
+fun decelerateSpeedXY(speedX: Float, speedY: Float, deceleration: Float, frameTime: Long): Array<Float> {
+    var speedX = speedX
+    var speedY = speedY
+    val dSpeed = deceleration * frameTime / 2
+    var speed = sqrt(square(speedX) + square(speedY))
+    
+    if (speed > dSpeed) speed -= dSpeed
+    else speed = 0f
+    
+    when {
+        speedX == 0f -> // calculation can be simplified
+            speedY = if (speedY >= 0) speed else -speed
+        speedY == 0f ->
+            speedX = if (speedX >= 0) speed else -speed
+        else -> {
+            val ratio = speedY / speedX
+            speedX = if (speedX >= 0) // preserve sign of speeds
+                speed / sqrt(square(ratio) + 1)
+            else
+                -speed / sqrt(square(ratio) + 1)
+            speedY = ratio * speedX
+        }
+    }
+    return arrayOf(speedX, speedY)
 }
