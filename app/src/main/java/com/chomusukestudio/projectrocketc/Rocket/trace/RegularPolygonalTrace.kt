@@ -11,34 +11,32 @@ import kotlin.math.sqrt
 class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long,
                             private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float, private val layers: Layers) : Trace() {
 
-    override fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float) {
-        val dx = originX - lastOriginX
-        val dy = originY - lastOriginY
-        var ds = sqrt(square(dx) + square(dy))
-        ds += unfilledDs
-        val I_MAX = ds / 128f * 1000f - 0.25f - (random().toFloat() * 0.5f)
-        if (I_MAX <= 0) { // if we are not adding any trace this frame
-            // let the next frame know
-            unfilledDs = ds // there is unfinished work
-        } else {
-            unfilledDs = 0f // also update it so the next frame know there is no unfinished work
-
-            var i = 0
-            while (i < I_MAX) {
-
-                val newTraceShape = newRegularPolygonalTraceShape(originX, originY, random().toFloat() * 0.1f - 0.05f, random().toFloat() * 0.1f - 0.05f,
-                        initialWidth / 2, finalWidth / 2, duration, initialRed, initialGreen, initialBlue, initialAlpha)
-                newTraceShape.rotateShape(originX, originY, (2 * Math.PI * random()).toFloat())
-
-                val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
-                newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + random()).toInt()) // + 0.5 for rounding
-                newTraceShape.moveShape(-dx * margin, -dy * margin)
-
-                i++
+    override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float) {
+            val dx = originX - lastOriginX
+            val dy = originY - lastOriginY
+            var ds = sqrt(square(dx) + square(dy))
+            ds += unfilledDs
+            val I_MAX = ds / 128f * 1000f - 0.25f - (random().toFloat() * 0.5f)
+            if (I_MAX <= 0) { // if we are not adding any trace this frame
+                // let the next frame know
+                unfilledDs = ds // there is unfinished work
+            } else {
+                unfilledDs = 0f // also update it so the next frame know there is no unfinished work
+        
+                var i = 0
+                while (i < I_MAX) {
+            
+                    val newTraceShape = newRegularPolygonalTraceShape(originX, originY, random().toFloat() * 0.1f - 0.05f, random().toFloat() * 0.1f - 0.05f,
+                            initialWidth / 2, finalWidth / 2, duration, initialRed, initialGreen, initialBlue, initialAlpha)
+                    newTraceShape.rotateShape(originX, originY, (2 * Math.PI * random()).toFloat())
+            
+                    val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/
+                    newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + random()).toInt()) // + 0.5 for rounding
+                    newTraceShape.moveShape(-dx * margin, -dy * margin)
+            
+                    i++
+                }
             }
-        }
-        lastOriginX = originX
-        lastOriginY = originY
     }
 
     private var unfilledDs = 0f
@@ -52,7 +50,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
     }
 }
 
-private class RegularPolygonalTraceShape(numberOfEdges: Int, private var centerX: Float, private var centerY: Float, private val initialRadius: Float, finalRadius: Float,
+open class RegularPolygonalTraceShape(numberOfEdges: Int, private var centerX: Float, private var centerY: Float, private val initialRadius: Float, finalRadius: Float,
                                          private val duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float, buildShapeAttr: BuildShapeAttr) : TraceShape() {
     override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(numberOfEdges, centerX, centerY, initialRadius, initialRed, initialGreen, initialBlue, initialAlpha, buildShapeAttr))
     private var deltaRadius: Float = finalRadius - initialRadius

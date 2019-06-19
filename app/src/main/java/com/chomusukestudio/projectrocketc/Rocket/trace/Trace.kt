@@ -5,13 +5,25 @@ import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 
 abstract class Trace {
     protected open val traceShapes = ArrayList<TraceShape>()
-    protected var lastOriginX = 0f
-    protected var lastOriginY = 0f
-    abstract fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float)
+    
+    private var generateTraceCalledThisFrame = true
+    private var lastOriginX: Float? = null
+    private var lastOriginY: Float? = null
+    fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float) {
+        val lastOriginX = lastOriginX // so i can use smart cast
+        val lastOriginY = lastOriginY // how dumb
+        if (lastOriginX != null && lastOriginY != null)
+            generateTraceOverride(now, previousFrameTime, originX, originY, lastOriginX, lastOriginY)
+        this.lastOriginX = originX
+        this.lastOriginY = originY
+        generateTraceCalledThisFrame = true
+    }
+    
+    protected abstract fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float)
 
     private val parallelForIForFadeTraces = ParallelForI(8, "fade traceShapes thread")
     private val parallelForIForMoveTraces = ParallelForI(8, "move traceShapes thread")
-    fun fadeTrace(now: Long, previousFrameTime: Long) {
+    open fun fadeTrace(now: Long, previousFrameTime: Long) {
         parallelForIForFadeTraces.waitForLastRun()
         parallelForIForMoveTraces.waitForLastRun()
         // to avoid concurrent modification
@@ -35,8 +47,14 @@ abstract class Trace {
         parallelForIForMoveTraces.run({ i ->
             traceShapes[i].moveShape(dx, dy)
         }, traceShapes.size)
-        lastOriginX += dx
-        lastOriginY += dy
+        lastOriginX = lastOriginX?.plus(dx)
+        lastOriginY = lastOriginY?.plus(dy) // what elegancy lol
+        if (generateTraceCalledThisFrame)
+            generateTraceCalledThisFrame = false // initialize for next frame
+        else {
+            lastOriginX = null
+            lastOriginY = null
+        }
     }
 
     open fun removeTrace() {
