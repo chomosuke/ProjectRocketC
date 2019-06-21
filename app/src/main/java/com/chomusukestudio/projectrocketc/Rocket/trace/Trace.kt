@@ -9,17 +9,15 @@ abstract class Trace {
     private var generateTraceCalledThisFrame = true
     private var lastOriginX: Float? = null
     private var lastOriginY: Float? = null
-    fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float) {
-        val lastOriginX = lastOriginX // so i can use smart cast
-        val lastOriginY = lastOriginY // how dumb
+    fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float, direction: Float) {
         if (lastOriginX != null && lastOriginY != null)
-            generateTraceOverride(now, previousFrameTime, originX, originY, lastOriginX, lastOriginY)
+            generateTraceOverride(now, previousFrameTime, originX, originY, lastOriginX!!, lastOriginY!!, direction)
         this.lastOriginX = originX
         this.lastOriginY = originY
         generateTraceCalledThisFrame = true
     }
     
-    protected abstract fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float)
+    protected abstract fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, direction: Float)
 
     private val parallelForIForFadeTraces = ParallelForI(8, "fade traceShapes thread")
     private val parallelForIForMoveTraces = ParallelForI(8, "move traceShapes thread")

@@ -6,6 +6,7 @@ import com.chomusukestudio.projectrocketc.Rocket.trace.RegularPolygonalTrace
 import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import kotlin.math.PI
 
 /**
  * Created by Shuang Li on 11/03/2018.
@@ -21,7 +22,7 @@ open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer
         val y2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3)
         val originX = (x1 + x2) / 2
         val originY = (y1 + y2) / 2
-        trace.generateTrace(now, previousFrameTime, originX, originY)
+        trace.generateTrace(now, previousFrameTime, originX, originY, currentRotation + PI.toFloat())
     }
 
     override var radiusOfRotation = 2f

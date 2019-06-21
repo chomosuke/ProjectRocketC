@@ -17,7 +17,7 @@ class SquareTrace(private val initialWidth: Float, private val finalWidth: Float
                   val z: Float, private val layers: Layers) : Trace() {
 
     private var unfilledDs = 0f
-    override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float) {
+    override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, direction: Float) {
         val dx = originX - lastOriginX
         val dy = originY - lastOriginY
         var ds = sqrt(square(dx) + square(dy))
