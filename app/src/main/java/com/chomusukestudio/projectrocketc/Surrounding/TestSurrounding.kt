@@ -12,6 +12,7 @@ import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
+import com.chomusukestudio.projectrocketc.randFloat
 
 import java.util.ArrayList
 
@@ -82,7 +83,7 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
                 i++
             }
             // to create
-            val randomPoint = (random() * 5 - 2.5).toFloat()
+            val randomPoint = randFloat(-2.5f, 2.5f)
 
             val buildBoundryShapesAttr = BuildShapeAttr(10f, true, layers)
             // complicated calculation done to ensure triangle meet up with each other and there ain't any overlapping or gap

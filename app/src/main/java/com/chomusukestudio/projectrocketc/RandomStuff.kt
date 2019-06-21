@@ -13,6 +13,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import java.lang.Math.random
 import kotlin.math.sqrt
 
 
@@ -170,3 +171,5 @@ fun decelerateSpeedXY(speedX: Float, speedY: Float, deceleration: Float, frameTi
     }
     return arrayOf(speedX, speedY)
 }
+
+fun randFloat(b1: Float, b2: Float) = random().toFloat() * (b2 - b1) + b1

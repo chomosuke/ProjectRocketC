@@ -4,13 +4,13 @@ import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
+import com.chomusukestudio.projectrocketc.randFloat
 
 import java.util.Arrays
 
 import java.lang.Math.PI
 import java.lang.Math.asin
 import java.lang.Math.cos
-import java.lang.Math.random
 import java.lang.Math.sin
 
 class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(centerX, centerY, radius) {
@@ -19,14 +19,17 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
     
     init {
         
-        val numberOfCrater = (4 + random() * 2).toInt()
-        // 4 to 6 crater each planet
+        val numberOfCrater = randFloat(4f, 6f).toInt()
+        // 4 to 5 crater each planet
         val componentShapes = arrayOfNulls<Shape>(numberOfCrater + 1)
         
         // color of planet
-        val mainColor = floatArrayOf((random() * 0.8 + 0.2).toFloat(), (random() * 0.8 + 0.2).toFloat(), (random() * 0.8 + 0.2).toFloat())
+        val mainColor = floatArrayOf(
+                randFloat(0.2f, 1f),
+                randFloat(0.2f, 1f),
+                randFloat(0.2f, 1f))
         // color of crater
-        val randomDarker = (random() * 0.2 + 0.6).toFloat()
+        val randomDarker = randFloat(0.6f, 0.8f)
         val darkerColor = floatArrayOf(randomDarker * mainColor[0], randomDarker * mainColor[1], randomDarker * mainColor[2])
         
         // the planet itself
@@ -35,13 +38,13 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
         // generate some Crater on the planet
         for (i in 1 until componentShapes.size) {
             // (radius) of crater
-            val sRadius = (random() * 0.3 + 0.35) * PI / 6
+            val sRadius = randFloat(0.35f, 0.65f) * PI / 6
             // (distance) of crater from center
             val offsetRadius = asin((i - 0.25) / numberOfCrater)
             
             // generate the crater
-            val centerXOfBall = centerX.toDouble()
-            val centerYOfBall = centerY.toDouble()
+            val centerXOfBall = centerX
+            val centerYOfBall = centerY
             val red = darkerColor[0]
             val green = darkerColor[1]
             val blue = darkerColor[2]
@@ -60,10 +63,10 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
                     for (i in 1 until componentShapes.size + 1) {
                         componentShapes[i - 1] = TriangularShape(mSin(offsetRadius).toFloat() * radius * cos(sRadius).toFloat(),
                                 sin(sRadius).toFloat() * radius,
-                                mSin(offsetRadius + sRadius * sin(2.0 * PI * i.toDouble() / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * i.toDouble() / numberOfEdges)).toFloat(),
-                                sin(sRadius * cos(2.0 * PI * i.toDouble() / numberOfEdges)).toFloat() * radius,
-                                mSin(offsetRadius + sRadius * sin(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat(),
-                                sin(sRadius * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges)).toFloat() * radius,
+                                mSin(offsetRadius + sRadius * sin(2.0 * PI * i / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * i / numberOfEdges)).toFloat(),
+                                sin(sRadius * cos(2.0 * PI * i / numberOfEdges)).toFloat() * radius,
+                                mSin(offsetRadius + sRadius * sin(2.0 * PI * (i + 1) / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * (i + 1) / numberOfEdges)).toFloat(),
+                                sin(sRadius * cos(2.0 * PI * (i + 1) / numberOfEdges)).toFloat() * radius,
                                 red, green, blue, 1f, shapeAttributes1) // close for modification
                         // below is circular crater
 //                        val x2 = centerXOfCrater + (r * sin(2 * PI * i / numberOfEdges)).toFloat()
@@ -85,7 +88,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
                     }
                     this.componentShapes = componentShapes as Array<Shape>
 
-                    moveShape(centerXOfBall.toFloat(), centerYOfBall.toFloat())
+                    moveShape(centerXOfBall, centerYOfBall)
                 }
                 
                 private fun mSin(a: Double): Double {
