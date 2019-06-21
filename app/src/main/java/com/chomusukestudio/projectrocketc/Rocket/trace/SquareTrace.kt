@@ -7,6 +7,7 @@ import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.Shape.RegularPolygonalShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import com.chomusukestudio.projectrocketc.randFloat
 import java.lang.Math.random
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -22,7 +23,7 @@ class SquareTrace(private val initialWidth: Float, private val finalWidth: Float
         val dy = originY - lastOriginY
         var ds = sqrt(square(dx) + square(dy))
         ds += unfilledDs
-        val I_MAX = ds / 128f * 1000f - 0.25f - (random().toFloat() * 0.5f)
+        val I_MAX = ds / 128f * 1000f - randFloat(0.25f, 0.75f)
         if (I_MAX <= 0) { // if we are not adding any trace this frame
             // let the next frame know
             unfilledDs = ds // there is unfinished work

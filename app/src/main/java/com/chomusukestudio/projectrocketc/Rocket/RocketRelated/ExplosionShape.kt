@@ -5,6 +5,7 @@ import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import com.chomusukestudio.projectrocketc.randFloat
 import java.lang.Math.random
 import kotlin.math.PI
 
@@ -46,7 +47,7 @@ class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float
             } else {
                 val distantToCenter = Math.random().toFloat() * approximateRadius * 1.25f
                 val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (rotationOrder[i] * PI / 4).toFloat())
-                CircularShape(centers[0], centers[1], 0f, 1f, 0.675f + 0.3f*random().toFloat(), 0.114f + 0.4f*random().toFloat(), 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
+                CircularShape(centers[0], centers[1], 0f, 1f, randFloat(0.675f, 0.975f), randFloat(0.114f, 0.514f), 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             }
         }
     }
@@ -55,7 +56,7 @@ class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float
         if (i == 0)
             (componentShapes[i] as CircularShape).radius
         else
-            (0.2 + 0.2 * Math.random()).toFloat()
+            randFloat(0.2f, 0.4f)
     }
 
     override fun drawExplosion(timePassed: Long) {
@@ -130,6 +131,6 @@ class WhiteExplosionShape(private val centerX: Float, private val centerY: Float
         if (i == 0)
             (componentShapes[i] as CircularShape).radius
         else
-            (0.5 + 1 * Math.random()).toFloat()
+            randFloat(1.5f, 0.5f)
     }
 }

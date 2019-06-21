@@ -5,6 +5,7 @@ import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import com.chomusukestudio.projectrocketc.randFloat
 import java.lang.Math.random
 import kotlin.math.sqrt
 
@@ -16,7 +17,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
             val dy = originY - lastOriginY
             var ds = sqrt(square(dx) + square(dy))
             ds += unfilledDs
-            val I_MAX = ds / 128f * 1000f - 0.25f - (random().toFloat() * 0.5f)
+            val I_MAX = ds / 128f * 1000f - randFloat(0.25f, 0.75f)
             if (I_MAX <= 0) { // if we are not adding any trace this frame
                 // let the next frame know
                 unfilledDs = ds // there is unfinished work
@@ -26,7 +27,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
                 var i = 0
                 while (i < I_MAX) {
             
-                    val newTraceShape = newRegularPolygonalTraceShape(originX, originY, random().toFloat() * 0.1f - 0.05f, random().toFloat() * 0.1f - 0.05f,
+                    val newTraceShape = newRegularPolygonalTraceShape(originX, originY, randFloat(-0.05f, 0.05f), randFloat(-0.05f, 0.05f),
                             initialWidth / 2, finalWidth / 2, duration, initialRed, initialGreen, initialBlue, initialAlpha)
                     newTraceShape.rotateShape(originX, originY, (2 * Math.PI * random()).toFloat())
             
