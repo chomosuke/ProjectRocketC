@@ -4,7 +4,7 @@ package com.chomusukestudio.projectrocketc.Rocket.trace
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
-import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import com.chomusukestudio.projectrocketc.square
 import com.chomusukestudio.projectrocketc.randFloat
 import java.lang.Math.random
 import kotlin.math.sqrt

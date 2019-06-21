@@ -1,7 +1,7 @@
 package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.*
-import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import com.chomusukestudio.projectrocketc.square
 import com.chomusukestudio.projectrocketc.heightInPixel
 import com.chomusukestudio.projectrocketc.widthInPixel
 import java.lang.Math.PI
@@ -106,7 +106,7 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
             return ((square(getArea(centerX, centerY, x1, y1, x2, y2) * 2) / (square(x1 - x2) // square of distance from center to the edge of triangle.
                     + square(y1 - y2)) // calculated by divide the area by length of the edge of triangle.
                     <=
-                    square(radius)) // is overlap if it's smaller than square of radius.
+					square(radius)) // is overlap if it's smaller than square of radius.
                     &&
                     ((square(x1 - x2) // the above will consider edge as a straight line without ends
                     + square(y1 - y2)) // that would be problematic as the edge of the triangle have ends.
