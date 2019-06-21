@@ -22,7 +22,7 @@ import java.util.ArrayList
 
 import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
-import com.chomusukestudio.projectrocketc.Shape.coordinate.square
+import com.chomusukestudio.projectrocketc.square
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar.Color.YELLOW
 import java.lang.Math.random
 import kotlin.math.PI

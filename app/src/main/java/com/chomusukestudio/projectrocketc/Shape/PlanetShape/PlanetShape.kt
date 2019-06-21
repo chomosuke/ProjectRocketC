@@ -1,17 +1,11 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
 import android.util.Log
-import com.chomusukestudio.projectrocketc.GLRenderer.bottomEnd
-import com.chomusukestudio.projectrocketc.GLRenderer.leftEnd
-import com.chomusukestudio.projectrocketc.GLRenderer.rightEnd
-import com.chomusukestudio.projectrocketc.GLRenderer.topEnd
-import com.chomusukestudio.projectrocketc.IReusable
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
-import com.chomusukestudio.projectrocketc.Shape.coordinate.square
-import com.chomusukestudio.projectrocketc.Surrounding.IFlybyable
+import com.chomusukestudio.projectrocketc.square
 
 abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, val radius: Float) : Shape() {
     var centerX: Float = centerX
