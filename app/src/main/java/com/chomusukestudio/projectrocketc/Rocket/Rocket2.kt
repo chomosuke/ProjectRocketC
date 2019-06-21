@@ -10,6 +10,7 @@ import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 import com.chomusukestudio.projectrocketc.State
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.decelerateSpeedXY
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -91,40 +92,23 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
                 rotateRocket(rotationNeeded)
             }
         }
-        if (rocketMotion.throttleOn) {
+        if (rocketMotion.throttleOn && state == State.InGame) {
             speedX += acce * (now - previousFrameTime) * -sin(currentRotation)
             speedY += acce * (now - previousFrameTime) * -cos(currentRotation)
             speed = sqrt(square(speedX) + square(speedY))
-            if (state == State.InGame) { // only generate trace when in game
-                trace.moveTrace(dx, dy)
-                generateTrace(now, previousFrameTime)
-                fadeTrace(now, previousFrameTime)
-            }
+            generateTrace(now, previousFrameTime) // only generate trace when throttle on
             Log.d("throttle", "on")
         }
         // friction
         if (speed != 0f) {
-        
-            val dSpeed = acce * (now - previousFrameTime) / 2
-            if (speed > dSpeed) speed -= dSpeed
-            else speed = 0f
-            when {
-                speedX == 0f -> // calculation can be simplified
-                    speedY = if (speedY >= 0) speed else -speed
-                speedY == 0f ->
-                    speedX = if (speedX >= 0) speed else -speed
-                else -> {
-                    val ratio = speedY / speedX
-                    speedX = if (speedX >= 0) // preserve sign of speeds
-                        speed / sqrt(square(ratio) + 1)
-                    else
-                        -speed / sqrt(square(ratio) + 1)
-                    speedY = ratio * speedX
-                }
-            }
+            val speedXY = decelerateSpeedXY(speedX, speedY, acce, (now - previousFrameTime))
+            speedX = speedXY[0]
+            speedY = speedXY[1]
         }
         val dx = speedX * (now - previousFrameTime)
         val dy = speedY * (now - previousFrameTime)
         surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
+        trace.moveTrace(dx, dy)
+        fadeTrace(now, previousFrameTime)
     }
 }

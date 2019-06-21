@@ -31,8 +31,17 @@ class InertiaJoystick: Joystick() {
 				if (pointers.isNotEmpty()) // pointers.isEmpty() if pointer is from before the game start
 					pointers.remove(e.getPointerId(e.actionIndex))
 		}
-		nowX = transformToMatrixX(e.getX(e.findPointerIndex(pointers.last())))
-		nowY = transformToMatrixY(e.getY(e.findPointerIndex(pointers.last())))
+		var pointerExist: Boolean
+		do {
+			pointerExist = true
+			try {
+				nowX = transformToMatrixX(e.getX(e.findPointerIndex(pointers.last())))
+				nowY = transformToMatrixY(e.getY(e.findPointerIndex(pointers.last())))
+			} catch (e: IllegalArgumentException) {
+				pointerExist = false
+			}
+		} while (!pointerExist)
+		
 		
 		if (pointers.size > 1) {
 			nowX2 = transformToMatrixX(e.getX(e.findPointerIndex(pointers[pointers.lastIndex - 1])))
@@ -41,25 +50,16 @@ class InertiaJoystick: Joystick() {
 			nowX2 = 0f
 			nowY2 = 0f
 		}
-		if (nowX2 > nowX) { // nowX is always right
-			val tempX = nowX2
-			val tempY = nowY2
-			nowX2 = nowX
-			nowY2 = nowY
-			nowX = tempX
-			nowY = tempY
-		}
 	}
 	override fun getRocketMotion(currentRotation: Float): RocketMotion {
-		return RocketMotion((if (actionDown) {
-			if (nowX > 0)
-				1f
-			else if (nowX < 0)
-				-1f
-			else
-				0f
-		} else
-			0f
-		), (actionDown && ((nowX2 > 0 && nowX < 0) || (nowX > 0 && nowX2 < 0))))
+		return RocketMotion(
+				if (actionDown && nowX2 == 0f) {
+					when {
+						nowX > 0 -> 1f
+						nowX < 0 -> -1f
+						else -> 0f
+					}
+				} else 0f
+				, !((nowX2 > 0 && nowX < 0) || (nowX > 0 && nowX2 < 0)))
 	}
 }
