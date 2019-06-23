@@ -36,7 +36,16 @@ import kotlin.math.sqrt
 class BasicSurrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources?) : Surrounding() {
     private val planets = ArrayList<Planet>() // this defines where the plane can't go
     // planets should have z value of 10 while background should have a z value higher than 10, like 11.
-    private var backgrounds: ArrayList<Shape> // backGrounds doesn't effect plane
+    private val backgrounds = // backGrounds doesn't effect plane
+            if (resources is BasicSurroundingResources)
+                resources.background
+            else {
+                // initialize all those stars in the backgrounds
+                Array<Shape>(6000) { // 6000 stars in the background
+                    return@Array StarShape(randFloat(rightEnd, leftEnd), randFloat(topEnd, bottomEnd),
+                            (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, BuildShapeAttr(11f, true, layers))
+                }
+            }
     private val littleStars = ArrayList<LittleStar>()
     private lateinit var startingPathOfRocket: Shape
     override lateinit var rocket: Rocket
@@ -54,17 +63,15 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     private var displacementY = 0f // displacement since last makeNewTriangleAndRemoveTheOldOne()
     private val parallelForIForBackgroundStars = ParallelForI(8, "move background")
 
-    private val NUMBER_OF_STARS = 6000
-
-    private val NUMBER_OF_PLANET = 1000
-    private lateinit var planetsStore: Array<Planet>
-    private fun fillUpPlanets(layers: Layers) {
-        planetsStore = Array(NUMBER_OF_PLANET) {
-            val planetShape = generateRandomPlanet(100f, 100f, generateRadius(), 10f, layers)
-            planetShape.isInUse = false
-            return@Array planetShape
-        }
-    }
+    private val planetsStore =
+            if(resources is BasicSurroundingResources)
+                resources.planetsStore
+            else
+                Array(1000) {// 1000 planet in store waiting for use
+                    val planetShape = generateRandomPlanet(100f, 100f, generateRadius(), 10f, layers)
+                    planetShape.isInUse = false
+                    return@Array planetShape
+                }
 
     private fun generateRandomPlanet(centerX: Float, centerY: Float, radius: Float, z: Float, layers: Layers): Planet {
         val randomPlanetShape: PlanetShape
@@ -88,19 +95,6 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     }
 
     init {
-        if(resources is BasicSurroundingResources) {
-            planetsStore = resources.planetsStore
-            backgrounds = resources.background
-        } else {
-            fillUpPlanets(layers)
-            // initialize all those stars in the backgrounds
-            backgrounds = ArrayList(NUMBER_OF_STARS)
-            for (i in 0 until NUMBER_OF_STARS) {
-                backgrounds.add(StarShape(randFloat(rightEnd, leftEnd), randFloat(topEnd, bottomEnd),
-                        (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, BuildShapeAttr(11f, true, layers)))
-            }
-        }
-
         LittleStar.setCenterOfRocket(centerOfRotationX, centerOfRotationY)
     }
 
@@ -135,7 +129,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         for (i in 0..iMax) {
             // randomly reposition the new planet
             val centerX = randFloat(rightEnd * 1.5f, leftEnd * 1.5f) + avoidDistanceX // + avoidDistanceX as to avoid constant change of visibility
-            val centerY = (topEnd*(1.5f/*/* + topMarginForLittleStar*/*/) - bottomEnd*1.5f) / iMax * i + bottomEnd*1.5f
+            val centerY = (topEnd*(1.5f/* + topMarginForLittleStar*/) - bottomEnd*1.5f) / iMax * i + bottomEnd*1.5f
             newPlanet.resetPosition(centerX, centerY)
 
             if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
@@ -493,7 +487,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     }
 }
 
-class BasicSurroundingResources(val background: ArrayList<Shape>, val planetsStore: Array<Planet>): SurroundingResources()
+class BasicSurroundingResources(val background: Array<Shape>, val planetsStore: Array<Planet>): SurroundingResources()
 
 private const val radiusMargin = 0.25f
 private const val averageRadius = 0.75f // for planet shape to determent which type of planet suits the size best.
