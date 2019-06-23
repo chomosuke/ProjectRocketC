@@ -34,7 +34,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
         protected set // ds/dt
     abstract val radiusOfRotation: Float
     
-    protected abstract val initialSpeed: Float
+    abstract val initialSpeed: Float
     protected abstract val components: Array<Shape>
     
     var centerOfRotationX: Float = surrounding.centerOfRotationX
