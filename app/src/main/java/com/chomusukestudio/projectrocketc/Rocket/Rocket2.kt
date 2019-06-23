@@ -7,11 +7,11 @@ import com.chomusukestudio.projectrocketc.Joystick.RocketMotion
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.RegularPolygonalTrace
 import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.Shape.coordinate.square
 import com.chomusukestudio.projectrocketc.State
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.decelerateSpeedXY
+import com.chomusukestudio.projectrocketc.square
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -23,7 +23,7 @@ import kotlin.math.PI
 
 open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer, layers: Layers) : Rocket(surrounding, layers) {
 //    override val trace = RegularPolygonalTrace(6, 1.01f, 0.24f,  0.4f, 1000, 1f, 1f, 0f, 3f, layers)
-    override val trace = AccelerationTrace(6, 1.01f, 0.24f,  0.4f, 1000, 20, 0.004f,1f, 1f, 0f, 3f, layers)
+    override val trace = AccelerationTrace(6, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f,1f, 1f, 0f, 3f, layers)
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val x1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4)
         val y1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4)
