@@ -145,3 +145,5 @@ fun speedFormula(initialSpeed: Float, score: Int): Float {
     return initialSpeed * (log(score + 1f, 32f) + 1)
 //                        speed = initialSpeed * (LittleStar.score / 64f + 1);
 }
+
+class RocketState(val currentRotation: Float, val speedX: Float, val speedY: Float)

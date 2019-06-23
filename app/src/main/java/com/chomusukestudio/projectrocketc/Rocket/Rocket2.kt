@@ -31,7 +31,7 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
         val y2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3)
         val originX = (x1 + x2) / 2
         val originY = (y1 + y2) / 2
-        trace.generateTrace(now, previousFrameTime, originX, originY, currentRotation + PI.toFloat())
+        trace.generateTrace(now, previousFrameTime, originX, originY, RocketState(currentRotation, speedX, speedY))
     }
 
     override var radiusOfRotation = 2f
@@ -94,8 +94,8 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
             }
         }
         if (rocketMotion.throttleOn && state == State.InGame) {
-            speedX += acce * (now - previousFrameTime) * -sin(currentRotation)
-            speedY += acce * (now - previousFrameTime) * -cos(currentRotation)
+            speedX += acce * (now - previousFrameTime) * sin(currentRotation)
+            speedY += acce * (now - previousFrameTime) * cos(currentRotation)
             speed = sqrt(square(speedX) + square(speedY))
             generateTrace(now, previousFrameTime) // only generate trace when throttle on
             Log.d("throttle", "on")
@@ -106,8 +106,8 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
             speedX = speedXY[0]
             speedY = speedXY[1]
         }
-        val dx = speedX * (now - previousFrameTime)
-        val dy = speedY * (now - previousFrameTime)
+        val dx = -speedX * (now - previousFrameTime)
+        val dy = -speedY * (now - previousFrameTime)
         surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
         trace.moveTrace(dx, dy)
         fadeTrace(now, previousFrameTime)

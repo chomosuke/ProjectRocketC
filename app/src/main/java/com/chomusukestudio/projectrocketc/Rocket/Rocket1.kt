@@ -7,6 +7,8 @@ import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * Created by Shuang Li on 11/03/2018.
@@ -22,7 +24,7 @@ open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer
         val y2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3)
         val originX = (x1 + x2) / 2
         val originY = (y1 + y2) / 2
-        trace.generateTrace(now, previousFrameTime, originX, originY, currentRotation + PI.toFloat())
+        trace.generateTrace(now, previousFrameTime, originX, originY, RocketState(currentRotation, speed*sin(currentRotation), speed*cos(currentRotation)))
     }
 
     override val radiusOfRotation = 2f

@@ -1,6 +1,7 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.decelerateSpeedXY
 import com.chomusukestudio.projectrocketc.randFloat
@@ -12,14 +13,15 @@ class SnowTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: 
 						private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float, private val layers: Layers) : Trace() {
 	
 	private var preUnfinishedHalfIs = 0f
-	override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, direction: Float) {
+	override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, rocketState: RocketState) {
 		val dx = originX - lastOriginX
 		val dy = originY - lastOriginY
+		val direction = rocketState.currentRotation + PI.toFloat()
 		
 		val iMax = perSecRate * (now - previousFrameTime) / 1000f + preUnfinishedHalfIs
 		var i = 0
 		while (i < iMax) {
-			
+
 			val widthMargin = randFloat(-initialWidth/0.1f, initialWidth/0.1f)
 			val newTraceShape = newAccelerationTraceShape(originX + widthMargin*cos(direction), originY + widthMargin*sin(direction),
 					randFloat(initialWidth / 16, initialWidth / 4), finalWidth / 2, direction, duration, initialRed, initialGreen, initialBlue, initialAlpha)

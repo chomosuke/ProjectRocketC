@@ -2,6 +2,7 @@ package com.chomusukestudio.projectrocketc.Rocket.trace
 
 import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.decelerateSpeedXY
 import com.chomusukestudio.projectrocketc.randFloat
@@ -13,19 +14,23 @@ class AccelerationTrace(val numberOfEdges: Int, val z: Float, private val initia
 						private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float, private val layers: Layers) : Trace() {
 	
 	private var preUnfinishedHalfIs = 0f
-	override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, direction: Float) {
+	override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, rocketState: RocketState) {
 		val dx = originX - lastOriginX
 		val dy = originY - lastOriginY
+		val direction = rocketState.currentRotation + PI.toFloat()
 		
 		val iMax = perSecRate * (now - previousFrameTime) / 1000f + preUnfinishedHalfIs
 		var i = 0
 		while (i < iMax) {
 			
-			val widthMargin = randFloat(-initialWidth/2, initialWidth/2)
+			val widthMargin = randFloat(-initialWidth/3, initialWidth/3)
 			val centerX = originX - widthMargin*cos(direction)
 			val centerY = originY + widthMargin*sin(direction)
-			val newTraceShape = newAccelerationTraceShape(centerX, centerY,
-					randFloat(initialWidth / 16, initialWidth / 4), finalWidth / 2, direction, duration, initialRed, initialGreen, initialBlue, initialAlpha)
+			val initialSpeedX = initialSpeed * sin(direction) + rocketState.speedX
+			val initialSpeedY = initialSpeed * cos(direction) + rocketState.speedY
+			val newTraceShape = newAccelerationTraceShape(centerX, centerY, randFloat(initialWidth / 16, initialWidth / 4), finalWidth / 2,
+					initialSpeedX, initialSpeedY, duration, initialRed, initialGreen, initialBlue, initialAlpha)
+
 			newTraceShape.rotateShape(centerX, centerY, (2 * Math.PI * Math.random()).toFloat())
 			
 			val margin = /*random();*/i / iMax/* * (0.5f + (1 * (float) random()))*/
@@ -37,11 +42,10 @@ class AccelerationTrace(val numberOfEdges: Int, val z: Float, private val initia
 		
 	}
 	
-	private fun newAccelerationTraceShape(centerX: Float, centerY: Float, initialRadius: Float, finalRadius: Float, direction: Float,
+	private fun newAccelerationTraceShape(centerX: Float, centerY: Float, initialRadius: Float, finalRadius: Float, initialSpeedX: Float, initialSpeedY: Float,
 										  duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float): RegularPolygonalTraceShape {
-		val trace = AccelerationTraceShape(numberOfEdges, centerX, centerY, initialRadius, finalRadius,
-				duration, initialSpeed * sin(direction), initialSpeed * cos(direction), 0.00004f,
-				initialRed, initialGreen, initialBlue, initialAlpha, BuildShapeAttr(z, true, layers))
+		val trace = AccelerationTraceShape(numberOfEdges, centerX, centerY, initialRadius, finalRadius, duration,
+				initialSpeedX, initialSpeedY, 0.00004f, initialRed, initialGreen, initialBlue, initialAlpha, BuildShapeAttr(z, true, layers))
 		traceShapes.add(trace)
 		return trace
 	}

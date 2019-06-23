@@ -1,6 +1,7 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.RegularPolygonalShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
@@ -16,7 +17,7 @@ class SquareTrace(private val initialWidth: Float, private val finalWidth: Float
                   val z: Float, private val layers: Layers) : Trace() {
 
     private var unfilledDs = 0f
-    override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, direction: Float) {
+    override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, rocketState: RocketState) {
         val dx = originX - lastOriginX
         val dy = originY - lastOriginY
         var ds = sqrt(square(dx) + square(dy))

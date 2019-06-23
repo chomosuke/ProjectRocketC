@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
+import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 
@@ -9,15 +10,15 @@ abstract class Trace {
     private var generateTraceCalledThisFrame = true
     private var lastOriginX: Float? = null
     private var lastOriginY: Float? = null
-    fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float, direction: Float) {
+    fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float, rocketState: RocketState) {
         if (lastOriginX != null && lastOriginY != null)
-            generateTraceOverride(now, previousFrameTime, originX, originY, lastOriginX!!, lastOriginY!!, direction)
+            generateTraceOverride(now, previousFrameTime, originX, originY, lastOriginX!!, lastOriginY!!, rocketState)
         this.lastOriginX = originX
         this.lastOriginY = originY
         generateTraceCalledThisFrame = true
     }
     
-    protected abstract fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, direction: Float)
+    protected abstract fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, rocketState: RocketState)
 
     private val parallelForIForFadeTraces = ParallelForI(8, "fade traceShapes thread")
     private val parallelForIForMoveTraces = ParallelForI(8, "move traceShapes thread")
