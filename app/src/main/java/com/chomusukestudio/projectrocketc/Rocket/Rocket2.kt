@@ -21,7 +21,7 @@ import kotlin.math.PI
  * Created by Shuang Li on 11/03/2018.
  */
 
-open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer, layers: Layers) : Rocket(surrounding, layers) {
+open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer, layers: Layers) : Rocket(surrounding, layers) {
 //    override val trace = RegularPolygonalTrace(6, 1.01f, 0.24f,  0.4f, 1000, 1f, 1f, 0f, 3f, layers)
     override val trace = AccelerationTrace(6, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f,1f, 1f, 0f, 3f, layers)
     override fun generateTrace(now: Long, previousFrameTime: Long) {

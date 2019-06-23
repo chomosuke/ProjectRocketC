@@ -34,6 +34,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
+import com.chomusukestudio.projectrocketc.Rocket.Rocket2
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 //import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
@@ -437,7 +438,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
             val surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, null)
-            val rocket = Rocket1(surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
+            val rocket = Rocket2(surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
 
             processingThread = ProcessingThread(
 //                    TwoFingersJoystick(),
@@ -490,7 +491,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             val leftRightBottomTop = generateLeftRightBottomTopEnd(width.toFloat() / height.toFloat())
             val surroundingResources = processingThread.surrounding.trashAndGetResources()
             processingThread.surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
-            processingThread.rocket = Rocket1(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
+            processingThread.rocket = Rocket2(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
             processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
 //            processingThread.joystick = TwoFingersJoystick()
 //            processingThread.joystick = OneFingerJoystick()
