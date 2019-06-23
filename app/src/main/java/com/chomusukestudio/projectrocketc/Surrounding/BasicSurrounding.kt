@@ -38,7 +38,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     // planets should have z value of 10 while background should have a z value higher than 10, like 11.
     private var backgrounds: ArrayList<Shape> // backGrounds doesn't effect plane
     private val littleStars = ArrayList<LittleStar>()
-    private lateinit var startingPathOfRocket: QuadrilateralShape
+    private lateinit var startingPathOfRocket: Shape
     override lateinit var rocket: Rocket
 
     override val centerOfRotationX: Float = 0f
@@ -108,24 +108,34 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
 
         this.rocket = rocket
+
         val minCloseDist = 0.004f * timeLimit
         val initialFlybyDistance = sqrt(square(flybyDistance + averageRadius) - square(minCloseDist))/*rocket.width / 2 + flybyDistance*/
-        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, 1000000000f,
-                centerOfRotationX + initialFlybyDistance, 1000000000f, // max value is bad because it causes overflow... twice
-                centerOfRotationX + initialFlybyDistance, centerOfRotationY,
-                centerOfRotationX - initialFlybyDistance, centerOfRotationY,
-                0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
-        startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
+        if (rocket.initialSpeed != 0f) {
+            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, 100000000f,
+                    centerOfRotationX + initialFlybyDistance, 100000000f, // max value is bad because it causes overflow... twice
+                    centerOfRotationX + initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
+                    centerOfRotationX - initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
+                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
+            startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
+        } else {
+            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
+                    centerOfRotationX + initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
+                    centerOfRotationX + initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
+                    centerOfRotationX - initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
+                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
+        }
 
 
         val avoidDistanceX = 110f // to avoid constant change of visibility
         startingPathOfRocket.moveShape(avoidDistanceX, 0f) // i'll move it back later
         newPlanet = getRandomPlanet()
         // initialize surrounding
-        for (i in 0..256) {
+        val iMax = 256
+        for (i in 0..iMax) {
             // randomly reposition the new planet
             val centerX = randFloat(rightEnd * 1.5f, leftEnd * 1.5f) + avoidDistanceX // + avoidDistanceX as to avoid constant change of visibility
-            val centerY = randFloat(bottomEnd * 1.5f, topEnd * (1.5f/*/* + topMarginForLittleStar*/*/))
+            val centerY = (topEnd*(1.5f/*/* + topMarginForLittleStar*/*/) - bottomEnd*1.5f) / iMax * i + bottomEnd*1.5f
             newPlanet.resetPosition(centerX, centerY)
 
             if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet

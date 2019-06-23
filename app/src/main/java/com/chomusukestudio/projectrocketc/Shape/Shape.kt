@@ -5,7 +5,11 @@ package com.chomusukestudio.projectrocketc.Shape
  * Created by Shuang Li on 28/02/2018.
  */
 
-abstract class Shape{
+abstract class Shape: Cloneable{
+    fun cloneShape(): Shape {
+        return super.clone() as Shape
+    }
+
     abstract val isOverlapMethodLevel: Double // numerical measurement of how considerate is isOverlapToOverride method.
     /* IMPORTANT
      inheriting note:
