@@ -17,7 +17,6 @@ import com.chomusukestudio.projectrocketc.Shape.PlanetShape.SaturnShape
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.StarShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 
 import java.util.ArrayList
 
@@ -39,7 +38,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     // planets should have z value of 10 while background should have a z value higher than 10, like 11.
     private var backgrounds: ArrayList<Shape> // backGrounds doesn't effect plane
     private val littleStars = ArrayList<LittleStar>()
-    private var startingPathOfRocket: QuadrilateralShape? = null
+    private lateinit var startingPathOfRocket: QuadrilateralShape
     override lateinit var rocket: Rocket
 
     override val centerOfRotationX: Float = 0f
@@ -111,17 +110,16 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         this.rocket = rocket
         val minCloseDist = 0.004f * timeLimit
         val initialFlybyDistance = sqrt(square(flybyDistance + averageRadius) - square(minCloseDist))/*rocket.width / 2 + flybyDistance*/
-        if (rocket.initialSpeed != 0f) { // only clean planet when initialSpeed is not 0
-            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, 100000000f,
-                    centerOfRotationX + initialFlybyDistance, 100000000f, // max value is bad because it causes overflow... twice
-                    centerOfRotationX + initialFlybyDistance, -100000000f,
-                    centerOfRotationX - initialFlybyDistance, -100000000f,
-                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
-            startingPathOfRocket?.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
-        }
+        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, 1000000000f,
+                centerOfRotationX + initialFlybyDistance, 1000000000f, // max value is bad because it causes overflow... twice
+                centerOfRotationX + initialFlybyDistance, centerOfRotationY,
+                centerOfRotationX - initialFlybyDistance, centerOfRotationY,
+                0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
+        startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
+
 
         val avoidDistanceX = 110f // to avoid constant change of visibility
-        startingPathOfRocket?.moveShape(avoidDistanceX, 0f) // i'll move it back later
+        startingPathOfRocket.moveShape(avoidDistanceX, 0f) // i'll move it back later
         newPlanet = getRandomPlanet()
         // initialize surrounding
         for (i in 0..256) {
@@ -140,7 +138,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         }
         for (boundary in planets)
             boundary.movePlanet(-avoidDistanceX, 0f) // move planets back
-        startingPathOfRocket?.moveShape(-avoidDistanceX, 0f) // move startingPathOfRocket back
+        startingPathOfRocket.moveShape(-avoidDistanceX, 0f) // move startingPathOfRocket back
     }
 
     private fun isGoodPlanet(planet: Planet, state: State): Boolean {
@@ -152,9 +150,8 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         }
         // it is not too close to any other planet
         if (state != State.InGame)
-            if (startingPathOfRocket != null)
-                if (planet.isOverlap(startingPathOfRocket!!))
-                    return false// if it blocks the rocket before start
+            if (planet.isOverlap(startingPathOfRocket))
+                return false// if it blocks the rocket before start
         return true
     }
 
