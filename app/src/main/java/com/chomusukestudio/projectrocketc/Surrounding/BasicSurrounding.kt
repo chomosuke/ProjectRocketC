@@ -33,7 +33,7 @@ import kotlin.math.sqrt
  * Created by Shuang Li on 31/03/2018.
  */
 
-class BasicSurrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources?) : Surrounding() {
+class BasicSurrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources? = null) : Surrounding() {
     private val planets = ArrayList<Planet>() // this defines where the plane can't go
     // planets should have z value of 10 while background should have a z value higher than 10, like 11.
     private val backgrounds = // backGrounds doesn't effect plane
