@@ -74,6 +74,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+        with(sharedPreferences.edit()) {
+            putInt(getString(R.string.highestScoreRefresh), 0)
+            apply()
+        }
 
 //        // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
