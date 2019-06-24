@@ -68,6 +68,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ImageButton>(R.id.pauseButton).setOnClickListener { view -> onPause(view) }
         findViewById<ImageButton>(R.id.restartButton).setOnClickListener { view -> restartGame(view) }
         findViewById<ImageButton>(R.id.toHomeButton).setOnClickListener { view -> toHome(view) }
+        findViewById<Button>(R.id.swapRocketLeftButton).setOnClickListener { view -> swapRocketLeft(view) }
+        findViewById<Button>(R.id.swapRocketRightButton).setOnClickListener { view -> swapRocketRight(view) }
 
         // display splashScreen
         findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
@@ -223,6 +225,23 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         state = State.PreGame
     }
+
+    fun swapRocketLeft(view: View) {
+        val processingThread = findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.processingThread
+        if (processingThread.isOutOfBounds(-1))
+            findViewById<Button>(R.id.swapRocketLeftButton).visibility = View.INVISIBLE
+        processingThread.swapRocket(-1)
+        findViewById<Button>(R.id.swapRocketRightButton).visibility = View.VISIBLE
+    }
+
+    fun swapRocketRight(view: View) {
+        val processingThread = findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.processingThread
+        if (processingThread.isOutOfBounds(1))
+            findViewById<Button>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
+        processingThread.swapRocket(1)
+        findViewById<Button>(R.id.swapRocketLeftButton).visibility = View.VISIBLE
+    }
+
 
     fun openSetting(view: View) {
 

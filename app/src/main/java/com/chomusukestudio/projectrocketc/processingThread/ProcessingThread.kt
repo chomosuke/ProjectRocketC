@@ -21,6 +21,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.ThreadClasses.ScheduledThread
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
+import java.lang.IndexOutOfBoundsException
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 
@@ -33,14 +34,35 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 //            TwoFingersJoystick()
 //            OneFingerJoystick()
             InertiaJoystick()
-    var surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers)
-    var rocket = Rocket2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), layers)
+    private var surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers)
+    private var rocketIndex = 0
+    private var rocket = getRocket(rocketIndex)
     init {
         // load sound for eat little star soundPool
         LittleStar.soundId = LittleStar.soundPool.load(mainActivity, R.raw.eat_little_star, 1)
 //        LittleStar.soundId = LittleStar.soundPool.load("res/raw/eat_little_star.m4a", 1) // this is not working
 
         surrounding.initializeSurrounding(rocket, mainActivity.state)
+    }
+
+    private fun getRocket(rocketIndex: Int): Rocket {
+        return when (rocketIndex) {
+            0 -> Rocket1(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), layers)
+            1 -> Rocket2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), layers)
+            else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
+        }
+    }
+    fun swapRocket(dIndex: Int) {
+        pauseForChanges()
+        rocket.removeAllShape()
+        rocketIndex += dIndex
+        rocket = getRocket(rocketIndex)
+        surrounding.rocket = rocket
+        resumeWithChanges()
+    }
+    fun isOutOfBounds(dIndex: Int): Boolean {
+        val index = rocketIndex + dIndex
+        return index in 0..1
     }
 
     private fun updateScore() {
@@ -67,7 +89,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         removeAllShapes() // remove all previous shapes
         val surroundingResources = surrounding.trashAndGetResources()
         surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
-        rocket = Rocket2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), layers)
+        rocket = getRocket(rocketIndex)
         surrounding.initializeSurrounding(rocket, mainActivity.state)
 //            joystick = TwoFingersJoystick()
 //            joystick = OneFingerJoystick()

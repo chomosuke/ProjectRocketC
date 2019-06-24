@@ -17,6 +17,7 @@ import com.chomusukestudio.projectrocketc.Shape.PlanetShape.SaturnShape
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.StarShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
+import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 
 import java.util.ArrayList
 
@@ -105,20 +106,20 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
 
         val minCloseDist = 0.004f * timeLimit
         val initialFlybyDistance = sqrt(square(flybyDistance + averageRadius) - square(minCloseDist))/*rocket.width / 2 + flybyDistance*/
-        if (rocket.initialSpeed != 0f) {
+//        if (rocket.initialSpeed != 0f) {
             startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, 100000000f,
                     centerOfRotationX + initialFlybyDistance, 100000000f, // max value is bad because it causes overflow... twice
                     centerOfRotationX + initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
                     centerOfRotationX - initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
                     0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
             startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
-        } else {
-            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
-                    centerOfRotationX + initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
-                    centerOfRotationX + initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
-                    centerOfRotationX - initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
-                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
-        }
+//        } else {
+//            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
+//                    centerOfRotationX + initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
+//                    centerOfRotationX + initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
+//                    centerOfRotationX - initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
+//                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
+//        }
 
 
         val avoidDistanceX = 110f // to avoid constant change of visibility
@@ -405,7 +406,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         val centerX = randFloat(leftEnd, rightEnd)
         val centerY = topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/
         val littleStar = LittleStar(YELLOW, centerX, centerY, 1f,
-                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(1f / 1000f, LittleStar.score) * 2).toLong(), now, layers)
+                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(2f / 1000f, LittleStar.score) * 2).toLong(), now, layers)
 
         var finished: Boolean
         while (true) {
@@ -491,7 +492,7 @@ class BasicSurroundingResources(val background: Array<Shape>, val planetsStore: 
 
 private const val radiusMargin = 0.25f
 private const val averageRadius = 0.75f // for planet shape to determent which type of planet suits the size best.
-private const val flybyDistance = 1f
+private const val flybyDistance = 0.5f
 private val maxCloseDist = sqrt(square(flybyDistance) + 2 * (averageRadius + radiusMargin) * flybyDistance) * 2
 private val maxFlybySpeed = speedFormula(0.004f, 200)
 private val timeLimit = maxCloseDist / maxFlybySpeed
