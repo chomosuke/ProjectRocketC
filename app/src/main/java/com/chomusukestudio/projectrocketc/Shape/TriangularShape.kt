@@ -2,6 +2,8 @@ package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import kotlin.math.abs
+import kotlin.math.sign
 
 class TriangularShape(x1: Float, y1: Float,
                       x2: Float, y2: Float,
@@ -96,12 +98,6 @@ class TriangularShape(x1: Float, y1: Float,
     }
 
     override fun isInside(x: Float, y: Float): Boolean { // close for modification
-        val areaA = getArea(this.getTriangularShapeCoords(0),
-                this.getTriangularShapeCoords(1),
-                this.getTriangularShapeCoords(2),
-                this.getTriangularShapeCoords(3),
-                this.getTriangularShapeCoords(4),
-                this.getTriangularShapeCoords(5))
         val areaA1 = getArea(x, y,
                 this.getTriangularShapeCoords(2),
                 this.getTriangularShapeCoords(3),
@@ -117,16 +113,13 @@ class TriangularShape(x1: Float, y1: Float,
                 this.getTriangularShapeCoords(2),
                 this.getTriangularShapeCoords(3),
                 x, y)
-        return areaA == areaA1 + areaA2 + areaA3
+        return sign(areaA1) == sign(areaA2) && sign(areaA1) == sign(areaA3)
         // https://stackoverflow.com/questions/13300904/determine-whether-point-lies-inside-triangle
         // https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/
     }
 
     private fun getArea(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float): Float {
-        return if ((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2 < 0)
-            -(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
-        else
-            (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
+        return (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
     }
 
     val x1 get() = getTriangularShapeCoords(X1)
