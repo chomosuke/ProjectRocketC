@@ -23,7 +23,7 @@ import kotlin.math.PI
 
 open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer, layers: Layers) : Rocket(surrounding, layers) {
 //    override val trace = RegularPolygonalTrace(6, 1.01f, 0.24f,  0.4f, 1000, 1f, 1f, 0f, 3f, layers)
-    override val trace = AccelerationTrace(6, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f,1f, 1f, 0f, 3f, layers)
+    override val trace = AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f,1f, 1f, 0f, 3f, layers)
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val x1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4)
         val y1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4)

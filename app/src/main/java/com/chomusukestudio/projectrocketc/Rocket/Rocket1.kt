@@ -2,6 +2,7 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.SquareTrace
 import com.chomusukestudio.projectrocketc.Shape.*
 
@@ -16,7 +17,8 @@ import kotlin.math.sin
 
 open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer, layers: Layers) : Rocket(surrounding, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
-        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
+//        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
+            AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f,1f, 1f, 0f, 3f, layers)
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val x1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4)
         val y1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4)
