@@ -454,9 +454,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //        }
 
         fun resetGame() {
-            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
             mRenderer.processingThread.reset()
-            findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
         }
 
         override fun onTouchEvent(e: MotionEvent): Boolean {

@@ -62,11 +62,8 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
             false
     }
 
-    fun shutDown() {
-        removeAllShapes()
-    }
-
     fun reset() {
+        pauseForChanges()
         removeAllShapes() // remove all previous shapes
         val surroundingResources = surrounding.trashAndGetResources()
         surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
@@ -76,6 +73,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 //            joystick = OneFingerJoystick()
         joystick = InertiaJoystick()
         LittleStar.cleanScore()
+        resumeWithChanges()
     }
 
     private fun removeAllShapes() {
@@ -85,35 +83,51 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     } // for onStop() and onDestroy() to remove Shapes
     // and when crashed
 
+    private var pausedForChanges = false
+    private fun pauseForChanges() {
+        if (!pausedForChanges) {
+            pausedForChanges = true
+            waitForLastFrame()
+        }
+    }
+    private fun resumeWithChanges() {
+        pausedForChanges = false
+    }
+
+    fun shutDown() {
+        removeAllShapes()
+    }
+
     private val nextFrameThread = Executors.newSingleThreadExecutor { r -> Thread(r, "nextFrameThread") }
     private val lock = ReentrantLock()
     private val condition = lock.newCondition()
 
     fun generateNextFrame(now: Long, previousFrameTime: Long) {
-        finished = false // haven't started
-        nextFrameThread.submit {
-            runWithExceptionChecked {
-                val startTime = SystemClock.uptimeMillis()
+        if (!pausedForChanges) { // if aren't pausing for changes
+            finished = false // haven't started
+            nextFrameThread.submit {
+                runWithExceptionChecked {
+                    val startTime = SystemClock.uptimeMillis()
 
-                if (state == State.InGame) {
+                    if (state == State.InGame) {
 
-                    // see if crashed
-                    if (rocket.isCrashed(surrounding)) {
-                        mainActivity.onCrashed()
+                        // see if crashed
+                        if (rocket.isCrashed(surrounding)) {
+                            mainActivity.onCrashed()
+                        }
+                        surrounding.checkAndAddLittleStar(now)
                     }
-                    surrounding.checkAndAddLittleStar(now)
-                }
-                if (state == State.PreGame || state == State.InGame) {
-                    rocket.moveRocket(joystick.getRocketMotion(rocket.currentRotation), now, previousFrameTime, state)
-                    surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime, state)
-                    joystick.drawJoystick()
-                }
-                if (state == State.Crashed) {
-                    rocket.fadeTrace(now, previousFrameTime)
-                    rocket.drawExplosion(now, previousFrameTime)
-                }
-                if (state == State.InGame)
-                    updateScore() // only update score when InGame
+                    if (state == State.PreGame || state == State.InGame) {
+                        rocket.moveRocket(joystick.getRocketMotion(rocket.currentRotation), now, previousFrameTime, state)
+                        surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime, state)
+                        joystick.drawJoystick()
+                    }
+                    if (state == State.Crashed) {
+                        rocket.fadeTrace(now, previousFrameTime)
+                        rocket.drawExplosion(now, previousFrameTime)
+                    }
+                    if (state == State.InGame)
+                        updateScore() // only update score when InGame
 
 ////                if (SystemClock.uptimeMillis() - startTime > 1000 / refreshRate) {
 //                if (SystemClock.uptimeMillis() - startTime > 16) { // target 60 fps
@@ -128,19 +142,20 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 //                        CircularShape.performanceIndex *= 1.001
 //                    }
 //                }
-                // let's do this at the end
+                    // let's do this at the end
 
-                if (SystemClock.uptimeMillis() - startTime > 16) {
-                    Log.i("processing thread", "" + (SystemClock.uptimeMillis() - startTime))
+                    if (SystemClock.uptimeMillis() - startTime > 16) {
+                        Log.i("processing thread", "" + (SystemClock.uptimeMillis() - startTime))
+                    }
+
+                    // finished
+                    finished = true
+                    // notify waitForLastFrame
+                    lock.lock()
+                    condition.signal() // wakes up GLThread
+                    //                Log.v("Thread", "nextFrameThread notified lockObject");
+                    lock.unlock()
                 }
-
-                // finished
-                finished = true
-                // notify waitForLastFrame
-                lock.lock()
-                condition.signal() // wakes up GLThread
-                //                Log.v("Thread", "nextFrameThread notified lockObject");
-                lock.unlock()
             }
         }
     }
