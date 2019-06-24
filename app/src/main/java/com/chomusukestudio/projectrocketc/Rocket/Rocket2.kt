@@ -98,7 +98,6 @@ open class Rocket2(surrounding: Surrounding, private val crashSound: MediaPlayer
             speedY += acce * (now - previousFrameTime) * cos(currentRotation)
             speed = sqrt(square(speedX) + square(speedY))
             generateTrace(now, previousFrameTime) // only generate trace when throttle on
-            Log.d("throttle", "on")
         }
         // friction
         if (speed != 0f) {

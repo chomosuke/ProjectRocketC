@@ -1,17 +1,60 @@
 package com.chomusukestudio.projectrocketc.processingThread
 
+import android.content.Context
+import android.media.MediaPlayer
 import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
+import android.view.WindowManager
+import android.widget.TextView
 import com.chomusukestudio.projectrocketc.*
+import com.chomusukestudio.projectrocketc.GLRenderer.Layer
+import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.GLRenderer.generateLeftRightBottomTopEnd
+import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
 import com.chomusukestudio.projectrocketc.Joystick.Joystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
+import com.chomusukestudio.projectrocketc.Rocket.Rocket1
+import com.chomusukestudio.projectrocketc.Rocket.Rocket2
+import com.chomusukestudio.projectrocketc.Shape.CircularShape
+import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.ThreadClasses.ScheduledThread
+import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 
-class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var rocket: Rocket, val refreshRate: Float, val mainActivity: MainActivity) {
-    fun onTouchEvent(e: MotionEvent, state: State): Boolean {
+class ProcessingThread(val refreshRate: Float, private val mainActivity: MainActivity, private val layers: Layers) {
+
+    private val state
+            get() = mainActivity.state
+
+    var joystick =
+//            TwoFingersJoystick()
+//            OneFingerJoystick()
+            InertiaJoystick()
+    var surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers)
+    var rocket = Rocket2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), layers)
+    init {
+        // load sound for eat little star soundPool
+        LittleStar.soundId = LittleStar.soundPool.load(mainActivity, R.raw.eat_little_star, 1)
+//        LittleStar.soundId = LittleStar.soundPool.load("res/raw/eat_little_star.m4a", 1) // this is not working
+
+        surrounding.initializeSurrounding(rocket, mainActivity.state)
+    }
+
+    private fun updateScore() {
+        mainActivity.runOnUiThread {
+            mainActivity.findViewById<TextView>(R.id.scoreTextView).text = /*putCommasInInt*/(LittleStar.score.toString())
+            mainActivity.findViewById<TextView>(R.id.deltaTextView).text = "δ " + (LittleStar.dScore).toString()
+        }
+    }
+
+    fun updateHighestScore(updateHighestScore: (Int) -> Unit ) {
+        updateHighestScore(LittleStar.score)
+    }
+
+    fun onTouchEvent(e: MotionEvent): Boolean {
         return if (state == State.InGame || state == State.Paused) {
             joystick.onTouchEvent(e)
             true
@@ -23,7 +66,19 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
         removeAllShapes()
     }
 
-    fun removeAllShapes() {
+    fun reset() {
+        removeAllShapes() // remove all previous shapes
+        val surroundingResources = surrounding.trashAndGetResources()
+        surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
+        rocket = Rocket2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), layers)
+        surrounding.initializeSurrounding(rocket, mainActivity.state)
+//            joystick = TwoFingersJoystick()
+//            joystick = OneFingerJoystick()
+        joystick = InertiaJoystick()
+        LittleStar.cleanScore()
+    }
+
+    private fun removeAllShapes() {
         surrounding.removeAllShape()
         rocket.removeAllShape()
         joystick.removeAllShape()
@@ -34,7 +89,7 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
     private val lock = ReentrantLock()
     private val condition = lock.newCondition()
 
-    fun generateNextFrame(now: Long, previousFrameTime: Long, state: State) {
+    fun generateNextFrame(now: Long, previousFrameTime: Long) {
         finished = false // haven't started
         nextFrameThread.submit {
             runWithExceptionChecked {
@@ -57,6 +112,8 @@ class ProcessingThread(var joystick: Joystick, var surrounding: Surrounding, var
                     rocket.fadeTrace(now, previousFrameTime)
                     rocket.drawExplosion(now, previousFrameTime)
                 }
+                if (state == State.InGame)
+                    updateScore() // only update score when InGame
 
 ////                if (SystemClock.uptimeMillis() - startTime > 1000 / refreshRate) {
 //                if (SystemClock.uptimeMillis() - startTime > 16) { // target 60 fps

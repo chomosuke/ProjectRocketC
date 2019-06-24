@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
 import android.graphics.Point
-import android.media.MediaPlayer
 import android.opengl.GLES20
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
@@ -18,23 +17,15 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 
-import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
-import com.chomusukestudio.projectrocketc.Rocket.Rocket1
-import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
-import com.chomusukestudio.projectrocketc.ThreadClasses.ScheduledThread
-
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLDisplay
-import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 import android.view.*
 import android.view.animation.Animation
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
-import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
-import com.chomusukestudio.projectrocketc.Rocket.Rocket2
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 //import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
@@ -50,6 +41,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     @Volatile var state: State = State.PreGame
+        private set
 
     public override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -77,20 +69,16 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ImageButton>(R.id.restartButton).setOnClickListener { view -> restartGame(view) }
         findViewById<ImageButton>(R.id.toHomeButton).setOnClickListener { view -> toHome(view) }
 
-        // load sound for eat little star soundPool
-        LittleStar.soundId = LittleStar.soundPool.load(this, R.raw.eat_little_star, 1)
-//        LittleStar.soundId = LittleStar.soundPool.load("res/raw/eat_little_star.m4a", 1) // this is not working
-
-//        // Obtain the FirebaseAnalytics instance.
-//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
-
-        CircularShape.performanceIndex = sharedPreferences.getFloat(getString(R.string.performanceIndex), 1f)
-
         // display splashScreen
         findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
 
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+
+//        // Obtain the FirebaseAnalytics instance.
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
+
+        CircularShape.performanceIndex = sharedPreferences.getFloat(getString(R.string.performanceIndex), 1f)
 
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
@@ -140,23 +128,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
-    private val updateScoreThread = ScheduledThread(16) { // 16 millisecond should be good
-        this.runOnUiThread {
-            findViewById<TextView>(R.id.scoreTextView).text = /*putCommasInInt*/(LittleStar.score.toString())
-            findViewById<TextView>(R.id.deltaTextView).text = "δ " + (LittleStar.dScore).toString()
-        }
-    }
-
     fun startGame(view: View) {
         if (state == State.InGame) return // already started, must've been lag
 
         if (state != State.PreGame)
             throw IllegalStateException("Starting Game while not in PreGame")
         state = State.InGame // start game
-        LittleStar.cleanScore()
-
-        // start refresh score regularly
-        updateScoreThread.run()
 
         // fade away pregame layout with animation
         fadeOut(findViewById(R.id.preGameLayout))
@@ -223,10 +200,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
 
-        // start refresh score regularly
-        updateScoreThread.run()
-        LittleStar.cleanScore()
-
         state = State.InGame
     }
 
@@ -256,20 +229,22 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun onCrashed() {
-        updateScoreThread.pause()
         state = State.Crashed
-        if (LittleStar.score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
-            // update highest score
-            with(sharedPreferences.edit()) {
-                putInt(getString(R.string.highestScore), LittleStar.score)
-                apply()
-            }
-            // firebase stuff that i don't understand
+
+        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.processingThread.updateHighestScore { score ->
+            if (score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
+                // update highest score
+                with(sharedPreferences.edit()) {
+                    putInt(getString(R.string.highestScore), score)
+                    apply()
+                }
+                // firebase stuff that i don't understand
 //            val bundle = Bundle()
 //            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
 //            bundle.putString("leaderboard_id", "mLeaderboard")
 //            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
 
+            }
         }
         runOnUiThread {
             findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.VISIBLE
@@ -389,19 +364,16 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
 
-        private val layers = Layers()
-        val mainActivity = scanForActivity(context) as MainActivity
         init {
             // Create an OpenGL ES 2.0 context
             setEGLContextClientVersion(2)
         }
 
-        lateinit var processingThread: ProcessingThread
         lateinit var mRenderer: TheGLRenderer
 
         fun shutDown() {
             try {
-                processingThread.shutDown()
+                mRenderer.processingThread.shutDown()
             } catch (e: UninitializedPropertyAccessException) {
                 // processingThread have not yet being initialized
                 // just do some basic clean up
@@ -437,20 +409,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
-            val surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, null)
-            val rocket = Rocket2(surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
-
-            processingThread = ProcessingThread(
-//                    TwoFingersJoystick(),
-//                    OneFingerJoystick(),
-                    InertiaJoystick(),
-                    surrounding,
-                    rocket,
+            val layers = Layers()
+            val processingThread = ProcessingThread(
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
-                    mainActivity) // we know that the context is MainActivity
+                    scanForActivity(context) as MainActivity, layers) // we know that the context is MainActivity
 //            processingThread = TestingProcessingThread()
             mRenderer = TheGLRenderer(processingThread, this, layers)
-            processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(mRenderer)
@@ -487,20 +451,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         fun resetGame() {
             findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
-            processingThread.removeAllShapes() // remove all previous shapes
-            val leftRightBottomTop = generateLeftRightBottomTopEnd(width.toFloat() / height.toFloat())
-            val surroundingResources = processingThread.surrounding.trashAndGetResources()
-            processingThread.surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
-            processingThread.rocket = Rocket2(processingThread.surrounding, MediaPlayer.create(context, R.raw.fx22), layers)
-            processingThread.surrounding.initializeSurrounding(processingThread.rocket, mainActivity.state)
-//            processingThread.joystick = TwoFingersJoystick()
-//            processingThread.joystick = OneFingerJoystick()
-            processingThread.joystick = InertiaJoystick()
+            mRenderer.processingThread.reset()
             findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
         }
 
         override fun onTouchEvent(e: MotionEvent): Boolean {
-            return processingThread.onTouchEvent(e, mainActivity.state) // we know that the context is MainActivity
+            return mRenderer.processingThread.onTouchEvent(e) // we know that the context is MainActivity
         }
     }
 }

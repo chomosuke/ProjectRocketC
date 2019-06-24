@@ -68,7 +68,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             // can't refresh buffers when processingThread is running or when drawing all triangles
             layers.passArraysToBuffers()
 
-            processingThread.generateNextFrame(now, previousFrameTime, myGLSurfaceView.mainActivity.state)
+            processingThread.generateNextFrame(now, previousFrameTime)
 
             previousFrameTime = now
         }
