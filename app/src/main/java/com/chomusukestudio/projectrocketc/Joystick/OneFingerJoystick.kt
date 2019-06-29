@@ -28,8 +28,8 @@ class OneFingerJoystick(layers: Layers) : Joystick() {
         quadrilateralShape.removeShape()
     }
 
-    override fun getRocketMotion(currentRotation: Float): RocketMotion {
-        return RocketMotion(if (actionDown) {
+    override fun getRocketControl(currentRotation: Float): RocketControl {
+        return RocketControl(if (actionDown) {
             if (nowX > 0)
                 1f
             else if (nowX < -0)

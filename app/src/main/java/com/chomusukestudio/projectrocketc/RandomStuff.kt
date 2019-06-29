@@ -148,7 +148,7 @@ interface IReusable { // stuff that can be stored in a place (e.g. an array) and
 fun decelerateSpeedXY(speedX: Float, speedY: Float, deceleration: Float, frameTime: Long): Array<Float> {
     var speedX = speedX
     var speedY = speedY
-    val dSpeed = deceleration * frameTime / 2
+    val dSpeed = deceleration * frameTime
     var speed = sqrt(square(speedX) + square(speedY))
     
     if (speed > dSpeed) speed -= dSpeed

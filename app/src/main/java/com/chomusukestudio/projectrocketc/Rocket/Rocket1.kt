@@ -2,6 +2,8 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DirectionalRocketPhysics
+import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.SquareTrace
 import com.chomusukestudio.projectrocketc.Shape.*
@@ -15,7 +17,7 @@ import kotlin.math.sin
  * Created by Shuang Li on 11/03/2018.
  */
 
-open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer, layers: Layers) : Rocket(surrounding, layers) {
+open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
             AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f,1f, 1f, 0f, 3f, layers)
@@ -26,12 +28,10 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
         val y2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3)
         val originX = (x1 + x2) / 2
         val originY = (y1 + y2) / 2
-        trace.generateTrace(now, previousFrameTime, originX, originY, RocketState(currentRotation, speed*sin(currentRotation), speed*cos(currentRotation)))
+        trace.generateTrace(now, previousFrameTime, originX, originY, RocketState(currentRotation, speedX, speedY))
     }
 
-    override val radiusOfRotation = 2f
-    final override val initialSpeed = 4f / 1000f
-    override var speed = initialSpeed
+    override val rocketQuirks = RocketQuirks(0.003f, 0.004f, 0.000002f, 0.000001f)
     
     override val width = 0.3f
 

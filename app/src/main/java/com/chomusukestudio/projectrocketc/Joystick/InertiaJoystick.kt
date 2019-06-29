@@ -51,8 +51,8 @@ class InertiaJoystick: Joystick() {
 			nowY2 = 0f
 		}
 	}
-	override fun getRocketMotion(currentRotation: Float): RocketMotion {
-		return RocketMotion(
+	override fun getRocketControl(currentRotation: Float): RocketControl {
+		return RocketControl(
 				if (actionDown && nowX2 == 0f) {
 					when {
 						nowX > 0 -> 1f

@@ -60,7 +60,7 @@ abstract class Joystick {
         this.nowY = nowY
     }
 
-    abstract fun getRocketMotion(currentRotation: Float): RocketMotion
+    abstract fun getRocketControl(currentRotation: Float): RocketControl
 
     open fun drawJoystick() {}
 

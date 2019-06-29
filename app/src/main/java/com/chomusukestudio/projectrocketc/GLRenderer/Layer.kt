@@ -193,7 +193,6 @@ class Layer(val z: Float) { // depth for the drawing order
         fun refreshMatrix() {
             // this projection matrix is applied to object coordinates
             // in the onDrawFrame() method
-            val leftRightBottomTop = generateLeftRightBottomTopEnd(widthInPixel / heightInPixel)
 
             // for debugging
 //        Matrix.orthoM(mProjectionMatrix, 0, leftEnd * 2, rightEnd * 2,

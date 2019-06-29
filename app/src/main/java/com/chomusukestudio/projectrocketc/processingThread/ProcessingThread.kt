@@ -1,25 +1,18 @@
 package com.chomusukestudio.projectrocketc.processingThread
 
-import android.content.Context
 import android.media.MediaPlayer
 import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
-import android.view.WindowManager
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.*
-import com.chomusukestudio.projectrocketc.GLRenderer.Layer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.GLRenderer.generateLeftRightBottomTopEnd
 import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
-import com.chomusukestudio.projectrocketc.Joystick.Joystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Rocket.Rocket1
-import com.chomusukestudio.projectrocketc.Rocket.Rocket2
-import com.chomusukestudio.projectrocketc.Shape.CircularShape
+import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.AccelerativeRocketPhysics
+import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DirectionalRocketPhysics
 import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
-import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import com.chomusukestudio.projectrocketc.ThreadClasses.ScheduledThread
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import java.lang.IndexOutOfBoundsException
 import java.util.concurrent.Executors
@@ -47,8 +40,8 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 
     private fun getRocket(rocketIndex: Int): Rocket {
         return when (rocketIndex) {
-            0 -> Rocket1(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), layers)
-            1 -> Rocket2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), layers)
+            0 -> Rocket1(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DirectionalRocketPhysics(), layers)
+            1 -> Rocket1(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), AccelerativeRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -139,8 +132,8 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
                         }
                         surrounding.checkAndAddLittleStar(now)
                     }
-                    if (state == State.PreGame || state == State.InGame) {
-                        rocket.moveRocket(joystick.getRocketMotion(rocket.currentRotation), now, previousFrameTime, state)
+                    if (/*state == State.PreGame || */state == State.InGame) {
+                        rocket.moveRocket(joystick.getRocketControl(rocket.currentRotation), now, previousFrameTime)
                         surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime, state)
                         joystick.drawJoystick()
                     }

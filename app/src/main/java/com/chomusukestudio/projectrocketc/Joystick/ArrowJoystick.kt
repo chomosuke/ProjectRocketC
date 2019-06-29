@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.Joystick
 
-import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
@@ -30,7 +29,7 @@ class ArrowJoystick(private val centerOfRotationX: Float, private val centerOfRo
         super.updateTouchPosition(nowX, nowY)
     }
     
-    override fun getRocketMotion(currentRotation: Float): RocketMotion { // compare currentRotation with intended direction to determine turning direction
+    override fun getRocketControl(currentRotation: Float): RocketControl { // compare currentRotation with intended direction to determine turning direction
         if (actionDown) { // only rotate rocket when the screen is touched
             var rotationNeeded = intendedDirection - currentRotation
             
@@ -42,10 +41,10 @@ class ArrowJoystick(private val centerOfRotationX: Float, private val centerOfRo
                 else
                     break
             }
-            return RocketMotion(rotationNeeded)
+            return RocketControl(rotationNeeded)
         } // it works, but why
         else
-            return RocketMotion(0f)
+            return RocketControl(0f)
     }
     
     override fun drawJoystick() {

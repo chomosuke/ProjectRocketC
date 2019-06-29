@@ -5,8 +5,8 @@ package com.chomusukestudio.projectrocketc.Joystick
  */
 
 class TraditionalJoystick : Joystick() {
-    override fun getRocketMotion(currentRotation: Float): RocketMotion {
-        return RocketMotion(0f)
+    override fun getRocketControl(currentRotation: Float): RocketControl {
+        return RocketControl(0f)
     }
     
     override fun drawJoystick() {

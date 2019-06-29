@@ -6,9 +6,10 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.support.annotation.CallSuper
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.Joystick.RocketMotion
+import com.chomusukestudio.projectrocketc.Joystick.RocketControl
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
+import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 
@@ -16,60 +17,9 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.Coordinate
-import com.chomusukestudio.projectrocketc.State
 import kotlin.math.*
 
-abstract class Rocket(protected val surrounding: Surrounding, private val layers: Layers) {
-
-    protected open var explosionShape: ExplosionShape? = null
-
-
-    protected abstract val shapeForCrashAppro: Shape
-    fun cloneShapeForCrashAppro(): Shape { return shapeForCrashAppro.cloneShape() }
-
-    protected abstract val trace: Trace
-    var currentRotation = surrounding.rotation
-        protected set/* angle of rocket's current heading in radians
-    angle between up and rocket current heading, positive is clockwise. */
-    abstract var speed: Float
-        protected set // ds/dt
-    abstract val radiusOfRotation: Float
-    
-    abstract val initialSpeed: Float
-    protected abstract val components: Array<Shape>
-    
-    var centerOfRotationX: Float = surrounding.centerOfRotationX
-        protected set
-    var centerOfRotationY: Float = surrounding.centerOfRotationY
-        protected set
-    // surrounding have to define center of rotation
-    // constructor of subclasses need to reset components with its center of rotation at centerOfRotationY and centerOfRotationX and defined it's speed
-
-    protected var crashedComponent: Shape? = null
-    open fun isCrashed(surrounding: Surrounding): Boolean {
-        // surrounding will handle this
-        crashedComponent = surrounding.isCrashed(shapeForCrashAppro, components)
-        if (crashedComponent != null) {
-            return true
-        }
-        return false
-    }
-
-    open val explosionCoordinate = Coordinate(centerOfRotationX, centerOfRotationY)
-    fun drawExplosion(now: Long, previousFrameTime: Long) {
-        if (explosionShape == null) {
-            explosionShape = RedExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 0.75f, 1000, BuildShapeAttr(-11f, true, layers))
-        } else {
-            // rocket already blown up
-            for (component in components)
-                if (!component.removed)
-                    component.removeShape()
-
-            explosionShape!!.drawExplosion(now - previousFrameTime)
-        }
-    }
-
-    abstract val width: Float
+abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics: RocketPhysics, private val layers: Layers) {
     
     protected fun setRotation(centerOfRotationX: Float, centerOfRotationY: Float, rotation: Float) {
         // called before initialize trace
@@ -80,54 +30,89 @@ abstract class Rocket(protected val surrounding: Surrounding, private val layers
             component.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
         currentRotation = rotation
     }
-
-    protected fun rotateRocket(angle: Float) {
-        currentRotation += angle
-        for (component in components)
-            component.rotateShape(centerOfRotationX, centerOfRotationY, angle)
-        //            surrounding.rotateSurrounding(dr, now, previousFrameTime);
-        shapeForCrashAppro.rotateShape(centerOfRotationX, centerOfRotationY, angle)
+    
+    protected open var explosionShape: ExplosionShape? = null
+    
+    protected abstract val shapeForCrashAppro: Shape
+    fun cloneShapeForCrashAppro(): Shape {
+        return shapeForCrashAppro.cloneShape()
     }
     
-//    @CallSuper // allow rocket to have moving component
-    open fun moveRocket(rocketMotion: RocketMotion, now: Long, previousFrameTime: Long, state: State) {
-        val rotationNeeded = rocketMotion.rotationNeeded
-        if (state == State.InGame) { // only make it faster if it's already started
-            speed = speedFormula(initialSpeed, LittleStar.score)
+    protected abstract val trace: Trace
+    var currentRotation = surrounding.rotation
+        /* angle of rocket's current heading in radians
+    angle between up and rocket current heading, positive is clockwise. */
+        protected set(value) {
+            val angle = value - field
+            field = value
+            for (component in components)
+                component.rotateShape(centerOfRotationX, centerOfRotationY, angle)
+            //            surrounding.rotateSurrounding(dr, now, previousFrameTime);
+            shapeForCrashAppro.rotateShape(centerOfRotationX, centerOfRotationY, angle)
         }
-        val speedOfRotation = speed / radiusOfRotation // dr/dt = ds/dt / radiusOfRotation
-        val ds = speed * (now - previousFrameTime) // ds/dt * dt
-        val dr = speedOfRotation * (now - previousFrameTime) // dr/dt * dt
+    protected var speedX = 0f
+        private set
+    protected var speedY = 0f
+        private set
     
-        when {
-            rotationNeeded < -dr -> {
-                rotateRocket(-dr)
-            }
-            rotationNeeded > dr -> {
-                rotateRocket(dr)
-            }
-            else -> {
-                rotateRocket(rotationNeeded)
-            }
+    abstract val rocketQuirks: RocketQuirks
+    protected abstract val components: Array<Shape>
+    
+    var centerOfRotationX: Float = surrounding.centerOfRotationX
+        protected set
+    var centerOfRotationY: Float = surrounding.centerOfRotationY
+        protected set
+    // surrounding have to define center of rotation
+    // constructor of subclasses need to reset components with its center of rotation at centerOfRotationY and centerOfRotationX and defined it's speed
+    
+    protected var crashedComponent: Shape? = null
+    open fun isCrashed(surrounding: Surrounding): Boolean {
+        // surrounding will handle this
+        crashedComponent = surrounding.isCrashed(shapeForCrashAppro, components)
+        if (crashedComponent != null) {
+            return true
         }
-
-        val dx = -ds * sin(currentRotation.toDouble()).toFloat()
-        val dy = -ds * cos(currentRotation.toDouble()).toFloat()
-
-        if (state == State.InGame) { // only generate trace when in game
-            trace.moveTrace(dx, dy)
+        return false
+    }
+    
+    open val explosionCoordinate = Coordinate(centerOfRotationX, centerOfRotationY)
+    fun drawExplosion(now: Long, previousFrameTime: Long) {
+        if (explosionShape == null) {
+            explosionShape = RedExplosionShape(explosionCoordinate.x, explosionCoordinate.y, 0.75f, 1000, BuildShapeAttr(-11f, true, layers))
+        } else {
+            // rocket already blown up
+            for (component in components)
+                if (!component.removed)
+                    component.removeShape()
+            
+            explosionShape!!.drawExplosion(now - previousFrameTime)
+        }
+    }
+    
+    abstract val width: Float
+    
+    @CallSuper // allow rocket to have moving component
+    open fun moveRocket(rocketControl: RocketControl, now: Long, previousFrameTime: Long) {
+        val rocketState = rocketPhysics.getRocketState(rocketQuirks, RocketState(currentRotation, speedX, speedY), rocketControl, now, previousFrameTime)
+        
+        this.speedX = rocketState.speedX
+        this.speedY = rocketState.speedY
+        this.currentRotation = rocketState.currentRotation
+        
+        val dx = -speedX * (now - previousFrameTime)
+        val dy = -speedY * (now - previousFrameTime)
+        
+        if (rocketControl.throttleOn) {
             generateTrace(now, previousFrameTime)
-            fadeTrace(now, previousFrameTime)
         }
-
-        surrounding.moveSurrounding(dx, dy , now, previousFrameTime)
-    }
-
-    protected abstract fun generateTrace(now: Long, previousFrameTime: Long)
-    open fun fadeTrace(now: Long, previousFrameTime: Long) {
+        trace.moveTrace(dx, dy)
         trace.fadeTrace(now, previousFrameTime)
+        
+        surrounding.moveSurrounding(dx, dy, now, previousFrameTime)
     }
-
+    
+    protected abstract fun generateTrace(now: Long, previousFrameTime: Long)
+    
     open fun removeAllShape() {
         for (component in components)
             if (!component.removed)
@@ -147,4 +132,6 @@ fun speedFormula(initialSpeed: Float, score: Int): Float {
 //                        speed = initialSpeed * (LittleStar.score / 64f + 1);
 }
 
-class RocketState(val currentRotation: Float, val speedX: Float, val speedY: Float)
+data class RocketState(val currentRotation: Float, val speedX: Float, val speedY: Float)
+
+data class RocketQuirks(val rotationSpeed: Float, val initialSpeed: Float, val acceleration: Float, val deceleration: Float)
