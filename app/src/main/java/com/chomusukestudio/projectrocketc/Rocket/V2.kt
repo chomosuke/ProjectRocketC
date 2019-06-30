@@ -17,7 +17,7 @@ import kotlin.math.sin
  * Created by Shuang Li on 11/03/2018.
  */
 
-open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, rocketPhysics, layers) {
+class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
             AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f,1f, 1f, 0f, 3f, layers)
@@ -35,7 +35,7 @@ open class Rocket1(surrounding: Surrounding, private val crashSound: MediaPlayer
     
     override val width = 0.3f
 
-    final override val components: Array<Shape> = Array(4) { i ->
+    override val components: Array<Shape> = Array(4) { i ->
         when (i) {
         // defined components of rocket around centerOfRotation set by surrounding
             0 ->

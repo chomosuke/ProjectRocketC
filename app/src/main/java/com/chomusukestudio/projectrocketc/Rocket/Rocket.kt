@@ -112,6 +112,10 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
     }
     
     protected abstract fun generateTrace(now: Long, previousFrameTime: Long)
+
+    fun fadeTrace(now: Long, previousFrameTime: Long) {
+        trace.fadeTrace(now, previousFrameTime)
+    }
     
     open fun removeAllShape() {
         for (component in components)

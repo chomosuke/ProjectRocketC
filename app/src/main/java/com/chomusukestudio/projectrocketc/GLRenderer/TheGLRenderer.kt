@@ -14,7 +14,7 @@ import javax.microedition.khronos.opengles.GL10
 import android.content.ContentValues.TAG
 import android.opengl.GLES20
 import com.chomusukestudio.projectrocketc.*
-import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
+import com.chomusukestudio.projectrocketc.ProcessingThread
 
 class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MainActivity.MyGLSurfaceView, private val layers: Layers) : GLSurfaceView.Renderer {
 

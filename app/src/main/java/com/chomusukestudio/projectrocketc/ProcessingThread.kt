@@ -1,4 +1,4 @@
-package com.chomusukestudio.projectrocketc.processingThread
+package com.chomusukestudio.projectrocketc
 
 import android.media.MediaPlayer
 import android.os.SystemClock
@@ -9,9 +9,10 @@ import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
-import com.chomusukestudio.projectrocketc.Rocket.Rocket1
+import com.chomusukestudio.projectrocketc.Rocket.V2
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.AccelerativeRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DirectionalRocketPhysics
+import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DragRocketPhysics
 import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import java.lang.IndexOutOfBoundsException
@@ -40,8 +41,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 
     private fun getRocket(rocketIndex: Int): Rocket {
         return when (rocketIndex) {
-            0 -> Rocket1(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DirectionalRocketPhysics(), layers)
-            1 -> Rocket1(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), AccelerativeRocketPhysics(), layers)
+            0 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -55,7 +55,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     }
     fun isOutOfBounds(dIndex: Int): Boolean {
         val index = rocketIndex + dIndex
-        return index in 0..1
+        return index !in 0..2
     }
 
     private fun updateScore() {

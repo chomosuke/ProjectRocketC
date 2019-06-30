@@ -30,7 +30,7 @@ class AccelerativeRocketPhysics : RocketPhysics() {
 			speedY += rocketQuirks.acceleration * (now - previousFrameTime) * cos(currentRotation)
 		}
 		// friction
-		if (speedX != 0f && speedY != 0f) {
+		if (speedX != 0f || speedY != 0f) {
 			val speedXY = decelerateSpeedXY(speedX, speedY, rocketQuirks.deceleration, (now - previousFrameTime))
 			speedX = speedXY[0]
 			speedY = speedXY[1]

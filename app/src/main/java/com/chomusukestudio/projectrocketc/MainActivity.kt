@@ -20,7 +20,6 @@ import com.chomusukestudio.projectrocketc.GLRenderer.*
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLDisplay
-import com.chomusukestudio.projectrocketc.processingThread.ProcessingThread
 import android.view.*
 import android.view.animation.Animation
 import android.widget.Button
@@ -228,7 +227,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     fun swapRocketLeft(view: View) {
         val processingThread = findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.processingThread
-        if (processingThread.isOutOfBounds(-1))
+        if (processingThread.isOutOfBounds(-2))
             findViewById<Button>(R.id.swapRocketLeftButton).visibility = View.INVISIBLE
         processingThread.swapRocket(-1)
         findViewById<Button>(R.id.swapRocketRightButton).visibility = View.VISIBLE
@@ -236,7 +235,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     fun swapRocketRight(view: View) {
         val processingThread = findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.processingThread
-        if (processingThread.isOutOfBounds(1))
+        if (processingThread.isOutOfBounds(2))
             findViewById<Button>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
         processingThread.swapRocket(1)
         findViewById<Button>(R.id.swapRocketLeftButton).visibility = View.VISIBLE
