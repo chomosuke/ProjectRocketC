@@ -1,11 +1,9 @@
 package com.chomusukestudio.projectrocketc.Rocket.rocketPhysics
 
 import com.chomusukestudio.projectrocketc.Joystick.RocketControl
-import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Rocket.RocketQuirks
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.Rocket.speedFormula
-import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import kotlin.math.cos
 import kotlin.math.sin
@@ -13,9 +11,15 @@ import kotlin.math.sin
 
 class DirectionalRocketPhysics: RocketPhysics() {
 	override fun getRocketState(rocketQuirks: RocketQuirks, rocketState: RocketState, rocketControl: RocketControl, now: Long, previousFrameTime: Long): RocketState {
-		val rotationNeeded = rocketControl.rotationNeeded
-		val dr = rocketQuirks.rotationSpeed * (now - previousFrameTime) // dr/dt * dt
 		var currentRotation = rocketState.currentRotation
+
+		val speed = speedFormula(rocketQuirks.initialSpeed, LittleStar.score)
+		val speedX = speed * sin(currentRotation)
+		val speedY = speed * cos(currentRotation)
+
+		val rotationNeeded = rocketControl.rotationNeeded
+		val rotationSpeed = speed / rocketQuirks.turningRadius
+		val dr = rotationSpeed * (now - previousFrameTime) // dr/dt * dt
 		when {
 			rotationNeeded < -dr -> {
 				currentRotation -= dr
@@ -27,9 +31,6 @@ class DirectionalRocketPhysics: RocketPhysics() {
 				currentRotation += rotationNeeded
 			}
 		}
-		val speed = speedFormula(rocketQuirks.initialSpeed, LittleStar.score)
-		val speedX = speed * sin(currentRotation)
-		val speedY = speed * cos(currentRotation)
 		return RocketState(currentRotation, speedX, speedY)
 	}
 }

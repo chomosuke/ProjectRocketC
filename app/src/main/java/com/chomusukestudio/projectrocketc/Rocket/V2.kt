@@ -2,16 +2,11 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DirectionalRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
-import com.chomusukestudio.projectrocketc.Rocket.trace.SquareTrace
 import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * Created by Shuang Li on 11/03/2018.
@@ -20,45 +15,58 @@ import kotlin.math.sin
 class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
-            AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f,1f, 1f, 0f, 3f, layers)
+            AccelerationTrace(7, 1.01f, 0.24f, 0.4f, 1000, 100, 0.004f, 1f, 1f, 0f, 3f, layers)
+
     override fun generateTrace(now: Long, previousFrameTime: Long) {
-        val x1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4)
-        val y1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4)
-        val x2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3)
-        val y2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3)
+        val x1 = (components[6] as QuadrilateralShape).getQuadrilateralShapeCoords(QX1)
+        val y1 = (components[6] as QuadrilateralShape).getQuadrilateralShapeCoords(QY1)
+        val x2 = (components[5] as QuadrilateralShape).getQuadrilateralShapeCoords(QX1)
+        val y2 = (components[5] as QuadrilateralShape).getQuadrilateralShapeCoords(QY1)
         val originX = (x1 + x2) / 2
         val originY = (y1 + y2) / 2
         trace.generateTrace(now, previousFrameTime, originX, originY, RocketState(currentRotation, speedX, speedY))
     }
 
-    override val rocketQuirks = RocketQuirks(0.003f, 0.004f, 0.000002f, 0.000001f)
-    
+    override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f, 0.000002f, 0.000001f)
+
     override val width = 0.3f
 
-    override val components: Array<Shape> = Array(4) { i ->
-        when (i) {
-        // defined components of rocket around centerOfRotation set by surrounding
-            0 ->
-                TriangularShape(centerOfRotationX, centerOfRotationY + 0.5f,
-                        centerOfRotationX + 0.15f, centerOfRotationY + 0.3f,
-                        centerOfRotationX - 0.15f, centerOfRotationY + 0.3f,
-                        1f, 1f, 1f, 1f, BuildShapeAttr(1f, true, layers))
-            1 ->
-                QuadrilateralShape(centerOfRotationX + 0.15f, centerOfRotationY + 0.3f,
-                        centerOfRotationX - 0.15f, centerOfRotationY + 0.3f, centerOfRotationX - 0.15f, centerOfRotationY - 0.3f,
-                        centerOfRotationX + 0.15f, centerOfRotationY - 0.3f, 1f, 1f, 1f, 1f, BuildShapeAttr(1f, true, layers))
-            2 ->
-                CircularShape(centerOfRotationX, centerOfRotationY /*+ 0.38*/, 0.07f,
-                        0.1f, 0.1f, 0.1f, 1f, BuildShapeAttr(0.9999f, true, layers))
-            3 ->
-                QuadrilateralShape(centerOfRotationX + 0.1f, centerOfRotationY - 0.3f,
-                        centerOfRotationX - 0.1f, centerOfRotationY - 0.3f, centerOfRotationX - 0.12f, centerOfRotationY - 0.4f,
-                        centerOfRotationX + 0.12f, centerOfRotationY - 0.4f, 1f, 1f, 1f, 1f, BuildShapeAttr(1f, true, layers))
-            else -> {
-                throw IndexOutOfBoundsException()
-            }
-        }
-    }
+    override val components: Array<Shape> = arrayOf(
+            // defined components of rocket around centerOfRotation set by surrounding
+            // 0
+            TriangularShape(centerOfRotationX, centerOfRotationY + 0.65f,
+                    centerOfRotationX + 0.05f, centerOfRotationY + 0.45f,
+                    centerOfRotationX - 0.05f, centerOfRotationY + 0.45f,
+                    0.2f, 0.2f, 0.2f, 1f, BuildShapeAttr(1f, true, layers)),
+            // 1
+            QuadrilateralShape(centerOfRotationX + 0.05f, centerOfRotationY + 0.45f,
+                    centerOfRotationX, centerOfRotationY + 0.45f, centerOfRotationX, centerOfRotationY + 0.15f,
+                    centerOfRotationX + 0.08f, centerOfRotationY + 0.15f, 1f, 1f, 1f, 1f, BuildShapeAttr(1f, true, layers)),
+            // 2
+            QuadrilateralShape(centerOfRotationX - 0.05f, centerOfRotationY + 0.45f,
+                    centerOfRotationX, centerOfRotationY + 0.45f, centerOfRotationX, centerOfRotationY + 0.15f,
+                    centerOfRotationX - 0.08f, centerOfRotationY + 0.15f, 0.2f, 0.2f, 0.2f, 1f, BuildShapeAttr(1f, true, layers)),
+            // 3
+            QuadrilateralShape(centerOfRotationX + 0.08f, centerOfRotationY - 0.15f,
+                    centerOfRotationX, centerOfRotationY - 0.15f,
+                    centerOfRotationX, centerOfRotationY + 0.15f,
+                    centerOfRotationX + 0.08f, centerOfRotationY + 0.15f, 0.2f, 0.2f, 0.2f, 1f, BuildShapeAttr(1f, true, layers)),
+            // 4
+            QuadrilateralShape(centerOfRotationX - 0.08f, centerOfRotationY - 0.15f,
+                    centerOfRotationX, centerOfRotationY - 0.15f,
+                    centerOfRotationX, centerOfRotationY + 0.15f,
+                    centerOfRotationX - 0.08f, centerOfRotationY + 0.15f, 1f, 1f, 1f, 1f, BuildShapeAttr(1f, true, layers)),
+            // 5
+            QuadrilateralShape(centerOfRotationX + 0.09f, centerOfRotationY - 0.35f,
+                    centerOfRotationX, centerOfRotationY - 0.35f,
+                    centerOfRotationX, centerOfRotationY - 0.15f,
+                    centerOfRotationX + 0.08f, centerOfRotationY - 0.15f, 1f, 1f, 1f, 1f, BuildShapeAttr(1f, true, layers)),
+            // 6
+            QuadrilateralShape(centerOfRotationX - 0.09f, centerOfRotationY - 0.35f,
+                    centerOfRotationX, centerOfRotationY - 0.35f,
+                    centerOfRotationX, centerOfRotationY - 0.15f,
+                    centerOfRotationX - 0.08f, centerOfRotationY - 0.15f, 0.2f, 0.2f, 0.2f, 1f, BuildShapeAttr(1f, true, layers)))
+
     override val shapeForCrashAppro = QuadrilateralShape(centerOfRotationX + 0.15f, centerOfRotationY + 0.5f,
             centerOfRotationX - 0.15f, centerOfRotationY + 0.5f, centerOfRotationX - 0.15f, centerOfRotationY - 0.4f,
             centerOfRotationX + 0.15f, centerOfRotationY - 0.4f, 1f, 1f, 1f, 1f, BuildShapeAttr(1f, false, layers))

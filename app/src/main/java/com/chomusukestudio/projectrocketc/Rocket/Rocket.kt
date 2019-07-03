@@ -138,4 +138,4 @@ fun speedFormula(initialSpeed: Float, score: Int): Float {
 
 data class RocketState(val currentRotation: Float, val speedX: Float, val speedY: Float)
 
-data class RocketQuirks(val rotationSpeed: Float, val initialSpeed: Float, val acceleration: Float, val deceleration: Float)
+data class RocketQuirks(val turningRadius: Float, val initialSpeed: Float, val rotationSpeed: Float, val acceleration: Float, val deceleration: Float)
