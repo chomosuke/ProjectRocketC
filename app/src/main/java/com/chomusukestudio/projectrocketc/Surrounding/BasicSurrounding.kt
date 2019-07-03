@@ -17,7 +17,6 @@ import com.chomusukestudio.projectrocketc.Shape.PlanetShape.SaturnShape
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.StarShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 
 import java.util.ArrayList
 
@@ -99,6 +98,11 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         LittleStar.setCenterOfRocket(centerOfRotationX, centerOfRotationY)
     }
 
+    private val topPlanetBoundary = topEnd * (1.5f/* + topMarginForLittleStar*/)
+    private val bottomPlanetBoundary = bottomEnd * 1.5f
+    private val leftPlanetBoundary = leftEnd * 1.5f
+    private val rightPlanetBoundary = rightEnd * 1.5f
+
     override fun initializeSurrounding(rocket: Rocket, state: State) {
         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
 
@@ -129,8 +133,8 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         val iMax = 256
         for (i in 0..iMax) {
             // randomly reposition the new planet
-            val centerX = randFloat(rightEnd * 1.5f, leftEnd * 1.5f) + avoidDistanceX // + avoidDistanceX as to avoid constant change of visibility
-            val centerY = (topEnd*(1.5f/* + topMarginForLittleStar*/) - bottomEnd*1.5f) / iMax * i + bottomEnd*1.5f
+            val centerX = randFloat(rightPlanetBoundary, leftPlanetBoundary) + avoidDistanceX // + avoidDistanceX as to avoid constant change of visibility
+            val centerY = (topPlanetBoundary - bottomPlanetBoundary) / iMax * i + bottomPlanetBoundary
             newPlanet.resetPosition(centerX, centerY)
 
             if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
@@ -181,15 +185,15 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         }
 
         // to create
-        val newAreaLR = abs(displacementX * (topEnd * (1.5f/* + topMarginForLittleStar*/) - bottomEnd * 1.5f))
-        val newAreaTB = abs(displacementY * (leftEnd * 1.5f - rightEnd * 1.5f))
+        val newAreaLR = abs(displacementX * (topPlanetBoundary - bottomPlanetBoundary))
+        val newAreaTB = abs(displacementY * (leftPlanetBoundary - rightPlanetBoundary))
         val rand = random()
         if (rand * newAreaLR > (1 - rand) * newAreaTB) {
 
             if (displacementX < 0) {
                 // if need to create on positive side
                 // put the random planet on the positive side
-                newPlanet.resetPosition(randFloat(leftEnd * 1.5f, leftEnd * 1.5f + displacementX), randFloat(bottomEnd * 1.5f, topEnd * (1.5f/* + topMarginForLittleStar*/)))
+                newPlanet.resetPosition(randFloat(leftPlanetBoundary, leftPlanetBoundary + displacementX), randFloat(bottomPlanetBoundary, topPlanetBoundary))
 
                 if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
                     planets.add(newPlanet)// use the random new planet
@@ -199,7 +203,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             } else {
                 // if need to create on negative side
                 // put the random planet on the negative side
-                newPlanet.resetPosition(randFloat(rightEnd * 1.5f, rightEnd * 1.5f + displacementX), randFloat(bottomEnd * 1.5f, topEnd * (1.5f/* + topMarginForLittleStar*/)))
+                newPlanet.resetPosition(randFloat(rightPlanetBoundary, rightPlanetBoundary + displacementX), randFloat(bottomPlanetBoundary, topPlanetBoundary))
 
                 if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
                     planets.add(newPlanet)// use the random new planet
@@ -211,8 +215,8 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             if (displacementY < 0) {
                 // if need to create on positive side
                 // put the random planet on the positive side
-                newPlanet.resetPosition(randFloat(rightEnd * 1.5f, leftEnd * 1.5f),
-                        randFloat(topEnd * (1.5f/* + topMarginForLittleStar*/), topEnd * (1.5f/* + topMarginForLittleStar*/) + displacementY))
+                newPlanet.resetPosition(randFloat(rightPlanetBoundary, leftPlanetBoundary),
+                        randFloat(topPlanetBoundary, topPlanetBoundary + displacementY))
 
                 if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
                     planets.add(newPlanet) // use the random new planet
@@ -222,7 +226,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             } else {
                 // if need to create on negative side
                 // put the random planet on the positive side
-                newPlanet.resetPosition(randFloat(rightEnd * 1.5f, leftEnd * 1.5f), randFloat(bottomEnd * 1.5f, bottomEnd * 1.5f + displacementY))
+                newPlanet.resetPosition(randFloat(rightPlanetBoundary, leftPlanetBoundary), randFloat(bottomPlanetBoundary, bottomPlanetBoundary + displacementY))
 
                 if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
                     planets.add(newPlanet)// use the random new planet
