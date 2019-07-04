@@ -27,6 +27,7 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
 
     var radius
         set(value) {
+            regularPolygonalShape.radius = value
             if (abs(radius) > abs(lastChangeOfNumberOfEdgesRadius * 1.25) || abs(radius) < abs(lastChangeOfNumberOfEdgesRadius * 0.8)
                     && getNumberOfEdges(radius, performanceIndex) != regularPolygonalShape.numberOfEdges) {
                 lastChangeOfNumberOfEdgesRadius = radius
@@ -34,8 +35,7 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
                 regularPolygonalShape.removeShape()
                 regularPolygonalShape = RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
                         centerX, centerY, radius, color, buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
-            } else
-                regularPolygonalShape.radius = value
+            }
         }
         get() = regularPolygonalShape.radius
 
