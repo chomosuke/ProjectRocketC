@@ -1,14 +1,12 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
-import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.TopHalfRingShape
+import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
 import com.chomusukestudio.projectrocketc.randFloat
 import java.lang.Math.*
 
 import java.util.ArrayList
+import kotlin.math.pow
 
 class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int, centerX: Float, centerY: Float, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(centerX, centerY, radius) {
     override val isOverlapMethodLevel: Double = 3.0 // one level higher than other PlanetShape cause the ring
@@ -20,45 +18,43 @@ class SaturnShape(ringA: Float, ringB: Float, innerA: Float, numberOfRings: Int,
         var ringA = ringA
         var ringB = ringB
         
-        val mainColor = floatArrayOf(
+        val mainColor = Color(
                 randFloat(0.2f, 0.8f),
                 randFloat(0.2f, 0.8f),
-                randFloat(0.2f, 0.8f))
+                randFloat(0.2f, 0.8f), 1f)
         
         val centerComponentShapes = arrayOfNulls<Shape>(1)
-        centerComponentShapes[0] = CircularShape(centerX, centerY, radius, mainColor[0], mainColor[1], mainColor[2], 1f, buildShapeAttr)
+        centerComponentShapes[0] = CircularShape(centerX, centerY, radius, mainColor, buildShapeAttr)
         
         val theRatio = ringB / ringA
         
         val aForPointsOutside = ringA
         val bForPointsOutside = ringB
         
-        val factor = pow((innerA / ringA).toDouble(), (1f / numberOfRings).toDouble()).toFloat()
+        val factor = (innerA / ringA).pow(1f / numberOfRings)
         val ringComponentShapes = arrayOfNulls<TopHalfRingShape>(numberOfRings * 2) // number of rings times two
-        var ringColor = FloatArray(0) // just for the compiler to not talk about not initializing stuff
+        var ringColor: Color? = null // just for the compiler to not talk about not initializing stuff
         for (i in ringComponentShapes.indices) {
             if (i % 2 == 0) {
                 // new color
                 
                 // the ratio also happens to be the ratio of actual thickness to thickness to camera
-                var alpha = pow(randFloat(0.5f, 1f).toDouble(), theRatio.toDouble()).toFloat()
+                var alpha = randFloat(0.5f, 1f).pow(theRatio)
                 
                 if (alpha > 1) alpha = 1f // alpha can't be bigger than 1.
-                ringColor = floatArrayOf(
-                        randFloat(0.7f, 1.3f) * mainColor[0],
-                        randFloat(0.7f, 1.3f) * mainColor[1],
-                        randFloat(0.7f, 1.3f) * mainColor[2], alpha)
+                ringColor = Color(
+                        randFloat(0.7f, 1.3f) * mainColor.red,
+                        randFloat(0.7f, 1.3f) * mainColor.green,
+                        randFloat(0.7f, 1.3f) * mainColor.blue, alpha)
                 
                 // topEnd half ring
                 ringComponentShapes[i] = TopHalfRingShape(centerX, centerY, ringA, ringB, factor,
-                        ringColor[0], ringColor[1], ringColor[2],
-                        ringColor[3], buildShapeAttr.newAttrWithChangedZ(0.01f))
+                        ringColor, buildShapeAttr.newAttrWithChangedZ(0.01f))
                 
             } else {
                 // bottomEnd half ring
                 ringComponentShapes[i] = TopHalfRingShape(centerX, centerY, ringA, ringB, factor,
-                        ringColor[0], ringColor[1], ringColor[2],
-                        ringColor[3], buildShapeAttr.newAttrWithChangedZ(-0.01f))
+                        ringColor!!, buildShapeAttr.newAttrWithChangedZ(-0.01f))
                 ringComponentShapes[i]!!.rotateShape(centerX, centerY, PI.toFloat())
                 
                 // smaller a & b
