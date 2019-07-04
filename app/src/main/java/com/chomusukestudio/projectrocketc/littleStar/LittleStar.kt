@@ -1,13 +1,10 @@
 package com.chomusukestudio.projectrocketc.littleStar
 
 import android.widget.TextView
-import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.chomusukestudio.projectrocketc.Shape.FullRingShape
 import com.chomusukestudio.projectrocketc.Shape.LittleStar.ArrowToLittleStarShape
 import com.chomusukestudio.projectrocketc.Shape.LittleStar.LittleStarShape
 import com.chomusukestudio.projectrocketc.Shape.LittleStar.RADIUS_OF_LITTLE_STAR
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
-import com.chomusukestudio.projectrocketc.Shape.Shape
 
 import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
@@ -20,10 +17,10 @@ import android.media.SoundPool
 import android.media.AudioManager
 import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.*
-import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
+import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Planet
 import java.lang.Math.abs
-import java.lang.Math.pow
+import kotlin.math.pow
 
 
 /**
@@ -36,8 +33,8 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     private var rangeCircleThingy: FullRingShape? = null
     private var inScreen: Boolean
     
-    enum class Color(val red: Float, val green: Float, val blue: Float) {
-        RED(1f, 0f, 0f), YELLOW(242f/256f, 187f/256f, 26f/256f)
+    enum class Color(val color: com.chomusukestudio.projectrocketc.Shape.Color) {
+        RED(Color(1f, 0f, 0f, 1f)), YELLOW(Color(242f/256f, 187f/256f, 26f/256f, 1f))
     }
     
     private val birthTime: Long = now
@@ -46,8 +43,8 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         // circle color for arrowToLittleStarShape is star color
         // arrow color is circle color for littleStarShape
         val buildShapeAttr = BuildShapeAttr(-10f, true, layers)
-        littleStarShape = LittleStarShape(centerX, centerY, RADIUS_OF_LITTLE_STAR, COLOR.red, COLOR.green, COLOR.blue, 1f, 1f, 1f, buildShapeAttr)
-        arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, 1f, 1f, 1f, COLOR.red, COLOR.green, COLOR.blue, buildShapeAttr)
+        littleStarShape = LittleStarShape(centerX, centerY, RADIUS_OF_LITTLE_STAR, COLOR.color, Color(1f, 1f, 1f, 1f), buildShapeAttr)
+        arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, Color(1f, 1f, 1f, 1f), COLOR.color, buildShapeAttr)
 
         if (centerX + RADIUS_OF_LITTLE_STAR + range > rightEnd &&
                         centerX - RADIUS_OF_LITTLE_STAR + range < leftEnd &&
@@ -114,7 +111,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
                 }
 
                 if (dScore > 48) {
-                    val playbackSpeed = pow(2.0, (dScore % 12 + 48).toDouble() / 12).toFloat() / 2
+                    val playbackSpeed = 2f.pow((dScore % 12 + 48).toFloat() / 12) / 2
 
                     val baseVolume = 1 - abs((12f - dScore % 12) / 12f)
 
@@ -124,7 +121,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
                     starEatingStreamIds.add(soundPool.play(soundId, 1 - baseVolume, 1 - baseVolume, 1, 0, playbackSpeed))
                 } else {
 
-                    val playbackSpeed = pow(2.0, dScore.toDouble() / 12).toFloat() / 2
+                    val playbackSpeed = 2f.pow(dScore.toFloat() / 12) / 2
 
                     starEatingStreamIds.add(soundPool.play(soundId, 1f, 1f, 1, 0, playbackSpeed))
                 }

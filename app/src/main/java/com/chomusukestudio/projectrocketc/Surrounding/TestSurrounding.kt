@@ -5,10 +5,7 @@ import android.support.annotation.CallSuper
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
-import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
-import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.TriangularShape
+import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.State
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
@@ -26,7 +23,7 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
                 centerOfRotationX + rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
                 centerOfRotationX + rocket.width / 2f, centerOfRotationY,
                 centerOfRotationX - rocket.width / 2f, centerOfRotationY,
-                0f, 1f, 0f, 1f, BuildShapeAttr(10f, true, layers)) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
+                Color(0f, 1f, 0f, 1f), BuildShapeAttr(10f, true, layers)) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
         startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
         startingPathOfRocket.visibility = false //  this shape will only be used in isOverlapToOverride.
     } // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
@@ -52,11 +49,11 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
     private val previousTriangles = arrayOf(TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //topEnd leftEnd
             2f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //topEnd rightEnd
             2f, -13f, //bottomEnd rightEnd
-            random().toFloat(), 1f, 1f, 1f, BuildShapeAttr(10f, true, layers)),//leftEnd topEnd
+            Color(random().toFloat(), 1f, 1f, 1f), BuildShapeAttr(10f, true, layers)),//leftEnd topEnd
             TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //topEnd leftEnd
                     6f, -13f, // bottomEnd leftEnd
                     2f, -13f, //bottomEnd rightEnd
-                    random().toFloat(), 1f, 1f, 1f, BuildShapeAttr(10f, true, layers)))//leftEnd bottomEnd
+                    Color(random().toFloat(), 1f, 1f, 1f), BuildShapeAttr(10f, true, layers)))//leftEnd bottomEnd
     
     init {
         LittleStar.setCenterOfRocket(centerOfRotationX, centerOfRotationY)
@@ -90,23 +87,23 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
             boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd leftEnd
                     randomPoint + 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd rightEnd
                     previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottomEnd rightEnd (previous topEnd rightEnd)
-                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//leftEnd topEnd
+                    Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//leftEnd topEnd
             // refresh previous triangle so other can follow
             boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd leftEnd
                     previousTriangles[0].getTriangularShapeCoords(X1), previousTriangles[0].getTriangularShapeCoords(Y1), // bottomEnd leftEnd (previous topEnd leftEnd)
                     previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottomEnd rightEnd (previous topEnd rightEnd)
-                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//leftEnd bottomEnd
+                    Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//leftEnd bottomEnd
             previousTriangles[0] = boundaries[boundaries.size - 2] as TriangularShape
             
             boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd rightEnd
                     randomPoint - 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd leftEnd
                     previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottomEnd leftEnd (previous topEnd leftEnd)
-                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//rightEnd topEnd
+                    Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//rightEnd topEnd
             // refresh previous triangle so other can follow
             boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd rightEnd
                     previousTriangles[1].getTriangularShapeCoords(X1), previousTriangles[1].getTriangularShapeCoords(Y1), // bottomEnd rightEnd (previous topEnd rightEnd)
                     previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottomEnd leftEnd (previous topEnd leftEnd)
-                    random().toFloat(), 1f, 1f, 1f, buildBoundryShapesAttr))//rightEnd bottomEnd
+                    Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//rightEnd bottomEnd
             previousTriangles[1] = boundaries[boundaries.size - 2] as TriangularShape
         }
     }

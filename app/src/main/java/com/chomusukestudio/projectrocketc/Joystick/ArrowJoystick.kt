@@ -2,6 +2,7 @@ package com.chomusukestudio.projectrocketc.Joystick
 
 import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
+import com.chomusukestudio.projectrocketc.Shape.Color
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 
 import java.lang.Math.PI
@@ -17,8 +18,8 @@ class ArrowJoystick(private val centerOfRotationX: Float, private val centerOfRo
     val intendedDirection: Float
         get() = atan2((nowX - centerOfJoystickX).toDouble(), (nowY - centerOfJoystickY).toDouble()).toFloat()
     
-    private val triangularShape = TriangularShape(0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, buildShapeAttr)
-    private val quadrilateralShape = QuadrilateralShape(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.7f, 0.3f, 0.3f, 0.9f, buildShapeAttr)
+    private val triangularShape = TriangularShape(0f, 0f, 0f, 0f, 0f, 0f, Color(0.7f, 0.3f, 0.3f, 0.9f), buildShapeAttr)
+    private val quadrilateralShape = QuadrilateralShape(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, Color(0.7f, 0.3f, 0.3f, 0.9f), buildShapeAttr)
     private fun actionDown() {
         this.centerOfJoystickX = nowX
         this.centerOfJoystickY = nowY
