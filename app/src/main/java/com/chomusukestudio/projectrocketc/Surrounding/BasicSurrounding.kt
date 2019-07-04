@@ -17,7 +17,6 @@ import com.chomusukestudio.projectrocketc.Shape.PlanetShape.SaturnShape
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.StarShape
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.Color
 
 import java.util.ArrayList
 
@@ -116,7 +115,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
                     centerOfRotationX + initialFlybyDistance, 100000000f, // max value is bad because it causes overflow... twice
                     centerOfRotationX + initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
                     centerOfRotationX - initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
-                    Color(0f, 1f, 0f, 1f), BuildShapeAttr(0f, false, layers))
+                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
             startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
 //        } else {
 //            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,

@@ -1,7 +1,9 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
-import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.littleStar.LittleStar
+import com.chomusukestudio.projectrocketc.Shape.CircularShape
+import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
+import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.randFloat
 
 import java.util.Arrays
@@ -22,16 +24,16 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
         val componentShapes = arrayOfNulls<Shape>(numberOfCrater + 1)
         
         // color of planet
-        val mainColor = Color(
+        val mainColor = floatArrayOf(
                 randFloat(0.2f, 1f),
                 randFloat(0.2f, 1f),
-                randFloat(0.2f, 1f), 1f)
+                randFloat(0.2f, 1f))
         // color of crater
         val randomDarker = randFloat(0.6f, 0.8f)
-        val darkerColor = Color(randomDarker * mainColor.red, randomDarker * mainColor.green, randomDarker * mainColor.blue, 1f)
+        val darkerColor = floatArrayOf(randomDarker * mainColor[0], randomDarker * mainColor[1], randomDarker * mainColor[2])
         
         // the planet itself
-        componentShapes[0] = CircularShape(centerX, centerY, radius, mainColor, buildShapeAttr)
+        componentShapes[0] = CircularShape(centerX, centerY, radius, mainColor[0], mainColor[1], mainColor[2], 1f, buildShapeAttr)
         
         // generate some Crater on the planet
         for (i in 1 until componentShapes.size) {
@@ -43,6 +45,9 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
             // generate the crater
             val centerXOfBall = centerX
             val centerYOfBall = centerY
+            val red = darkerColor[0]
+            val green = darkerColor[1]
+            val blue = darkerColor[2]
             val shapeAttributes1 = buildShapeAttr.newAttrWithChangedZ(-0.01f)
             componentShapes[i] = object : Shape() {
                 override var componentShapes: Array<Shape>
@@ -62,7 +67,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
                                 sin(sRadius * cos(2.0 * PI * i / numberOfEdges)).toFloat() * radius,
                                 mSin(offsetRadius + sRadius * sin(2.0 * PI * (i + 1) / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * (i + 1) / numberOfEdges)).toFloat(),
                                 sin(sRadius * cos(2.0 * PI * (i + 1) / numberOfEdges)).toFloat() * radius,
-                                darkerColor, shapeAttributes1) // close for modification
+                                red, green, blue, 1f, shapeAttributes1) // close for modification
                         // below is circular crater
 //                        val x2 = centerXOfCrater + (r * sin(2 * PI * i / numberOfEdges)).toFloat()
 //                        val y2 = (r * cos(2 * PI * i / numberOfEdges)).toFloat()

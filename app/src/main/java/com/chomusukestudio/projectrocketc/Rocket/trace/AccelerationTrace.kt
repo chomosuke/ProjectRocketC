@@ -4,7 +4,6 @@ import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.Color
 import com.chomusukestudio.projectrocketc.decelerateSpeedXY
 import com.chomusukestudio.projectrocketc.randFloat
 import kotlin.math.PI
@@ -12,7 +11,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class AccelerationTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long, private val perSecRate: Long, private val initialSpeed: Float,
-						private val initialColor: Color, private val layers: Layers) : Trace() {
+						private val initialRed: Float, private val initialGreen: Float, private val initialBlue: Float, private val initialAlpha: Float, private val layers: Layers) : Trace() {
 	
 	private var preUnfinishedHalfIs = 0f
 	override fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, rocketState: RocketState) {
@@ -30,7 +29,7 @@ class AccelerationTrace(val numberOfEdges: Int, val z: Float, private val initia
 			val initialSpeedX = initialSpeed * sin(direction) + rocketState.speedX
 			val initialSpeedY = initialSpeed * cos(direction) + rocketState.speedY
 			val newTraceShape = newAccelerationTraceShape(centerX, centerY, randFloat(initialWidth / 16, initialWidth / 4), finalWidth / 2,
-					initialSpeedX, initialSpeedY, duration, initialColor)
+					initialSpeedX, initialSpeedY, duration, initialRed, initialGreen, initialBlue, initialAlpha)
 
 			newTraceShape.rotateShape(centerX, centerY, (2 * Math.PI * Math.random()).toFloat())
 			
@@ -44,17 +43,17 @@ class AccelerationTrace(val numberOfEdges: Int, val z: Float, private val initia
 	}
 	
 	private fun newAccelerationTraceShape(centerX: Float, centerY: Float, initialRadius: Float, finalRadius: Float, initialSpeedX: Float, initialSpeedY: Float,
-										  duration: Long, initialColor: Color): RegularPolygonalTraceShape {
+										  duration: Long, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float): RegularPolygonalTraceShape {
 		val trace = AccelerationTraceShape(numberOfEdges, centerX, centerY, initialRadius, finalRadius, duration,
-				initialSpeedX, initialSpeedY, 0.00004f, initialColor, BuildShapeAttr(z, true, layers))
+				initialSpeedX, initialSpeedY, 0.00004f, initialRed, initialGreen, initialBlue, initialAlpha, BuildShapeAttr(z, true, layers))
 		traceShapes.add(trace)
 		return trace
 	}
 }
 
 class AccelerationTraceShape(numberOfEdges: Int, centerX: Float, centerY: Float, initialRadius: Float, finalRadius: Float, duration: Long, initialSpeedX: Float, initialSpeedY: Float,
-							 private val deceleration: Float, initialColor: Color, buildShapeAttr: BuildShapeAttr)
-	: RegularPolygonalTraceShape(numberOfEdges, centerX, centerY, initialRadius, finalRadius, duration, initialColor, buildShapeAttr) {
+							 private val deceleration: Float, initialRed: Float, initialGreen: Float, initialBlue: Float, initialAlpha: Float, buildShapeAttr: BuildShapeAttr)
+	: RegularPolygonalTraceShape(numberOfEdges, centerX, centerY, initialRadius, finalRadius, duration, initialRed, initialGreen, initialBlue, initialAlpha, buildShapeAttr) {
 	private var speedX = initialSpeedX
 	private var speedY = initialSpeedY
 	override fun fadeTrace(now: Long, previousFrameTime: Long) {

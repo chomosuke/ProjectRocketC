@@ -2,6 +2,7 @@ package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 import com.chomusukestudio.projectrocketc.square
+import com.chomusukestudio.projectrocketc.heightInPixel
 import com.chomusukestudio.projectrocketc.widthInPixel
 import java.lang.Math.PI
 import java.lang.Math.abs
@@ -11,9 +12,9 @@ import java.lang.Math.acos
  * Created by Shuang Li on 12/03/2018.
  */
 
-class CircularShape(centerX: Float, centerY: Float, radius: Float, private val performanceIndex: Double, color: Color, private val buildShapeAttr: BuildShapeAttr) : Shape() {
+class CircularShape(centerX: Float, centerY: Float, radius: Float, private val performanceIndex: Double, red: Float, green: Float, blue: Float, alpha: Float, private val buildShapeAttr: BuildShapeAttr) : Shape() {
     override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
-            centerX, centerY, radius, color, buildShapeAttr))
+            centerX, centerY, radius, red, green, blue, alpha, buildShapeAttr))
     private var regularPolygonalShape
         set(value) { componentShapes[0] = value }
         get() = componentShapes[0] as RegularPolygonalShape
@@ -30,16 +31,18 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
             if (abs(radius) > abs(lastChangeOfNumberOfEdgesRadius * 1.25) || abs(radius) < abs(lastChangeOfNumberOfEdgesRadius * 0.8)
                     && getNumberOfEdges(radius, performanceIndex) != regularPolygonalShape.numberOfEdges) {
                 lastChangeOfNumberOfEdgesRadius = radius
+                val color = FloatArray(4)
+                System.arraycopy(shapeColor, 0, color, 0, color.size)
                 regularPolygonalShape.removeShape()
                 regularPolygonalShape = RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
-                        centerX, centerY, radius, shapeColor, buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
+                        centerX, centerY, radius, color[0], color[1], color[2], color[3], buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
             } else
                 regularPolygonalShape.radius = value
         }
         get() = regularPolygonalShape.radius
 
     
-    constructor(centerX: Float, centerY: Float, radius: Float, color: Color, buildShapeAttr: BuildShapeAttr) : this(centerX, centerY, radius, 1.0, color, buildShapeAttr)
+    constructor(centerX: Float, centerY: Float, radius: Float, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) : this(centerX, centerY, radius, 1.0, red, green, blue, alpha, buildShapeAttr)
 
     private var lastChangeOfNumberOfEdgesRadius = radius
     fun resetParameter(centerX: Float, centerY: Float, radius: Float) {

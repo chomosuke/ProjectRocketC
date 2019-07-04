@@ -4,7 +4,7 @@ import java.lang.Math.PI
 import java.lang.Math.cos
 import java.lang.Math.sin
 
-class EllipseShape(centerX: Float, centerY: Float, a: Float, b: Float, color: Color, buildShapeAttr: BuildShapeAttr) : Shape() {
+class EllipseShape(centerX: Float, centerY: Float, a: Float, b: Float, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) : Shape() {
     override val isOverlapMethodLevel: Double = 0.0
     override lateinit var componentShapes: Array<Shape>
     
@@ -21,7 +21,7 @@ class EllipseShape(centerX: Float, centerY: Float, a: Float, b: Float, color: Co
                     centerY + b * cos(2.0 * PI * i.toDouble() / numberOfEdges).toFloat(),
                     centerX + a * sin(2.0 * PI * (i + 1).toDouble() / numberOfEdges).toFloat(),
                     centerY + b * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges).toFloat(),
-                    color, buildShapeAttr) // close for modification
+                    red, green, blue, alpha, buildShapeAttr) // close for modification
         
         this.componentShapes = componentShapes as Array<Shape>
     }

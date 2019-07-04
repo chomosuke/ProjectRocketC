@@ -2,7 +2,6 @@ package com.chomusukestudio.projectrocketc.Rocket.RocketRelated
 
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.chomusukestudio.projectrocketc.Shape.Color
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import com.chomusukestudio.projectrocketc.square
@@ -44,12 +43,11 @@ class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float
         val rotationOrder = IntArray(componentShapesSize) { i -> i }.asList().shuffled().toIntArray() // randomOrder
         componentShapes = Array(componentShapesSize) { i ->
             if (i == 0) {
-                CircularShape(centerX, centerY, approximateRadius, Color(1f, 0.675f, 0.114f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
+                CircularShape(centerX, centerY, approximateRadius, 1f, 0.675f, 0.114f, 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             } else {
                 val distantToCenter = Math.random().toFloat() * approximateRadius * 1.25f
                 val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (rotationOrder[i] * PI / 4).toFloat())
-                CircularShape(centers[0], centers[1], 0f, Color(1f, randFloat(0.675f, 0.975f), randFloat(0.114f, 0.514f), 1f),
-                        buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
+                CircularShape(centers[0], centers[1], 0f, 1f, randFloat(0.675f, 0.975f), randFloat(0.114f, 0.514f), 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             }
         }
     }
@@ -120,11 +118,11 @@ class WhiteExplosionShape(private val centerX: Float, private val centerY: Float
         val rotationOrder = IntArray(componentShapesSize) { i -> i }.asList().shuffled().toIntArray() // randomOrder
         componentShapes = Array(componentShapesSize) { i ->
             if (i == 0) {
-                CircularShape(centerX, centerY, approximateRadius, Color(0.996f, 0.675f, 0.114f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
+                CircularShape(centerX, centerY, approximateRadius, 0.996f, 0.675f, 0.114f, 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             } else {
                 val distantToCenter = Math.random().toFloat() * approximateRadius * 1.25f
                 val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (rotationOrder[i] * 2*PI / componentShapesSize).toFloat())
-                CircularShape(centers[0], centers[1], 0f, Color(0.996f, 0.875f, 0.314f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
+                CircularShape(centers[0], centers[1], 0f, 0.996f, 0.875f, 0.314f, 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             }
         }
     }

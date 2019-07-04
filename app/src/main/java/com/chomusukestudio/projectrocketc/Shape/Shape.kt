@@ -1,7 +1,5 @@
 package com.chomusukestudio.projectrocketc.Shape
 
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-
 
 /**
  * Created by Shuang Li on 28/02/2018.
@@ -25,7 +23,7 @@ abstract class Shape: Cloneable{
     abstract var componentShapes: Array<Shape>
         protected set
     
-    open val shapeColor: Color
+    open val shapeColor: FloatArray
         get() = componentShapes[0].shapeColor
     
     protected open val size: Int
@@ -62,9 +60,9 @@ abstract class Shape: Cloneable{
             componentShape.rotateShape(centerOfRotationX, centerOfRotationY, angle)
     }
     
-    open fun resetShapeColor(color: Color) {
+    open fun resetShapeColor(red: Float, green: Float, blue: Float, alpha: Float) {
         for (componentShape in componentShapes)
-            componentShape.resetShapeColor(color)
+            componentShape.resetShapeColor(red, green, blue, alpha)
     }
     
     open fun resetAlpha(alpha: Float) {
@@ -73,9 +71,9 @@ abstract class Shape: Cloneable{
         }
     }
     
-    open fun changeShapeColor(dRed: Float, dGreen: Float, dBlue: Float, dAlpha: Float) {
+    open fun changeShapeColor(red: Float, green: Float, blue: Float, alpha: Float) {
         for (componentShape in componentShapes)
-            componentShape.changeShapeColor(dRed, dGreen, dBlue, dAlpha)
+            componentShape.changeShapeColor(red, green, blue, alpha)
     }
     
     fun isOverlap(anotherShape: Shape): Boolean {
@@ -109,11 +107,4 @@ abstract class Shape: Cloneable{
             componentShape.removeShape()
         removed = true
     }
-}
-
-data class Color (val red: Float, val green: Float, val blue: Float, val alpha: Float)
-
-data class BuildShapeAttr(val z: Float, val visibility: Boolean, val layers: Layers) { // never set this as a property
-    fun newAttrWithChangedZ(dz: Float) = BuildShapeAttr(z + dz, visibility, layers)
-    fun newAttrWithNewVisibility(visibility: Boolean) = BuildShapeAttr(z, visibility, layers)
 }

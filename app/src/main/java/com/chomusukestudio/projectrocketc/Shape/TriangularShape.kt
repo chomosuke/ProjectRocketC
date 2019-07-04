@@ -2,28 +2,29 @@ package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import kotlin.math.abs
 import kotlin.math.sign
 
 class TriangularShape(x1: Float, y1: Float,
                       x2: Float, y2: Float,
                       x3: Float, y3: Float,
-                      color: Color, val buildShapeAttr: BuildShapeAttr) : Shape() {
-    constructor(coords: FloatArray, color: Color, buildShapeAttr: BuildShapeAttr): this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], color, buildShapeAttr)
+                      red: Float, green: Float, blue: Float, alpha: Float, val buildShapeAttr: BuildShapeAttr) : Shape() {
+    constructor(coords: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr): this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], red, green, blue, alpha, buildShapeAttr)
 
     override val isOverlapMethodLevel: Double = 0.0
     
-    private var triangle: Triangle? = if (buildShapeAttr.visibility) GLTriangle(x1, y1, x2, y2, x3, y3, color.red, color.green, color.blue, color.alpha, buildShapeAttr) else null
+    private var triangle: Triangle? = if (buildShapeAttr.visibility) GLTriangle(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, buildShapeAttr) else null
     // nullable because sometimes invisible
     
     private var triangleCoords = /*if (visibility) FloatArray(6) else */floatArrayOf(x1, y1, x2, y2, x3, y3)
-    private var RGBA = /*if (visibility) FloatArray(4) else */floatArrayOf(color.red, color.green, color.blue, color.alpha)
+    private var RGBA = /*if (visibility) FloatArray(4) else */floatArrayOf(red, green, blue, alpha)
 
-    override val shapeColor: Color
+    override val shapeColor: FloatArray
         get() =
             if (visibility)
-                Color(triangle!!.RGBA[0], triangle!!.RGBA[1], triangle!!.RGBA[2], triangle!!.RGBA[3])
+                triangle!!.RGBA.floatArray
             else
-                Color(RGBA[0], RGBA[1], RGBA[2], RGBA[3])
+                RGBA
 
     override fun resetAlpha(alpha: Float) {
         if (visibility)
@@ -32,17 +33,17 @@ class TriangularShape(x1: Float, y1: Float,
             RGBA[3] = alpha
     }
 
-    override fun changeShapeColor(dRed: Float, dGreen: Float, dBlue: Float, dAlpha: Float) {
+    override fun changeShapeColor(red: Float, green: Float, blue: Float, alpha: Float) {
         if (visibility) {
-            triangle!!.RGBA[0] += dRed
-            triangle!!.RGBA[1] += dGreen
-            triangle!!.RGBA[2] += dBlue
-            triangle!!.RGBA[3] += dAlpha
+            triangle!!.RGBA[0] += red
+            triangle!!.RGBA[1] += green
+            triangle!!.RGBA[2] += blue
+            triangle!!.RGBA[3] += alpha
         } else {
-            RGBA[0] += dRed
-            RGBA[1] += dGreen
-            RGBA[2] += dBlue
-            RGBA[3] += dAlpha
+            RGBA[0] += red
+            RGBA[1] += green
+            RGBA[2] += blue
+            RGBA[3] += alpha
         }
     }
 
@@ -188,14 +189,14 @@ class TriangularShape(x1: Float, y1: Float,
         }
     }
 
-    override fun resetShapeColor(color: Color) {
+    override fun resetShapeColor(red: Float, green: Float, blue: Float, alpha: Float) {
         if (visibility) {
-            triangle!!.setTriangleRGBA(color.red, color.green, color.blue, color.alpha)
+            triangle!!.setTriangleRGBA(red, green, blue, alpha)
         } else {
-            RGBA[0] = color.red
-            RGBA[1] = color.green
-            RGBA[2] = color.blue
-            RGBA[3] = color.alpha
+            RGBA[0] = red
+            RGBA[1] = green
+            RGBA[2] = blue
+            RGBA[3] = alpha
         }
     }
 

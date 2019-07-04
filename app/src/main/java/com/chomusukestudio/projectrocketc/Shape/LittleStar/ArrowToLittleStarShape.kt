@@ -1,12 +1,16 @@
 package com.chomusukestudio.projectrocketc.Shape.LittleStar
 
-import com.chomusukestudio.projectrocketc.Shape.*
+import com.chomusukestudio.projectrocketc.Shape.CircularShape
+import com.chomusukestudio.projectrocketc.Shape.RegularPolygonalShape
+import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import kotlin.math.PI
 
-class ArrowToLittleStarShape(radius: Float, arrowColor: Color, circleColor: Color, buildShapeAttr: BuildShapeAttr): Shape()/* can't overlap with the arrow */{
+class ArrowToLittleStarShape(radius: Float, redArrow: Float, greenArrow: Float, blueArrow: Float,
+                             redCircle: Float, greenCircle: Float, blueCircle: Float, buildShapeAttr: BuildShapeAttr): Shape()/* can't overlap with the arrow */{
     override val isOverlapMethodLevel: Double = 0.0
-    override var componentShapes: Array<Shape> = arrayOf(CircularShape(0f, 0f, radius, circleColor, buildShapeAttr),
-            RegularPolygonalShape(3, 0f, 0f, radius * 0.75f, arrowColor, buildShapeAttr.newAttrWithChangedZ(-0.01f)))
+    override var componentShapes: Array<Shape> = arrayOf(CircularShape(0f, 0f, radius, redCircle, greenCircle, blueCircle, 1f, buildShapeAttr),
+            RegularPolygonalShape(3, 0f, 0f, radius * 0.75f, redArrow, greenArrow, blueArrow, 1f, buildShapeAttr.newAttrWithChangedZ(-0.01f)))
 
     enum class Direction(val direction: Int) {
         UP(0), LEFT(1), DOWN(2), RIGHT(3)

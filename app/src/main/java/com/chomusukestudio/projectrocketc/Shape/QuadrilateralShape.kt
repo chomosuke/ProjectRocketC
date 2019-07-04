@@ -14,9 +14,9 @@ class QuadrilateralShape : Shape {
                 x2: Float, y2: Float,
                 x3: Float, y3: Float,
                 x4: Float, y4: Float,
-                color: Color, buildShapeAttr: BuildShapeAttr) {
-        componentShapes = arrayOf(TriangularShape(x1, y1, x2, y2, x3, y3, color, buildShapeAttr),
-                TriangularShape(x1, y1, x4, y4, x3, y3, color, buildShapeAttr))
+                red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) {
+        componentShapes = arrayOf(TriangularShape(x1, y1, x2, y2, x3, y3, red, green, blue, alpha, buildShapeAttr),
+                TriangularShape(x1, y1, x4, y4, x3, y3, red, green, blue, alpha, buildShapeAttr))
     }
 
     fun setQuadrilateralShapeCoords(x1: Float, y1: Float, // in order:
@@ -27,9 +27,9 @@ class QuadrilateralShape : Shape {
         (componentShapes[1] as TriangularShape).setTriangleCoords(x1, y1, x4, y4, x3, y3)
     }
 
-    constructor(coords1: FloatArray, coords2: FloatArray, color: Color, buildShapeAttr: BuildShapeAttr) {
-        componentShapes = arrayOf(TriangularShape(coords1, color, buildShapeAttr),
-                TriangularShape(coords2, color, buildShapeAttr))
+    constructor(coords1: FloatArray, coords2: FloatArray, red: Float, green: Float, blue: Float, alpha: Float, buildShapeAttr: BuildShapeAttr) {
+        componentShapes = arrayOf(TriangularShape(coords1, red, green, blue, alpha, buildShapeAttr),
+                TriangularShape(coords2, red, green, blue, alpha, buildShapeAttr))
     }
 
     val x1 get() = getQuadrilateralShapeCoords(QX1)
