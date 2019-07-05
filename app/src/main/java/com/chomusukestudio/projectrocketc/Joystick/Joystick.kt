@@ -66,3 +66,5 @@ abstract class Joystick {
 
     open fun removeAllShape() {}
 }
+
+data class RocketControl(val rotationNeeded: Float, val throttleOn: Boolean = true)
