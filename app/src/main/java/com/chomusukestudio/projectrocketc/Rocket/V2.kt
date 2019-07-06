@@ -31,43 +31,77 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
 
     override val width = 0.3f
 
-    private val white = Color(1f, 1f, 1f, 1f)
-    private val black = Color(0.2f, 0.2f, 0.2f, 1f)
-    override val components: Array<Shape> = arrayOf(
-            // defined components of rocket around centerOfRotation set by surrounding
-            // 0
-            TriangularShape(centerOfRotationX, centerOfRotationY + 0.65f,
-                    centerOfRotationX + 0.05f, centerOfRotationY + 0.45f,
-                    centerOfRotationX - 0.05f, centerOfRotationY + 0.45f,
-                    black, BuildShapeAttr(1f, true, layers)),
-            // 1
-            QuadrilateralShape(centerOfRotationX + 0.05f, centerOfRotationY + 0.45f,
-                    centerOfRotationX, centerOfRotationY + 0.45f, centerOfRotationX, centerOfRotationY + 0.15f,
-                    centerOfRotationX + 0.08f, centerOfRotationY + 0.15f, white, BuildShapeAttr(1f, true, layers)),
-            // 2
-            QuadrilateralShape(centerOfRotationX - 0.05f, centerOfRotationY + 0.45f,
-                    centerOfRotationX, centerOfRotationY + 0.45f, centerOfRotationX, centerOfRotationY + 0.15f,
-                    centerOfRotationX - 0.08f, centerOfRotationY + 0.15f, black, BuildShapeAttr(1f, true, layers)),
-            // 3
-            QuadrilateralShape(centerOfRotationX + 0.08f, centerOfRotationY - 0.15f,
-                    centerOfRotationX, centerOfRotationY - 0.15f,
-                    centerOfRotationX, centerOfRotationY + 0.15f,
-                    centerOfRotationX + 0.08f, centerOfRotationY + 0.15f, black, BuildShapeAttr(1f, true, layers)),
-            // 4
-            QuadrilateralShape(centerOfRotationX - 0.08f, centerOfRotationY - 0.15f,
-                    centerOfRotationX, centerOfRotationY - 0.15f,
-                    centerOfRotationX, centerOfRotationY + 0.15f,
-                    centerOfRotationX - 0.08f, centerOfRotationY + 0.15f, white, BuildShapeAttr(1f, true, layers)),
-            // 5
-            QuadrilateralShape(centerOfRotationX + 0.09f, centerOfRotationY - 0.35f,
-                    centerOfRotationX, centerOfRotationY - 0.35f,
-                    centerOfRotationX, centerOfRotationY - 0.15f,
-                    centerOfRotationX + 0.08f, centerOfRotationY - 0.15f, white, BuildShapeAttr(1f, true, layers)),
-            // 6
-            QuadrilateralShape(centerOfRotationX - 0.09f, centerOfRotationY - 0.35f,
-                    centerOfRotationX, centerOfRotationY - 0.35f,
-                    centerOfRotationX, centerOfRotationY - 0.15f,
-                    centerOfRotationX - 0.08f, centerOfRotationY - 0.15f, black, BuildShapeAttr(1f, true, layers)))
+    override val components: Array<Shape> = generateComponents(layers)
+    private fun generateComponents(layers: Layers): Array<Shape> {
+        val white = Color(1f, 1f, 1f, 1f)
+        val black = Color(0.2f, 0.2f, 0.2f, 1f)
+        
+        val scaleX = 1f; val scaleY = 1f
+                         val y1 = 0.65f * scaleY
+        val x2 = 0.125f * scaleX; val y2 = 0.35f * scaleY
+        val x3 = 0.16f  * scaleX
+        val x4 = 0.145f * scaleX; val y4 = -0.3f * scaleY
+        val x10 = 0.085f * scaleX; val y10 = -0.6f * scaleY
+        val x7 = 0.32f  * scaleX; val y7 = -0.67f * scaleY
+        
+        return arrayOf(
+                // defined components of rocket around centerOfRotation set by surrounding
+                // 0
+                TriangularShape(centerOfRotationX, centerOfRotationY + y1,
+                        centerOfRotationX + x2, centerOfRotationY + y2,
+                        centerOfRotationX - x2, centerOfRotationY + y2,
+                        black, BuildShapeAttr(1f, true, layers)),
+                // 1
+                QuadrilateralShape(centerOfRotationX + x2, centerOfRotationY + y2,
+                        centerOfRotationX, centerOfRotationY + y2,
+                        centerOfRotationX, centerOfRotationY,
+                        centerOfRotationX + x3, centerOfRotationY,
+                        white, BuildShapeAttr(1f, true, layers)),
+                // 2
+                QuadrilateralShape(centerOfRotationX - x2, centerOfRotationY + y2,
+                        centerOfRotationX, centerOfRotationY + y2,
+                        centerOfRotationX, centerOfRotationY,
+                        centerOfRotationX - x3, centerOfRotationY,
+                        black, BuildShapeAttr(1f, true, layers)),
+                // 3
+                QuadrilateralShape(centerOfRotationX + x4, centerOfRotationY + y4,
+                        centerOfRotationX, centerOfRotationY + y4,
+                        centerOfRotationX, centerOfRotationY,
+                        centerOfRotationX + x3, centerOfRotationY,
+                        black, BuildShapeAttr(1f, true, layers)),
+                // 4
+                QuadrilateralShape(centerOfRotationX - x4, centerOfRotationY + y4,
+                        centerOfRotationX, centerOfRotationY + y4,
+                        centerOfRotationX, centerOfRotationY,
+                        centerOfRotationX - x3, centerOfRotationY,
+                        white, BuildShapeAttr(1f, true, layers)),
+                // 5
+                QuadrilateralShape(centerOfRotationX + x10, centerOfRotationY + y10,
+                        centerOfRotationX, centerOfRotationY + y10,
+                        centerOfRotationX, centerOfRotationY + y4,
+                        centerOfRotationX + x4, centerOfRotationY + y4,
+                        white, BuildShapeAttr(1f, true, layers)),
+                // 6
+                QuadrilateralShape(centerOfRotationX - x10, centerOfRotationY + y10,
+                        centerOfRotationX, centerOfRotationY + y10,
+                        centerOfRotationX, centerOfRotationY + y4,
+                        centerOfRotationX - x4, centerOfRotationY + y4,
+                        black, BuildShapeAttr(1f, true, layers)),
+                // 7
+                QuadrilateralShape(centerOfRotationX + x10, centerOfRotationY + y10,
+                        centerOfRotationX, centerOfRotationY + y10,
+                        centerOfRotationX, centerOfRotationY + y7,
+                        centerOfRotationX + x7, centerOfRotationY + y7,
+                        white, BuildShapeAttr(1f, true, layers)),
+                // 8
+                QuadrilateralShape(centerOfRotationX - x10, centerOfRotationY + y10,
+                        centerOfRotationX, centerOfRotationY + y10,
+                        centerOfRotationX, centerOfRotationY + y7,
+                        centerOfRotationX - x7, centerOfRotationY + y7,
+                        black, BuildShapeAttr(1f, true, layers))
+    
+        )
+    }
 
     override val shapeForCrashAppro = QuadrilateralShape(centerOfRotationX + 0.15f, centerOfRotationY + 0.5f,
             centerOfRotationX - 0.15f, centerOfRotationY + 0.5f, centerOfRotationX - 0.15f, centerOfRotationY - 0.4f,
