@@ -112,14 +112,14 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
         return (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
     }
     
-    val vertex1 get() = Vector(getTriangularShapeCoords(0), getTriangularShapeCoords(1))
-    val vertex2 get() = Vector(getTriangularShapeCoords(2), getTriangularShapeCoords(3))
-    val vertex3 get() = Vector(getTriangularShapeCoords(4), getTriangularShapeCoords(5))
-    fun getTriangularShapeCoords(coord: Int): Float {
+    val vertex1 get() = getTriangularShapeCoords(0)
+    val vertex2 get() = getTriangularShapeCoords(1)
+    val vertex3 get() = getTriangularShapeCoords(2)
+    private fun getTriangularShapeCoords(coord: Int): Vector {
         return if (visibility)
-            triangle!!.triangleCoords[coord]
+            Vector(triangle!!.triangleCoords[coord * 2], triangle!!.triangleCoords[coord * 2 + 1])
         else {
-            triangleCoords[coord]
+            Vector(triangleCoords[coord * 2], triangleCoords[coord * 2 + 1])
         }
     }
 

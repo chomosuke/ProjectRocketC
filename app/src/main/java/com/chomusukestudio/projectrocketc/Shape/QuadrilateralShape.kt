@@ -16,29 +16,10 @@ class QuadrilateralShape// in order:
         (componentShapes[0] as TriangularShape).setTriangleCoords(vertex1, vertex2, vertex3)
         (componentShapes[1] as TriangularShape).setTriangleCoords(vertex1, vertex4, vertex3)
     }
-
-    val x1 get() = getQuadrilateralShapeCoords(QX1)
-    val y1 get() = getQuadrilateralShapeCoords(QY1)
-    val x2 get() = getQuadrilateralShapeCoords(QX2)
-    val y2 get() = getQuadrilateralShapeCoords(QY2)
-    val x3 get() = getQuadrilateralShapeCoords(QX3)
-    val y3 get() = getQuadrilateralShapeCoords(QY3)
-    val x4 get() = getQuadrilateralShapeCoords(QX4)
-    val y4 get() = getQuadrilateralShapeCoords(QY4)
-    fun getQuadrilateralShapeCoords(coord: Int): Float {
-        return if (coord < 6)
-            (componentShapes[0] as TriangularShape).getTriangularShapeCoords(coord)
-        else
-            (componentShapes[1] as TriangularShape).getTriangularShapeCoords(coord - 4)
-    }
+    
+    val vertex1 get() = (componentShapes[0] as TriangularShape).vertex1
+    val vertex2 get() = (componentShapes[0] as TriangularShape).vertex2
+    val vertex3 get() = (componentShapes[0] as TriangularShape).vertex3
+    val vertex4 get() = (componentShapes[1] as TriangularShape).vertex2
 }
-
-const val QX1 = 0
-const val QY1 = 1
-const val QX2 = 2
-const val QY2 = 3
-const val QX3 = 4
-const val QY3 = 5
-const val QX4 = 2 + 2 * COORDS_PER_VERTEX
-const val QY4 = 3 + 2 * COORDS_PER_VERTEX
 

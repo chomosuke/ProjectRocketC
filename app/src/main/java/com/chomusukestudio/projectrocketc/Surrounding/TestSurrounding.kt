@@ -65,15 +65,15 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
     
     override fun makeNewTriangleAndRemoveTheOldOne(now: Long, previousFrameTime: Long, state: State) {
         
-        if (8.1 >= previousTriangles[0].getTriangularShapeCoords(1)) {// only go though the entire thing when need to
+        if (8.1 >= previousTriangles[0].vertex1.y) {// only go though the entire thing when need to
             // to remove
             var i = 0
             while (i < boundaries.size) {
-                if ((boundaries[i] as TriangularShape).getTriangularShapeCoords(1) < -13 && //y1
+                if ((boundaries[i] as TriangularShape).vertex1.y < -13 && //y1
                         
-                        (boundaries[i] as TriangularShape).getTriangularShapeCoords(3) < -13 && //y2
+                        (boundaries[i] as TriangularShape).vertex2.y < -13 && //y2
                         
-                        (boundaries[i] as TriangularShape).getTriangularShapeCoords(5) < -13) { //y3
+                        (boundaries[i] as TriangularShape).vertex3.y < -13) { //y3
                     boundaries.removeAt(i).removeShape()
                     i--
                 }

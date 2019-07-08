@@ -17,11 +17,9 @@ class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlaye
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
             AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f, Color(1f, 1f, 0f, 3f), layers)
     override fun generateTrace(now: Long, previousFrameTime: Long) {
-        val x1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX4)
-        val y1 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY4)
-        val x2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QX3)
-        val y2 = (components[3] as QuadrilateralShape).getQuadrilateralShapeCoords(QY3)
-        val origin = Vector((x1 + x2) / 2, (y1 + y2) / 2)
+        val p1 = (components[3] as QuadrilateralShape).vertex4
+        val p2 = (components[3] as QuadrilateralShape).vertex3
+        val origin = (p1 + p2) * 0.5f
         trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
 
