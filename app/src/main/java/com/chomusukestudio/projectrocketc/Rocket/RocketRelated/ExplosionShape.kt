@@ -1,16 +1,12 @@
 package com.chomusukestudio.projectrocketc.Rocket.RocketRelated
 
-import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.chomusukestudio.projectrocketc.Shape.Color
-import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.square
 import com.chomusukestudio.projectrocketc.randFloat
 import java.lang.Math.random
 import kotlin.math.PI
 
-abstract class ExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float, protected val duration: Long) : Shape() {
+abstract class ExplosionShape(center: Vector, approximateRadius: Float, protected val duration: Long) : Shape() {
     override val isOverlapMethodLevel: Double
         get() = throw IllegalAccessException("explosionShape can't overlap anything")
 
@@ -23,10 +19,10 @@ abstract class ExplosionShape(centerX: Float, centerY: Float, approximateRadius:
     }
 }
 
-class RedWhiteExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float, duration: Long, buildShapeAttr: BuildShapeAttr) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
+class RedWhiteExplosionShape(center: Vector, approximateRadius: Float, duration: Long, buildShapeAttr: BuildShapeAttr) : ExplosionShape(center, approximateRadius, duration) {
 
-    override var componentShapes: Array<Shape> = arrayOf(RedExplosionShape(centerX, centerY, approximateRadius, duration, buildShapeAttr),
-            WhiteExplosionShape(centerX, centerY, approximateRadius, duration, buildShapeAttr))
+    override var componentShapes: Array<Shape> = arrayOf(RedExplosionShape(center, approximateRadius, duration, buildShapeAttr),
+            WhiteExplosionShape(center, approximateRadius, duration, buildShapeAttr))
 
     override fun drawExplosion(timePassed: Long) {
         (componentShapes[0] as ExplosionShape).drawExplosion(timePassed)
@@ -34,7 +30,7 @@ class RedWhiteExplosionShape(centerX: Float, centerY: Float, approximateRadius: 
     }
 }
 
-class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float, duration: Long, buildShapeAttr: BuildShapeAttr) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
+class RedExplosionShape(center: Vector, approximateRadius: Float, duration: Long, buildShapeAttr: BuildShapeAttr) : ExplosionShape(center, approximateRadius, duration) {
     private val componentShapesSize = 5
 
     private val timeSinceMade = LongArray(componentShapesSize)
@@ -44,11 +40,11 @@ class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float
         val rotationOrder = IntArray(componentShapesSize) { i -> i }.asList().shuffled().toIntArray() // randomOrder
         componentShapes = Array(componentShapesSize) { i ->
             if (i == 0) {
-                CircularShape(centerX, centerY, approximateRadius, Color(1f, 0.675f, 0.114f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
+                CircularShape(center, approximateRadius, Color(1f, 0.675f, 0.114f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             } else {
                 val distantToCenter = Math.random().toFloat() * approximateRadius * 1.25f
-                val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (rotationOrder[i] * PI / 4).toFloat())
-                CircularShape(centers[0], centers[1], 0f, Color(1f, randFloat(0.675f, 0.975f), randFloat(0.114f, 0.514f), 1f),
+                val centers = (center + Vector(0f, distantToCenter)).rotateVector(center, (rotationOrder[i] * PI / 4).toFloat())
+                CircularShape(centers, 0f, Color(1f, randFloat(0.675f, 0.975f), randFloat(0.114f, 0.514f), 1f),
                         buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             }
         }
@@ -86,7 +82,7 @@ class RedExplosionShape(centerX: Float, centerY: Float, approximateRadius: Float
     }
 }
 
-class WhiteExplosionShape(private val centerX: Float, private val centerY: Float, private val approximateRadius: Float, duration: Long, buildShapeAttr: BuildShapeAttr) : ExplosionShape(centerX, centerY, approximateRadius, duration) {
+class WhiteExplosionShape(private val center: Vector, private val approximateRadius: Float, duration: Long, buildShapeAttr: BuildShapeAttr) : ExplosionShape(center, approximateRadius, duration) {
 
     private var timeSinceMade = 0L
     override fun drawExplosion(timePassed: Long) {
@@ -106,7 +102,7 @@ class WhiteExplosionShape(private val centerX: Float, private val centerY: Float
 //            (componentShapes[0] as CircularShape).resetParameter(centerX, centerY, radius)
 //
 //            for (i in 1 until componentShapes.size) {
-//                val centers = rotatePoint(centerX, centerY + radius, centerX, centerY, (i*2*PI / (componentShapesSize - 1)).toFloat())
+//                val centers = rotateVector(centerX, centerY + radius, centerX, centerY, (i*2*PI / (componentShapesSize - 1)).toFloat())
 //                (componentShapes[i] as CircularShape).resetParameter(centers[0], centers[1], radius / 4f)
 //            }
 //        }
@@ -120,11 +116,11 @@ class WhiteExplosionShape(private val centerX: Float, private val centerY: Float
         val rotationOrder = IntArray(componentShapesSize) { i -> i }.asList().shuffled().toIntArray() // randomOrder
         componentShapes = Array(componentShapesSize) { i ->
             if (i == 0) {
-                CircularShape(centerX, centerY, approximateRadius, Color(0.996f, 0.675f, 0.114f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
+                CircularShape(center, approximateRadius, Color(0.996f, 0.675f, 0.114f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             } else {
                 val distantToCenter = Math.random().toFloat() * approximateRadius * 1.25f
-                val centers = rotatePoint(centerX, centerY + distantToCenter, centerX, centerY, (rotationOrder[i] * 2*PI / componentShapesSize).toFloat())
-                CircularShape(centers[0], centers[1], 0f, Color(0.996f, 0.875f, 0.314f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
+                val centers = (center + Vector(0f, distantToCenter)).rotateVector(center, (rotationOrder[i] * PI / 4).toFloat())
+                CircularShape(centers, 0f, Color(0.996f, 0.875f, 0.314f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             }
         }
     }

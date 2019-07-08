@@ -45,21 +45,21 @@ abstract class Shape: Cloneable{
         }
         get() = componentShapes[0].visibility
     
-    open fun moveShape(dx: Float, dy: Float) {
-        if (dx == 0f && dy == 0f) {
+    open fun moveShape(displacement: Vector) {
+        if (displacement.x == 0f && displacement.y == 0f) {
             return // yeah i do that a lot
         }
         for (componentShape in componentShapes)
-            componentShape.moveShape(dx, dy)
+            componentShape.moveShape(displacement)
     }
     
-    open fun rotateShape(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
+    open fun rotateShape(centerOfRotation: Vector, angle: Float) {
         if (angle == 0f) {
-            return  // as mind blowing as it is people like me do zero angle a lot
+            return  // as mind blowing as it is, people like me do zero angle a lot
         }
-        // positive is clockwise
+        // positive is counter clockwise
         for (componentShape in componentShapes)
-            componentShape.rotateShape(centerOfRotationX, centerOfRotationY, angle)
+            componentShape.rotateShape(centerOfRotation, angle)
     }
     
     open fun resetShapeColor(color: Color) {
@@ -95,9 +95,9 @@ abstract class Shape: Cloneable{
         return false
     }
     
-    open fun isInside(x: Float, y: Float): Boolean {
+    open fun isInside(point: Vector): Boolean {
         for (componentShape in componentShapes)
-            if (componentShape.isInside(x, y))
+            if (componentShape.isInside(point))
                 return true
         return false
     }

@@ -2,17 +2,16 @@ package com.chomusukestudio.projectrocketc.GLRenderer
 
 import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 
-class GLTriangle (buildShapeAttr: BuildShapeAttr) : Triangle() {
+class GLTriangle (buildShapeAttr: BuildShapeAttr) {
 
     val layer: Layer = getLayer(buildShapeAttr.z, buildShapeAttr.layers) // the layer this triangle belong
 
-    override val z: Float
+    val z: Float
         get() = layer.z
 
     private val coordPointer: Int = layer.getCoordPointer() // point to the first of the six layer.triangleCoords[] this triangle is isInUse
-    override val triangleCoords: Triangle.TriangleCoords = object : Triangle.TriangleCoords() {
+    val triangleCoords: TriangleCoords = object : TriangleCoords() {
 
         override var floatArray: FloatArray
             get() { return FloatArray(6) { i -> this[i] } }
@@ -34,7 +33,7 @@ class GLTriangle (buildShapeAttr: BuildShapeAttr) : Triangle() {
     }
 
     private val colorPointer = layer.getColorPointer(coordPointer)
-    override val RGBA: Triangle.RGBAArray = object : Triangle.RGBAArray() {
+    val RGBA: RGBAArray = object : RGBAArray() {
 
         override var floatArray: FloatArray
             get() { return FloatArray(4) { i -> this[i] } }
@@ -111,38 +110,27 @@ class GLTriangle (buildShapeAttr: BuildShapeAttr) : Triangle() {
         System.arraycopy(color, 0, layer.colors, colorPointer + 8, color.size)
     }
 
-    fun rotateTriangle(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
-        var i = 0
-        while (i < CPT) {
-            // rotate score
-            val result = rotatePoint(triangleCoords[i], triangleCoords[i + 1], centerOfRotationX, centerOfRotationY, angle)
-            triangleCoords[i] = result[0]
-            triangleCoords[i + 1] = result[1]
-            i += COORDS_PER_VERTEX
-        }
+    fun moveTriangle(dx: Float, dy: Float) {
+        layer.triangleCoords[0 + coordPointer] += dx
+        layer.triangleCoords[1 + coordPointer] += dy
+        layer.triangleCoords[2 + coordPointer] += dx
+        layer.triangleCoords[3 + coordPointer] += dy
+        layer.triangleCoords[4 + coordPointer] += dx
+        layer.triangleCoords[5 + coordPointer] += dy
     }
 
-    override fun moveTriangle(dx: Float, dy: Float) {
-        layer.triangleCoords[X1 + coordPointer] += dx
-        layer.triangleCoords[Y1 + coordPointer] += dy
-        layer.triangleCoords[X2 + coordPointer] += dx
-        layer.triangleCoords[Y2 + coordPointer] += dy
-        layer.triangleCoords[X3 + coordPointer] += dx
-        layer.triangleCoords[Y3 + coordPointer] += dy
-    }
-
-    override fun setTriangleCoords(x1: Float, y1: Float,
+    fun setTriangleCoords(x1: Float, y1: Float,
                           x2: Float, y2: Float,
                           x3: Float, y3: Float) {
-        layer.triangleCoords[X1 + coordPointer] = x1
-        layer.triangleCoords[Y1 + coordPointer] = y1
-        layer.triangleCoords[X2 + coordPointer] = x2
-        layer.triangleCoords[Y2 + coordPointer] = y2
-        layer.triangleCoords[X3 + coordPointer] = x3
-        layer.triangleCoords[Y3 + coordPointer] = y3
+        layer.triangleCoords[0 + coordPointer] = x1
+        layer.triangleCoords[1 + coordPointer] = y1
+        layer.triangleCoords[2 + coordPointer] = x2
+        layer.triangleCoords[3 + coordPointer] = y2
+        layer.triangleCoords[4 + coordPointer] = x3
+        layer.triangleCoords[5 + coordPointer] = y3
     }
 
-    override fun setTriangleRGBA(red: Float, green: Float, blue: Float, alpha: Float) {
+    fun setTriangleRGBA(red: Float, green: Float, blue: Float, alpha: Float) {
         layer.colors[0 + colorPointer] = red
         layer.colors[1 + colorPointer] = green
         layer.colors[2 + colorPointer] = blue
@@ -157,7 +145,7 @@ class GLTriangle (buildShapeAttr: BuildShapeAttr) : Triangle() {
         layer.colors[11 + colorPointer] = alpha
     }
 
-    override fun removeTriangle() {
+    fun removeTriangle() {
         // mark coords as unused
         if (removed)
             throw RuntimeException("triangle is already removed")
@@ -170,5 +158,17 @@ class GLTriangle (buildShapeAttr: BuildShapeAttr) : Triangle() {
             removeTriangle()
             Log.e("triangle finalizer", "triangle isn't removed")
         }
+    }
+    
+    abstract class TriangleCoords {
+        abstract operator fun get(index: Int): Float
+        abstract operator fun set(index: Int, value: Float)
+        abstract val floatArray : FloatArray
+    }
+    
+    abstract class RGBAArray {
+        abstract operator fun get(index: Int): Float
+        abstract operator fun set(index: Int, value: Float)
+        abstract val floatArray : FloatArray
     }
 }

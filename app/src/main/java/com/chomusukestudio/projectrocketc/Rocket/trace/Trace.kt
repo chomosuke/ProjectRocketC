@@ -2,23 +2,22 @@ package com.chomusukestudio.projectrocketc.Rocket.trace
 
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.Shape.Shape
+import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 
 abstract class Trace {
     protected open val traceShapes = ArrayList<TraceShape>()
     
     private var generateTraceCalledThisFrame = true
-    private var lastOriginX: Float? = null
-    private var lastOriginY: Float? = null
-    fun generateTrace(now: Long, previousFrameTime: Long, originX: Float, originY: Float, rocketState: RocketState) {
-        if (lastOriginX != null && lastOriginY != null)
-            generateTraceOverride(now, previousFrameTime, originX, originY, lastOriginX!!, lastOriginY!!, rocketState)
-        this.lastOriginX = originX
-        this.lastOriginY = originY
+    private var lastOrigin: Vector? = null
+    fun generateTrace(now: Long, previousFrameTime: Long, origin: Vector, rocketState: RocketState) {
+        if (lastOrigin != null)
+            generateTraceOverride(now, previousFrameTime, origin, lastOrigin!!, rocketState)
+        this.lastOrigin = origin
         generateTraceCalledThisFrame = true
     }
     
-    protected abstract fun generateTraceOverride(now: Long, previousFrameTime: Long, originX: Float, originY: Float, lastOriginX: Float, lastOriginY: Float, rocketState: RocketState)
+    protected abstract fun generateTraceOverride(now: Long, previousFrameTime: Long, origin: Vector, lastOrigin: Vector, rocketState: RocketState)
 
     private val parallelForIForFadeTraces = ParallelForI(8, "fade traceShapes thread")
     private val parallelForIForMoveTraces = ParallelForI(8, "move traceShapes thread")
@@ -38,21 +37,19 @@ abstract class Trace {
         }
 
         parallelForIForFadeTraces.run({ i ->
-            traceShapes[i].fadeTrace(now, /*now - ((now - */previousFrameTime/*) * refreshFactor)*/)
+            traceShapes[i].fadeTrace(now, /*nowXY - ((nowXY - */previousFrameTime/*) * refreshFactor)*/)
         }, traceShapes.size)
     }
 
-    fun moveTrace(dx: Float, dy: Float) {
+    fun moveTrace(vector: Vector) {
         parallelForIForMoveTraces.run({ i ->
-            traceShapes[i].moveShape(dx, dy)
+            traceShapes[i].moveShape(vector)
         }, traceShapes.size)
-        lastOriginX = lastOriginX?.plus(dx)
-        lastOriginY = lastOriginY?.plus(dy) // what elegancy lol
+        lastOrigin = lastOrigin?.plus(vector) // what elegancy lol
         if (generateTraceCalledThisFrame)
             generateTraceCalledThisFrame = false // initialize for next frame
         else {
-            lastOriginX = null
-            lastOriginY = null
+            lastOrigin = null
         }
     }
 

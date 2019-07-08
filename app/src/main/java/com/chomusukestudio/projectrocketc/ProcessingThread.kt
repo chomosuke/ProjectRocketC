@@ -9,6 +9,7 @@ import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
+import com.chomusukestudio.projectrocketc.Rocket.TestingRocket
 import com.chomusukestudio.projectrocketc.Rocket.V2
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.AccelerativeRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DirectionalRocketPhysics

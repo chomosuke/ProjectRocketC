@@ -6,8 +6,7 @@ import com.chomusukestudio.projectrocketc.Shape.LittleStar.LittleStarShape
 import com.chomusukestudio.projectrocketc.Shape.LittleStar.RADIUS_OF_LITTLE_STAR
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
 
-import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
-import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.distance
 import com.chomusukestudio.projectrocketc.TouchableView
 import com.chomusukestudio.projectrocketc.giveVisualText
 import kotlin.math.atan2
@@ -27,7 +26,7 @@ import kotlin.math.pow
  * Created by Shuang Li on 25/03/2018.
  */
 
-class LittleStar(val COLOR: Color, private var centerX: Float, private var centerY: Float, private val range: Float, var duration: Long, now: Long, layers: Layers) {
+class LittleStar(val COLOR: Color, private var center: Vector, private val range: Float, var duration: Long, now: Long, layers: Layers) {
     private var littleStarShape: LittleStarShape
     private var arrowToLittleStarShape: ArrowToLittleStarShape
     private var rangeCircleThingy: FullRingShape? = null
@@ -43,13 +42,13 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
         // circle color for arrowToLittleStarShape is star color
         // arrow color is circle color for littleStarShape
         val buildShapeAttr = BuildShapeAttr(-10f, true, layers)
-        littleStarShape = LittleStarShape(centerX, centerY, RADIUS_OF_LITTLE_STAR, COLOR.color, Color(1f, 1f, 1f, 1f), buildShapeAttr)
+        littleStarShape = LittleStarShape(center, RADIUS_OF_LITTLE_STAR, COLOR.color, Color(1f, 1f, 1f, 1f), buildShapeAttr)
         arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, Color(1f, 1f, 1f, 1f), COLOR.color, buildShapeAttr)
 
-        if (centerX + RADIUS_OF_LITTLE_STAR + range > rightEnd &&
-                        centerX - RADIUS_OF_LITTLE_STAR + range < leftEnd &&
-                        centerY + RADIUS_OF_LITTLE_STAR + range > bottomEnd &&
-                        centerY - RADIUS_OF_LITTLE_STAR + range < topEnd) { // if inScreen
+        if (center.x + RADIUS_OF_LITTLE_STAR + range > leftEnd &&
+                        center.x - RADIUS_OF_LITTLE_STAR + range < rightEnd &&
+                        center.y + RADIUS_OF_LITTLE_STAR + range > bottomEnd &&
+                        center.y - RADIUS_OF_LITTLE_STAR + range < topEnd) { // if inScreen
             inScreen = true
             arrowToLittleStarShape.visibility = false
         } else {
@@ -92,7 +91,7 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     
     fun isEaten(rocketComponentShapes: Array<Shape>): Boolean {
         for (rocketComponentShape in rocketComponentShapes)
-            if (CircularShape.isOverlap(rocketComponentShape, centerX, centerY, RADIUS_OF_LITTLE_STAR))
+            if (CircularShape.isOverlap(rocketComponentShape, center, RADIUS_OF_LITTLE_STAR))
                 return true
         return false
     }
@@ -137,38 +136,37 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     }
     
     fun isTooCloseToAPlanet(planet: Planet, margin: Float): Boolean {
-        return distance(planet.centerX, planet.centerY, centerX, centerY) <= RADIUS_OF_LITTLE_STAR + margin + planet.radius
+        return distance(planet.center, center) <= RADIUS_OF_LITTLE_STAR + margin + planet.radius
     }
     
     fun isTooFarFromAPlanet(planetShape: PlanetShape, margin: Float): Boolean {
-        return distance(planetShape.centerX, planetShape.centerY, centerX, centerY) >= RADIUS_OF_LITTLE_STAR + margin + planetShape.radius
+        return distance(planetShape.center, center) >= RADIUS_OF_LITTLE_STAR + margin + planetShape.radius
     }
     
-    fun moveLittleStar(dx: Float, dy: Float) {
-        if (dx == 0f && dy == 0f) {
+    fun moveLittleStar(displacement: Vector) {
+        if (displacement.x == 0f && displacement.y == 0f) {
             return
         }
-        centerX += dx
-        centerY += dy
-        littleStarShape.moveShape(dx, dy)
-        rangeCircleThingy?.moveShape(dx, dy)
+        center += displacement
+        littleStarShape.moveShape(displacement)
+        rangeCircleThingy?.moveShape(displacement)
         if (inScreen) {
-            if (centerX + RADIUS_OF_LITTLE_STAR < rightEnd ||
-                    centerX - RADIUS_OF_LITTLE_STAR > leftEnd ||
-                    centerY + RADIUS_OF_LITTLE_STAR < bottomEnd ||
-                    centerY - RADIUS_OF_LITTLE_STAR > topEnd) {
-                // if now it's out of screen
+            if (center.x + RADIUS_OF_LITTLE_STAR < leftEnd ||
+                    center.x - RADIUS_OF_LITTLE_STAR > rightEnd ||
+                    center.y + RADIUS_OF_LITTLE_STAR < bottomEnd ||
+                    center.y - RADIUS_OF_LITTLE_STAR > topEnd) {
+                // if nowXY it's out of screen
                 inScreen = false
                 arrowToLittleStarShape.visibility = true
                 // the next if statement will do the rest
             }
         }
         if (!inScreen) {
-            if (centerX + RADIUS_OF_LITTLE_STAR > rightEnd &&
-                    centerX - RADIUS_OF_LITTLE_STAR < leftEnd &&
-                    centerY + RADIUS_OF_LITTLE_STAR > bottomEnd &&
-                    centerY - RADIUS_OF_LITTLE_STAR < topEnd) {
-                // if inScreen now
+            if (center.x + RADIUS_OF_LITTLE_STAR > leftEnd &&
+                    center.x - RADIUS_OF_LITTLE_STAR < rightEnd &&
+                    center.y + RADIUS_OF_LITTLE_STAR > bottomEnd &&
+                    center.y - RADIUS_OF_LITTLE_STAR < topEnd) {
+                // if inScreen nowXY
                 inScreen = true
                 arrowToLittleStarShape.visibility = false
             } else {
@@ -181,65 +179,58 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     private fun positionArrow() {
         // still out of screen
         // point the arrow to the LittleStar
-        val cLeftMax = leftEnd - RADIUS_OF_LITTLE_STAR
-        val cRightMax = rightEnd + RADIUS_OF_LITTLE_STAR
+        val cLeftMax = rightEnd - RADIUS_OF_LITTLE_STAR
+        val cRightMax = leftEnd + RADIUS_OF_LITTLE_STAR
         val cTopMax = topEnd - RADIUS_OF_LITTLE_STAR
         val cBottomMax = bottomEnd + RADIUS_OF_LITTLE_STAR
-        var arrowX: Float
-        var arrowY: Float
-        val m = (centerY - centerOfRocketY) / (centerX - centerOfRocketX) // gradient of arrow
+        var arrow: Vector
+        val m = (center.y - centerOfRocket.y) / (center.x - centerOfRocket.x) // gradient of arrow
     
-        if (centerY > centerOfRocketY) { // could be topEnd
-            arrowY = cTopMax
-            arrowX = (cTopMax - centerOfRocketY) / m + centerOfRocketX // put arrow on topEnd
+        if (center.y > centerOfRocket.y) { // could be topEnd
+           
+            arrow = Vector((cTopMax - centerOfRocket.y) / m + centerOfRocket.x, cTopMax) // put arrow on topEnd
             arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.UP)
         
-            if (arrowX < cRightMax) { // if not topEnd but rightEnd
-                arrowX = cRightMax
-                arrowY = (cRightMax - centerOfRocketX) * m + centerOfRocketY// put arrow on rightEnd
+            if (arrow.x < cRightMax) { // if not topEnd but leftEnd
+                
+                arrow = Vector(cRightMax, (cRightMax - centerOfRocket.x) * m + centerOfRocket.y) // put arrow on leftEnd
                 arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.RIGHT)
             
-            } else if (arrowX > cLeftMax) { // if not topEnd but leftEnd
-            
-                arrowX = cLeftMax
-                arrowY = (cLeftMax - centerOfRocketX) * m + centerOfRocketY // put arrow on leftEnd
+            } else if (arrow.x > cLeftMax) { // if not topEnd but rightEnd
+                
+                arrow = Vector(cLeftMax, (cLeftMax - centerOfRocket.x) * m + centerOfRocket.y) // put arrow on rightEnd
                 arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.LEFT)
             
             } // else arrow is on topEnd, don't have to change anything, already put it there
         } else { // could be bottomEnd
-            arrowY = cBottomMax
-            arrowX = (cBottomMax - centerOfRocketY) / m + centerOfRocketX // put arrow on bottomEnd
+            
+            arrow = Vector((cBottomMax - centerOfRocket.y) / m + centerOfRocket.x, cBottomMax) // put arrow on bottomEnd
             arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.DOWN)
         
-            if (arrowX < cRightMax) { // if not bottomEnd but rightEnd
+            if (arrow.x < cRightMax) { // if not bottomEnd but leftEnd
             
-                arrowX = cRightMax
-                arrowY = (cRightMax - centerOfRocketX) * m + centerOfRocketY// put arrow on rightEnd
+                arrow = Vector(cRightMax, (cRightMax - centerOfRocket.x) * m + centerOfRocket.y) // put arrow on leftEnd
                 arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.RIGHT)
             
-            } else if (arrowX > cLeftMax) { // if not bottomEnd but leftEnd
+            } else if (arrow.x > cLeftMax) { // if not bottomEnd but rightEnd
             
-                arrowX = cLeftMax
-                arrowY = (cLeftMax - centerOfRocketX) * m + centerOfRocketY // put arrow on leftEnd
+                arrow = Vector(cLeftMax, (cLeftMax - centerOfRocket.x) * m + centerOfRocket.y) // put arrow on rightEnd
                 arrowToLittleStarShape.setDirection(ArrowToLittleStarShape.Direction.LEFT)
             
             } // else arrow is on bottomEnd, don't have to change anything, already put it there
         }
-        arrowToLittleStarShape.setPosition(arrowX, arrowY)
+        arrowToLittleStarShape.setPosition(arrow)
     }
     
-    fun rotateLittleStar(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
-        val result = rotatePoint(centerX, centerY, centerOfRotationX, centerOfRotationY, angle)
-        centerX = result[0]
-        centerY = result[1]
-        littleStarShape.rotateShape(centerOfRotationX, centerOfRotationY, angle)
-        rangeCircleThingy?.rotateShape(centerOfRotationX, centerOfRotationY, angle)
+    fun rotateLittleStar(centerOfRotation: Vector, angle: Float) {
+        center = center.rotateVector(centerOfRotation, angle)
+        littleStarShape.rotateShape(centerOfRotation, angle)
+        rangeCircleThingy?.rotateShape(centerOfRotation, angle)
     }
     
-    fun resetPosition(centerX: Float, centerY: Float) {
-        val dx = centerX - this.centerX
-        val dy = centerY - this.centerY
-        moveLittleStar(dx, dy)
+    fun resetPosition(center: Vector) {
+        val dCenter = center - this.center
+        moveLittleStar(dCenter)
     }
     
     fun removeLittleStarShape() {
@@ -253,8 +244,8 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
     }
     
     private var speed = 0f
-    fun attractLittleStar(centerOfRotationX: Float, centerOfRotationY: Float, now: Long, previousFrameTime: Long, acceleration: Float) {
-        val distance = distance(centerX, centerY, centerOfRotationX, centerOfRotationY)
+    fun attractLittleStar(centerOfRotation: Vector, now: Long, previousFrameTime: Long, acceleration: Float) {
+        val distance = distance(center, centerOfRotation)
         if (distance < RADIUS_OF_LITTLE_STAR + range){
             // accelerate it
             speed += acceleration * (now -  previousFrameTime)
@@ -268,8 +259,8 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
                 speed = 0f
         }
         if (speed != 0f) {
-            val angle = atan2(centerOfRotationY - centerY, centerOfRotationX - centerX)
-            moveLittleStar(speed * cos(angle) * (now - previousFrameTime), speed * sin(angle) * (now - previousFrameTime))
+            val angle = atan2(centerOfRotation.y - center.y, centerOfRotation.x - center.x)
+            moveLittleStar(Vector(speed * cos(angle), speed * sin(angle)) * (now - previousFrameTime).toFloat())
         }
     }
     
@@ -284,11 +275,9 @@ class LittleStar(val COLOR: Color, private var centerX: Float, private var cente
             score = 0
         }
         
-        private var centerOfRocketX = 0f
-        private var centerOfRocketY = 0f
-        fun setCenterOfRocket(centerOfRocketX: Float, centerOfRocketY: Float) {
-            LittleStar.centerOfRocketX = centerOfRocketX
-            LittleStar.centerOfRocketY = centerOfRocketY
+        private var centerOfRocket = Vector(0f, 0f)
+        fun setCenterOfRocket(centerOfRocket: Vector) {
+            LittleStar.centerOfRocket = centerOfRocket
         }
 
         var soundId: Int = 0

@@ -1,7 +1,6 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
 import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.randFloat
 
 import java.util.Arrays
@@ -11,7 +10,7 @@ import java.lang.Math.asin
 import java.lang.Math.cos
 import java.lang.Math.sin
 
-class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(centerX, centerY, radius) {
+class MarsShape(center: Vector, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(center, radius) {
     override val isOverlapMethodLevel: Double = 2.0 // one level higher circularShape
     override lateinit var componentShapes: Array<Shape>
     
@@ -31,7 +30,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
         val darkerColor = Color(randomDarker * mainColor.red, randomDarker * mainColor.green, randomDarker * mainColor.blue, 1f)
         
         // the planet itself
-        componentShapes[0] = CircularShape(centerX, centerY, radius, mainColor, buildShapeAttr)
+        componentShapes[0] = CircularShape(center, radius, mainColor, buildShapeAttr)
         
         // generate some Crater on the planet
         for (i in 1 until componentShapes.size) {
@@ -41,8 +40,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
             val offsetRadius = asin((i - 0.25) / numberOfCrater)
             
             // generate the crater
-            val centerXOfBall = centerX
-            val centerYOfBall = centerY
+            val centerOfBall = center
             val shapeAttributes1 = buildShapeAttr.newAttrWithChangedZ(-0.01f)
             componentShapes[i] = object : Shape() {
                 override var componentShapes: Array<Shape>
@@ -56,12 +54,12 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
                     
                     // generate components triangularShape for EllipseShape isInUse center and a and b
                     for (i in 1 until componentShapes.size + 1) {
-                        componentShapes[i - 1] = TriangularShape(mSin(offsetRadius).toFloat() * radius * cos(sRadius).toFloat(),
-                                sin(sRadius).toFloat() * radius,
-                                mSin(offsetRadius + sRadius * sin(2.0 * PI * i / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * i / numberOfEdges)).toFloat(),
-                                sin(sRadius * cos(2.0 * PI * i / numberOfEdges)).toFloat() * radius,
-                                mSin(offsetRadius + sRadius * sin(2.0 * PI * (i + 1) / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * (i + 1) / numberOfEdges)).toFloat(),
-                                sin(sRadius * cos(2.0 * PI * (i + 1) / numberOfEdges)).toFloat() * radius,
+                        componentShapes[i - 1] = TriangularShape(Vector(mSin(offsetRadius).toFloat() * radius * cos(sRadius).toFloat(),
+                                sin(sRadius).toFloat() * radius),
+                                Vector(mSin(offsetRadius + sRadius * sin(2.0 * PI * i / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * i / numberOfEdges)).toFloat(),
+                                sin(sRadius * cos(2.0 * PI * i / numberOfEdges)).toFloat() * radius),
+                                Vector(mSin(offsetRadius + sRadius * sin(2.0 * PI * (i + 1) / numberOfEdges)).toFloat() * radius * cos(sRadius * cos(2.0 * PI * (i + 1) / numberOfEdges)).toFloat(),
+                                sin(sRadius * cos(2.0 * PI * (i + 1) / numberOfEdges)).toFloat() * radius),
                                 darkerColor, shapeAttributes1) // close for modification
                         // below is circular crater
 //                        val x2 = centerXOfCrater + (r * sin(2 * PI * i / numberOfEdges)).toFloat()
@@ -83,7 +81,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
                     }
                     this.componentShapes = componentShapes as Array<Shape>
 
-                    moveShape(centerXOfBall, centerYOfBall)
+                    moveShape(centerOfBall)
                 }
                 
                 private fun mSin(a: Double): Double {
@@ -100,7 +98,7 @@ class MarsShape(centerX: Float, centerY: Float, radius: Float, buildShapeAttr: B
         System.arraycopy(componentShapes, 1, rComponentShapes, 0, rComponentShapes.size)
         Arrays.asList<Shape>(*rComponentShapes).shuffle()
         for (i in rComponentShapes.indices) {
-            rComponentShapes[i]!!.rotateShape(centerX, centerY, (2 * PI / rComponentShapes.size * i).toFloat())
+            rComponentShapes[i]!!.rotateShape(center, 2 * PI.toFloat() / rComponentShapes.size * i)
         }
         
         this.componentShapes = componentShapes as Array<Shape>

@@ -3,8 +3,6 @@ package com.chomusukestudio.projectrocketc.GLRenderer
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
-import com.chomusukestudio.projectrocketc.heightInPixel
-import com.chomusukestudio.projectrocketc.widthInPixel
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -44,7 +42,7 @@ class Layer(val z: Float) { // depth for the drawing order
                 lastUsedCoordIndex = 0
 
             if (i >= vertexCount * COORDS_PER_VERTEX / 2) {
-                // if half of all before vertexCount does not have unused triangle leftEnd
+                // if half of all before vertexCount does not have unused triangle rightEnd
                 lastUsedCoordIndex = incrementVertexCountAndGiveNewCoordsPointer()
                 return lastUsedCoordIndex
             }
@@ -121,11 +119,11 @@ class Layer(val z: Float) { // depth for the drawing order
 
         changingBuffer = true
 
-        // add the coordinates to the FloatBuffer
+        // offset the coordinates to the FloatBuffer
         vertexBuffer.put(triangleCoords)
         // set the buffer to read the first coordinate
         vertexBuffer.position(0)
-        // add the coordinates to the FloatBuffer
+        // offset the coordinates to the FloatBuffer
         colorBuffer.put(colors)
         // set the buffer to read the first coordinate
         colorBuffer.position(0)
@@ -195,11 +193,11 @@ class Layer(val z: Float) { // depth for the drawing order
             // in the onDrawFrame() method
 
             // for debugging
-//        Matrix.orthoM(mProjectionMatrix, 0, leftEnd * 2, rightEnd * 2,
+//        Matrix.orthoM(mProjectionMatrix, 0, rightEnd * 2, leftEnd * 2,
 //                bottomEnd * 2, topEnd * 2, -1000f, 1000f)
-            Matrix.orthoM(mProjectionMatrix, 0, leftEnd, rightEnd,
+            Matrix.orthoM(mProjectionMatrix, 0, rightEnd, leftEnd,
                     bottomEnd, topEnd, -1000f, 1000f)
-            // this game shall be optimised for any aspect ratio as now all leftEnd, rightEnd, bottomEnd and topEnd are visibility
+            // this game shall be optimised for any aspect ratio as nowXY all rightEnd, leftEnd, bottomEnd and topEnd are visibility
 
             // Set the camera position (View matrix)
             Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
@@ -221,10 +219,10 @@ class Layer(val z: Float) { // depth for the drawing order
             val fragmentShader = TheGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER,
                     fragmentShaderCode)
 
-            // add the vertex shader to program
+            // offset the vertex shader to program
             GLES20.glAttachShader(mProgram, vertexShader)
 
-            // add the fragment shader to program
+            // offset the fragment shader to program
             GLES20.glAttachShader(mProgram, fragmentShader)
 
             // creates OpenGL ES program executables

@@ -12,6 +12,7 @@ import android.widget.TextView
 import java.util.logging.Level
 import java.util.logging.Logger
 import com.chomusukestudio.projectrocketc.GLRenderer.*
+import com.chomusukestudio.projectrocketc.Shape.Vector
 import java.lang.Math.random
 import kotlin.math.sqrt
 
@@ -32,11 +33,11 @@ fun transformToMatrixX(x: Float): Float {
     // transformation
     resultX -= widthInPixel / 2
     resultX /= widthInPixel / 2
-    resultX *= leftEnd
-    // assuming leftEnd == - rightEnd is true
+    resultX *= rightEnd
+    // assuming rightEnd == - leftEnd is true
     // need improvement to obey OOP principles by getting rid of the assumption above
-    if (!(leftEnd == -rightEnd))
-        throw RuntimeException("need improvement to obey OOP principles by not assuming leftEnd == - rightEnd is true.\n" +
+    if (!(rightEnd == -leftEnd))
+        throw RuntimeException("need improvement to obey OOP principles by not assuming rightEnd == - leftEnd is true.\n" +
                 "or you can ignore the above and just twist the code to get it work and not give a fuck about OOP principles.\n" +
                 "which is what i did when i wrote those code.  :)")
     return resultX
@@ -145,33 +146,14 @@ interface IReusable { // stuff that can be stored in a place (e.g. an array) and
     var isInUse: Boolean
 }
 
-fun decelerateSpeedXY(speedX: Float, speedY: Float, deceleration: Float, frameTime: Long): Array<Float> {
-    var speedX = speedX
-    var speedY = speedY
+fun decelerateVelocity(velocity: Vector, deceleration: Float, frameTime: Long): Vector {
     val dSpeed = deceleration * frameTime
-    var speed = sqrt(square(speedX) + square(speedY))
-    
-    if (speed > dSpeed) speed -= dSpeed
-    else speed = 0f
-    
-    when {
-        speedX == 0f -> // calculation can be simplified
-            speedY = if (speedY >= 0) speed else -speed
-        speedY == 0f ->
-            speedX = if (speedX >= 0) speed else -speed
-        else -> {
-            val ratio = speedY / speedX
-            speedX = if (speedX >= 0) // preserve sign of speeds
-                speed / sqrt(square(ratio) + 1)
-            else
-                -speed / sqrt(square(ratio) + 1)
-            speedY = ratio * speedX
-        }
-    }
-    return arrayOf(speedX, speedY)
+    val resultSpeed = velocity.abs - dSpeed
+    return velocity * (resultSpeed / velocity.abs)
 }
 
 fun randFloat(b1: Float, b2: Float) = random().toFloat() * (b2 - b1) + b1
 
 fun square(input: Double) = input * input
 fun square(input: Float) = input * input
+fun distance(p1: Vector, p2: Vector) = sqrt(square(p1.x - p2.x) + square(p1.y - p2.y))

@@ -7,7 +7,7 @@ import com.chomusukestudio.projectrocketc.GLRenderer.*
 
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Rocket.speedFormula
-import com.chomusukestudio.projectrocketc.Shape.QuadrilateralShape
+import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.JupiterShape
@@ -15,14 +15,10 @@ import com.chomusukestudio.projectrocketc.Shape.PlanetShape.MarsShape
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.SaturnShape
 import com.chomusukestudio.projectrocketc.Shape.PlanetShape.StarShape
-import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.Color
 
 import java.util.ArrayList
 
-import com.chomusukestudio.projectrocketc.Shape.coordinate.distance
-import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
+import com.chomusukestudio.projectrocketc.distance
 import com.chomusukestudio.projectrocketc.square
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar.Color.YELLOW
 import java.lang.Math.random
@@ -43,7 +39,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             else {
                 // initialize all those stars in the backgrounds
                 Array<Shape>(6000) { // 6000 stars in the background
-                    return@Array StarShape(randFloat(rightEnd, leftEnd), randFloat(topEnd, bottomEnd),
+                    return@Array StarShape(Vector(randFloat(leftEnd, rightEnd), randFloat(topEnd, bottomEnd)),
                             (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, BuildShapeAttr(11f, true, layers))
                 }
             }
@@ -51,17 +47,15 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     private lateinit var startingPathOfRocket: Shape
     override lateinit var rocket: Rocket
 
-    override val centerOfRotationX: Float = 0f
-    override val centerOfRotationY: Float = 0f
-    override val rotation: Float = 0f
+    override val centerOfRotation = Vector(0f, 0f)
+    override val rotation = PI.toFloat() / 2
 
     private val minDistantBetweenPlanet = 4f
 
     private lateinit var newPlanet: Planet
     private var numberOfRedStar = 0
 
-    private var displacementX = 0f
-    private var displacementY = 0f // displacement since last makeNewTriangleAndRemoveTheOldOne()
+    private var displacement = Vector(0f, 0f) // displacement since last makeNewTriangleAndRemoveTheOldOne()
     private val parallelForIForBackgroundStars = ParallelForI(8, "move background")
 
     private val planetsStore =
@@ -69,40 +63,40 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
                 resources.planetsStore
             else
                 Array(1000) {// 1000 planet in store waiting for use
-                    val planetShape = generateRandomPlanet(100f, 100f, generateRadius(), 10f, layers)
+                    val planetShape = generateRandomPlanet(Vector(100f, 100f), generateRadius(), 10f, layers)
                     planetShape.isInUse = false
                     return@Array planetShape
                 }
 
-    private fun generateRandomPlanet(centerX: Float, centerY: Float, radius: Float, z: Float, layers: Layers): Planet {
+    private fun generateRandomPlanet(center: Vector, radius: Float, z: Float, layers: Layers): Planet {
         val randomPlanetShape: PlanetShape
         if (radius < averageRadius) {
 //            val timeStarted = SystemClock.uptimeMillis()
-            randomPlanetShape = MarsShape(centerX, centerY, radius, BuildShapeAttr(z, false, layers))
+            randomPlanetShape = MarsShape(center, radius, BuildShapeAttr(z, false, layers))
 //            Log.v("time take for newPlanet", "mars " + (SystemClock.uptimeMillis() - timeStarted))
         } else if (radius < averageRadius + radiusMargin * 0.6) {
 //            val timeStarted = SystemClock.uptimeMillis()
             val ringA = randFloat(1.5f, 1.7f) * radius
-            randomPlanetShape = SaturnShape(ringA, randFloat(0.1f, 0.6f) * ringA, 1.2f * radius, randFloat(3f, 6f).toInt(), centerX, centerY, radius, BuildShapeAttr(z, false, layers))
+            randomPlanetShape = SaturnShape(ringA, randFloat(0.1f, 0.6f) * ringA, 1.2f * radius, randFloat(3f, 6f).toInt(), center, radius, BuildShapeAttr(z, false, layers))
             //            randomPlanetShape = new SaturnShape(ringA, (float) (0.1 + 0.5 * random()) * ringA, (0.67f + 0.2f*(float)random()) * ringA, (int) (3 * random() + 3), centerX, centerY, radius, z);
 //            Log.v("time take for newPlanet", "saturn " + (SystemClock.uptimeMillis() - timeStarted))
         } else {
 //            val timeStarted = SystemClock.uptimeMillis()
-            randomPlanetShape = JupiterShape(centerX, centerY, radius, BuildShapeAttr(z, false, layers))
+            randomPlanetShape = JupiterShape(center, radius, BuildShapeAttr(z, false, layers))
 //            Log.v("time take for newPlanet", "jupiter " + (SystemClock.uptimeMillis() - timeStarted))
         }
-        randomPlanetShape.rotateShape(centerX, centerY, (random() * 2.0 * PI).toFloat())
+        randomPlanetShape.rotateShape(center, (random() * 2.0 * PI).toFloat())
         return Planet(randomPlanetShape)
     }
 
     init {
-        LittleStar.setCenterOfRocket(centerOfRotationX, centerOfRotationY)
+        LittleStar.setCenterOfRocket(centerOfRotation)
     }
 
     private val topPlanetBoundary = topEnd * (1.5f/* + topMarginForLittleStar*/)
     private val bottomPlanetBoundary = bottomEnd * 1.5f
-    private val leftPlanetBoundary = leftEnd * 1.5f
-    private val rightPlanetBoundary = rightEnd * 1.5f
+    private val leftPlanetBoundary = rightEnd * 1.5f
+    private val rightPlanetBoundary = leftEnd * 1.5f
 
     override fun initializeSurrounding(rocket: Rocket, state: State) {
         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
@@ -112,12 +106,12 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         val minCloseDist = 0.004f * timeLimit
         val initialFlybyDistance = sqrt(square(flybyDistance + averageRadius) - square(minCloseDist))/*rocket.width / 2 + flybyDistance*/
 //        if (rocket.initialSpeed != 0f) {
-            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, 100000000f,
-                    centerOfRotationX + initialFlybyDistance, 100000000f, // max value is bad because it causes overflow... twice
-                    centerOfRotationX + initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
-                    centerOfRotationX - initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
+            startingPathOfRocket = QuadrilateralShape(Vector(centerOfRotation.x - initialFlybyDistance, 100000000f),
+                    Vector(centerOfRotation.x + initialFlybyDistance, 100000000f), // max value is bad because it causes overflow... twice
+                            Vector(centerOfRotation.x + initialFlybyDistance, centerOfRotation.y - initialFlybyDistance),
+                                    Vector(centerOfRotation.x - initialFlybyDistance, centerOfRotation.y - initialFlybyDistance),
                     Color(0f, 1f, 0f, 1f), BuildShapeAttr(0f, false, layers))
-            startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
+            startingPathOfRocket.rotateShape(centerOfRotation, rotation - PI.toFloat()/2)
 //        } else {
 //            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
 //                    centerOfRotationX + initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
@@ -127,16 +121,16 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
 //        }
 
 
-        val avoidDistanceX = 110f // to avoid constant change of visibility
-        startingPathOfRocket.moveShape(avoidDistanceX, 0f) // i'll move it back later
+        val avoidDistance = Vector(110f, 0f) // to avoid constant change of visibility
+        startingPathOfRocket.moveShape(avoidDistance) // i'll move it back later
         newPlanet = getRandomPlanet()
         // initialize surrounding
         val iMax = 256
         for (i in 0..iMax) {
             // randomly reposition the new planet
-            val centerX = randFloat(rightPlanetBoundary, leftPlanetBoundary) + avoidDistanceX // + avoidDistanceX as to avoid constant change of visibility
-            val centerY = (topPlanetBoundary - bottomPlanetBoundary) / iMax * i + bottomPlanetBoundary
-            newPlanet.resetPosition(centerX, centerY)
+            val center = Vector(randFloat(rightPlanetBoundary, leftPlanetBoundary),
+            (topPlanetBoundary - bottomPlanetBoundary) / iMax * i + bottomPlanetBoundary) + avoidDistance // + avoidDistanceX as to avoid constant change of visibility
+            newPlanet.resetPosition(center)
 
             if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
 
@@ -147,8 +141,8 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             }
         }
         for (boundary in planets)
-            boundary.movePlanet(-avoidDistanceX, 0f) // move planets back
-        startingPathOfRocket.moveShape(-avoidDistanceX, 0f) // move startingPathOfRocket back
+            boundary.movePlanet(-avoidDistance) // move planets back
+        startingPathOfRocket.moveShape(-avoidDistance) // move startingPathOfRocket back
     }
 
     private fun isGoodPlanet(planet: Planet, state: State): Boolean {
@@ -175,10 +169,10 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         // to delete
         var i = 0
         while (i < planets.size) { // planets
-            if (planets[i].centerY < bottomEnd * 30f ||
-                    planets[i].centerY > topEnd * 30f ||
-                    planets[i].centerX < rightEnd * 30f ||
-                    planets[i].centerX > leftEnd * 30f) {
+            if (planets[i].center.y < bottomEnd * 30f ||
+                    planets[i].center.y > topEnd * 30f ||
+                    planets[i].center.x < leftEnd * 30f ||
+                    planets[i].center.x > rightEnd * 30f) {
                 planets.removeAt(i).isInUse = false
                 i--// this one is removed so the next one would have a index of i
             }
@@ -186,15 +180,15 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         }
 
         // to create
-        val newAreaLR = abs(displacementX * (topPlanetBoundary - bottomPlanetBoundary))
-        val newAreaTB = abs(displacementY * (leftPlanetBoundary - rightPlanetBoundary))
+        val newAreaLR = abs(displacement.x * (topPlanetBoundary - bottomPlanetBoundary))
+        val newAreaTB = abs(displacement.y * (leftPlanetBoundary - rightPlanetBoundary))
         val rand = random()
         if (rand * newAreaLR > (1 - rand) * newAreaTB) {
 
-            if (displacementX < 0) {
+            if (displacement.x < 0) {
                 // if need to create on positive side
                 // put the random planet on the positive side
-                newPlanet.resetPosition(randFloat(leftPlanetBoundary, leftPlanetBoundary + displacementX), randFloat(bottomPlanetBoundary, topPlanetBoundary))
+                newPlanet.resetPosition(Vector(randFloat(leftPlanetBoundary, leftPlanetBoundary + displacement.x), randFloat(bottomPlanetBoundary, topPlanetBoundary)))
 
                 if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
                     planets.add(newPlanet)// use the random new planet
@@ -204,7 +198,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             } else {
                 // if need to create on negative side
                 // put the random planet on the negative side
-                newPlanet.resetPosition(randFloat(rightPlanetBoundary, rightPlanetBoundary + displacementX), randFloat(bottomPlanetBoundary, topPlanetBoundary))
+                newPlanet.resetPosition(Vector(randFloat(rightPlanetBoundary, rightPlanetBoundary + displacement.x), randFloat(bottomPlanetBoundary, topPlanetBoundary)))
 
                 if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
                     planets.add(newPlanet)// use the random new planet
@@ -213,11 +207,11 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
                 }
             }
         } else {
-            if (displacementY < 0) {
+            if (displacement.y < 0) {
                 // if need to create on positive side
                 // put the random planet on the positive side
-                newPlanet.resetPosition(randFloat(rightPlanetBoundary, leftPlanetBoundary),
-                        randFloat(topPlanetBoundary, topPlanetBoundary + displacementY))
+                newPlanet.resetPosition(Vector(randFloat(rightPlanetBoundary, leftPlanetBoundary),
+                        randFloat(topPlanetBoundary, topPlanetBoundary + displacement.y)))
 
                 if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
                     planets.add(newPlanet) // use the random new planet
@@ -227,7 +221,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             } else {
                 // if need to create on negative side
                 // put the random planet on the positive side
-                newPlanet.resetPosition(randFloat(rightPlanetBoundary, leftPlanetBoundary), randFloat(bottomPlanetBoundary, bottomPlanetBoundary + displacementY))
+                newPlanet.resetPosition(Vector(randFloat(rightPlanetBoundary, leftPlanetBoundary), randFloat(bottomPlanetBoundary, bottomPlanetBoundary + displacement.y)))
 
                 if (isGoodPlanet(newPlanet, state)) {// it is not too close to any other planet
                     planets.add(newPlanet)// use the random new planet
@@ -237,14 +231,13 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             }
         }
         // reset displacement
-        displacementX = 0f
-        displacementY = 0f
+        displacement = Vector(0f, 0f)
 
     }
 
     private fun attractLittleStar(now: Long, previousFrameTime: Long) {
         for (littleStar in littleStars)
-            littleStar.attractLittleStar(centerOfRotationX, centerOfRotationY, now, previousFrameTime, 0.00002f)
+            littleStar.attractLittleStar(centerOfRotation, now, previousFrameTime, 0.00002f)
     }
 
     override fun removeAllShape() {
@@ -258,16 +251,16 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         parallelForIForBackgroundStars.run({ i ->
             val starShape = backgrounds[i] as StarShape
 
-            starShape.moveStarShape(3.1415926535f, 3.1415926535897932354626f)
+            starShape.moveStarShape(Vector(3.1415926535f, 3.1415926535897932354626f))
             // those that got out of screen, make them appear on the opposite side
-            if (starShape.centerY < bottomEnd)
-                starShape.resetPosition(starShape.centerX, starShape.centerY + (topEnd - bottomEnd))
-            if (starShape.centerY > topEnd)
-                starShape.resetPosition(starShape.centerX, starShape.centerY - (topEnd - bottomEnd))
-            if (starShape.centerX < rightEnd)
-                starShape.resetPosition(starShape.centerX + (leftEnd - rightEnd), starShape.centerY)
-            if (starShape.centerX > leftEnd)
-                starShape.resetPosition(starShape.centerX - (leftEnd - rightEnd), starShape.centerY)
+            if (starShape.center.y < bottomEnd)
+                starShape.resetPosition(Vector(starShape.center.x, starShape.center.y + (topEnd - bottomEnd)))
+            if (starShape.center.y > topEnd)
+                starShape.resetPosition(Vector(starShape.center.x, starShape.center.y - (topEnd - bottomEnd)))
+            if (starShape.center.x < leftEnd)
+                starShape.resetPosition(Vector(starShape.center.x + (rightEnd - leftEnd), starShape.center.y))
+            if (starShape.center.x > rightEnd)
+                starShape.resetPosition(Vector(starShape.center.x - (rightEnd - leftEnd), starShape.center.y))
         }, backgrounds.size)
         parallelForIForBackgroundStars.waitForLastRun()
         // leave background for next use
@@ -307,29 +300,29 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     }
 
     //    private val parallelForIForMoveBoundaries = ParallelForI(8, "parallelForIForMoveBoundaries")
-    override fun moveSurrounding(dx: Float, dy: Float, now: Long, previousFrameTime: Long) {
+    override fun moveSurrounding(vector: Vector, now: Long, previousFrameTime: Long) {
         parallelForIForBackgroundStars.waitForLastRun()
 
         // move background
         parallelForIForBackgroundStars.run({ i ->
             val starShape = backgrounds[i] as StarShape
 
-            starShape.moveStarShape(dx, dy)
+            starShape.moveStarShape(vector)
             // those that got out of screen, make them appear on the opposite side
-            if (starShape.centerY < bottomEnd)
-                starShape.resetPosition(starShape.centerX, starShape.centerY + (topEnd - bottomEnd))
-            if (starShape.centerY > topEnd)
-                starShape.resetPosition(starShape.centerX, starShape.centerY - (topEnd - bottomEnd))
-            if (starShape.centerX < rightEnd)
-                starShape.resetPosition(starShape.centerX + (leftEnd - rightEnd), starShape.centerY)
-            if (starShape.centerX > leftEnd)
-                starShape.resetPosition(starShape.centerX - (leftEnd - rightEnd), starShape.centerY)
+            if (starShape.center.y < bottomEnd)
+                starShape.resetPosition(Vector(starShape.center.x, starShape.center.y + (topEnd - bottomEnd)))
+            if (starShape.center.y > topEnd)
+                starShape.resetPosition(Vector(starShape.center.x, starShape.center.y - (topEnd - bottomEnd)))
+            if (starShape.center.x < leftEnd)
+                starShape.resetPosition(Vector(starShape.center.x + (rightEnd - leftEnd), starShape.center.y))
+            if (starShape.center.x > rightEnd)
+                starShape.resetPosition(Vector(starShape.center.x - (rightEnd - leftEnd), starShape.center.y))
         }, backgrounds.size)
 
 //        val visibleBoundaries = ArrayList<Shape>()
 //        for (planet in planets) {
 //            if (planet.visibility)
-//                visibleBoundaries.add(planet)
+//                visibleBoundaries.offset(planet)
 //            else
 //                planet.moveStarShape(dx, dy)
 //        }
@@ -339,12 +332,11 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
 //        parallelForIForBackgroundStars.waitForLastRun()
 
         for (i in planets.indices)
-            planets[i].movePlanet(dx, dy)
+            planets[i].movePlanet(vector)
         for (littleStar in littleStars)
-            littleStar.moveLittleStar(dx, dy)
+            littleStar.moveLittleStar(vector)
 
-        displacementX += dx
-        displacementY += dy
+        displacement += vector
         // refresh displacement since last makeNewTriangleAndRemoveTheOldOne()
 
         attractLittleStar(now, previousFrameTime)
@@ -381,7 +373,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     override fun checkAndAddLittleStar(now: Long) { // this get called every frame
         // you trust state will be inGame or processing thread won't check
         if (littleStars.size == 0) {
-            littleStars.add(oneNewLittleStar(now)) // if started and there is no little star in surrounding, then add one.
+            littleStars.add(oneNewLittleStar(now)) // if started and there is no little star in surrounding, then offset one.
         }
         for (i in littleStars.indices) {
             if (rocket.isEaten(littleStars[i])) {
@@ -408,14 +400,13 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     }
 
     private fun oneNewLittleStar(now: Long): LittleStar {
-        val centerX = randFloat(leftEnd, rightEnd)
-        val centerY = topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/
+        val center = Vector(randFloat(rightEnd, leftEnd), topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/)
         val littleStar = /*if (rocket.initialSpeed == 0f)
             LittleStar(YELLOW, centerX, centerY, 1f,
-                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(1f / 1000f, LittleStar.score) * 2).toLong(), now, layers)
+                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(1f / 1000f, LittleStar.score) * 2).toLong(), nowXY, layers)
         else*/
-            LittleStar(YELLOW, centerX, centerY, 1f,
-                    (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(2f/ 1000f, LittleStar.score) * 2).toLong(), now, layers)
+            LittleStar(YELLOW, center, 1f,
+                    (distance(center, centerOfRotation) / speedFormula(2f/ 1000f, LittleStar.score) * 2).toLong(), now, layers)
 
         var finished: Boolean
         while (true) {
@@ -430,7 +421,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
                 flybysInThisYellowStar = 0
                 return littleStar
             } else {
-                littleStar.resetPosition(randFloat(leftEnd, rightEnd), topEnd/* + topMarginForLittleStar * topEnd * random().toFloat()*/)
+                littleStar.resetPosition(Vector(randFloat(rightEnd, leftEnd), topEnd/* + topMarginForLittleStar * topEnd * random().toFloat()*/))
             }
         }
     }
@@ -469,9 +460,9 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     override fun rotateSurrounding(angle: Float, now: Long, previousFrameTime: Long) {
         // move the planets down by y (y is decided by plane.movePlane())
         for (planet in planets)
-            planet.rotatePlanet(centerOfRotationX, centerOfRotationY, angle)
+            planet.rotatePlanet(centerOfRotation, angle)
         for (littleStar in littleStars)
-            littleStar.rotateLittleStar(centerOfRotationX, centerOfRotationY, angle)
+            littleStar.rotateLittleStar(centerOfRotation, angle)
     }
 
 
@@ -518,7 +509,7 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
     private var flybyable = true
     private var closeTime = 0L
     override fun checkFlyby(rocket: Rocket, frameDuration: Long): Boolean {
-        if (distance(rocket.centerOfRotationX, rocket.centerOfRotationY, centerX, centerY) <= radius + (rocket.width/2) + flybyDistance)
+        if (distance(rocket.centerOfRotation, center) <= radius + (rocket.width/2) + flybyDistance)
             closeTime += frameDuration
         if (flybyable) {
             if (closeTime > timeLimit) {
@@ -532,10 +523,8 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
     }
 
 
-    var centerX: Float = planetShape.centerX
-        private set
-    var centerY: Float = planetShape.centerY
-        private set
+    var center = planetShape.center
+        private set // Planet's center is different from actual center while planet go beyond the screen
 
     val radius: Float
         get() = planetShape.radius
@@ -552,54 +541,49 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
             }
         }
 
-    private fun setActual(actualCenterX: Float, actualCenterY: Float) {
-        val dx = actualCenterX - planetShape.centerX
-        val dy = actualCenterY - planetShape.centerY
-        planetShape.moveShape(dx, dy)
+    private fun setActual(actualCenter: Vector) {
+        val dCenter = actualCenter - planetShape.center
+        planetShape.moveShape(dCenter)
         if (angleRotated != 0f) {
-            planetShape.rotateShape(centerX, centerY, angleRotated)
+            planetShape.rotateShape(center, angleRotated)
             angleRotated = 0f // reset angleRotated
         }
     }
 
 
-    fun resetPosition(centerX: Float, centerY: Float) {
-        planetShape.resetPosition(centerX, centerY)
-        this.centerX = centerX
-        this.centerY = centerY
+    fun resetPosition(center: Vector) {
+        planetShape.resetPosition(center)
+        this.center = center
     }
 
-    fun rotatePlanet(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
+    fun rotatePlanet(centerOfRotation: Vector, angle: Float) {
         if (angle == 0f) {
             return
         }
         angleRotated += angle
-        val result = rotatePoint(centerX, centerY, centerOfRotationX, centerOfRotationY, angle)
-        centerX = result[0]
-        centerY = result[1]
+        center = center.rotateVector(centerOfRotation, angle)
         visibility = canBeSeen()
         if (visibility)
-            setActual(centerX, centerY)
+            setActual(center)
     }
 
     private fun canBeSeen(): Boolean {
-        return canBeSeenIf(centerX, centerY) || canBeSeenIf(planetShape.centerX, planetShape.centerY)
+        return canBeSeenIf(center) || canBeSeenIf(planetShape.center)
     }
 
-    fun canBeSeenIf(centerX: Float, centerY: Float): Boolean {
+    private fun canBeSeenIf(center: Vector): Boolean {
         val maxWidth = planetShape.maxWidth
-        return centerX < leftEnd + maxWidth &&
-                centerX > rightEnd - maxWidth &&
-                centerY < topEnd + maxWidth &&
-                centerY > bottomEnd - maxWidth
+        return center.x < rightEnd + maxWidth &&
+                center.x > leftEnd - maxWidth &&
+                center.y < topEnd + maxWidth &&
+                center.y > bottomEnd - maxWidth
     }
 
-    fun movePlanet(dx: Float, dy: Float) {
-        centerX += dx
-        centerY += dy
+    fun movePlanet(vector: Vector) {
+        center += vector
         visibility = canBeSeen()
         if (visibility)
-            setActual(centerX, centerY)
+            setActual(center)
     }
 
     fun isOverlap(anotherShape: Shape): Boolean {
@@ -608,7 +592,7 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
 
     fun isTooClose(anotherPlanet: Planet, distance: Float): Boolean {
         // if circle and circle are too close
-        return square(anotherPlanet.centerX - this.centerX) + square(anotherPlanet.centerY - this.centerY) <= square(anotherPlanet.planetShape.radius + planetShape.radius + distance)
+        return distance(anotherPlanet.center, this.center) <= anotherPlanet.planetShape.radius + planetShape.radius + distance
         // testing all pointsOutside is impractical because performance, subclass may override this method.
     }
 }
