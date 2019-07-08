@@ -3,6 +3,7 @@ package com.chomusukestudio.projectrocketc.Joystick
 
 import android.support.annotation.CallSuper
 import android.view.MotionEvent
+import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.transformToMatrixX
 import com.chomusukestudio.projectrocketc.transformToMatrixY
 import kotlin.collections.ArrayList
@@ -13,9 +14,7 @@ import kotlin.collections.ArrayList
 
 abstract class Joystick {
     @Volatile
-    protected var nowX: Float = 0f
-    @Volatile
-    protected var nowY: Float = 0f
+    protected var nowXY = Vector(0f, 0f)
 
     protected val actionDown
         get() = pointers.isNotEmpty() // action is down when there is pointer
@@ -28,7 +27,7 @@ abstract class Joystick {
         // interested in events where the touch position changed.
         when (e.actionMasked) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN ->
-                if (!pointers.contains(e.getPointerId(e.actionIndex))) // add the new pointer
+                if (!pointers.contains(e.getPointerId(e.actionIndex))) // offset the new pointer
                     pointers.add(e.getPointerId(e.actionIndex))
 //                else // this actually does happen for some reason
 //                    throw RuntimeException("New pointer is already in pointers.") // interesting
@@ -51,13 +50,12 @@ abstract class Joystick {
         val x = transformToMatrixX(e.getX(e.findPointerIndex(pointers.last())))
         val y = transformToMatrixY(e.getY(e.findPointerIndex(pointers.last())))
 
-        updateTouchPosition(x, y)
+        updateTouchPosition(Vector(x, y))
     }
 
     @CallSuper
-    protected open fun updateTouchPosition(nowX: Float, nowY: Float) {
-        this.nowX = nowX
-        this.nowY = nowY
+    protected open fun updateTouchPosition(nowXY: Vector) {
+        this.nowXY = nowXY
     }
 
     abstract fun getRocketControl(currentRotation: Float): RocketControl

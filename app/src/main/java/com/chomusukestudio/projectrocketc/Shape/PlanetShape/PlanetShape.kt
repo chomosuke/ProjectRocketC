@@ -1,22 +1,17 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
-import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
+import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
-import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
-import com.chomusukestudio.projectrocketc.square
+import com.chomusukestudio.projectrocketc.distance
 
-abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, val radius: Float) : Shape() {
-    var centerX: Float = centerX
-        private set
-    var centerY: Float = centerY
+abstract class PlanetShape internal constructor(center: Vector, val radius: Float) : Shape() {
+    var center = center
         private set
 
     // part of isOverlap
-    var pointsOutsideX: FloatArray? = null
-        protected set
-    var pointsOutsideY: FloatArray? = null
+    var pointsOutside: Array<Vector>? = null
         protected set
 
     open val maxWidth: Float = radius
@@ -30,17 +25,15 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
 //            super.visibility = value
 //        }
     
-    override fun moveShape(dx: Float, dy: Float) {
-        super.moveShape(dx, dy)
-        if (pointsOutsideX != null) { // update special score as well
-            for (i in pointsOutsideX!!.indices) {
-                pointsOutsideX!![i] += dx
-                pointsOutsideY!![i] += dy
+    override fun moveShape(displacement: Vector) {
+        super.moveShape(displacement)
+        if (pointsOutside != null) { // update special point as well
+            for (i in pointsOutside!!.indices) {
+                pointsOutside!![i] += (displacement)
             }
         }
 
-        centerX += dx
-        centerY += dy
+        center += (displacement)
     }
 
     private fun getComponentTriangularShapes(shape: Shape): Array<TriangularShape> {
@@ -59,31 +52,26 @@ abstract class PlanetShape internal constructor(centerX: Float, centerY: Float, 
         }
     }
 
-    fun resetPosition(centerX: Float, centerY: Float) {
-        val dx = centerX - this.centerX
-        val dy = centerY - this.centerY
-        moveShape(dx, dy)
+    fun resetPosition(center: Vector) {
+        val dCenter = center - this.center
+        moveShape(dCenter)
     }
     
-    override fun rotateShape(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
-        super.rotateShape(centerOfRotationX, centerOfRotationY, angle)
-        if (pointsOutsideX != null) { // update special score as well
-            for (i in pointsOutsideX!!.indices) {
-                val result = rotatePoint(pointsOutsideX!![i], pointsOutsideY!![i], centerOfRotationX, centerOfRotationY, angle)
-                pointsOutsideX!![i] = result[0]
-                pointsOutsideY!![i] = result[1]
+    override fun rotateShape(centerOfRotation: Vector, angle: Float) {
+        super.rotateShape(centerOfRotation, angle)
+        if (pointsOutside != null) { // update special points as well
+            for (i in pointsOutside!!.indices) {
+                pointsOutside!![i] = pointsOutside!![i].rotateVector(centerOfRotation, angle)
             }
         }
-        val result = rotatePoint(centerX, centerY, centerOfRotationX, centerOfRotationY, angle)
-        centerX = result[0]
-        centerY = result[1]
+        center = center.rotateVector(centerOfRotation, angle)
     }
     
     public override fun isOverlapToOverride(anotherShape: Shape): Boolean {
-        return CircularShape.isOverlap(anotherShape, centerX, centerY, radius)
+        return CircularShape.isOverlap(anotherShape, center, radius)
     }
     
-    override fun isInside(x: Float, y: Float): Boolean {
-        return square(x - centerX) + square(y - centerY) <= square(radius)
+    override fun isInside(point: Vector): Boolean {
+        return distance(center, point) <= radius
     }
 }

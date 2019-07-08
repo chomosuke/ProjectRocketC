@@ -9,20 +9,20 @@ class EllipseShape(centerX: Float, centerY: Float, a: Float, b: Float, color: Co
     override lateinit var componentShapes: Array<Shape>
     
     init {
-        
+    
         val numberOfEdges = CircularShape.getNumberOfEdges((a + b) / 2)
         // just initialize it.
         val componentShapes = arrayOfNulls<TriangularShape>(numberOfEdges - 2)
-        
+    
         // generate components triangularShape for EllipseShape isInUse center and a and b
         for (i in 1 until numberOfEdges - 1)
-            componentShapes[i - 1] = TriangularShape(centerX, centerY + b,
-                    centerX + a * sin(2.0 * PI * i.toDouble() / numberOfEdges).toFloat(),
-                    centerY + b * cos(2.0 * PI * i.toDouble() / numberOfEdges).toFloat(),
-                    centerX + a * sin(2.0 * PI * (i + 1).toDouble() / numberOfEdges).toFloat(),
-                    centerY + b * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges).toFloat(),
+            componentShapes[i - 1] = TriangularShape(Vector(centerX, centerY + b),
+                    Vector(centerX + a * sin(2.0 * PI * i.toDouble() / numberOfEdges).toFloat(),
+                            centerY + b * cos(2.0 * PI * i.toDouble() / numberOfEdges).toFloat()),
+                    Vector(centerX + a * sin(2.0 * PI * (i + 1).toDouble() / numberOfEdges).toFloat(),
+                            centerY + b * cos(2.0 * PI * (i + 1).toDouble() / numberOfEdges).toFloat()),
                     color, buildShapeAttr) // close for modification
-        
+    
         this.componentShapes = componentShapes as Array<Shape>
     }
 }

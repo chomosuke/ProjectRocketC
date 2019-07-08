@@ -6,30 +6,15 @@ import com.chomusukestudio.projectrocketc.GLRenderer.*
  * Created by Shuang Li on 3/03/2018.
  */
 
-class QuadrilateralShape : Shape {
+class QuadrilateralShape// in order:
+(vertex1: Vector, vertex2: Vector, vertex3: Vector, vertex4: Vector, color: Color, buildShapeAttr: BuildShapeAttr) : Shape() {
     override val isOverlapMethodLevel: Double = 0.0 // as no special isOverlapToOverride method is provided.
-    override var componentShapes: Array<Shape>
+    override var componentShapes: Array<Shape> = arrayOf(TriangularShape(vertex1, vertex2, vertex3, color, buildShapeAttr),
+            TriangularShape(vertex1, vertex4, vertex3, color, buildShapeAttr))
 
-    constructor(x1: Float, y1: Float, // in order:
-                x2: Float, y2: Float,
-                x3: Float, y3: Float,
-                x4: Float, y4: Float,
-                color: Color, buildShapeAttr: BuildShapeAttr) {
-        componentShapes = arrayOf(TriangularShape(x1, y1, x2, y2, x3, y3, color, buildShapeAttr),
-                TriangularShape(x1, y1, x4, y4, x3, y3, color, buildShapeAttr))
-    }
-
-    fun setQuadrilateralShapeCoords(x1: Float, y1: Float, // in order:
-                                    x2: Float, y2: Float,
-                                    x3: Float, y3: Float,
-                                    x4: Float, y4: Float) {
-        (componentShapes[0] as TriangularShape).setTriangleCoords(x1, y1, x2, y2, x3, y3)
-        (componentShapes[1] as TriangularShape).setTriangleCoords(x1, y1, x4, y4, x3, y3)
-    }
-
-    constructor(coords1: FloatArray, coords2: FloatArray, color: Color, buildShapeAttr: BuildShapeAttr) {
-        componentShapes = arrayOf(TriangularShape(coords1, color, buildShapeAttr),
-                TriangularShape(coords2, color, buildShapeAttr))
+    fun setQuadrilateralShapeCoords(vertex1: Vector, vertex2: Vector, vertex3: Vector, vertex4: Vector) { // in order:
+        (componentShapes[0] as TriangularShape).setTriangleCoords(vertex1, vertex2, vertex3)
+        (componentShapes[1] as TriangularShape).setTriangleCoords(vertex1, vertex4, vertex3)
     }
 
     val x1 get() = getQuadrilateralShapeCoords(QX1)
@@ -47,13 +32,13 @@ class QuadrilateralShape : Shape {
             (componentShapes[1] as TriangularShape).getTriangularShapeCoords(coord - 4)
     }
 }
-        
-const val QX1 = X1
-const val QY1 = Y1
-const val QX2 = X2
-const val QY2 = Y2
-const val QX3 = X3
-const val QY3 = Y3
-const val QX4 = X2 + 2 * COORDS_PER_VERTEX
-const val QY4 = Y2 + 2 * COORDS_PER_VERTEX
+
+const val QX1 = 0
+const val QY1 = 1
+const val QX2 = 2
+const val QY2 = 3
+const val QX3 = 4
+const val QY3 = 5
+const val QX4 = 2 + 2 * COORDS_PER_VERTEX
+const val QY4 = 3 + 2 * COORDS_PER_VERTEX
 

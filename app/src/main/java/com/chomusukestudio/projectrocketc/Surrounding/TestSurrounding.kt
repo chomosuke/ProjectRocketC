@@ -14,21 +14,22 @@ import com.chomusukestudio.projectrocketc.randFloat
 import java.util.ArrayList
 
 import java.lang.Math.random
+import kotlin.math.PI
 
 class TestSurrounding(private val layers: Layers): Surrounding() {
-
+    
     override fun initializeSurrounding(rocket: Rocket, state: State) {
         this.rocket = rocket
-        startingPathOfRocket = QuadrilateralShape(centerOfRotationX - rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f,
-                centerOfRotationX + rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f, // / 100 to prevent overflow
-                centerOfRotationX + rocket.width / 2f, centerOfRotationY,
-                centerOfRotationX - rocket.width / 2f, centerOfRotationY,
+        startingPathOfRocket = QuadrilateralShape(Vector(centerOfRotation.x - rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f),
+                Vector(centerOfRotation.x + rocket.width / 2f, java.lang.Float.MAX_VALUE / 100f), // / 100 to prevent overflow
+                Vector(centerOfRotation.x + rocket.width / 2f, centerOfRotation.y),
+                Vector(centerOfRotation.x - rocket.width / 2f, centerOfRotation.y),
                 Color(0f, 1f, 0f, 1f), BuildShapeAttr(10f, true, layers)) // z is 10 because this is the most common use of z therefore are least likely to create a new layer.
-        startingPathOfRocket.rotateShape(centerOfRotationX, centerOfRotationY, rotation)
+        startingPathOfRocket.rotateShape(centerOfRotation, rotation)
         startingPathOfRocket.visibility = false //  this shape will only be used in isOverlapToOverride.
     } // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
-
-
+    
+    
     private var boundaries = ArrayList<Shape>() // this defines where the plane can't go
     // boundaries should have z value of 10 while background should have a z value higher than 10, like 11.
     private var backgrounds = ArrayList<Shape>() // backGrounds doesn't effect plane
@@ -39,25 +40,24 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
     private var crashedShape: Shape? = null
     private val parallelForIForIsCrashed = ParallelForI(8, "is crashed")
     
-    override val centerOfRotationX: Float = 0f
-    override val centerOfRotationY: Float = 0f
-    override val rotation: Float = 0f
+    override val centerOfRotation = Vector(0f, 0f)
+    override val rotation = PI.toFloat() / 2
     
     private val numberOfTriangleOnScreen = 5
     
     // reference to the previous topEnd triangles
-    private val previousTriangles = arrayOf(TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //topEnd leftEnd
-            2f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //topEnd rightEnd
-            2f, -13f, //bottomEnd rightEnd
-            Color(random().toFloat(), 1f, 1f, 1f), BuildShapeAttr(10f, true, layers)),//leftEnd topEnd
-            TriangularShape(6f, (8 + 16 / numberOfTriangleOnScreen).toFloat(), //topEnd leftEnd
-                    6f, -13f, // bottomEnd leftEnd
-                    2f, -13f, //bottomEnd rightEnd
-                    Color(random().toFloat(), 1f, 1f, 1f), BuildShapeAttr(10f, true, layers)))//leftEnd bottomEnd
+    private val previousTriangles = arrayOf(TriangularShape(Vector(6f, 8 + 16f / numberOfTriangleOnScreen), //topEnd rightEnd
+            Vector(2f, 8 + 16f / numberOfTriangleOnScreen), //topEnd leftEnd
+            Vector(2f, -13f), //bottomEnd leftEnd
+            Color(random().toFloat(), 1f, 1f, 1f), BuildShapeAttr(10f, true, layers)),//rightEnd topEnd
+            TriangularShape(Vector(6f, 8 + 16f / numberOfTriangleOnScreen), //topEnd rightEnd
+                    Vector(6f, -13f), // bottomEnd rightEnd
+                    Vector(2f, -13f), //bottomEnd leftEnd
+                    Color(random().toFloat(), 1f, 1f, 1f), BuildShapeAttr(10f, true, layers)))//rightEnd bottomEnd
     
     init {
-        LittleStar.setCenterOfRocket(centerOfRotationX, centerOfRotationY)
-    
+        LittleStar.setCenterOfRocket(centerOfRotation)
+        
         // so that previousTriangle can be not nullable
         boundaries.add(previousTriangles[0])
         boundaries.add(previousTriangles[1])
@@ -65,15 +65,15 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
     
     override fun makeNewTriangleAndRemoveTheOldOne(now: Long, previousFrameTime: Long, state: State) {
         
-        if (8.1 >= previousTriangles[0].getTriangularShapeCoords(Y1)) {// only go though the entire thing when need to
+        if (8.1 >= previousTriangles[0].getTriangularShapeCoords(1)) {// only go though the entire thing when need to
             // to remove
             var i = 0
             while (i < boundaries.size) {
-                if ((boundaries[i] as TriangularShape).getTriangularShapeCoords(Y1) < -13 && //y1
+                if ((boundaries[i] as TriangularShape).getTriangularShapeCoords(1) < -13 && //y1
                         
-                        (boundaries[i] as TriangularShape).getTriangularShapeCoords(Y2) < -13 && //y2
+                        (boundaries[i] as TriangularShape).getTriangularShapeCoords(3) < -13 && //y2
                         
-                        (boundaries[i] as TriangularShape).getTriangularShapeCoords(Y3) < -13) { //y3
+                        (boundaries[i] as TriangularShape).getTriangularShapeCoords(5) < -13) { //y3
                     boundaries.removeAt(i).removeShape()
                     i--
                 }
@@ -81,53 +81,53 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
             }
             // to create
             val randomPoint = randFloat(-2.5f, 2.5f)
-
+            
             val buildBoundryShapesAttr = BuildShapeAttr(10f, true, layers)
             // complicated calculation done to ensure triangle meet up with each other and there ain't any overlapping or gap
-            boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd leftEnd
-                    randomPoint + 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd rightEnd
-                    previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottomEnd rightEnd (previous topEnd rightEnd)
-                    Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//leftEnd topEnd
-            // refresh previous triangle so other can follow
-            boundaries.add(TriangularShape(6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd leftEnd
-                    previousTriangles[0].getTriangularShapeCoords(X1), previousTriangles[0].getTriangularShapeCoords(Y1), // bottomEnd leftEnd (previous topEnd leftEnd)
-                    previousTriangles[0].getTriangularShapeCoords(X2), previousTriangles[0].getTriangularShapeCoords(Y2), //bottomEnd rightEnd (previous topEnd rightEnd)
-                    Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//leftEnd bottomEnd
-            previousTriangles[0] = boundaries[boundaries.size - 2] as TriangularShape
-            
-            boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd rightEnd
-                    randomPoint - 1.5f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd leftEnd
-                    previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottomEnd leftEnd (previous topEnd leftEnd)
+            boundaries.add(TriangularShape(Vector(6f, 8.1f + 16f / numberOfTriangleOnScreen), //topEnd rightEnd
+                    Vector(randomPoint + 1.5f, 8.1f + 16f / numberOfTriangleOnScreen), //topEnd leftEnd
+                    previousTriangles[0].vertex2, //bottomEnd leftEnd (previous topEnd leftEnd)
                     Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//rightEnd topEnd
             // refresh previous triangle so other can follow
-            boundaries.add(TriangularShape(-6f, 8.1f + 16f / numberOfTriangleOnScreen, //topEnd rightEnd
-                    previousTriangles[1].getTriangularShapeCoords(X1), previousTriangles[1].getTriangularShapeCoords(Y1), // bottomEnd rightEnd (previous topEnd rightEnd)
-                    previousTriangles[1].getTriangularShapeCoords(X2), previousTriangles[1].getTriangularShapeCoords(Y2), //bottomEnd leftEnd (previous topEnd leftEnd)
+            boundaries.add(TriangularShape(Vector(6f, 8.1f + 16f / numberOfTriangleOnScreen), //topEnd rightEnd
+                    previousTriangles[0].vertex1, // bottomEnd rightEnd (previous topEnd rightEnd)
+                    previousTriangles[0].vertex2, //bottomEnd leftEnd (previous topEnd leftEnd)
                     Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//rightEnd bottomEnd
+            previousTriangles[0] = boundaries[boundaries.size - 2] as TriangularShape
+            
+            boundaries.add(TriangularShape(Vector(-6f, 8.1f + 16f / numberOfTriangleOnScreen), //topEnd leftEnd
+                    Vector(randomPoint - 1.5f, 8.1f + 16f / numberOfTriangleOnScreen), //topEnd rightEnd
+                    previousTriangles[1].vertex2, //bottomEnd rightEnd (previous topEnd rightEnd)
+                    Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//leftEnd topEnd
+            // refresh previous triangle so other can follow
+            boundaries.add(TriangularShape(Vector(-6f, 8.1f + 16f / numberOfTriangleOnScreen), //topEnd leftEnd
+                    previousTriangles[1].vertex1, // bottomEnd leftEnd (previous topEnd leftEnd)
+                    previousTriangles[1].vertex2, //bottomEnd rightEnd (previous topEnd rightEnd)
+                    Color(random().toFloat(), 1f, 1f, 1f), buildBoundryShapesAttr))//leftEnd bottomEnd
             previousTriangles[1] = boundaries[boundaries.size - 2] as TriangularShape
         }
     }
     
     @CallSuper
-    override fun moveSurrounding(dx: Float, dy: Float, now: Long, previousFrameTime: Long) {
+    override fun moveSurrounding(vector: Vector, now: Long, previousFrameTime: Long) {
         // move the boundaries down by y (y is decided by plane.movePlane())
         
         for (i in boundaries.indices)
-            boundaries[i].moveShape(dx, dy)
+            boundaries[i].moveShape(vector)
         
         for (littleStar in littleStars)
-            littleStar.moveLittleStar(dx, dy)
+            littleStar.moveLittleStar(vector)
     }
     
     override fun rotateSurrounding(angle: Float, now: Long, previousFrameTime: Long) {
         // move the boundaries down by y (y is decided by plane.movePlane())
         for (boundary in boundaries)
-            boundary.rotateShape(centerOfRotationX, centerOfRotationY, angle)
+            boundary.rotateShape(centerOfRotation, angle)
         for (littleStar in littleStars)
-            littleStar.rotateLittleStar(centerOfRotationX, centerOfRotationY, angle)
+            littleStar.rotateLittleStar(centerOfRotation, angle)
     }
     
-    override fun isCrashed(shapeForCrashAppro:Shape, components: Array<Shape>): Shape? {
+    override fun isCrashed(shapeForCrashAppro: Shape, components: Array<Shape>): Shape? {
         crashedShape = null
         val boundariesNeedToBeChecked = ArrayList<Shape>(100)
         for (boundary in boundaries) {

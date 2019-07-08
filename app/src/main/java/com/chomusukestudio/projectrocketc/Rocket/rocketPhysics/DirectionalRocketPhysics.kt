@@ -4,6 +4,7 @@ import com.chomusukestudio.projectrocketc.Joystick.RocketControl
 import com.chomusukestudio.projectrocketc.Rocket.RocketQuirks
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.Rocket.speedFormula
+import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import kotlin.math.cos
 import kotlin.math.sin
@@ -14,8 +15,6 @@ class DirectionalRocketPhysics: RocketPhysics() {
 		var currentRotation = rocketState.currentRotation
 
 		val speed = speedFormula(rocketQuirks.initialSpeed, LittleStar.score)
-		val speedX = speed * sin(currentRotation)
-		val speedY = speed * cos(currentRotation)
 
 		val rotationNeeded = rocketControl.rotationNeeded
 		val rotationSpeed = speed / rocketQuirks.turningRadius
@@ -31,6 +30,8 @@ class DirectionalRocketPhysics: RocketPhysics() {
 				currentRotation += rotationNeeded
 			}
 		}
-		return RocketState(currentRotation, speedX, speedY)
+		
+		val velocity = Vector(speed, 0f).rotateVector(currentRotation)
+		return RocketState(currentRotation, velocity)
 	}
 }

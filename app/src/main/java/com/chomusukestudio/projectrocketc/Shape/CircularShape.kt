@@ -1,6 +1,7 @@
 package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.*
+import com.chomusukestudio.projectrocketc.distance
 import com.chomusukestudio.projectrocketc.square
 import com.chomusukestudio.projectrocketc.widthInPixel
 import java.lang.Math.PI
@@ -11,19 +12,17 @@ import java.lang.Math.acos
  * Created by Shuang Li on 12/03/2018.
  */
 
-class CircularShape(centerX: Float, centerY: Float, radius: Float, private val performanceIndex: Double, color: Color, private val buildShapeAttr: BuildShapeAttr) : Shape() {
+class CircularShape(center: Vector, radius: Float, private val performanceIndex: Double, color: Color, private val buildShapeAttr: BuildShapeAttr) : Shape() {
     override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
-            centerX, centerY, radius, color, buildShapeAttr))
+            center, radius, color, buildShapeAttr))
     private var regularPolygonalShape
         set(value) { componentShapes[0] = value }
         get() = componentShapes[0] as RegularPolygonalShape
 
     override val isOverlapMethodLevel: Double = 1.0
     // parameters needed for isOverlapToOverride method.
-    val centerX
-        get() = regularPolygonalShape.centerX
-    val centerY
-        get() = regularPolygonalShape.centerY
+    val center
+        get() = regularPolygonalShape.center
 
     var radius
         set(value) {
@@ -34,65 +33,62 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
                 val color = shapeColor
                 regularPolygonalShape.removeShape()
                 regularPolygonalShape = RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
-                        centerX, centerY, radius, color, buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
+                        center, radius, color, buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
             }
         }
         get() = regularPolygonalShape.radius
 
     
-    constructor(centerX: Float, centerY: Float, radius: Float, color: Color, buildShapeAttr: BuildShapeAttr) : this(centerX, centerY, radius, 1.0, color, buildShapeAttr)
+    constructor(center: Vector, radius: Float, color: Color, buildShapeAttr: BuildShapeAttr) : this(center, radius, 1.0, color, buildShapeAttr)
 
     private var lastChangeOfNumberOfEdgesRadius = radius
-    fun resetParameter(centerX: Float, centerY: Float, radius: Float) {
+    fun resetParameter(center: Vector, radius: Float) {
         this.radius = radius
-        regularPolygonalShape.resetCenter(centerX, centerY)
+        regularPolygonalShape.resetCenter(center)
     }
     
-    public override// isOverlapMethodLevel is 1 now!
+    public override// isOverlapMethodLevel is 1 nowXY!
     // remember this!
     fun isOverlapToOverride(anotherShape: Shape): Boolean {
-        return isOverlap(anotherShape, centerX, centerY, radius)
+        return isOverlap(anotherShape, center, radius)
     }
     
-    override fun isInside(x: Float, y: Float): Boolean {
-        return square(x - centerX) + square(y - centerY) <= square(radius)
+    override fun isInside(point: Vector): Boolean {
+        return distance(point, center) <= radius
     }
 
     companion object {
         
-        fun isOverlap(anotherShape: Shape, centerX: Float, centerY: Float, radius: Float): Boolean {
+        fun isOverlap(anotherShape: Shape, center: Vector, radius: Float): Boolean {
             if (anotherShape is CircularShape) {
-                return square(centerX - anotherShape.centerX) + square(centerY - anotherShape.centerY) <= square(radius + anotherShape.radius)
+                return distance(center, anotherShape.center) <= radius + anotherShape.radius
             } else if (anotherShape is TriangularShape) {
-                val x1 = anotherShape.getTriangularShapeCoords(X1)
-                val y1 = anotherShape.getTriangularShapeCoords(Y1)
-                val x2 = anotherShape.getTriangularShapeCoords(X2)
-                val y2 = anotherShape.getTriangularShapeCoords(Y2)
-                val x3 = anotherShape.getTriangularShapeCoords(X3)
-                val y3 = anotherShape.getTriangularShapeCoords(Y3)
+                val vertex1 = anotherShape.vertex1
+                val vertex2 = anotherShape.vertex2
+                val vertex3 = anotherShape.vertex3
                 //
                 // TEST 1: Vertex within circle
                 //
-                if (square(x1 - centerX) + square(y1 - centerY) <= square(radius) ||
-                        square(x2 - centerX) + square(y2 - centerY) <= square(radius) ||
-                        square(x3 - centerX) + square(y3 - centerY) <= square(radius))
+                if (distance(center, vertex1) <= radius ||
+                        distance(center, vertex2) <= radius ||
+                        distance(center, vertex3) <= radius)
                     return true
                 //
                 // TEST 2: Circle centre within triangle
                 //
-                if (anotherShape.isInside(centerX, centerY))
+                if (anotherShape.isInside(center))
                     return true
                 //
                 // TEST 3: Circle intersects edge
                 //
-                if (circleOverlapWithLine(centerX, centerY, radius, x1, y1, x2, y2) ||
-                        circleOverlapWithLine(centerX, centerY, radius, x2, y2, x3, y3) ||
-                        circleOverlapWithLine(centerX, centerY, radius, x1, y1, x3, y3))
+                if (circleOverlapWithLine(center.x, center.y, radius, vertex1.x, vertex1.y, vertex2.x, vertex2.y) ||
+                        circleOverlapWithLine(center.x, center.y, radius, vertex3.x, vertex3.y, vertex2.x, vertex2.y) ||
+                        circleOverlapWithLine(center.x, center.y, radius, vertex1.x, vertex1.y, vertex3.x, vertex3.y))
                     return true
                 // We're done, no intersection
             } else {
                 for (componentShapeOfAnotherShape in anotherShape.componentShapes)
-                    if (isOverlap(componentShapeOfAnotherShape, centerX, centerY, radius))
+                    if (isOverlap(componentShapeOfAnotherShape, center, radius))
                         return true
             }
             return false
@@ -128,7 +124,7 @@ class CircularShape(centerX: Float, centerY: Float, radius: Float, private val p
         var performanceIndex = 1f
 
         fun getNumberOfEdges(radius: Float, dynamicPerformanceIndex: Double = 1.0): Int {
-            val pixelOnRadius = (radius / abs(leftEnd - rightEnd) * widthInPixel + 0.5).toInt() // +0.5 for rounding
+            val pixelOnRadius = (radius / abs(rightEnd - leftEnd) * widthInPixel + 0.5).toInt() // +0.5 for rounding
             val numberOfEdges = (PI / acos(1.0 - 0.2 / pixelOnRadius / (dynamicPerformanceIndex * CircularShape.performanceIndex)) / 2.0 + 0.5).toInt() * 2 /*
          /2*2 to make it even +0.5 for rounding */
             return if (numberOfEdges > 64)

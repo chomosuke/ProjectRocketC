@@ -1,21 +1,18 @@
 package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.*
-import com.chomusukestudio.projectrocketc.Shape.coordinate.rotatePoint
 import kotlin.math.sign
 
-class TriangularShape(x1: Float, y1: Float,
-                      x2: Float, y2: Float,
-                      x3: Float, y3: Float,
+class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
                       color: Color, val buildShapeAttr: BuildShapeAttr) : Shape() {
-    constructor(coords: FloatArray, color: Color, buildShapeAttr: BuildShapeAttr): this(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5], color, buildShapeAttr)
 
     override val isOverlapMethodLevel: Double = 0.0
     
-    private var triangle: Triangle? = if (buildShapeAttr.visibility) GLTriangle(x1, y1, x2, y2, x3, y3, color.red, color.green, color.blue, color.alpha, buildShapeAttr) else null
+    private var triangle: GLTriangle? = if (buildShapeAttr.visibility) GLTriangle(vertex1.x, vertex1.y, vertex2.x, vertex2.y, vertex3.x, vertex3.y,
+            color.red, color.green, color.blue, color.alpha, buildShapeAttr) else null
     // nullable because sometimes invisible
     
-    private var triangleCoords = /*if (visibility) FloatArray(6) else */floatArrayOf(x1, y1, x2, y2, x3, y3)
+    private var triangleCoords = /*if (visibility) FloatArray(6) else */floatArrayOf(vertex1.x, vertex1.y, vertex2.x, vertex2.y, vertex3.x, vertex3.y)
     private var RGBA = /*if (visibility) FloatArray(4) else */floatArrayOf(color.red, color.green, color.blue, color.alpha)
 
     override val shapeColor: Color
@@ -80,12 +77,12 @@ class TriangularShape(x1: Float, y1: Float,
     public override fun isOverlapToOverride(anotherShape: Shape): Boolean {
         for (anotherComponentShape in anotherShape.componentShapes) {
             if (anotherComponentShape is TriangularShape) {
-                if (this.isInside(anotherComponentShape.getTriangularShapeCoords(0), anotherComponentShape.getTriangularShapeCoords(1)) ||
-                        this.isInside(anotherComponentShape.getTriangularShapeCoords(2), anotherComponentShape.getTriangularShapeCoords(3)) ||
-                        this.isInside(anotherComponentShape.getTriangularShapeCoords(4), anotherComponentShape.getTriangularShapeCoords(5)) ||
-                        anotherComponentShape.isInside(this.getTriangularShapeCoords(0), this.getTriangularShapeCoords(1)) ||
-                        anotherComponentShape.isInside(this.getTriangularShapeCoords(2), this.getTriangularShapeCoords(3)) ||
-                        anotherComponentShape.isInside(this.getTriangularShapeCoords(4), this.getTriangularShapeCoords(5))) { // close for modification
+                if (this.isInside(anotherComponentShape.vertex1) ||
+                        this.isInside(anotherComponentShape.vertex2) ||
+                        this.isInside(anotherComponentShape.vertex3) ||
+                        anotherComponentShape.isInside(vertex1) ||
+                        anotherComponentShape.isInside(vertex2) ||
+                        anotherComponentShape.isInside(vertex3)) {
                     return true
                 }
             } else {
@@ -96,22 +93,16 @@ class TriangularShape(x1: Float, y1: Float,
         return false
     }
 
-    override fun isInside(x: Float, y: Float): Boolean { // close for modification
-        val areaA1 = getArea(x, y,
-                this.getTriangularShapeCoords(2),
-                this.getTriangularShapeCoords(3),
-                this.getTriangularShapeCoords(4),
-                this.getTriangularShapeCoords(5))
-        val areaA2 = getArea(this.getTriangularShapeCoords(0),
-                this.getTriangularShapeCoords(1),
-                x, y,
-                this.getTriangularShapeCoords(4),
-                this.getTriangularShapeCoords(5))
-        val areaA3 = getArea(this.getTriangularShapeCoords(0),
-                this.getTriangularShapeCoords(1),
-                this.getTriangularShapeCoords(2),
-                this.getTriangularShapeCoords(3),
-                x, y)
+    override fun isInside(vector: Vector): Boolean {
+        val areaA1 = getArea(vector.x, vector.y,
+                vertex2.x, vertex2.y,
+                vertex3.x, vertex3.y)
+        val areaA2 = getArea(vertex1.x, vertex1.y,
+                vector.x, vector.y,
+                vertex3.x, vertex3.y)
+        val areaA3 = getArea(vertex1.x, vertex1.y,
+                vertex2.x, vertex2.y,
+                vector.x, vector.y)
         return sign(areaA1) == sign(areaA2) && sign(areaA1) == sign(areaA3)
         // https://stackoverflow.com/questions/13300904/determine-whether-point-lies-inside-triangle
         // https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/
@@ -120,13 +111,10 @@ class TriangularShape(x1: Float, y1: Float,
     private fun getArea(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float): Float {
         return (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
     }
-
-    val x1 get() = getTriangularShapeCoords(X1)
-    val y1 get() = getTriangularShapeCoords(Y1)
-    val x2 get() = getTriangularShapeCoords(X2)
-    val y2 get() = getTriangularShapeCoords(Y2)
-    val x3 get() = getTriangularShapeCoords(X3)
-    val y3 get() = getTriangularShapeCoords(Y3)
+    
+    val vertex1 get() = Vector(getTriangularShapeCoords(0), getTriangularShapeCoords(1))
+    val vertex2 get() = Vector(getTriangularShapeCoords(2), getTriangularShapeCoords(3))
+    val vertex3 get() = Vector(getTriangularShapeCoords(4), getTriangularShapeCoords(5))
     fun getTriangularShapeCoords(coord: Int): Float {
         return if (visibility)
             triangle!!.triangleCoords[coord]
@@ -135,44 +123,44 @@ class TriangularShape(x1: Float, y1: Float,
         }
     }
 
-    fun setTriangleCoords(x1: Float, y1: Float,
-                          x2: Float, y2: Float,
-                          x3: Float, y3: Float) {
+    fun setTriangleCoords(vertex1: Vector, vertex2: Vector, vertex3: Vector) {
         if (visibility) {
-            triangle!!.setTriangleCoords(x1, y1, x2, y2, x3, y3)
+            triangle!!.setTriangleCoords(vertex1.x, vertex1.y, vertex2.x, vertex2.y, vertex3.x, vertex3.y)
         }
         else {
-            triangleCoords[X1] = x1
-            triangleCoords[Y1] = y1
-            triangleCoords[X2] = x2
-            triangleCoords[Y2] = y2
-            triangleCoords[X3] = x3
-            triangleCoords[Y3] = y3
+            triangleCoords[0] = vertex1.x
+            triangleCoords[1] = vertex1.y
+            triangleCoords[2] = vertex2.x
+            triangleCoords[3] = vertex2.y
+            triangleCoords[4] = vertex3.x
+            triangleCoords[5] = vertex3.y
         }
     }
 
-    override fun moveShape(dx: Float, dy: Float) {
+    override fun moveShape(displacement: Vector) {
+        val dx = displacement.x
+        val dy = displacement.y
         if (visibility) {
             triangle!!.moveTriangle(dx, dy)
         }
         else {
-            triangleCoords[X1] += dx
-            triangleCoords[Y1] += dy
-            triangleCoords[X2] += dx
-            triangleCoords[Y2] += dy
-            triangleCoords[X3] += dx
-            triangleCoords[Y3] += dy
+            triangleCoords[0] += dx
+            triangleCoords[1] += dy
+            triangleCoords[2] += dx
+            triangleCoords[3] += dy
+            triangleCoords[4] += dx
+            triangleCoords[5] += dy
         }
     }
 
-    override fun rotateShape(centerOfRotationX: Float, centerOfRotationY: Float, angle: Float) {
+    override fun rotateShape(centerOfRotation: Vector, angle: Float) {
         if (visibility) {
             var i = 0
             while (i < CPT) {
                 // rotate score
-                val result = rotatePoint(triangle!!.triangleCoords[i], triangle!!.triangleCoords[i + 1], centerOfRotationX, centerOfRotationY, angle)
-                triangle!!.triangleCoords[i] = result[0]
-                triangle!!.triangleCoords[i + 1] = result[1]
+                val result = Vector(triangle!!.triangleCoords[i], triangle!!.triangleCoords[i + 1]).rotateVector(centerOfRotation, angle)
+                triangle!!.triangleCoords[i] = result.x
+                triangle!!.triangleCoords[i + 1] = result.y
                 i += COORDS_PER_VERTEX
             }
         }
@@ -180,9 +168,9 @@ class TriangularShape(x1: Float, y1: Float,
             var i = 0
             while (i < CPT) {
                 // rotate point
-                val result = rotatePoint(triangleCoords[i], triangleCoords[i + 1], centerOfRotationX, centerOfRotationY, angle)
-                triangleCoords[i] = result[0]
-                triangleCoords[i + 1] = result[1]
+                val result = Vector(triangleCoords[i], triangleCoords[i + 1]).rotateVector(centerOfRotation, angle)
+                triangleCoords[i] = result.x
+                triangleCoords[i + 1] = result.y
                 i += COORDS_PER_VERTEX
             }
         }

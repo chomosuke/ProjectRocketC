@@ -50,7 +50,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             countingFrames++
 
             now = timer.timeMillis()// so you access timeMillis() less
-//                            previousFrameTime = now - 16; // for break point
+//                            previousFrameTime = nowXY - 16; // for break point
 
             if (previousTime == 0L) {
                 // initialize it
@@ -58,7 +58,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             }
             if (now - previousTime >= 1000) {// just to get frame rates
                 Log.i("Frame rate", "" + countingFrames + " and dynamic performance index " + CircularShape.performanceIndex)
-//                allFrameRate.add(countingFrames)
+//                allFrameRate.offset(countingFrames)
                 countingFrames = 0
                 previousTime = now
             }
@@ -110,7 +110,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
             timer.resume()
 //            // if something happened with time try uncomment this
-//            now = timeMillis()
+//            nowXY = timeMillis()
 //            previousFrameTime = timeMillis()
         }
     }
@@ -123,7 +123,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             // or a fragment shader type (GLES31.GL_FRAGMENT_SHADER)
             val shader = GLES20.glCreateShader(type)
             
-            // add the source code to the shader and compile it
+            // offset the source code to the shader and compile it
             GLES20.glShaderSource(shader, shaderCode)
             GLES20.glCompileShader(shader)
             
@@ -132,9 +132,9 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     }
 }
 
-var leftEnd: Float = 0f
-    get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
 var rightEnd: Float = 0f
+    get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
+var leftEnd: Float = 0f
     get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
 var bottomEnd: Float = 0f
     get() { if(field == 0f) throw UninitializedPropertyAccessException() else return field }
@@ -143,22 +143,22 @@ var topEnd: Float = 0f
 
 fun generateLeftRightBottomTopEnd(widthOverHeight: Float) {
     if (widthOverHeight > 9f / 16f) {// if the screen is wider than a 16:9 screen
-        leftEnd = widthOverHeight * 8f
-        rightEnd = widthOverHeight * -8f
+        rightEnd = widthOverHeight * 8f
+        leftEnd = widthOverHeight * -8f
         bottomEnd = -8f
         topEnd = 8f
     } else if (1 / widthOverHeight > 16f / 9f) {// if the screen is taller than a 16:9 screen
-        leftEnd = 4.5f
-        rightEnd = -4.5f
+        rightEnd = 4.5f
+        leftEnd = -4.5f
         bottomEnd = 1 / widthOverHeight * -4.5f
         topEnd = 1 / widthOverHeight * 4.5f
     } else {// if the screen is 16;9
-        leftEnd = 4.5f
-        rightEnd = -4.5f
+        rightEnd = 4.5f
+        leftEnd = -4.5f
         bottomEnd = -8f
         topEnd = 8f
     }
-//    return arrayOf(leftEnd - GLTriangle.arrayList[0].offsetX, rightEnd - GLTriangle.arrayList[0].offsetX, bottomEnd - GLTriangle.arrayList[0].offsetY, topEnd - GLTriangle.arrayList[0].offsetY)
+//    return arrayOf(rightEnd - GLTriangle.arrayList[0].offsetX, leftEnd - GLTriangle.arrayList[0].offsetX, bottomEnd - GLTriangle.arrayList[0].offsetY, topEnd - GLTriangle.arrayList[0].offsetY)
 }
 
 var offsetX = 0f

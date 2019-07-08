@@ -22,9 +22,8 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         val y1 = (components[6] as QuadrilateralShape).getQuadrilateralShapeCoords(QY1)
         val x2 = (components[5] as QuadrilateralShape).getQuadrilateralShapeCoords(QX1)
         val y2 = (components[5] as QuadrilateralShape).getQuadrilateralShapeCoords(QY1)
-        val originX = (x1 + x2) / 2
-        val originY = (y1 + y2) / 2
-        trace.generateTrace(now, previousFrameTime, originX, originY, RocketState(currentRotation, speedX, speedY))
+        val origin = Vector((x1 + x2) / 2, (y1 + y2) / 2)
+        trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
 
     override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f, 0.000002f, 0.000001f)
@@ -35,81 +34,57 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
     private fun generateComponents(layers: Layers): Array<Shape> {
         val white = Color(1f, 1f, 1f, 1f)
         val black = Color(0.2f, 0.2f, 0.2f, 1f)
-        
+    
         val scaleX = 1f; val scaleY = 1f
-                         val y1 = 0.65f * scaleY
-        val x2 = 0.125f * scaleX; val y2 = 0.35f * scaleY
-        val x3 = 0.16f  * scaleX
-        val x4 = 0.145f * scaleX; val y4 = -0.3f * scaleY
-        val x10 = 0.085f * scaleX; val y10 = -0.6f * scaleY
-        val x7 = 0.32f  * scaleX; val y7 = -0.67f * scaleY
+        val v1 = Vector(0.65f * scaleX, 0f)
+        val v2 = Vector(0.35f * scaleX, 0.125f * scaleY)
+        val v3 = Vector(0f, 0.16f  * scaleY)
+        val v4 = Vector(-0.3f * scaleX, 0.145f * scaleY)
+        val v7 = Vector(-0.67f * scaleX, 0.32f  * scaleY)
+        val v10 = Vector(-0.6f * scaleX, 0.085f * scaleY)
         
-        return arrayOf(
+        val components = arrayOf(
                 // defined components of rocket around centerOfRotation set by surrounding
                 // 0
-                TriangularShape(centerOfRotationX, centerOfRotationY + y1,
-                        centerOfRotationX + x2, centerOfRotationY + y2,
-                        centerOfRotationX - x2, centerOfRotationY + y2,
+                TriangularShape(v1, v2, v2.mirrorXAxis(),
                         black, BuildShapeAttr(1f, true, layers)),
                 // 1
-                QuadrilateralShape(centerOfRotationX + x2, centerOfRotationY + y2,
-                        centerOfRotationX, centerOfRotationY + y2,
-                        centerOfRotationX, centerOfRotationY,
-                        centerOfRotationX + x3, centerOfRotationY,
+                QuadrilateralShape(v2, Vector(v2.x, 0f), Vector(0f, 0f), v3,
                         white, BuildShapeAttr(1f, true, layers)),
                 // 2
-                QuadrilateralShape(centerOfRotationX - x2, centerOfRotationY + y2,
-                        centerOfRotationX, centerOfRotationY + y2,
-                        centerOfRotationX, centerOfRotationY,
-                        centerOfRotationX - x3, centerOfRotationY,
+                QuadrilateralShape(v2.mirrorXAxis(), Vector(v2.x, 0f), Vector(0f, 0f), v3.mirrorXAxis(),
                         black, BuildShapeAttr(1f, true, layers)),
                 // 3
-                QuadrilateralShape(centerOfRotationX + x4, centerOfRotationY + y4,
-                        centerOfRotationX, centerOfRotationY + y4,
-                        centerOfRotationX, centerOfRotationY,
-                        centerOfRotationX + x3, centerOfRotationY,
+                QuadrilateralShape(v4, Vector(v4.x , 0f), Vector(0f, 0f), v3,
                         black, BuildShapeAttr(1f, true, layers)),
                 // 4
-                QuadrilateralShape(centerOfRotationX - x4, centerOfRotationY + y4,
-                        centerOfRotationX, centerOfRotationY + y4,
-                        centerOfRotationX, centerOfRotationY,
-                        centerOfRotationX - x3, centerOfRotationY,
+                QuadrilateralShape(v4.mirrorXAxis(), Vector(v4.x, 0f), Vector(0f, 0f), v3.mirrorXAxis(),
                         white, BuildShapeAttr(1f, true, layers)),
                 // 5
-                QuadrilateralShape(centerOfRotationX + x10, centerOfRotationY + y10,
-                        centerOfRotationX, centerOfRotationY + y10,
-                        centerOfRotationX, centerOfRotationY + y4,
-                        centerOfRotationX + x4, centerOfRotationY + y4,
+                QuadrilateralShape(v10, Vector(v10.x, 0f), Vector(v4.x, 0f), v4,
                         white, BuildShapeAttr(1f, true, layers)),
                 // 6
-                QuadrilateralShape(centerOfRotationX - x10, centerOfRotationY + y10,
-                        centerOfRotationX, centerOfRotationY + y10,
-                        centerOfRotationX, centerOfRotationY + y4,
-                        centerOfRotationX - x4, centerOfRotationY + y4,
+                QuadrilateralShape(v10.mirrorXAxis(), Vector(v10.x, 0f), Vector(v4.x, 0f), v4.mirrorXAxis(),
                         black, BuildShapeAttr(1f, true, layers)),
                 // 7
-                QuadrilateralShape(centerOfRotationX + x10, centerOfRotationY + y10,
-                        centerOfRotationX, centerOfRotationY + y10,
-                        centerOfRotationX, centerOfRotationY + y7,
-                        centerOfRotationX + x7, centerOfRotationY + y7,
+                QuadrilateralShape(v10, Vector(v10.x, 0f), Vector(v7.x, 0f), v7,
                         white, BuildShapeAttr(1f, true, layers)),
                 // 8
-                QuadrilateralShape(centerOfRotationX - x10, centerOfRotationY + y10,
-                        centerOfRotationX, centerOfRotationY + y10,
-                        centerOfRotationX, centerOfRotationY + y7,
-                        centerOfRotationX - x7, centerOfRotationY + y7,
+                QuadrilateralShape(v10.mirrorXAxis(), Vector(v10.x, 0f), Vector(v7.x, 0f), v7.mirrorXAxis(),
                         black, BuildShapeAttr(1f, true, layers))
-    
         )
+        for (component in components)
+            component.moveShape(centerOfRotation)
+        return components
     }
-
-    override val shapeForCrashAppro = QuadrilateralShape(centerOfRotationX + 0.15f, centerOfRotationY + 0.5f,
-            centerOfRotationX - 0.15f, centerOfRotationY + 0.5f, centerOfRotationX - 0.15f, centerOfRotationY - 0.4f,
-            centerOfRotationX + 0.15f, centerOfRotationY - 0.4f, Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, false, layers))
+    
+    override val shapeForCrashAppro = QuadrilateralShape(centerOfRotation  + Vector(0.15f, 0.5f),
+            centerOfRotation + Vector(-0.15f, 0.5f), centerOfRotation + Vector(-0.15f, -0.4f),
+            centerOfRotation + Vector(0.15f, -0.4f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, false, layers))
 
     // initialize for surrounding to set centerOfRotation
     init {
-        setRotation(surrounding.centerOfRotationX, surrounding.centerOfRotationY, surrounding.rotation)
+        setRotation(surrounding.centerOfRotation, surrounding.rotation)
     }
 
     // make the crash sound

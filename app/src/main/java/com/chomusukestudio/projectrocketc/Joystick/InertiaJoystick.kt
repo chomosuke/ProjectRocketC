@@ -1,6 +1,7 @@
 package com.chomusukestudio.projectrocketc.Joystick
 
 import android.view.MotionEvent
+import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.transformToMatrixX
 import com.chomusukestudio.projectrocketc.transformToMatrixY
 
@@ -13,7 +14,7 @@ class InertiaJoystick: Joystick() {
 		// interested in events where the touch position changed.
 		when (e.actionMasked) {
 			MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN ->
-				if (!pointers.contains(e.getPointerId(e.actionIndex))) // add the new pointer
+				if (!pointers.contains(e.getPointerId(e.actionIndex))) // offset the new pointer
 					pointers.add(e.getPointerId(e.actionIndex))
 //                else // this actually does happen for some reason
 //                    throw RuntimeException("New pointer is already in pointers.") // interesting
@@ -35,8 +36,8 @@ class InertiaJoystick: Joystick() {
 		do {
 			pointerExist = true
 			try {
-				nowX = transformToMatrixX(e.getX(e.findPointerIndex(pointers.last())))
-				nowY = transformToMatrixY(e.getY(e.findPointerIndex(pointers.last())))
+				nowXY = Vector(transformToMatrixX(e.getX(e.findPointerIndex(pointers.last()))),
+						transformToMatrixY(e.getY(e.findPointerIndex(pointers.last()))))
 			} catch (e: IllegalArgumentException) {
 				pointerExist = false
 			}
@@ -55,11 +56,11 @@ class InertiaJoystick: Joystick() {
 		return RocketControl(
 				if (actionDown && nowX2 == 0f) {
 					when {
-						nowX > 0 -> 1f
-						nowX < 0 -> -1f
+						nowXY.x > 0 -> -1f
+						nowXY.x < 0 -> 1f
 						else -> 0f
 					}
 				} else 0f
-				, !((nowX2 > 0 && nowX < 0) || (nowX > 0 && nowX2 < 0)))
+				, !((nowX2 > 0 && nowXY.x < 0) || (nowXY.x > 0 && nowX2 < 0)))
 	}
 }

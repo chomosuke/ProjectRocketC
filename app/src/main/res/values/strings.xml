@@ -2,7 +2,7 @@
     <string name="app_name">Project Rocket C</string>
     <string name="highestScore">highestScore2</string>
     <string name="highestScoreRefresh">highestScore1</string><!--swap with highestScore when needed restart score-->
-    <string name="performanceIndex">dynamicPerformanceIndex</string><!--highest score log speed-->
+    <string name="performanceIndex">dynamicPerformanceIndex</string><!--highest score log velocity-->
     <!--<string name="highestScore">highestScoreLinearSpeed</string>-->
     <string name="firstTimeOpen">firstTimeOpen</string>
 </resources>
