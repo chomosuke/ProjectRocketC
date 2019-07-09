@@ -56,11 +56,11 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
         triangleCoords
     }
 
-    override var visibility: Boolean = buildShapeAttr.visibility
+    override var visibility: Boolean = buildShapeAttr.visibility // backing field because null doesn't necessarily mean invisible
         set(value) {
             if (field != value) {
                 if (value) {
-                    triangle = GLTriangle(triangleCoords, RGBA, buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
+                    triangle = GLTriangle(triangleCoords, RGBA, buildShapeAttr.newAttrWithNewVisibility(value))
                 } else {
                     triangleCoords = triangle!!.triangleCoords.floatArray
                     RGBA = triangle!!.RGBA.floatArray
