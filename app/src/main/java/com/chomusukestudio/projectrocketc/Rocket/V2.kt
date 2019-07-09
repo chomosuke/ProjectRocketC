@@ -12,73 +12,88 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
  * Created by Shuang Li on 11/03/2018.
  */
 
-class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, rocketPhysics, layers) {
+class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers)
+    : Rocket(surrounding, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
-            AccelerationTrace(7, 1.01f, 0.24f, 0.4f, 1000, 100, 0.004f, Color(1f, 1f, 0f, 3f), layers)
+            AccelerationTrace(7, 1.01f, 0.24f, 0.4f, 1000, 100,
+                    0.004f, Color(1f, 1f, 0f, 3f), layers)
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
-        val p1 = (components[6] as QuadrilateralShape).vertex1
-        val p2 = (components[5] as QuadrilateralShape).vertex1
+        val p1 = (components[5] as FreeFormShape).getVertex(6)
+        val p2 = (components[6] as FreeFormShape).getVertex(6)
         val origin = (p1 + p2) * 0.5f
         trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
 
-    override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f, 0.000002f, 0.000001f)
+    override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
+            0.000002f, 0.000001f)
 
     override val width = 0.3f
 
     override val components: Array<Shape> = generateComponents(layers)
     private fun generateComponents(layers: Layers): Array<Shape> {
         val white = Color(1f, 1f, 1f, 1f)
-        val black = Color(0.2f, 0.2f, 0.2f, 1f)
+        val black = Color(0.3f, 0.3f, 0.3f, 1f)
     
-        val scaleX = 1f; val scaleY = 1f
-        val v1 = Vector(0.65f * scaleX, 0f)
-        val v2 = Vector(0.35f * scaleX, 0.125f * scaleY)
-        val v3 = Vector(0f, 0.16f  * scaleY)
-        val v4 = Vector(-0.3f * scaleX, 0.145f * scaleY)
-        val v7 = Vector(-0.67f * scaleX, 0.32f  * scaleY)
-        val v10 = Vector(-0.6f * scaleX, 0.085f * scaleY)
-        
+        // when the rocket is created it's pointed towards right which is angle 0
+        val scaleX = 0.8f; val scaleY = 0.6f
+        val p1 = Vector(0.65f * scaleX, 0f)
+        val p2 = Vector(0.35f * scaleX, 0.125f * scaleY)
+        val p3 = Vector(0f, 0.155f  * scaleY)
+        val p4 = Vector(-0.3f * scaleX, 0.145f * scaleY)
+        val p5 = Vector(-0.415f * scaleX, 0.3f * scaleY)
+        val p6 = Vector(-0.67f * scaleX, 0.32f * scaleY)
+        val p7 = Vector(-0.67f * scaleX, 0.215f  * scaleY)
+        val p8 = Vector(-0.64f * scaleX, 0.145f * scaleY)
+        val p9 = Vector(-0.64f * scaleX, 0.085f * scaleY)
+        val p10 = Vector(-0.6f * scaleX, 0.085f * scaleY)
+        val p11 = Vector(-0.6f * scaleX, 0.055f * scaleY)
+        val p12 = Vector(-0.64f * scaleX, 0.07f * scaleY)
+        val p13 = Vector(-0.64f * scaleX, 0.015f * scaleY)
+        val p14 = Vector(-0.6f * scaleX, 0.032f * scaleY)
+    
+        val buildShapeAttr = BuildShapeAttr(1f, true, layers)
         val components = arrayOf(
                 // defined components of rocket around centerOfRotation set by surrounding
                 // 0
-                TriangularShape(v1, v2, v2.mirrorXAxis(),
-                        black, BuildShapeAttr(1f, true, layers)),
+                TriangularShape(p1, p2, p2.mirrorXAxis(),
+                        black, buildShapeAttr),
                 // 1
-                QuadrilateralShape(v2, Vector(v2.x, 0f), Vector(0f, 0f), v3,
-                        white, BuildShapeAttr(1f, true, layers)),
+                QuadrilateralShape(p2, Vector(p2.x, 0f), Vector(p3.x, 0f), p3,
+                        white, buildShapeAttr),
                 // 2
-                QuadrilateralShape(v2.mirrorXAxis(), Vector(v2.x, 0f), Vector(0f, 0f), v3.mirrorXAxis(),
-                        black, BuildShapeAttr(1f, true, layers)),
+                QuadrilateralShape(p2.mirrorXAxis(), Vector(p2.x, 0f), Vector(p3.x, 0f), p3.mirrorXAxis(),
+                        black, buildShapeAttr),
                 // 3
-                QuadrilateralShape(v4, Vector(v4.x , 0f), Vector(0f, 0f), v3,
-                        black, BuildShapeAttr(1f, true, layers)),
+                QuadrilateralShape(p4, Vector(p4.x , 0f), Vector(0f, 0f), p3,
+                        black, buildShapeAttr),
                 // 4
-                QuadrilateralShape(v4.mirrorXAxis(), Vector(v4.x, 0f), Vector(0f, 0f), v3.mirrorXAxis(),
-                        white, BuildShapeAttr(1f, true, layers)),
+                QuadrilateralShape(p4.mirrorXAxis(), Vector(p4.x, 0f), Vector(0f, 0f), p3.mirrorXAxis(),
+                        white, buildShapeAttr),
                 // 5
-                QuadrilateralShape(v10, Vector(v10.x, 0f), Vector(v4.x, 0f), v4,
-                        white, BuildShapeAttr(1f, true, layers)),
+                FreeFormShape(arrayOf(p4, p5, p6, p7, p8, p9, p10, Vector(p10.x, 0f), Vector(p4.x, 0f)),
+                        white, buildShapeAttr),
                 // 6
-                QuadrilateralShape(v10.mirrorXAxis(), Vector(v10.x, 0f), Vector(v4.x, 0f), v4.mirrorXAxis(),
-                        black, BuildShapeAttr(1f, true, layers)),
+                FreeFormShape(arrayOf(p4.mirrorXAxis(), p5.mirrorXAxis(), p6.mirrorXAxis(), p7.mirrorXAxis(),
+                        p8.mirrorXAxis(), p9.mirrorXAxis(), p10.mirrorXAxis(), Vector(p10.x, 0f), Vector(p4.x, 0f)),
+                        black, buildShapeAttr),
+                // 6
+                QuadrilateralShape(p11, p12, p13, p14, black, buildShapeAttr),
                 // 7
-                QuadrilateralShape(v10, Vector(v10.x, 0f), Vector(v7.x, 0f), v7,
-                        white, BuildShapeAttr(1f, true, layers)),
-                // 8
-                QuadrilateralShape(v10.mirrorXAxis(), Vector(v10.x, 0f), Vector(v7.x, 0f), v7.mirrorXAxis(),
-                        black, BuildShapeAttr(1f, true, layers))
+                QuadrilateralShape(p11.mirrorXAxis(), p12.mirrorXAxis(), p13.mirrorXAxis(), p14.mirrorXAxis(),
+                        black, buildShapeAttr)
         )
         for (component in components)
             component.moveShape(centerOfRotation)
         return components
     }
     
-    override val shapeForCrashAppro = QuadrilateralShape(centerOfRotation  + Vector(0.15f, 0.5f),
-            centerOfRotation + Vector(-0.15f, 0.5f), centerOfRotation + Vector(-0.15f, -0.4f),
-            centerOfRotation + Vector(0.15f, -0.4f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, false, layers))
+    override val shapeForCrashAppro = QuadrilateralShape(centerOfRotation  + Vector(1f, 1f),
+            centerOfRotation + Vector(-1f, 1f),
+            centerOfRotation + Vector(-1f, -1f),
+            centerOfRotation + Vector(1f, -1f),
+            Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, false, layers))
 
     // initialize for surrounding to set centerOfRotation
     init {
