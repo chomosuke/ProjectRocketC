@@ -14,6 +14,10 @@ import com.chomusukestudio.projectrocketc.Rocket.V2
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.AccelerativeRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DirectionalRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DragRocketPhysics
+import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
+import com.chomusukestudio.projectrocketc.Shape.Color
+import com.chomusukestudio.projectrocketc.Shape.TriangularShape
+import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import java.lang.IndexOutOfBoundsException
@@ -121,6 +125,8 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     private val lock = ReentrantLock()
     private val condition = lock.newCondition()
 
+//    private val warningRed = TriangularShape(Vector(0f, 100f), Vector(100f, -100f), Vector(-100f, -100f), Color(1f, 0f, 0f, 0.5f), BuildShapeAttr(-100f, false, layers))
+    
     fun generateNextFrame(now: Long, previousFrameTime: Long) {
         if (!pausedForChanges) { // if aren't pausing for changes
             finished = false // haven't started
@@ -165,7 +171,8 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 
                     if (SystemClock.uptimeMillis() - startTime > 16) {
                         Log.i("processing thread", "" + (SystemClock.uptimeMillis() - startTime))
-                    }
+//                        warningRed.visibility = true
+                    } //else warningRed.visibility = false
 
                     // finished
                     finished = true

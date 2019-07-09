@@ -50,7 +50,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             countingFrames++
 
             now = timer.timeMillis()// so you access timeMillis() less
-//                            previousFrameTime = nowXY - 16; // for break point
+//                            previousFrameTime = now - 16; // for break point
 
             if (previousTime == 0L) {
                 // initialize it
