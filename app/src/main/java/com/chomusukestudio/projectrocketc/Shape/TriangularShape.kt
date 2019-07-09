@@ -93,16 +93,16 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
         return false
     }
 
-    override fun isInside(vector: Vector): Boolean {
-        val areaA1 = getArea(vector.x, vector.y,
+    override fun isInside(point: Vector): Boolean {
+        val areaA1 = getArea(point.x, point.y,
                 vertex2.x, vertex2.y,
                 vertex3.x, vertex3.y)
         val areaA2 = getArea(vertex1.x, vertex1.y,
-                vector.x, vector.y,
+                point.x, point.y,
                 vertex3.x, vertex3.y)
         val areaA3 = getArea(vertex1.x, vertex1.y,
                 vertex2.x, vertex2.y,
-                vector.x, vector.y)
+                point.x, point.y)
         return sign(areaA1) == sign(areaA2) && sign(areaA1) == sign(areaA3)
         // https://stackoverflow.com/questions/13300904/determine-whether-point-lies-inside-triangle
         // https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/

@@ -16,12 +16,12 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
     : Rocket(surrounding, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
-            AccelerationTrace(7, 1.01f, 0.24f, 0.4f, 1000, 100,
+            AccelerationTrace(7, 1.01f, 0.14f, 0.5f, 1000, 100,
                     0.004f, Color(1f, 1f, 0f, 3f), layers)
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
-        val p1 = (components[5] as FreeFormShape).getVertex(6)
-        val p2 = (components[6] as FreeFormShape).getVertex(6)
+        val p1 = (components[9] as QuadrilateralShape).vertex2
+        val p2 = (components[10] as QuadrilateralShape).vertex2
         val origin = (p1 + p2) * 0.5f
         trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
@@ -40,11 +40,11 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         val scaleX = 0.8f; val scaleY = 0.6f
         val p1 = Vector(0.65f * scaleX, 0f)
         val p2 = Vector(0.35f * scaleX, 0.125f * scaleY)
-        val p3 = Vector(0f, 0.155f  * scaleY)
+        val p3 = Vector(0f, 0.155f * scaleY)
         val p4 = Vector(-0.3f * scaleX, 0.145f * scaleY)
         val p5 = Vector(-0.415f * scaleX, 0.3f * scaleY)
         val p6 = Vector(-0.67f * scaleX, 0.32f * scaleY)
-        val p7 = Vector(-0.67f * scaleX, 0.215f  * scaleY)
+        val p7 = Vector(-0.67f * scaleX, 0.215f * scaleY)
         val p8 = Vector(-0.64f * scaleX, 0.145f * scaleY)
         val p9 = Vector(-0.64f * scaleX, 0.085f * scaleY)
         val p10 = Vector(-0.6f * scaleX, 0.085f * scaleY)
@@ -66,21 +66,27 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
                 QuadrilateralShape(p2.mirrorXAxis(), Vector(p2.x, 0f), Vector(p3.x, 0f), p3.mirrorXAxis(),
                         black, buildShapeAttr),
                 // 3
-                QuadrilateralShape(p4, Vector(p4.x , 0f), Vector(0f, 0f), p3,
+                QuadrilateralShape(p4, Vector(p4.x, 0f), Vector(0f, 0f), p3,
                         black, buildShapeAttr),
                 // 4
                 QuadrilateralShape(p4.mirrorXAxis(), Vector(p4.x, 0f), Vector(0f, 0f), p3.mirrorXAxis(),
                         white, buildShapeAttr),
                 // 5
-                FreeFormShape(arrayOf(p4, p5, p6, p7, p8, p9, p10, Vector(p10.x, 0f), Vector(p4.x, 0f)),
+                QuadrilateralShape(p10, Vector(p10.x, 0f), Vector(p4.x, 0f), p4,
                         white, buildShapeAttr),
                 // 6
-                FreeFormShape(arrayOf(p4.mirrorXAxis(), p5.mirrorXAxis(), p6.mirrorXAxis(), p7.mirrorXAxis(),
-                        p8.mirrorXAxis(), p9.mirrorXAxis(), p10.mirrorXAxis(), Vector(p10.x, 0f), Vector(p4.x, 0f)),
-                        black, buildShapeAttr),
-                // 6
-                QuadrilateralShape(p11, p12, p13, p14, black, buildShapeAttr),
+                QuadrilateralShape(p10.mirrorXAxis(), Vector(p10.x, 0f), Vector(p4.x, 0f), p4.mirrorXAxis(),
+                        black, BuildShapeAttr(1f, true, layers)),
                 // 7
+                FreeFormShape(arrayOf(p4, p5, p6, p7, p8, p9, p10/*, Vector(p10.x, 0f), Vector(p4.x, 0f)*/),
+                        black, buildShapeAttr),
+                // 8
+                FreeFormShape(arrayOf(p4.mirrorXAxis(), p5.mirrorXAxis(), p6.mirrorXAxis(), p7.mirrorXAxis(),
+                        p8.mirrorXAxis(), p9.mirrorXAxis(), p10.mirrorXAxis()/*, Vector(p10.x, 0f), Vector(p4.x, 0f)*/),
+                        white, buildShapeAttr),
+                // 9
+                QuadrilateralShape(p11, p12, p13, p14, black, buildShapeAttr),
+                // 10
                 QuadrilateralShape(p11.mirrorXAxis(), p12.mirrorXAxis(), p13.mirrorXAxis(), p14.mirrorXAxis(),
                         black, buildShapeAttr)
         )
