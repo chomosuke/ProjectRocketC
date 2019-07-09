@@ -9,4 +9,12 @@ class FreeFormShape(points: Array<Vector>, color: Color, buildShapeAttr: BuildSh
 			componentShapes[i] = TriangularShape(points[0], points[i + 1], points[i + 2], color, buildShapeAttr)
 		return componentShapes as Array<Shape>
 	}
+	
+	fun getVertex(index: Int): Vector {
+		return when (index) {
+			0 -> (componentShapes[0] as TriangularShape).vertex1
+			1 -> (componentShapes[0] as TriangularShape).vertex2
+			else -> (componentShapes[index - 2] as TriangularShape).vertex3
+		}
+	}
 }
