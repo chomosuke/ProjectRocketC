@@ -43,7 +43,8 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
         }
     }
 
-    override var componentShapes: Array<Shape> = arrayOf(this)
+    override var componentShapes: Array<Shape>
+        get() = throw IllegalAccessException("TriangularShape itself is the componentShape of itself")
         set(value) {
             throw IllegalAccessException("TriangularShape itself is the componentShape of itself")
         }
