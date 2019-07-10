@@ -7,10 +7,7 @@ import com.chomusukestudio.projectrocketc.GLRenderer.Layers
  * Created by Shuang Li on 28/02/2018.
  */
 
-abstract class Shape: Cloneable{
-    fun cloneShape(): Shape {
-        return super.clone() as Shape
-    }
+abstract class Shape{
 
     abstract val isOverlapMethodLevel: Double // numerical measurement of how considerate is isOverlapToOverride method.
     /* IMPORTANT

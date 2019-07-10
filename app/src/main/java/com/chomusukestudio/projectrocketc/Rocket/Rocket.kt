@@ -33,9 +33,6 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
     protected open var explosionShape: ExplosionShape? = null
     
     protected abstract val shapeForCrashAppro: Shape
-    fun cloneShapeForCrashAppro(): Shape {
-        return shapeForCrashAppro.cloneShape()
-    }
     
     protected abstract val trace: Trace
     var currentRotation = surrounding.rotation
