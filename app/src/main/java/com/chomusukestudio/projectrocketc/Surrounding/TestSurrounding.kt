@@ -137,10 +137,10 @@ class TestSurrounding(private val layers: Layers): Surrounding() {
         }
         parallelForIForIsCrashed.run({ i ->
             val boundary = boundariesNeedToBeChecked[i]
-            if (boundary.isOverlap(shapeForCrashAppro)) {
+            if (boundary.overlapper overlap shapeForCrashAppro.overlapper) {
                 // only check it when it's close
                 for (component in components) {
-                    if (boundary.isOverlap(component)) { // if does overlap
+                    if (boundary.overlapper overlap component.overlapper) { // if does overlap
                         crashedShape = component
                     }
                 }

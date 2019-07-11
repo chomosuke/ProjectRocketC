@@ -8,12 +8,9 @@ import com.chomusukestudio.projectrocketc.GLRenderer.Layers
  */
 
 abstract class Shape{
-
-    abstract val isOverlapMethodLevel: Double // numerical measurement of how considerate is isOverlapToOverride method.
     /* IMPORTANT
      inheriting note:
      subclass need to defined the constructor and other that might be worth providing
-     set isOverlapMethodLevel
       */
     
     // TriangularShape is the end of all recursion.
@@ -41,6 +38,10 @@ abstract class Shape{
             }
         }
         get() = componentShapes[0].visibility
+    
+    open val overlapper: Overlapper get() = object : Overlapper() {
+		override val components: Array<Overlapper> = Array(componentShapes.size) { componentShapes[it].overlapper }
+	}
     
     open fun moveShape(displacement: Vector) {
         if (displacement.x == 0f && displacement.y == 0f) {
@@ -73,30 +74,6 @@ abstract class Shape{
     open fun changeShapeColor(dRed: Float, dGreen: Float, dBlue: Float, dAlpha: Float) {
         for (componentShape in componentShapes)
             componentShape.changeShapeColor(dRed, dGreen, dBlue, dAlpha)
-    }
-    
-    fun isOverlap(anotherShape: Shape): Boolean {
-        return if (anotherShape.isOverlapMethodLevel > this.isOverlapMethodLevel) {
-            // if anotherShape has a more considerate isOverlapToOverride method then of course use it
-            anotherShape.isOverlapToOverride(this)
-        } else {
-            this.isOverlapToOverride(anotherShape)
-        }
-    }
-    
-    protected open fun isOverlapToOverride(anotherShape: Shape): Boolean {
-        for (componentShape in componentShapes)
-            for (componentShapeOfAnotherShape in anotherShape.componentShapes)
-                if (componentShape.isOverlap(componentShapeOfAnotherShape))
-                    return true
-        return false
-    }
-    
-    open fun isInside(point: Vector): Boolean {
-        for (componentShape in componentShapes)
-            if (componentShape.isInside(point))
-                return true
-        return false
     }
 
     open var removed = false

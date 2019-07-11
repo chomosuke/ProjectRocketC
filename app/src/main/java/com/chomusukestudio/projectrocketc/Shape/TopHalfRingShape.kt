@@ -5,7 +5,6 @@ import java.lang.Math.cos
 import java.lang.Math.sin
 
 class TopHalfRingShape(center: Vector, a: Float, b: Float, factor: Float, color: Color, buildShapeAttr: BuildShapeAttr) : Shape() {
-    override val isOverlapMethodLevel: Double = 0.0
     override lateinit var componentShapes: Array<Shape>
     
     init {

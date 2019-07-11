@@ -11,8 +11,7 @@ import java.lang.Math.cos
 import java.lang.Math.sin
 
 class MarsShape(center: Vector, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(center, radius) {
-    override val isOverlapMethodLevel: Double = 2.0 // one level higher circularShape
-    override lateinit var componentShapes: Array<Shape>
+	override lateinit var componentShapes: Array<Shape>
     
     init {
         
@@ -44,8 +43,8 @@ class MarsShape(center: Vector, radius: Float, buildShapeAttr: BuildShapeAttr) :
             val shapeAttributes1 = buildShapeAttr.newAttrWithChangedZ(-0.01f)
             componentShapes[i] = object : Shape() {
                 override var componentShapes: Array<Shape>
-                override val isOverlapMethodLevel: Double = 0.0
-                init {
+	
+				init {
                     val r = sin(sRadius).toFloat() * radius
                     val centerXOfCrater = sin(offsetRadius).toFloat() * radius // for circularCrater
                     

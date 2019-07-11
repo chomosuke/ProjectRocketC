@@ -7,7 +7,6 @@ import java.lang.Math.PI
  */
 
 class RegularPolygonalShape(val numberOfEdges: Int, center: Vector, radius: Float, color: Color, buildShapeAttr: BuildShapeAttr) : Shape() {
-    override val isOverlapMethodLevel: Double = 0.0
     override lateinit var componentShapes: Array<Shape>
 
     var center = center

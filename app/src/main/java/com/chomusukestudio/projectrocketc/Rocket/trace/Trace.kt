@@ -62,9 +62,7 @@ abstract class Trace {
 
 
 abstract class TraceShape: Shape() {
-    override val isOverlapMethodLevel: Double
-        get() = throw IllegalAccessException("trace can't overlap anything")
-
+    
     var needToBeRemoved = false
         protected set
 

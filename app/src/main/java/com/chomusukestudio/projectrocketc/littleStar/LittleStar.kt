@@ -91,7 +91,7 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
     
     fun isEaten(rocketComponentShapes: Array<Shape>): Boolean {
         for (rocketComponentShape in rocketComponentShapes)
-            if (CircularShape.isOverlap(rocketComponentShape, center, RADIUS_OF_LITTLE_STAR))
+            if (CircularOverlapper(center, RADIUS_OF_LITTLE_STAR) overlap rocketComponentShape.overlapper)
                 return true
         return false
     }
@@ -240,7 +240,7 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
     }
     
     fun isOverlap(shape: Shape): Boolean {
-        return littleStarShape.isOverlap(shape)
+        return littleStarShape.overlapper overlap shape.overlapper
     }
     
     private var speed = 0f
