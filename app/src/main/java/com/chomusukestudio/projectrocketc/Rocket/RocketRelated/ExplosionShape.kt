@@ -7,10 +7,8 @@ import java.lang.Math.random
 import kotlin.math.PI
 
 abstract class ExplosionShape(center: Vector, approximateRadius: Float, protected val duration: Long) : Shape() {
-    override val isOverlapMethodLevel: Double
-        get() = throw IllegalAccessException("explosionShape can't overlap anything")
-
-    abstract fun drawExplosion(timePassed: Long)
+	
+	abstract fun drawExplosion(timePassed: Long)
 
     override fun removeShape() {
         for (componentShape in componentShapes)

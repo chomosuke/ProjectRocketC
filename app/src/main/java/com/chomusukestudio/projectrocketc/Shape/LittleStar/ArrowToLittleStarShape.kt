@@ -4,7 +4,6 @@ import com.chomusukestudio.projectrocketc.Shape.*
 import kotlin.math.PI
 
 class ArrowToLittleStarShape(radius: Float, arrowColor: Color, circleColor: Color, buildShapeAttr: BuildShapeAttr): Shape()/* can't overlap with the arrow */{
-    override val isOverlapMethodLevel: Double = 0.0
     override var componentShapes: Array<Shape> = arrayOf(CircularShape(Vector(0f, 0f), radius, circleColor, buildShapeAttr),
             RegularPolygonalShape(3, Vector(0f, 0f), radius * 0.75f, arrowColor, buildShapeAttr.newAttrWithChangedZ(-0.01f)))
 

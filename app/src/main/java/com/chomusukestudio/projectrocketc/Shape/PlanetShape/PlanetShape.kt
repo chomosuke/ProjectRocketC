@@ -1,18 +1,11 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
-import com.chomusukestudio.projectrocketc.Shape.CircularShape
-import com.chomusukestudio.projectrocketc.Shape.Vector
-import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.TriangularShape
+import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.distance
 
 abstract class PlanetShape internal constructor(center: Vector, val radius: Float) : Shape() {
     var center = center
         private set
-
-    // part of isOverlap
-    var pointsOutside: Array<Vector>? = null
-        protected set
 
     open val maxWidth: Float = radius
 
@@ -27,12 +20,6 @@ abstract class PlanetShape internal constructor(center: Vector, val radius: Floa
     
     override fun moveShape(displacement: Vector) {
         super.moveShape(displacement)
-        if (pointsOutside != null) { // update special point as well
-            for (i in pointsOutside!!.indices) {
-                pointsOutside!![i] += (displacement)
-            }
-        }
-
         center += (displacement)
     }
 
@@ -59,19 +46,9 @@ abstract class PlanetShape internal constructor(center: Vector, val radius: Floa
     
     override fun rotateShape(centerOfRotation: Vector, angle: Float) {
         super.rotateShape(centerOfRotation, angle)
-        if (pointsOutside != null) { // update special points as well
-            for (i in pointsOutside!!.indices) {
-                pointsOutside!![i] = pointsOutside!![i].rotateVector(centerOfRotation, angle)
-            }
-        }
         center = center.rotateVector(centerOfRotation, angle)
     }
     
-    public override fun isOverlapToOverride(anotherShape: Shape): Boolean {
-        return CircularShape.isOverlap(anotherShape, center, radius)
-    }
-    
-    override fun isInside(point: Vector): Boolean {
-        return distance(center, point) <= radius
-    }
+    override val overlapper: Overlapper
+        get() = CircularOverlapper(center, radius)
 }

@@ -5,7 +5,6 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class NPointsStarShape(n: Int, center: Vector, radius: Float, color: Color, buildShapeAttr: BuildShapeAttr) : Shape() {
-    override val isOverlapMethodLevel: Double = 0.0 //as no special isOverlapToOverride method is provided
     override lateinit var componentShapes: Array<Shape>
     
     init {

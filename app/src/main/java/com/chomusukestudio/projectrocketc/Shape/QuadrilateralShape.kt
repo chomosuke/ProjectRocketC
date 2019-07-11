@@ -1,14 +1,11 @@
 package com.chomusukestudio.projectrocketc.Shape
 
-import com.chomusukestudio.projectrocketc.GLRenderer.*
-
 /**
  * Created by Shuang Li on 3/03/2018.
  */
 
 class QuadrilateralShape// in order:
 (vertex1: Vector, vertex2: Vector, vertex3: Vector, vertex4: Vector, color: Color, buildShapeAttr: BuildShapeAttr) : Shape() {
-    override val isOverlapMethodLevel: Double = 0.0 // as no special isOverlapToOverride method is provided.
     override var componentShapes: Array<Shape> = arrayOf(TriangularShape(vertex1, vertex2, vertex3, color, buildShapeAttr),
             TriangularShape(vertex1, vertex4, vertex3, color, buildShapeAttr))
 

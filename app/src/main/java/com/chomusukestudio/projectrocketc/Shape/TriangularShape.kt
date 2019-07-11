@@ -5,8 +5,6 @@ import kotlin.math.sign
 
 class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
                       color: Color, val buildShapeAttr: BuildShapeAttr) : Shape() {
-
-    override val isOverlapMethodLevel: Double = 0.0
     
     private var triangle: GLTriangle? = if (buildShapeAttr.visibility) GLTriangle(vertex1.x, vertex1.y, vertex2.x, vertex2.y, vertex3.x, vertex3.y,
             color.red, color.green, color.blue, color.alpha, buildShapeAttr) else null
@@ -48,6 +46,9 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
         set(value) {
             throw IllegalAccessException("TriangularShape itself is the componentShape of itself")
         }
+    
+    override val overlapper: Overlapper
+        get() = TriangularOverlapper(vertex1, vertex2, vertex3)
 
     override val size: Int = 1
 
@@ -74,44 +75,6 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
 
     val z: Float = buildShapeAttr.z
         get() = if (visibility) triangle!!.z else field
-
-    public override fun isOverlapToOverride(anotherShape: Shape): Boolean {
-        for (anotherComponentShape in anotherShape.componentShapes) {
-            if (anotherComponentShape is TriangularShape) {
-                if (this.isInside(anotherComponentShape.vertex1) ||
-                        this.isInside(anotherComponentShape.vertex2) ||
-                        this.isInside(anotherComponentShape.vertex3) ||
-                        anotherComponentShape.isInside(vertex1) ||
-                        anotherComponentShape.isInside(vertex2) ||
-                        anotherComponentShape.isInside(vertex3)) {
-                    return true
-                }
-            } else {
-                // call the function again
-                isOverlap(anotherComponentShape)
-            }
-        }
-        return false
-    }
-
-    override fun isInside(point: Vector): Boolean {
-        val areaA1 = getArea(point.x, point.y,
-                vertex2.x, vertex2.y,
-                vertex3.x, vertex3.y)
-        val areaA2 = getArea(vertex1.x, vertex1.y,
-                point.x, point.y,
-                vertex3.x, vertex3.y)
-        val areaA3 = getArea(vertex1.x, vertex1.y,
-                vertex2.x, vertex2.y,
-                point.x, point.y)
-        return sign(areaA1) == sign(areaA2) && sign(areaA1) == sign(areaA3)
-        // https://stackoverflow.com/questions/13300904/determine-whether-point-lies-inside-triangle
-        // https://www.geeksforgeeks.org/check-whether-a-given-point-lies-inside-a-triangle-or-not/
-    }
-
-    private fun getArea(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float): Float {
-        return (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
-    }
     
     val vertex1 get() = getTriangularShapeCoords(0)
     val vertex2 get() = getTriangularShapeCoords(1)
@@ -206,5 +169,51 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
             RGBA[3] = UNUSED
         }
         removed = true
+    }
+}
+
+class TriangularOverlapper(val vertex1: Vector, val vertex2: Vector, val vertex3: Vector): Overlapper() {
+    override fun overlap(anotherOverlapper: Overlapper): Boolean {
+        when (anotherOverlapper) {
+            is PointOverlapper -> {
+                val point = anotherOverlapper.point
+                val areaA1 = getArea(point.x, point.y,
+                        vertex2.x, vertex2.y,
+                        vertex3.x, vertex3.y)
+                val areaA2 = getArea(vertex1.x, vertex1.y,
+                        point.x, point.y,
+                        vertex3.x, vertex3.y)
+                val areaA3 = getArea(vertex1.x, vertex1.y,
+                        vertex2.x, vertex2.y,
+                        point.x, point.y)
+                return sign(areaA1) == sign(areaA2) && sign(areaA1) == sign(areaA3)
+            }
+            is TriangularOverlapper -> {
+                // check if line overlap but no vertex is inside each other
+                if (LineSegmentOverlapper(vertex1, vertex2) overlap LineSegmentOverlapper(anotherOverlapper.vertex1, anotherOverlapper.vertex2) ||
+                        LineSegmentOverlapper(vertex1, vertex3) overlap LineSegmentOverlapper(anotherOverlapper.vertex1, anotherOverlapper.vertex2) ||
+                        LineSegmentOverlapper(vertex1, vertex2) overlap LineSegmentOverlapper(anotherOverlapper.vertex1, anotherOverlapper.vertex3) ||
+                        LineSegmentOverlapper(vertex1, vertex3) overlap LineSegmentOverlapper(anotherOverlapper.vertex1, anotherOverlapper.vertex3)
+                ) return true
+                // only possibility left is vertex inside each other
+                    return this overlap PointOverlapper(anotherOverlapper.vertex1) ||
+                            this overlap PointOverlapper(anotherOverlapper.vertex2) ||
+                            this overlap PointOverlapper(anotherOverlapper.vertex3) ||
+                            anotherOverlapper overlap PointOverlapper(vertex1) ||
+                            anotherOverlapper overlap PointOverlapper(vertex2) ||
+                            anotherOverlapper overlap PointOverlapper(vertex3)
+            }
+            is LineSegmentOverlapper -> {
+                return anotherOverlapper overlap LineSegmentOverlapper(vertex1, vertex2) ||
+                        anotherOverlapper overlap LineSegmentOverlapper(vertex1, vertex3) ||
+                        anotherOverlapper overlap LineSegmentOverlapper(vertex2, vertex3) ||
+                        // segment crosses circle's segment
+                        this overlap PointOverlapper(anotherOverlapper.p1) // segment within circle
+            }
+            else -> return super.overlap(anotherOverlapper)
+        }
+    }
+    private fun getArea(x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float): Float {
+        return (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2
     }
 }

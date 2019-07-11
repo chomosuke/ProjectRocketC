@@ -587,7 +587,7 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
     }
 
     fun isOverlap(anotherShape: Shape): Boolean {
-        return planetShape.isOverlap(anotherShape)
+        return planetShape.overlapper overlap anotherShape.overlapper
     }
 
     fun isTooClose(anotherPlanet: Planet, distance: Float): Boolean {

@@ -9,8 +9,7 @@ import java.lang.Math.random
 import java.lang.Math.sin
 
 class JupiterShape(center: Vector, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(center, radius) {
-    override val isOverlapMethodLevel: Double = 2.0// one level higher circularShape
-    override lateinit var componentShapes: Array<Shape>
+	override lateinit var componentShapes: Array<Shape>
     
     init {
     
