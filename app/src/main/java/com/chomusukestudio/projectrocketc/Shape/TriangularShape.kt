@@ -207,8 +207,8 @@ class TriangularOverlapper(val vertex1: Vector, val vertex2: Vector, val vertex3
                 return anotherOverlapper overlap LineSegmentOverlapper(vertex1, vertex2) ||
                         anotherOverlapper overlap LineSegmentOverlapper(vertex1, vertex3) ||
                         anotherOverlapper overlap LineSegmentOverlapper(vertex2, vertex3) ||
-                        // segment crosses circle's segment
-                        this overlap PointOverlapper(anotherOverlapper.p1) // segment within circle
+                        // segment crosses triangle's segment
+                        this overlap PointOverlapper(anotherOverlapper.p1) // segment within triangle
             }
             else -> return super.overlap(anotherOverlapper)
         }

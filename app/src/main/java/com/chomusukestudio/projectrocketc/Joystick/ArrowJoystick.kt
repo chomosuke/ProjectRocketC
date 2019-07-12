@@ -44,13 +44,13 @@ class ArrowJoystick(private val centerOfRotation: Vector, buildShapeAttr: BuildS
     override fun drawJoystick() {
         if (actionDown) { // only display arrow if the screen is touched
             val centerOfArrow = centerOfRotation + nowXY - centerOfJoystick
-            triangularShape.setTriangleCoords(centerOfArrow + Vector(0f, 0.5f),
-                    centerOfArrow + Vector(0.15f, 0.3f),
-                    centerOfArrow + Vector(-0.15f, 0.3f))
-            quadrilateralShape.setQuadrilateralShapeCoords(centerOfArrow + Vector(-0.05f, 0.3f),
-                    centerOfArrow + Vector(0.05f, 0.3f),
-                    centerOfArrow + Vector(0.05f, 0f),
-                    centerOfArrow + Vector(-0.05f, 0f)) // update arrow position
+            triangularShape.setTriangleCoords(centerOfArrow.offset(0f, 0.5f),
+                    centerOfArrow.offset(0.15f, 0.3f),
+                    centerOfArrow.offset(-0.15f, 0.3f))
+            quadrilateralShape.setQuadrilateralShapeCoords(centerOfArrow.offset(-0.05f, 0.3f),
+                    centerOfArrow.offset(0.05f, 0.3f),
+                    centerOfArrow.offset(0.05f, 0f),
+                    centerOfArrow.offset(-0.05f, 0f)) // update arrow position
             
             // rotate arrow
             triangularShape.rotateShape(centerOfArrow, intendedDirection)

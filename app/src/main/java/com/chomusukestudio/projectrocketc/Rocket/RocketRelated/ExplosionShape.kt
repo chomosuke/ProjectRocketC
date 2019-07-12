@@ -41,7 +41,7 @@ class RedExplosionShape(center: Vector, approximateRadius: Float, duration: Long
                 CircularShape(center, approximateRadius, Color(1f, 0.675f, 0.114f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             } else {
                 val distantToCenter = Math.random().toFloat() * approximateRadius * 1.25f
-                val centers = (center + Vector(0f, distantToCenter)).rotateVector(center, (rotationOrder[i] * PI / 4).toFloat())
+                val centers = center.offset(0f, distantToCenter).rotateVector(center, (rotationOrder[i] * PI / 4).toFloat())
                 CircularShape(centers, 0f, Color(1f, randFloat(0.675f, 0.975f), randFloat(0.114f, 0.514f), 1f),
                         buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             }
@@ -117,7 +117,7 @@ class WhiteExplosionShape(private val center: Vector, private val approximateRad
                 CircularShape(center, approximateRadius, Color(0.996f, 0.675f, 0.114f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             } else {
                 val distantToCenter = Math.random().toFloat() * approximateRadius * 1.25f
-                val centers = (center + Vector(0f, distantToCenter)).rotateVector(center, (rotationOrder[i] * PI / 4).toFloat())
+                val centers = center.offset(0f, distantToCenter).rotateVector(center, (rotationOrder[i] * PI / 4).toFloat())
                 CircularShape(centers, 0f, Color(0.996f, 0.875f, 0.314f, 1f), buildShapeAttr.newAttrWithChangedZ(-0.01f * i))
             }
         }
