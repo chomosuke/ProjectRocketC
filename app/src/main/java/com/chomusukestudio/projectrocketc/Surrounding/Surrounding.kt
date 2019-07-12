@@ -30,7 +30,7 @@ import kotlin.math.sqrt
  * Created by Shuang Li on 31/03/2018.
  */
 
-class BasicSurrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources? = null) {
+class Surrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources? = null) {
     private val planets = ArrayList<Planet>() // this defines where the rocket can't go
     // rockets should have z value of 10 while background should have a z value higher than 10, like 11.
     private val backgrounds = // backGrounds doesn't effect plane
@@ -490,7 +490,7 @@ private val maxFlybySpeed = speedFormula(0.004f, 200)
 private val timeLimit = maxCloseDist / maxFlybySpeed
 
 // this class takes a planetShape and manage it, make it flybyable and reusable.
-// this is done to weaken the coupling between PlanetShapes and BasicSurrounding
+// this is done to weaken the coupling between PlanetShapes and Surrounding
 class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
 
     var visibility: Boolean
