@@ -5,7 +5,6 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.TextView
-import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
@@ -18,7 +17,7 @@ import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.Color
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.Shape.Vector
-import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
+import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import java.lang.IndexOutOfBoundsException
 import java.util.concurrent.Executors
@@ -33,7 +32,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 //            TwoFingersJoystick()
 //            OneFingerJoystick()
             InertiaJoystick()
-    private var surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers)
+    private var surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers)
     private var rocketIndex = 0
     private var rocket = getRocket(rocketIndex)
     init {
@@ -89,7 +88,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         pauseForChanges()
         removeAllShapes() // remove all previous shapes
         val surroundingResources = surrounding.trashAndGetResources()
-        surrounding = BasicSurrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
+        surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
         rocket = getRocket(rocketIndex)
         surrounding.initializeSurrounding(rocket, mainActivity.state)
 //            joystick = TwoFingersJoystick()
