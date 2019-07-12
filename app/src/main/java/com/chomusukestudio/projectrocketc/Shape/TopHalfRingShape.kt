@@ -18,10 +18,11 @@ class TopHalfRingShape(center: Vector, a: Float, b: Float, factor: Float, color:
         var previousX3 = center.x + factor * a
         var previousY3 = center.y // start at left
         for (i in componentShapes.indices) {
-            val x2 = center.x + a * cos(PI * (i + 1) / numberOfEdges).toFloat()
-            val y2 = center.y + b * sin(PI * (i + 1) / numberOfEdges).toFloat()
-            val x3 = center.x + factor * a * cos(PI * (i + 1) / numberOfEdges).toFloat()
-            val y3 = center.y + factor * b * sin(PI * (i + 1) / numberOfEdges).toFloat()
+            val theta = PI * (i + 1) / numberOfEdges
+            val x2 = center.x + a * cos(theta).toFloat()
+            val y2 = center.y + b * sin(theta).toFloat()
+            val x3 = center.x + factor * a * cos(theta).toFloat()
+            val y3 = center.y + factor * b * sin(theta).toFloat()
             componentShapes[i] = QuadrilateralShape(Vector(previousX2, previousY2), Vector(x2, y2), Vector(x3, y3), Vector(previousX3, previousY3),
                     color, buildShapeAttr)
             previousX2 = x2

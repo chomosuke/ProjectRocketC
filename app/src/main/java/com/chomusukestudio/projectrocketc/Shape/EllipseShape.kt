@@ -16,13 +16,20 @@ class EllipseShape(center: Vector, a: Float, b: Float, color: Color, buildShapeA
         val componentShapes = arrayOfNulls<TriangularShape>(numberOfEdges - 2)
     
         // generate components triangularShape for EllipseShape isInUse center and a and b
-        for (i in 1 until numberOfEdges - 1)
-            componentShapes[i - 1] = TriangularShape(Vector(center.x, center.y + b),
-                    Vector(center.x + a * sin(2f * PI.toFloat() * i / numberOfEdges),
-                            center.y + b * cos(2f * PI.toFloat() * i / numberOfEdges)),
-                    Vector(center.x + a * sin(2f * PI.toFloat() * (i + 1) / numberOfEdges),
-                            center.y + b * cos(2f * PI.toFloat() * (i + 1) / numberOfEdges)),
-                    color, buildShapeAttr) // close for modification
+        val initialTheta = 2f * PI.toFloat() / numberOfEdges
+        val vertex1 = Vector(center.x, center.y + b)
+        var vertex2 = Vector(center.x + a * sin(initialTheta),
+                center.y + b * cos(initialTheta))
+        for (i in 1 until numberOfEdges - 1) {
+            val theta = 2f * PI.toFloat() * (i + 1) / numberOfEdges
+            val vertex3 = Vector(center.x + a * sin(theta),
+                    center.y + b * cos(theta))
+            componentShapes[i - 1] = TriangularShape(vertex1,
+                    vertex2,
+                    vertex3,
+                    color, buildShapeAttr)
+            vertex2 = vertex3
+        }
     
         this.componentShapes = componentShapes as Array<Shape>
     }
