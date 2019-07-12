@@ -36,8 +36,8 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         //        // Accept fragment if it closer to the camera than the former one
         //        glDepthFunc(GL_LESS);
         
-        // Set the background frame color
-        GLES20.glClearColor(0f, 0f, 0f, 1f)
+//        // Set the background frame color
+//        GLES20.glClearColor(0f, 0f, 0f, 1f)
         
         Layer.initializeGLShaderAndStuff()
         Log.i(TAG, "onSurfaceCreated() called")
@@ -75,7 +75,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         // Clear the screen
         //        GLES20.glClear(GL_DEPTH_BUFFER_BIT);
         // Redraw background color
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+//        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         // Draw all!
         layers.drawAllTriangles()
     }
