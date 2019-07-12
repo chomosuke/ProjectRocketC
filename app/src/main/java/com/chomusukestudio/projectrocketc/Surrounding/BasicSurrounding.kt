@@ -30,11 +30,11 @@ import kotlin.math.sqrt
  * Created by Shuang Li on 31/03/2018.
  */
 
-class BasicSurrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources? = null) : Surrounding() {
-    private val planets = ArrayList<Planet>() // this defines where the plane can't go
-    // planets should have z value of 10 while background should have a z value higher than 10, like 11.
+class BasicSurrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources? = null) {
+    private val planets = ArrayList<Planet>() // this defines where the rocket can't go
+    // rockets should have z value of 10 while background should have a z value higher than 10, like 11.
     private val backgrounds = // backGrounds doesn't effect plane
-            if (resources is BasicSurroundingResources)
+            if (resources is SurroundingResources)
                 resources.background
             else {
                 // initialize all those stars in the backgrounds
@@ -45,10 +45,10 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             }
     private val littleStars = ArrayList<LittleStar>()
     private lateinit var startingPathOfRocket: Shape
-    override lateinit var rocket: Rocket
+    lateinit var rocket: Rocket
 
-    override val centerOfRotation = Vector(0f, 0f)
-    override val rotation = PI.toFloat() / 2
+    val centerOfRotation = Vector(0f, 0f)
+    val rotation = PI.toFloat() / 2
 
     private val minDistantBetweenPlanet = 4f
 
@@ -59,7 +59,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     private val parallelForIForBackgroundStars = ParallelForI(8, "move background")
 
     private val planetsStore =
-            if(resources is BasicSurroundingResources)
+            if(resources is SurroundingResources)
                 resources.planetsStore
             else
                 Array(1000) {// 1000 planet in store waiting for use
@@ -98,7 +98,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     private val leftPlanetBoundary = rightEnd * 1.5f
     private val rightPlanetBoundary = leftEnd * 1.5f
 
-    override fun initializeSurrounding(rocket: Rocket, state: State) {
+    fun initializeSurrounding(rocket: Rocket, state: State) {
         // pass the rocket to the surrounding so surrounding can do stuff such as setCenterOfRotation
 
         this.rocket = rocket
@@ -154,12 +154,12 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         }
         // it is not too close to any other planet
         if (state != State.InGame)
-            if (planet.isOverlap(startingPathOfRocket))
+            if (planet.isOverlap(startingPathOfRocket.overlapper))
                 return false// if it blocks the rocket before start
         return true
     }
 
-    override fun makeNewTriangleAndRemoveTheOldOne(now: Long, previousFrameTime: Long, state: State) {
+    fun makeNewTriangleAndRemoveTheOldOne(now: Long, previousFrameTime: Long, state: State) {
         //        if ( ! (-1 < displacementX && displacementX < 1) || ! (-1 < displacementY && displacementY < 1)) {
         //            // only go through the whole thing when displacementX or displacementY is bigger than 1
         // or not so all these work don't get to pile up to one frame
@@ -240,7 +240,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             littleStar.attractLittleStar(centerOfRotation, now, previousFrameTime, 0.00002f)
     }
 
-    override fun removeAllShape() {
+    fun removeAllShape() {
 
         for (planet in planets) {
             planet.isInUse = false
@@ -273,8 +273,8 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         }
     }
 
-    override fun trashAndGetResources(): SurroundingResources? {
-        return BasicSurroundingResources(backgrounds, planetsStore)
+    fun trashAndGetResources(): SurroundingResources? {
+        return SurroundingResources(backgrounds, planetsStore)
     }
 
     private fun sparkleStar(starShape: StarShape, now: Long, previousFrameTime: Long) {
@@ -300,7 +300,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     }
 
     //    private val parallelForIForMoveBoundaries = ParallelForI(8, "parallelForIForMoveBoundaries")
-    override fun moveSurrounding(vector: Vector, now: Long, previousFrameTime: Long) {
+    fun moveSurrounding(vector: Vector, now: Long, previousFrameTime: Long) {
         parallelForIForBackgroundStars.waitForLastRun()
 
         // move background
@@ -370,7 +370,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
         }
     }
 
-    override fun checkAndAddLittleStar(now: Long) { // this get called every frame
+    fun checkAndAddLittleStar(now: Long) { // this get called every frame
         // you trust state will be inGame or processing thread won't check
         if (littleStars.size == 0) {
             littleStars.add(oneNewLittleStar(now)) // if started and there is no little star in surrounding, then offset one.
@@ -425,39 +425,31 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
             }
         }
     }
-
-    private val parallelForIForIsCrashed = ParallelForI(8, "is crashed")
+    
     private var flybysInThisYellowStar = 0
 
-    @Volatile
-    private var crashedShape: Shape? = null
-
-    override fun isCrashed(shapeForCrashAppro:Shape, components: Array<Shape>): Shape? {
-        crashedShape = null
-        val planetsNeedToBeChecked = ArrayList<Planet>(100)
-        for (planet in planets) {
-            if (planet.visibility) { // rocket can only hit on visibility stuff
-                planetsNeedToBeChecked.add(planet)
+    fun isCrashed(overlappers: Array<Overlapper>): Overlapper? {
+        // find the closest planet
+        // initialize to the first planet
+        var closestPlanet = planets[0]
+        var minDistance = distance(planets[0].center, centerOfRotation)
+        for (i in 1 until planets.size) {
+            val d = distance(planets[i].center, centerOfRotation)
+            if (d < minDistance) {
+                closestPlanet = planets[i]
+                minDistance = d
             }
         }
-        parallelForIForIsCrashed.run({ i ->
-            val planetShape = planetsNeedToBeChecked[i] as Planet
-            if (planetShape.isOverlap(shapeForCrashAppro)) {
-                // only check it when it's close
-                for (component in components) {
-                    if (planetShape.isOverlap(component)) { // if does overlap
-                        crashedShape = component
-                    }
-                }
+    
+        for (overlapper in overlappers) {
+            if (closestPlanet.isOverlap(overlapper)) { // if does overlap
+                return overlapper
             }
-        }, planetsNeedToBeChecked.size)
-        // no need for improvement for immediate return true, most of the time there will not be any overlap.
-        parallelForIForIsCrashed.waitForLastRun()
-
-        return crashedShape
+        }
+        return null
     }
 
-    override fun rotateSurrounding(angle: Float, now: Long, previousFrameTime: Long) {
+    fun rotateSurrounding(angle: Float, now: Long, previousFrameTime: Long) {
         // move the planets down by y (y is decided by plane.movePlane())
         for (planet in planets)
             planet.rotatePlanet(centerOfRotation, angle)
@@ -488,7 +480,7 @@ class BasicSurrounding(private val visualTextView: TouchableView<TextView>, priv
     }
 }
 
-class BasicSurroundingResources(val background: Array<Shape>, val planetsStore: Array<Planet>): SurroundingResources()
+class SurroundingResources(val background: Array<Shape>, val planetsStore: Array<Planet>)
 
 private const val radiusMargin = 0.25f
 private const val averageRadius = 0.75f // for planet shape to determent which type of planet suits the size best.
@@ -586,8 +578,8 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
             setActual(center)
     }
 
-    fun isOverlap(anotherShape: Shape): Boolean {
-        return planetShape.overlapper overlap anotherShape.overlapper
+    fun isOverlap(overlapper: Overlapper): Boolean {
+        return planetShape.overlapper overlap overlapper
     }
 
     fun isTooClose(anotherPlanet: Planet, distance: Float): Boolean {

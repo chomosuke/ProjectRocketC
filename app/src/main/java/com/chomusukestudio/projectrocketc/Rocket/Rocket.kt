@@ -12,14 +12,15 @@ import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
+import com.chomusukestudio.projectrocketc.Shape.Overlapper
 
-import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.Vector
 import kotlin.math.*
 
-abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics: RocketPhysics, private val layers: Layers) {
+abstract class Rocket(protected val surrounding: BasicSurrounding, var rocketPhysics: RocketPhysics, private val layers: Layers) {
     
     protected fun setRotation(centerOfRotation: Vector, rotation: Float) {
         // called before initialize trace
@@ -32,7 +33,7 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
     
     protected open var explosionShape: ExplosionShape? = null
     
-    protected abstract val shapeForCrashAppro: Shape
+    protected open val crashOverlappers get() = Array(components.size) { components[it].overlapper }
     
     protected abstract val trace: Trace
     var currentRotation = surrounding.rotation
@@ -44,7 +45,6 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
             for (component in components)
                 component.rotateShape(centerOfRotation, angle)
             //            surrounding.rotateSurrounding(dr, nowXY, previousFrameTime);
-            shapeForCrashAppro.rotateShape(centerOfRotation, angle)
         }
     protected var velocity = Vector(0f, 0f)
         private set
@@ -57,11 +57,11 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
     // surrounding have to define center of rotation
     // constructor of subclasses need to reset components with its center of rotation at centerOfRotationY and centerOfRotationX and defined it's velocity
     
-    protected var crashedComponent: Shape? = null
-    open fun isCrashed(surrounding: Surrounding): Boolean {
+    protected var crashedOverlapper: Overlapper? = null
+    open fun isCrashed(surrounding: BasicSurrounding): Boolean {
         // surrounding will handle this
-        crashedComponent = surrounding.isCrashed(shapeForCrashAppro, components)
-        if (crashedComponent != null) {
+        crashedOverlapper = surrounding.isCrashed(crashOverlappers)
+        if (crashedOverlapper != null) {
             return true
         }
         return false

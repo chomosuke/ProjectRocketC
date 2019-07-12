@@ -6,13 +6,13 @@ import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Shape.*
 
-import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 
 /**
  * Created by Shuang Li on 11/03/2018.
  */
 
-class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers)
+class V2(surrounding: BasicSurrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers)
     : Rocket(surrounding, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
@@ -95,11 +95,16 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         return components
     }
     
-    override val shapeForCrashAppro = QuadrilateralShape(centerOfRotation  + Vector(1f, 1f),
-            centerOfRotation + Vector(-1f, 1f),
-            centerOfRotation + Vector(-1f, -1f),
-            centerOfRotation + Vector(1f, -1f),
-            Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, false, layers))
+    override val crashOverlappers: Array<Overlapper>
+        get() = arrayOf(PointOverlapper((components[0] as TriangularShape).vertex1),
+                PointOverlapper((components[0] as TriangularShape).vertex2),
+                PointOverlapper((components[0] as TriangularShape).vertex3),
+                PointOverlapper((components[3] as QuadrilateralShape).vertex4),
+                PointOverlapper((components[4] as QuadrilateralShape).vertex4),
+                PointOverlapper((components[7] as FreeFormShape).getVertex(1)),
+                PointOverlapper((components[8] as FreeFormShape).getVertex(1)),
+                PointOverlapper((components[7] as FreeFormShape).getVertex(2)),
+                PointOverlapper((components[8] as FreeFormShape).getVertex(2)))
 
     // initialize for surrounding to set centerOfRotation
     init {
@@ -107,7 +112,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
     }
 
     // make the crash sound
-    override fun isCrashed(surrounding: Surrounding): Boolean {
+    override fun isCrashed(surrounding: BasicSurrounding): Boolean {
         return if (super.isCrashed(surrounding)) {
             crashSound.start()
             true

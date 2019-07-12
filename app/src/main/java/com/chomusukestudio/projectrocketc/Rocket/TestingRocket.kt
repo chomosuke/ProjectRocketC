@@ -6,13 +6,13 @@ import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Shape.*
 
-import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.Surrounding.BasicSurrounding
 
 /**
  * Created by Shuang Li on 11/03/2018.
  */
 
-class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, rocketPhysics, layers) {
+class TestingRocket(surrounding: BasicSurrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
             AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f, Color(1f, 1f, 0f, 3f), layers)
@@ -51,9 +51,6 @@ class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlaye
             }
         }
     }
-    override val shapeForCrashAppro = QuadrilateralShape(centerOfRotation.offset(0.15f, 0.5f),
-            centerOfRotation.offset(-0.15f, 0.5f), centerOfRotation.offset(-0.15f, -0.4f),
-            centerOfRotation.offset(0.15f, -0.4f),  Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, false, layers))
 
     // initialize for surrounding to set centerOfRotation
     init {
@@ -61,7 +58,7 @@ class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlaye
     }
 
     // make the crash sound
-    override fun isCrashed(surrounding: Surrounding): Boolean {
+    override fun isCrashed(surrounding: BasicSurrounding): Boolean {
         return if (super.isCrashed(surrounding)) {
             crashSound.start()
             true
