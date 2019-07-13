@@ -78,10 +78,10 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
                 QuadrilateralShape(p10.mirrorXAxis(), Vector(p10.x, 0f), Vector(p4.x, 0f), p4.mirrorXAxis(),
                         black, BuildShapeAttr(1f, true, layers)),
                 // 7
-                FreeFormShape(arrayOf(p4, p5, p6, p7, p8, p9, p10/*, Vector(p10.x, 0f), Vector(p4.x, 0f)*/),
+                PolygonalShape(arrayOf(p4, p5, p6, p7, p8, p9, p10/*, Vector(p10.x, 0f), Vector(p4.x, 0f)*/),
                         black, buildShapeAttr),
                 // 8
-                FreeFormShape(arrayOf(p4.mirrorXAxis(), p5.mirrorXAxis(), p6.mirrorXAxis(), p7.mirrorXAxis(),
+                PolygonalShape(arrayOf(p4.mirrorXAxis(), p5.mirrorXAxis(), p6.mirrorXAxis(), p7.mirrorXAxis(),
                         p8.mirrorXAxis(), p9.mirrorXAxis(), p10.mirrorXAxis()/*, Vector(p10.x, 0f), Vector(p4.x, 0f)*/),
                         white, buildShapeAttr),
                 // 9
@@ -101,10 +101,10 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
                 PointOverlapper((components[0] as TriangularShape).vertex3),
                 PointOverlapper((components[3] as QuadrilateralShape).vertex4),
                 PointOverlapper((components[4] as QuadrilateralShape).vertex4),
-                PointOverlapper((components[7] as FreeFormShape).getVertex(1)),
-                PointOverlapper((components[8] as FreeFormShape).getVertex(1)),
-                PointOverlapper((components[7] as FreeFormShape).getVertex(2)),
-                PointOverlapper((components[8] as FreeFormShape).getVertex(2)))
+                PointOverlapper((components[7] as PolygonalShape).getVertex(1)),
+                PointOverlapper((components[8] as PolygonalShape).getVertex(1)),
+                PointOverlapper((components[7] as PolygonalShape).getVertex(2)),
+                PointOverlapper((components[8] as PolygonalShape).getVertex(2)))
 
     // initialize for surrounding to set centerOfRotation
     init {
