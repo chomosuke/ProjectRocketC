@@ -25,6 +25,7 @@ import java.lang.Math.random
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 /**
  * Created by Shuang Li on 31/03/2018.
@@ -458,7 +459,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
     }
 
 
-    private var lastUsedPlanet: Int = 0
+    private var lastUsedPlanet = Random.nextInt(planetsStore.size)
     private fun getRandomPlanet(): Planet {
         for (i in planetsStore.indices) {
             lastUsedPlanet++// get the next random planet
