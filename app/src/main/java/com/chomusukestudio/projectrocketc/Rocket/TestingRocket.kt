@@ -58,8 +58,8 @@ class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlaye
     }
 
     // make the crash sound
-    override fun isCrashed(surrounding: Surrounding): Boolean {
-        return if (super.isCrashed(surrounding)) {
+    override fun isCrashed(surrounding: Surrounding, timePassed: Long): Boolean {
+        return if (super.isCrashed(surrounding, timePassed)) {
             crashSound.start()
             true
         } else false

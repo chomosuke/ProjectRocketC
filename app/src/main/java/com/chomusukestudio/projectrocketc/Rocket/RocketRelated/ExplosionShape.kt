@@ -9,6 +9,19 @@ import kotlin.math.PI
 abstract class ExplosionShape(center: Vector, approximateRadius: Float, protected val duration: Long) : Shape() {
 	
 	abstract fun drawExplosion(timePassed: Long)
+    
+    val isDone: Boolean get() {
+        for (componentShape in componentShapes)
+            if (!componentShape.removed)
+                return false
+        return true
+    }
+    
+    override fun moveShape(displacement: Vector) {
+        for (componentShape in componentShapes)
+            if (!componentShape.removed)
+                componentShape.moveShape(displacement)
+    }
 
     override fun removeShape() {
         for (componentShape in componentShapes)

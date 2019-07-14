@@ -2,6 +2,9 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Joystick.RocketControl
+import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
+import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Shape.*
@@ -12,7 +15,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
  * Created by Shuang Li on 11/03/2018.
  */
 
-class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers)
+class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, val layers: Layers)
     : Rocket(surrounding, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
@@ -26,7 +29,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
 
-    override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
+    override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.002f,
             0.000002f, 0.000001f)
 
     override val width = 0.3f
@@ -111,12 +114,35 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         setRotation(surrounding.centerOfRotation, surrounding.rotation)
     }
 
-    // make the crash sound
-    override fun isCrashed(surrounding: Surrounding): Boolean {
-        return if (super.isCrashed(surrounding)) {
+    private var blood = 100f
+    private var crashShape: ExplosionShape? = null
+    override fun isCrashed(surrounding: Surrounding, timePassed: Long): Boolean {
+        val crashingPoint = surrounding.isCrashed(crashOverlappers)
+        if (crashingPoint == null) {
+            // haven't crashed
+            return false
+        }
+        val explosionPoint = (crashingPoint as PointOverlapper).point
+            if (crashShape?.isDone ?: true) {
+                crashShape?.removeShape()
+                crashSound.seekTo(0)
+                crashSound.start()
+                crashShape = RedExplosionShape(explosionPoint, 0.3f, 500, BuildShapeAttr(-11f, true, layers))
+            }
+        blood -= timePassed / 5f
+        if (blood <= 0) {
+            crashShape?.removeShape()
+            crashSound.seekTo(0)
             crashSound.start()
-            true
-        } else false
+            return true
+        } else return false
+    }
+    
+    override fun moveRocket(rocketControl: RocketControl, now: Long, previousFrameTime: Long) {
+        super.moveRocket(rocketControl, now, previousFrameTime)
+        crashShape?.drawExplosion(now - previousFrameTime)
+        val displacement = -velocity * (now - previousFrameTime).toFloat()
+        crashShape?.moveShape(displacement)
     }
 
     override fun removeAllShape() {
