@@ -45,10 +45,8 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 
     private fun getRocket(rocketIndex: Int): Rocket {
         return when (rocketIndex) {
-            0 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DirectionalRocketPhysics(), layers)
-            1 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), AccelerativeRocketPhysics(), layers)
-            2 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
-            3 -> TestingRocket(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
+            0 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
+            1 -> TestingRocket(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -62,7 +60,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     }
     fun isOutOfBounds(dIndex: Int): Boolean {
         val index = rocketIndex + dIndex
-        return index !in 0..3
+        return index !in 0..1
     }
 
     private fun updateScore() {
@@ -136,7 +134,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
                     if (state == State.InGame) {
 
                         // see if crashed
-                        if (rocket.isCrashed(surrounding)) {
+                        if (rocket.isCrashed(surrounding, now - previousFrameTime)) {
                             mainActivity.onCrashed()
                         }
                         surrounding.checkAndAddLittleStar(now)
