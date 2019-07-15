@@ -89,9 +89,9 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
         return isTimeOut
     }
     
-    fun isEaten(rocketComponentShapes: Array<Shape>): Boolean {
-        for (rocketComponentShape in rocketComponentShapes)
-            if (CircularOverlapper(center, RADIUS_OF_LITTLE_STAR) overlap rocketComponentShape.overlapper)
+    fun isEaten(rocketOverlappers: Array<Overlapper>): Boolean {
+        for (rocketOverlapper in rocketOverlappers)
+            if (CircularOverlapper(center, RADIUS_OF_LITTLE_STAR) overlap rocketOverlapper)
                 return true
         return false
     }

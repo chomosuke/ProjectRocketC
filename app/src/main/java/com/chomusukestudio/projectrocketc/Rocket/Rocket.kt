@@ -116,7 +116,7 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
     }
     
     fun isEaten(littleStar: LittleStar): Boolean {
-        return littleStar.isEaten(components)
+        return littleStar.isEaten(crashOverlappers)
     }
 }
 
