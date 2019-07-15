@@ -23,7 +23,7 @@ class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlaye
         trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
 
-    override val rocketQuirks = RocketQuirks(2f, 0.003f, 0.004f, 0.000002f, 0.000001f)
+    override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f, 0.000002f, 0.000001f)
 
     override val width = 0.3f
 

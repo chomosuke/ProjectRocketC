@@ -29,7 +29,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
 
-    override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.002f,
+    override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
             0.000002f, 0.000001f)
 
     override val width = 0.3f
@@ -114,7 +114,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         setRotation(surrounding.centerOfRotation, surrounding.rotation)
     }
 
-    private var blood = 100f
+    private var blood = 500f
     private var crashShape: ExplosionShape? = null
     override fun isCrashed(surrounding: Surrounding, timePassed: Long): Boolean {
         val crashingPoint = surrounding.isCrashed(crashOverlappers)
@@ -127,9 +127,10 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
                 crashShape?.removeShape()
                 crashSound.seekTo(0)
                 crashSound.start()
-                crashShape = RedExplosionShape(explosionPoint, 0.3f, 500, BuildShapeAttr(-11f, true, layers))
+                crashShape = RedExplosionShape(explosionPoint, 0.3f, 200, BuildShapeAttr(-11f, true, layers))
             }
-        blood -= timePassed / 5f
+        blood -= timePassed
+        bloodBar.fullness = blood/500f
         if (blood <= 0) {
             crashShape?.removeShape()
             crashSound.seekTo(0)
@@ -137,6 +138,8 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
             return true
         } else return false
     }
+    private val bloodBar = BarShape(centerOfRotation.offset(-0.5f, 0.95f), centerOfRotation.offset(0.5f, 0.75f), 0.02f,
+            Color(1f, 0f, 0f, 0.6f), Color(1f, 0f, 0f, 1f), BuildShapeAttr(-11f, true, layers))
     
     override fun moveRocket(rocketControl: RocketControl, now: Long, previousFrameTime: Long) {
         super.moveRocket(rocketControl, now, previousFrameTime)
@@ -148,5 +151,6 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
     override fun removeAllShape() {
         super.removeAllShape()
         crashSound.release()
+        bloodBar.removeShape()
     }
 }
