@@ -41,4 +41,15 @@ class Vector(val x: Float, val y: Float) {
     operator fun minus(anotherVector: Vector) = Vector(x - anotherVector.x, y - anotherVector.y)
     operator fun unaryMinus() = Vector(-x, -y)
     operator fun times(factor: Float) = Vector(x * factor, y * factor)
+    override fun equals(other: Any?): Boolean {
+        return if (other is Vector)
+            x == other.x && y == other.y
+        else false
+    }
+    
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + y.hashCode()
+        return result
+    }
 }

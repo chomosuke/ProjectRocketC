@@ -11,7 +11,17 @@ abstract class Overlapper() {
     }
 }
 
-class PointOverlapper(val point: Vector): Overlapper()
+class PointOverlapper(val point: Vector): Overlapper() {
+	override fun equals(other: Any?): Boolean {
+		return if (other is PointOverlapper)
+			point == other.point
+		else false
+	}
+	
+	override fun hashCode(): Int {
+		return point.hashCode()
+	}
+}
 
 class LineSegmentOverlapper(val p1: Vector, val p2: Vector): Overlapper() {
 	override fun overlap(anotherOverlapper: Overlapper): Boolean {
