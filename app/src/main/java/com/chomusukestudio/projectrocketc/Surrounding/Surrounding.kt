@@ -429,7 +429,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
     
     private var flybysInThisYellowStar = 0
 
-    fun isCrashed(overlappers: Array<Overlapper>): Overlapper? {
+    fun isCrashed(overlappers: Array<Overlapper>): ArrayList<Overlapper> {
         // find the closest planet
         // initialize to the first planet
         var closestPlanet = planets[0]
@@ -442,12 +442,13 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
             }
         }
     
+        val crashedOverlappers = ArrayList<Overlapper>()
         for (overlapper in overlappers) {
             if (closestPlanet.isOverlap(overlapper)) { // if does overlap
-                return overlapper
+                crashedOverlappers.add(overlapper)
             }
         }
-        return null
+        return crashedOverlappers
     }
 
     fun rotateSurrounding(angle: Float, now: Long, previousFrameTime: Long) {

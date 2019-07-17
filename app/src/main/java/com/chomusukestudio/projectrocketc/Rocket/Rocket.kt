@@ -47,7 +47,7 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
             //            surrounding.rotateSurrounding(dr, nowXY, previousFrameTime);
         }
     protected var velocity = Vector(0f, 0f)
-        private set
+        protected set
     
     abstract val rocketQuirks: RocketQuirks
     protected abstract val components: Array<Shape>
@@ -57,11 +57,10 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
     // surrounding have to define center of rotation
     // constructor of subclasses need to reset components with its center of rotation at centerOfRotationY and centerOfRotationX and defined it's velocity
     
-    protected var crashedOverlapper: Overlapper? = null
     open fun isCrashed(surrounding: Surrounding, timePassed: Long): Boolean {
         // surrounding will handle this
-        crashedOverlapper = surrounding.isCrashed(crashOverlappers)
-        if (crashedOverlapper != null) {
+        val crashedOverlapper = surrounding.isCrashed(crashOverlappers)
+        if (crashedOverlapper.isNotEmpty()) {
             return true
         }
         return false

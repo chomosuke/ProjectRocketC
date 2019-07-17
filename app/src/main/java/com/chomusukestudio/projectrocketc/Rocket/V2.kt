@@ -21,26 +21,27 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
             AccelerationTrace(7, 1.01f, 0.14f, 0.5f, 1000, 100,
                     0.004f, Color(1f, 1f, 0f, 3f), layers)
-
+    
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val p1 = (components[9] as QuadrilateralShape).vertex2
         val p2 = (components[10] as QuadrilateralShape).vertex2
         val origin = (p1 + p2) * 0.5f
         trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
-
+    
     override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
             0.000002f, 0.000001f)
-
+    
     override val width = 0.3f
-
+    
     override val components: Array<Shape> = generateComponents(layers)
     private fun generateComponents(layers: Layers): Array<Shape> {
         val white = Color(1f, 1f, 1f, 1f)
         val black = Color(0.3f, 0.3f, 0.3f, 1f)
-    
+        
         // when the rocket is created it's pointed towards right which is angle 0
-        val scaleX = 0.8f; val scaleY = 0.6f
+        val scaleX = 0.8f;
+        val scaleY = 0.6f
         val p1 = Vector(0.65f * scaleX, 0f)
         val p2 = Vector(0.35f * scaleX, 0.125f * scaleY)
         val p3 = Vector(0f, 0.155f * scaleY)
@@ -55,7 +56,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         val p12 = Vector(-0.64f * scaleX, 0.07f * scaleY)
         val p13 = Vector(-0.64f * scaleX, 0.015f * scaleY)
         val p14 = Vector(-0.6f * scaleX, 0.032f * scaleY)
-    
+        
         val buildShapeAttr = BuildShapeAttr(1f, true, layers)
         val components = arrayOf(
                 // defined components of rocket around centerOfRotation set by surrounding
@@ -108,29 +109,45 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
                 PointOverlapper((components[8] as PolygonalShape).getVertex(1)),
                 PointOverlapper((components[7] as PolygonalShape).getVertex(2)),
                 PointOverlapper((components[8] as PolygonalShape).getVertex(2)))
-
+    
+    private val rf = 0.006f
+    private val repulsiveForces = arrayOf(Vector(-rf, 0f), Vector(0f, -rf),
+            Vector(0f, rf), Vector(0f, -rf), Vector(0f, rf), Vector(0f, -rf),
+            Vector(0f, rf), Vector(0f, -rf), Vector(0f, rf))
+    
     // initialize for surrounding to set centerOfRotation
     init {
         setRotation(surrounding.centerOfRotation, surrounding.rotation)
     }
-
+    
     private var blood = 500f
     private var crashShape: ExplosionShape? = null
+    private var timeCollided = 0f
     override fun isCrashed(surrounding: Surrounding, timePassed: Long): Boolean {
-        val crashingPoint = surrounding.isCrashed(crashOverlappers)
-        if (crashingPoint == null) {
+        val crashingPoints = surrounding.isCrashed(crashOverlappers)
+        if (crashingPoints.isEmpty()) {
             // haven't crashed
+            timeCollided = 0f
             return false
         }
-        val explosionPoint = (crashingPoint as PointOverlapper).point
-            if (crashShape?.isDone ?: true) {
-                crashShape?.removeShape()
-                crashSound.seekTo(0)
-                crashSound.start()
-                crashShape = RedExplosionShape(explosionPoint, 0.3f, 200, BuildShapeAttr(-11f, true, layers))
-            }
+        val explosionPoint = (crashingPoints[0] as PointOverlapper).point
+        if (crashShape?.isDone ?: true) {
+            crashShape?.removeShape()
+            crashSound.seekTo(0)
+            crashSound.start()
+            crashShape = RedExplosionShape(explosionPoint, 0.3f, 200, BuildShapeAttr(-11f, true, layers))
+        }
+        
+        // repel rocket from planet
+        timeCollided += timePassed * crashingPoints.size
+//        val repulsiveForce = repulsiveForces[crashOverlappers.indexOf(crashingPoint)].rotateVector(currentRotation)
+//        velocity = repulsiveForce/* * timePassed.toFloat()*/
+        
+        // decrease blood
         blood -= timePassed
-        bloodBar.fullness = blood/500f
+        bloodBar.fullness = blood / 500f
+        
+        // if death
         if (blood <= 0) {
             crashShape?.removeShape()
             crashSound.seekTo(0)
@@ -138,6 +155,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
             return true
         } else return false
     }
+    
     private val bloodBar = BarShape(centerOfRotation.offset(-0.5f, 0.95f), centerOfRotation.offset(0.5f, 0.75f), 0.02f,
             Color(1f, 0f, 0f, 0.6f), Color(1f, 0f, 0f, 1f), BuildShapeAttr(-11f, true, layers))
     
@@ -147,7 +165,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         val displacement = -velocity * (now - previousFrameTime).toFloat()
         crashShape?.moveShape(displacement)
     }
-
+    
     override fun removeAllShape() {
         super.removeAllShape()
         crashSound.release()

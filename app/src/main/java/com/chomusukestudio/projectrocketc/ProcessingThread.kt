@@ -10,6 +10,7 @@ import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Rocket.TestingRocket
 import com.chomusukestudio.projectrocketc.Rocket.V2
+import com.chomusukestudio.projectrocketc.Rocket.V2InstantDeath
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.AccelerativeRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DirectionalRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DragRocketPhysics
@@ -46,7 +47,8 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     private fun getRocket(rocketIndex: Int): Rocket {
         return when (rocketIndex) {
             0 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
-            1 -> TestingRocket(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
+            1 -> V2InstantDeath(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
+            2 -> TestingRocket(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -60,7 +62,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     }
     fun isOutOfBounds(dIndex: Int): Boolean {
         val index = rocketIndex + dIndex
-        return index !in 0..1
+        return index !in 0..2
     }
 
     private fun updateScore() {
@@ -122,7 +124,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     private val lock = ReentrantLock()
     private val condition = lock.newCondition()
 
-//    private val warningRed = TriangularShape(Vector(0f, 100f), Vector(100f, -100f), Vector(-100f, -100f), Color(1f, 0f, 0f, 0.5f), BuildShapeAttr(-100f, false, layers))
+    private val warningRed = TriangularShape(Vector(0f, 100f), Vector(100f, -100f), Vector(-100f, -100f), Color(1f, 0f, 0f, 0.5f), BuildShapeAttr(-100f, false, layers))
     
     fun generateNextFrame(now: Long, previousFrameTime: Long) {
         if (!pausedForChanges) { // if aren't pausing for changes
