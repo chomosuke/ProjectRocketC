@@ -34,8 +34,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
     
     override val width = 0.3f
     
-    override val components: Array<Shape> = generateComponents(layers)
-    private fun generateComponents(layers: Layers): Array<Shape> {
+    override val components: Array<Shape> = run {
         val white = Color(1f, 1f, 1f, 1f)
         val black = Color(0.3f, 0.3f, 0.3f, 1f)
         
@@ -96,7 +95,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         )
         for (component in components)
             component.moveShape(centerOfRotation)
-        return components
+        components
     }
     
     override val crashOverlappers: Array<Overlapper>
