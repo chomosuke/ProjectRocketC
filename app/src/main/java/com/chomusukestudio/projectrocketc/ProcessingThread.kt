@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
+import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
 import com.chomusukestudio.projectrocketc.Rocket.TestingRocket
 import com.chomusukestudio.projectrocketc.Rocket.V2
@@ -30,9 +31,9 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
             get() = mainActivity.state
 
     var joystick =
-//            TwoFingersJoystick()
+            TwoFingersJoystick()
 //            OneFingerJoystick()
-            InertiaJoystick()
+//            InertiaJoystick()
     private var surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers)
     private var rocketIndex = 0
     private var rocket = getRocket(rocketIndex)
@@ -46,9 +47,8 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 
     private fun getRocket(rocketIndex: Int): Rocket {
         return when (rocketIndex) {
-            0 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
-            1 -> V2InstantDeath(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
-            2 -> TestingRocket(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
+			0 -> V2InstantDeath(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
+            1 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -62,7 +62,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     }
     fun isOutOfBounds(dIndex: Int): Boolean {
         val index = rocketIndex + dIndex
-        return index !in 0..2
+        return index !in 0..1
     }
 
     private fun updateScore() {
@@ -91,9 +91,9 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
         rocket = getRocket(rocketIndex)
         surrounding.initializeSurrounding(rocket, mainActivity.state)
-//            joystick = TwoFingersJoystick()
+            joystick = TwoFingersJoystick()
 //            joystick = OneFingerJoystick()
-        joystick = InertiaJoystick()
+//        joystick = InertiaJoystick()
         LittleStar.cleanScore()
         resumeWithChanges()
     }
