@@ -10,6 +10,7 @@ import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import kotlin.math.pow
 
 /**
  * Created by Shuang Li on 11/03/2018.
@@ -56,7 +57,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         val p13 = Vector(-0.64f * scaleX, 0.015f * scaleY)
         val p14 = Vector(-0.6f * scaleX, 0.032f * scaleY)
         
-        val buildShapeAttr = BuildShapeAttr(1f, true, layers)
+        val buildShapeAttr = BuildShapeAttr(0.5f, true, layers)
         val components = arrayOf(
                 // defined components of rocket around centerOfRotation set by surrounding
                 // 0
@@ -119,7 +120,11 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         setRotation(surrounding.centerOfRotation, surrounding.rotation)
     }
     
-    private var blood = 500f
+    private var blood = 1f
+        set(value) {
+            field = value
+            bloodBar.fullness = blood
+        }
     private var crashShape: ExplosionShape? = null
     private var timeCollided = 0f
     override fun isCrashed(surrounding: Surrounding, timePassed: Long): Boolean {
@@ -127,6 +132,8 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         if (crashingPoints.isEmpty()) {
             // haven't crashed
             timeCollided = 0f
+//            if (blood < 1f)
+//                blood += 0.00001f * timePassed
             return false
         }
         val explosionPoint = (crashingPoints[0] as PointOverlapper).point
@@ -143,8 +150,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
 //        velocity = repulsiveForce/* * timePassed.toFloat()*/
         
         // decrease blood
-        blood -= timePassed
-        bloodBar.fullness = blood / 500f
+        blood -= timePassed * 2f.pow(crashingPoints.size) / 1000
         
         // if death
         if (blood <= 0) {
@@ -155,7 +161,8 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         } else return false
     }
     
-    private val bloodBar = BarShape(centerOfRotation.offset(-0.5f, 0.95f), centerOfRotation.offset(0.5f, 0.75f), 0.02f,
+    //    private val bloodBar = BarShape(Vector(-4f, 7.8f), Vector(4f, 7.5f), 0.02f,
+    private val bloodBar = BarShape(centerOfRotation.offset(-0.5f, 1.25f), centerOfRotation.offset(0.5f, 1.05f), 0.02f,
             Color(1f, 0f, 0f, 0.6f), Color(1f, 0f, 0f, 1f), BuildShapeAttr(-11f, true, layers))
     
     override fun moveRocket(rocketControl: RocketControl, now: Long, previousFrameTime: Long) {

@@ -41,7 +41,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
                 // initialize all those stars in the backgrounds
                 Array<Shape>(6000) { // 6000 stars in the background
                     return@Array StarShape(Vector(randFloat(leftEnd, rightEnd), randFloat(topEnd, bottomEnd)),
-                            (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, BuildShapeAttr(11f, true, layers))
+                            (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, BuildShapeAttr(1f, true, layers))
                 }
             }
     private val littleStars = ArrayList<LittleStar>()
@@ -64,7 +64,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
                 resources.planetsStore
             else
                 Array(1000) {// 1000 planet in store waiting for use
-                    val planetShape = generateRandomPlanet(Vector(100f, 100f), generateRadius(), 10f, layers)
+                    val planetShape = generateRandomPlanet(Vector(100f, 100f), generateRadius(), 0f, layers)
                     planetShape.isInUse = false
                     return@Array planetShape
                 }
