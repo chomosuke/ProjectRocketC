@@ -36,6 +36,8 @@ class Vector(val x: Float, val y: Float) {
     fun scale(pivot: Vector, factor: Float) = Vector(pivot.x + factor * (x - pivot.x), pivot.y + factor * (y - pivot.y))
     fun offset(dx: Float, dy: Float) = Vector(x + dx, y + dy)
     fun mirrorXAxis() = Vector(x, -y)
+    fun mirrorYAxis() = Vector(-x, y)
+    fun swapXY() = Vector(y, x)
     
     operator fun plus(anotherVector: Vector) = Vector(x + anotherVector.x, y + anotherVector.y)
     operator fun minus(anotherVector: Vector) = Vector(x - anotherVector.x, y - anotherVector.y)
