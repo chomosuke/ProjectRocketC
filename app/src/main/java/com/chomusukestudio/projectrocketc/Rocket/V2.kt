@@ -147,7 +147,10 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
 //        velocity = repulsiveForce/* * timePassed.toFloat()*/
         
         // decrease blood
-        blood -= timePassed * 2f.pow(crashingPoints.size) / 1000
+        var crashFactor = crashingPoints.size
+        if (crashOverlappers[0] in crashingPoints)
+            crashFactor += 1
+        blood -= timePassed * 2f.pow(crashFactor) / 1000
         
         // if death
         if (blood <= 0) {
