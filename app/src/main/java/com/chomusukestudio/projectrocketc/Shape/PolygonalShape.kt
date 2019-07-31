@@ -30,9 +30,16 @@ class EarClipPolygonalShape(private val vertexes: Array<Vector>, color: Color, b
 		super.moveShape(displacement)
 		totalDisplacement += displacement
 	}
+
+	override fun rotateShape(centerOfRotation: Vector, angle: Float) {
+		super.rotateShape(centerOfRotation, angle)
+		totalRotation += angle
+		totalDisplacement = totalDisplacement.rotateVector(centerOfRotation, angle)
+	}
 	private var totalDisplacement = Vector(0f, 0f)
+	private var totalRotation = 0f
 	fun getVertex(index: Int): Vector {
-		return vertexes[index] + totalDisplacement
+		return (vertexes[index] + totalDisplacement).rotateVector(totalDisplacement, totalRotation)
 	}
 }
 
