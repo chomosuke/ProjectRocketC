@@ -31,21 +31,21 @@ class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlaye
         when (i) {
             // defined components of rocket around centerOfRotation set by surrounding
             0 ->
-                TriangularShape(centerOfRotation.offset(0.5f, 0f),
-                        centerOfRotation.offset(0.3f, 0.15f),
-                        centerOfRotation.offset(0.3f, -0.15f),
+                TriangularShape(Vector(0.5f, 0f),
+                        Vector(0.3f, 0.15f),
+                        Vector(0.3f, -0.15f),
                         Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, layers))
             1 ->
-                QuadrilateralShape(centerOfRotation.offset(0.3f, 0.15f),
-                        centerOfRotation.offset(0.3f, -0.15f), centerOfRotation.offset(-0.3f, -0.15f),
-                        centerOfRotation.offset(-0.3f, 0.15f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, layers))
+                QuadrilateralShape(Vector(0.3f, 0.15f),
+                        Vector(0.3f, -0.15f), Vector(-0.3f, -0.15f),
+                        Vector(-0.3f, 0.15f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, layers))
             2 ->
                 CircularShape(centerOfRotation, 0.07f,
                         Color(0.1f, 0.1f, 0.1f, 1f), BuildShapeAttr(0.9999f, true, layers))
             3 ->
-                QuadrilateralShape(centerOfRotation.offset(-0.3f, 0.1f),
-                        centerOfRotation.offset(-0.3f, -0.1f), centerOfRotation.offset(-0.4f, -0.12f),
-                        centerOfRotation.offset(-0.4f, 0.12f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, layers))
+                QuadrilateralShape(Vector(-0.3f, 0.1f),
+                        Vector(-0.3f, -0.1f), Vector(-0.4f, -0.12f),
+                        Vector(-0.4f, 0.12f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, layers))
             else -> {
                 throw IndexOutOfBoundsException()
             }

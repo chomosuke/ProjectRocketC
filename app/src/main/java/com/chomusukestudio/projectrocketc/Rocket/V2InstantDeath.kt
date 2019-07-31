@@ -57,7 +57,7 @@ class V2InstantDeath(surrounding: Surrounding, private val crashSound: MediaPlay
 		val p14 = Vector(-0.6f * scaleX, 0.032f * scaleY)
 		
 		val buildShapeAttr = BuildShapeAttr(1f, true, layers)
-		val components = arrayOf(
+		return@run arrayOf(
 				// defined components of rocket around centerOfRotation set by surrounding
 				// 0
 				TriangularShape(p1, p2, p2.mirrorXAxis(),
@@ -93,9 +93,6 @@ class V2InstantDeath(surrounding: Surrounding, private val crashSound: MediaPlay
 				QuadrilateralShape(p11.mirrorXAxis(), p12.mirrorXAxis(), p13.mirrorXAxis(), p14.mirrorXAxis(),
 						black, buildShapeAttr)
 		)
-		for (component in components)
-			component.moveShape(centerOfRotation)
-		components
 	}
 	
 	override val crashOverlappers: Array<Overlapper>

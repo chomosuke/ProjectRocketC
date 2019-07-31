@@ -26,8 +26,10 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
         // called before initialize trace
         // set rotation
         this.centerOfRotation = centerOfRotation
-        for (component in components)
+        for (component in components) {
+            component.moveShape(centerOfRotation)
             component.rotateShape(centerOfRotation, rotation)
+        }
         currentRotation = rotation
     }
     
