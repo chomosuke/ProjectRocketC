@@ -76,9 +76,9 @@ open class RegularPolygonalTraceShape(numberOfEdges: Int, private var center: Ve
             // this is basically white nowXY
             componentShapes[0].resetAlpha(color.alpha * alphaEveryMiniSecond.pow((now - previousFrameTime).toFloat()))
         } else {
-            componentShapes[0].resetShapeColor(Color(color.red + (1 - color.red) * (now - previousFrameTime).toFloat() * 20f / duration,
-                    color.green + (1 - color.green) * (now - previousFrameTime).toFloat() * 20f / duration,
-                    color.blue + (1 - color.blue) * (now - previousFrameTime).toFloat() * 20f / duration,
+            componentShapes[0].resetShapeColor(Color(color.red + (1 - color.red) * (now - previousFrameTime).toFloat() * 15f / duration,
+                    color.green + (1 - color.green) * (now - previousFrameTime).toFloat() * 15f / duration,
+                    color.blue + (1 - color.blue) * (now - previousFrameTime).toFloat() * 15f / duration,
                     color.alpha * alphaEveryMiniSecond.pow((now - previousFrameTime).toFloat())))
         }
         // and change radius

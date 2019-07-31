@@ -58,7 +58,7 @@ class SaturnV(surrounding: Surrounding, rocketPhysics: RocketPhysics, layers: La
 				QuadrilateralShape(pL[34], pL[35], pL[36], pL[37], black, build),
 				QuadrilateralShape(pR[14], pR[16], pL[16], pL[14], white, build),
 				PolygonalShape(arrayOf(pR[33], pR[16], pR[17], pR[18], pR[21], pR[22], pR[27]), black, build),
-				PolygonalShape(arrayOf(pR[33], pL[16], pL[17], pL[18], pL[21], pL[22], pL[27]), white, build),
+				PolygonalShape(arrayOf(pL[33], pL[16], pL[17], pL[18], pL[21], pL[22], pL[27]), white, build),
 				QuadrilateralShape(pR[33], pR[27], pR[31], pR[32], white, build),
 				QuadrilateralShape(pL[33], pL[27], pL[31], pL[32], black, build),
 				QuadrilateralShape(pR[18], pR[19], pR[20], pR[21], white, build),
