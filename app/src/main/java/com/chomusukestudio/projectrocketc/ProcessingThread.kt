@@ -8,10 +8,7 @@ import android.widget.TextView
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
 import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
-import com.chomusukestudio.projectrocketc.Rocket.Rocket
-import com.chomusukestudio.projectrocketc.Rocket.TestingRocket
-import com.chomusukestudio.projectrocketc.Rocket.V2
-import com.chomusukestudio.projectrocketc.Rocket.V2InstantDeath
+import com.chomusukestudio.projectrocketc.Rocket.*
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.AccelerativeRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DirectionalRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DragRocketPhysics
@@ -49,6 +46,8 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         return when (rocketIndex) {
 			0 -> V2InstantDeath(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
             1 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
+            2 -> SaturnV(surrounding, DragRocketPhysics(), layers)
+
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -62,7 +61,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     }
     fun isOutOfBounds(dIndex: Int): Boolean {
         val index = rocketIndex + dIndex
-        return index !in 0..1
+        return index !in 0..2
     }
 
     private fun updateScore() {
