@@ -169,7 +169,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 
                     if (SystemClock.uptimeMillis() - startTime > 16) {
                         Log.i("processing thread", "" + (SystemClock.uptimeMillis() - startTime))
-                        warningRed.visibility = true
+//                        warningRed.visibility = true
                     }
                     else warningRed.visibility = false
 
