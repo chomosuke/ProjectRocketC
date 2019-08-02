@@ -130,3 +130,13 @@ fun speedFormula(initialSpeed: Float, score: Int): Float {
 data class RocketState(val currentRotation: Float, val velocity: Vector)
 
 data class RocketQuirks(val turningRadius: Float, val initialSpeed: Float, val rotationSpeed: Float, val acceleration: Float, val deceleration: Float)
+
+fun convertPointsOnRocket(pR: Array<Vector>, center: Vector, scale: Vector): Array<Vector> {
+    for (i in pR.indices) {
+        pR[i] -= center  // bring it to center
+        pR[i] = pR[i].scaleXY(scale)
+        pR[i] = pR[i].rotateVector(PI.toFloat() / 2) // point to right which is rotation 0
+    }
+    val pL = Array(pR.size) { pR[it].mirrorXAxis() }
+    return pL
+}

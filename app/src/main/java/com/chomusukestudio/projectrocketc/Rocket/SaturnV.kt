@@ -28,13 +28,7 @@ class SaturnV(surrounding: Surrounding, rocketPhysics: RocketPhysics, layers: La
 				Vector(324f, 622f), Vector(324f, 519f), Vector(305f, 519f), // 35
 				Vector(305f, 473f), Vector(324f, 473f), Vector(305f, 351f), // 38
 				Vector(305f, 334f), Vector(332f, 334f))
-		for (i in pR.indices) {
-            pR[i] = pR[i].offset(-305f, -414.5f) // bring it to center
-					.scaleXY(Vector(1.3f, 1f))
-					.rotateVector(PI.toFloat() / 2) // point to right which is rotation 0
-			pR[i] = pR[i] * 0.002f
-        }
-		val pL = Array(pR.size) { pR[it].mirrorXAxis() }
+		val pL = convertPointsOnRocket(pR, Vector(305f, 414.5f), Vector(1.3f, 1f) * 0.002f)
 		val white = Color(1f, 1f, 1f, 1f)
 		val black = Color(0.3f, 0.3f, 0.3f, 1f)
 		val build = BuildShapeAttr(0.5f, true, layers)
