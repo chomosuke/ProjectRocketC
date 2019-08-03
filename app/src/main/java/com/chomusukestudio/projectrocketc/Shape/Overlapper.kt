@@ -1,6 +1,6 @@
 package com.chomusukestudio.projectrocketc.Shape
 
-abstract class Overlapper() {
+abstract class Overlapper {
 	open val components: Array<Overlapper> get() = arrayOf(this) // default is itself
     open infix fun overlap(anotherOverlapper: Overlapper): Boolean {
         for (component in components)
