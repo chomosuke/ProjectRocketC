@@ -36,7 +36,7 @@ class LineSegmentOverlapper(val p1: Vector, val p2: Vector): Overlapper() {
 				val c2 =
 						anotherOverlapper.p1.y - (m2 *
 								anotherOverlapper.p1.x)
-				
+
 				if (m1 == m2) {
 					return if (c1 == c2) {
 						// segment on same line, might overlap or not
@@ -51,11 +51,17 @@ class LineSegmentOverlapper(val p1: Vector, val p2: Vector): Overlapper() {
 				// intersection within both segment
 				return isBetween(p1.x, p2.x, intersectionX) &&
 						isBetween(anotherOverlapper.p1.x, anotherOverlapper.p2.x, intersectionX)
-				
+
 			}
 			else -> return super.overlap(anotherOverlapper)
 		}
 	}
 	private fun intersectionX(m1: Float, c1: Float, m2: Float, c2: Float) = (c2 - c1) / (m1 - m2)
 	private fun isBetween(x1: Float, x2: Float, x: Float) = (x in x1..x2) || (x in x2..x1)
+}
+
+class EmptyOverlapper() : Overlapper() {
+	override fun overlap(anotherOverlapper: Overlapper): Boolean {
+		return false
+	}
 }
