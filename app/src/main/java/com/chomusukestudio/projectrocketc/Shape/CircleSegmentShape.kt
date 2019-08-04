@@ -7,6 +7,10 @@ import kotlin.math.pow
 class CircleSegmentShape() : Shape() {
     override lateinit var componentShapes: Array<Shape>
     private fun generateComponents(angle: Float, center: Vector, startPoint: Vector, color: Color, buildShapeAttr: BuildShapeAttr): Array<Shape> {
+
+        // set var for overlapper
+        this.angle = angle; this.center = center; this.startPoint = startPoint
+
         var numberOfEdge = (CircularShape.getNumberOfEdges(distance(center, startPoint)) * angle / PI).toInt()
         if (numberOfEdge < 2)
             numberOfEdge = 2
@@ -20,21 +24,11 @@ class CircleSegmentShape() : Shape() {
         }
         return componentShapes as Array<Shape>
     }
-
-    constructor(angle: Float, center: Vector, startPoint: Vector, color: Color, buildShapeAttr: BuildShapeAttr) : this() {
-        componentShapes = generateComponents(angle, center, startPoint, color, buildShapeAttr)
-    }
-
-    constructor(startPoint: Vector, endPoint: Vector, middlePoint: Vector, color: Color, buildShapeAttr: BuildShapeAttr) : this() {
-        val center = findCenter(startPoint, middlePoint, endPoint)
-        val angle = (endPoint - center).direction - (startPoint - center).direction
-        componentShapes = generateComponents(angle, center, startPoint, color, buildShapeAttr)
-    }
     private fun findCenter(p1: Vector, p2: Vector, p3: Vector): Vector {
         val x1 = p1.x; val y1 = p1.y
         val x2 = p2.x; val y2 = p2.y
         val x3 = p3.x; val y3 = p3.y
-        
+
         val x12 = x1 - x2
         val x13 = x1 - x3
 
@@ -72,19 +66,43 @@ class CircleSegmentShape() : Shape() {
         // where centre is (h = -g, k = -f) and radius r
         // as r^2 = h^2 + k^2 - c
     }
+
+    var angle = 0f; lateinit var center: Vector; lateinit var startPoint: Vector
+    override val overlapper: Overlapper
+        get() = CircleSegmentOverlapper(angle, center, startPoint)
+
+    override fun moveShape(displacement: Vector) {
+        super.moveShape(displacement)
+        center += displacement
+        startPoint += displacement
+    }
+    override fun rotateShape(centerOfRotation: Vector, angle: Float) {
+        super.rotateShape(centerOfRotation, angle)
+        center = center.rotateVector(centerOfRotation, angle)
+        startPoint = startPoint.rotateVector(centerOfRotation, angle)
+    }
+
+    constructor(angle: Float, center: Vector, startPoint: Vector, color: Color, buildShapeAttr: BuildShapeAttr) : this() {
+        componentShapes = generateComponents(angle, center, startPoint, color, buildShapeAttr)
+    }
+
+    constructor(startPoint: Vector, endPoint: Vector, middlePoint: Vector, color: Color, buildShapeAttr: BuildShapeAttr) : this() {
+        val center = findCenter(startPoint, middlePoint, endPoint)
+        val angle = (endPoint - center).direction - (startPoint - center).direction
+        componentShapes = generateComponents(angle, center, startPoint, color, buildShapeAttr)
+    }
 }
 
 class CircleSegmentOverlapper(val angle: Float, val center: Vector, val startPoint: Vector) : Overlapper() {
     override val components: Array<Overlapper> = run {
         val startingVertex = startPoint.scale(center, 2f)
-        arrayOf(TriangularOverlapper(startingVertex, startingVertex.rotateVector(center, angle / 3), center),
-            TriangularOverlapper(startingVertex.rotateVector(center, angle / 3), startingVertex.rotateVector(center, 2 * angle / 3), center),
-            TriangularOverlapper(startingVertex.rotateVector(center, 2 * angle / 3), startingVertex.rotateVector(center, angle), center),
+        arrayOf(TriangularOverlapper(startingVertex, startingVertex.rotateVector(center, angle / 3), startingVertex.rotateVector(center, 2 * angle / 3)),
+            TriangularOverlapper(startingVertex, startingVertex.rotateVector(center, 2 * angle / 3), startingVertex.rotateVector(center, angle)),
             CircularOverlapper(center, distance(center, startPoint)))
     }
 
     override fun overlap(anotherOverlapper: Overlapper): Boolean {
-        return (components[0].overlap(anotherOverlapper) || components[1].overlap(anotherOverlapper) || components[2].overlap(anotherOverlapper)) &&
-                components[3].overlap(anotherOverlapper)
+        return (components[0].overlap(anotherOverlapper) || components[1].overlap(anotherOverlapper)) &&
+                components[2].overlap(anotherOverlapper)
     }
 }
