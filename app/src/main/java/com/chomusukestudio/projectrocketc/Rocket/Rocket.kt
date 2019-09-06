@@ -4,6 +4,7 @@ package com.chomusukestudio.projectrocketc.Rocket
  * Created by Shuang Li on 11/03/2018.
  */
 
+import android.media.MediaPlayer
 import android.support.annotation.CallSuper
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.RocketControl
@@ -20,7 +21,7 @@ import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.Vector
 import kotlin.math.*
 
-abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics: RocketPhysics, private val layers: Layers) {
+abstract class Rocket(protected val surrounding: Surrounding, private val crashSound: MediaPlayer, var rocketPhysics: RocketPhysics, private val layers: Layers) {
     
     protected fun setRotation(centerOfRotation: Vector, rotation: Float) {
         // called before initialize trace
@@ -63,6 +64,7 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
         // surrounding will handle this
         val crashedOverlapper = surrounding.isCrashed(crashOverlappers)
         if (crashedOverlapper.isNotEmpty()) {
+            crashSound.start()
             return true
         }
         return false
@@ -114,6 +116,7 @@ abstract class Rocket(protected val surrounding: Surrounding, var rocketPhysics:
                 component.removeShape()
         trace.removeTrace()
         explosionShape?.removeShape()
+        crashSound.release()
     }
     
     fun isEaten(littleStar: LittleStar): Boolean {

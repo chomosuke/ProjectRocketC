@@ -43,11 +43,13 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     }
 
     private fun getRocket(rocketIndex: Int): Rocket {
+        val crashSound = MediaPlayer.create(mainActivity, R.raw.fx22)
+        crashSound.setVolume(0.66f, 0.66f)
         return when (rocketIndex) {
-			0 -> V2InstantDeath(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
-            1 -> V2(surrounding, MediaPlayer.create(mainActivity, R.raw.fx22), DragRocketPhysics(), layers)
-            2 -> SaturnV(surrounding, DragRocketPhysics(), layers)
-            3 -> Falcon9(surrounding, DragRocketPhysics(), layers)
+			0 -> V2InstantDeath(surrounding, crashSound, DragRocketPhysics(), layers)
+            1 -> V2(surrounding, crashSound, DragRocketPhysics(), layers)
+            2 -> SaturnV(surrounding, crashSound, DragRocketPhysics(), layers)
+            3 -> Falcon9(surrounding, crashSound, DragRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }

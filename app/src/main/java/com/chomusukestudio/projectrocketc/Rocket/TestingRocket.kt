@@ -12,7 +12,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
  * Created by Shuang Li on 11/03/2018.
  */
 
-class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, rocketPhysics, layers) {
+class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, crashSound, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
             AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f, Color(1f, 1f, 0f, 3f), layers)
@@ -55,18 +55,5 @@ class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlaye
     // initialize for surrounding to set centerOfRotation
     init {
         setRotation(surrounding.centerOfRotation, surrounding.rotation)
-    }
-
-    // make the crash sound
-    override fun isCrashed(surrounding: Surrounding, timePassed: Long): Boolean {
-        return if (super.isCrashed(surrounding, timePassed)) {
-            crashSound.start()
-            true
-        } else false
-    }
-
-    override fun removeAllShape() {
-        super.removeAllShape()
-        crashSound.release()
     }
 }

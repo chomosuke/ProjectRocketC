@@ -17,7 +17,7 @@ import kotlin.math.pow
  */
 
 class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, val layers: Layers)
-    : Rocket(surrounding, rocketPhysics, layers) {
+    : Rocket(surrounding, crashSound, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
             AccelerationTrace(7, 1.01f, 0.14f, 0.5f, 1000, 100,

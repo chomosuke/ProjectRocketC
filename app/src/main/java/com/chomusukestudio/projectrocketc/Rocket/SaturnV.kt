@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
+import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
@@ -8,7 +9,7 @@ import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import kotlin.math.PI
 
-class SaturnV(surrounding: Surrounding, rocketPhysics: RocketPhysics, layers: Layers): Rocket(surrounding, rocketPhysics, layers) {
+class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers): Rocket(surrounding, crashSound, rocketPhysics, layers) {
 	override val trace = AccelerationTrace(7, 1.01f, 0.2f, 0.5f, 1000, 100,
 					0.004f, Color(1f, 1f, 0f, 3f), layers)
 	override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
