@@ -74,8 +74,11 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         }
         // Clear the screen
         //        GLES20.glClear(GL_DEPTH_BUFFER_BIT);
-        // Redraw background color
-//        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+    
+    // Redraw background color
+    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+    // this is required on certain devices
+
         // Draw all!
         layers.drawAllTriangles()
     }
