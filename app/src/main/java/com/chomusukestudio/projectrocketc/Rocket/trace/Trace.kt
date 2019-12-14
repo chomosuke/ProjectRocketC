@@ -43,7 +43,7 @@ abstract class Trace {
 
     fun moveTrace(vector: Vector) {
         parallelForIForMoveTraces.run({ i ->
-            traceShapes[i].moveShape(vector)
+            traceShapes[i].move(vector)
         }, traceShapes.size)
         lastOrigin = lastOrigin?.plus(vector) // what elegancy lol
         if (generateTraceCalledThisFrame)

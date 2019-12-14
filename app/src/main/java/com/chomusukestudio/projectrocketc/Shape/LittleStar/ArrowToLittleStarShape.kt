@@ -12,13 +12,13 @@ class ArrowToLittleStarShape(radius: Float, arrowColor: Color, circleColor: Colo
     }
     private var direction = Direction.UP // because the three sided RegularPolygonalShape will be facing up when declared.
     fun setDirection(direction : Direction) {
-        componentShapes[1].rotateShape((componentShapes[1] as RegularPolygonalShape).center,
+        componentShapes[1].rotate((componentShapes[1] as RegularPolygonalShape).center,
 				PI.toFloat()/2 * (direction.direction - this.direction.direction))
         this.direction = direction
     }
     
     fun setPosition(center: Vector) {
         val dCenter = center - (componentShapes[0] as CircularShape).center
-        moveShape(dCenter)
+        move(dCenter)
     }
 }

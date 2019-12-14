@@ -26,7 +26,7 @@ import kotlin.math.pow
  * Created by Shuang Li on 25/03/2018.
  */
 
-class LittleStar(val COLOR: Color, private var center: Vector, private val range: Float, var duration: Long, now: Long, layers: Layers) {
+class LittleStar(val COLOR: Color, private var center: Vector, private val range: Float, var duration: Long, now: Long, allLayers: AllLayers) {
     private var littleStarShape: LittleStarShape
     private var arrowToLittleStarShape: ArrowToLittleStarShape
     private var rangeCircleThingy: FullRingShape? = null
@@ -41,7 +41,7 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
     init {
         // circle color for arrowToLittleStarShape is star color
         // arrow color is circle color for littleStarShape
-        val buildShapeAttr = BuildShapeAttr(-10f, true, layers)
+        val buildShapeAttr = BuildShapeAttr(-10f, true, allLayers.shapeLayers)
         littleStarShape = LittleStarShape(center, RADIUS_OF_LITTLE_STAR, COLOR.color, Color(1f, 1f, 1f, 1f), buildShapeAttr)
         arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, Color(1f, 1f, 1f, 1f), COLOR.color, buildShapeAttr)
 
@@ -148,8 +148,8 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
             return
         }
         center += displacement
-        littleStarShape.moveShape(displacement)
-        rangeCircleThingy?.moveShape(displacement)
+        littleStarShape.move(displacement)
+        rangeCircleThingy?.move(displacement)
         if (inScreen) {
             if (center.x + RADIUS_OF_LITTLE_STAR < leftEnd ||
                     center.x - RADIUS_OF_LITTLE_STAR > rightEnd ||
@@ -224,8 +224,8 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
     
     fun rotateLittleStar(centerOfRotation: Vector, angle: Float) {
         center = center.rotateVector(centerOfRotation, angle)
-        littleStarShape.rotateShape(centerOfRotation, angle)
-        rangeCircleThingy?.rotateShape(centerOfRotation, angle)
+        littleStarShape.rotate(centerOfRotation, angle)
+        rangeCircleThingy?.rotate(centerOfRotation, angle)
     }
     
     fun resetPosition(center: Vector) {

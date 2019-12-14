@@ -6,30 +6,28 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
 import android.support.annotation.CallSuper
+import com.chomusukestudio.projectrocketc.GLRenderer.AllLayers
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.RocketControl
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
-import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.Overlapper
+import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
-import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.Vector
 import kotlin.math.*
 
-abstract class Rocket(protected val surrounding: Surrounding, private val crashSound: MediaPlayer, var rocketPhysics: RocketPhysics, private val layers: Layers) {
+abstract class Rocket(protected val surrounding: Surrounding, private val crashSound: MediaPlayer, var rocketPhysics: RocketPhysics, private val allLayers: AllLayers) {
     
     protected fun setRotation(centerOfRotation: Vector, rotation: Float) {
         // called before initialize trace
         // set rotation
         this.centerOfRotation = centerOfRotation
         for (component in components) {
-            component.moveShape(centerOfRotation)
-            component.rotateShape(centerOfRotation, rotation)
+            component.move(centerOfRotation)
+            component.rotate(centerOfRotation, rotation)
         }
         currentRotation = rotation
     }
@@ -46,7 +44,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
             val angle = value - field
             field = value
             for (component in components)
-                component.rotateShape(centerOfRotation, angle)
+                component.rotate(centerOfRotation, angle)
             //            surrounding.rotateSurrounding(dr, nowXY, previousFrameTime);
         }
     protected var velocity = Vector(0f, 0f)
@@ -54,7 +52,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
     
     abstract val rocketQuirks: RocketQuirks
     protected abstract val components: Array<Shape>
-    
+
     var centerOfRotation = surrounding.centerOfRotation
         protected set
     // surrounding have to define center of rotation
@@ -73,7 +71,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
     open val explosionCoordinate = centerOfRotation
     fun drawExplosion(now: Long, previousFrameTime: Long) {
         if (explosionShape == null) {
-            explosionShape = RedExplosionShape(explosionCoordinate, 0.75f, 1000, BuildShapeAttr(-11f, true, layers))
+            explosionShape = RedExplosionShape(explosionCoordinate, 0.75f, 1000, BuildShapeAttr(-11f, true, allLayers.shapeLayers))
         } else {
             // rocket already blown up
             for (component in components)
@@ -94,7 +92,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
         this.currentRotation = rocketState.currentRotation
         
         val displacement = -velocity * (now - previousFrameTime).toFloat()
-        
+
         if (rocketControl.throttleOn) {
             generateTrace(now, previousFrameTime)
         }

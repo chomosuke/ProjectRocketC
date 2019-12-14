@@ -31,7 +31,7 @@ import kotlin.random.Random
  * Created by Shuang Li on 31/03/2018.
  */
 
-class Surrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources? = null) {
+class Surrounding(private val visualTextView: TouchableView<TextView>, private val allLayers: AllLayers, resources: SurroundingResources? = null) {
     private val planets = ArrayList<Planet>() // this defines where the rocket can't go
     // rockets should have z value of 10 while background should have a z value higher than 10, like 11.
     private val backgrounds = // backGrounds doesn't effect plane
@@ -41,7 +41,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
                 // initialize all those stars in the backgrounds
                 Array<Shape>(6000) { // 6000 stars in the background
                     return@Array StarShape(Vector(randFloat(leftEnd, rightEnd), randFloat(topEnd, bottomEnd)),
-                            (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, BuildShapeAttr(1f, true, layers))
+                            (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, BuildShapeAttr(1f, true, allLayers.shapeLayers))
                 }
             }
     private val littleStars = ArrayList<LittleStar>()
@@ -64,29 +64,29 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
                 resources.planetsStore
             else
                 Array(1000) {// 1000 planet in store waiting for use
-                    val planetShape = generateRandomPlanet(Vector(100f, 100f), generateRadius(), 0f, layers)
+                    val planetShape = generateRandomPlanet(Vector(100f, 100f), generateRadius(), 0f, allLayers)
                     planetShape.isInUse = false
                     return@Array planetShape
                 }
 
-    private fun generateRandomPlanet(center: Vector, radius: Float, z: Float, layers: Layers): Planet {
+    private fun generateRandomPlanet(center: Vector, radius: Float, z: Float, allLayers: AllLayers): Planet {
         val randomPlanetShape: PlanetShape
         if (radius < averageRadius) {
 //            val timeStarted = SystemClock.uptimeMillis()
-            randomPlanetShape = MarsShape(center, radius, BuildShapeAttr(z, false, layers))
+            randomPlanetShape = MarsShape(center, radius, BuildShapeAttr(z, false, allLayers.shapeLayers))
 //            Log.v("time take for newPlanet", "mars " + (SystemClock.uptimeMillis() - timeStarted))
         } else if (radius < averageRadius + radiusMargin * 0.6) {
 //            val timeStarted = SystemClock.uptimeMillis()
             val ringA = randFloat(1.5f, 1.7f) * radius
-            randomPlanetShape = SaturnShape(ringA, randFloat(0.1f, 0.6f) * ringA, 1.2f * radius, randFloat(3f, 6f).toInt(), center, radius, BuildShapeAttr(z, false, layers))
+            randomPlanetShape = SaturnShape(ringA, randFloat(0.1f, 0.6f) * ringA, 1.2f * radius, randFloat(3f, 6f).toInt(), center, radius, BuildShapeAttr(z, false, allLayers.shapeLayers))
             //            randomPlanetShape = new SaturnShape(ringA, (float) (0.1 + 0.5 * random()) * ringA, (0.67f + 0.2f*(float)random()) * ringA, (int) (3 * random() + 3), centerX, centerY, radius, z);
 //            Log.v("time take for newPlanet", "saturn " + (SystemClock.uptimeMillis() - timeStarted))
         } else {
 //            val timeStarted = SystemClock.uptimeMillis()
-            randomPlanetShape = JupiterShape(center, radius, BuildShapeAttr(z, false, layers))
+            randomPlanetShape = JupiterShape(center, radius, BuildShapeAttr(z, false, allLayers.shapeLayers))
 //            Log.v("time take for newPlanet", "jupiter " + (SystemClock.uptimeMillis() - timeStarted))
         }
-        randomPlanetShape.rotateShape(center, (random() * 2.0 * PI).toFloat())
+        randomPlanetShape.rotate(center, (random() * 2.0 * PI).toFloat())
         return Planet(randomPlanetShape)
     }
 
@@ -111,19 +111,19 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
                     Vector(centerOfRotation.x + initialFlybyDistance, 100000000f), // max value is bad because it causes overflow... twice
                             Vector(centerOfRotation.x + initialFlybyDistance, centerOfRotation.y - initialFlybyDistance),
                                     Vector(centerOfRotation.x - initialFlybyDistance, centerOfRotation.y - initialFlybyDistance),
-                    Color(0f, 1f, 0f, 1f), BuildShapeAttr(0f, false, layers))
-            startingPathOfRocket.rotateShape(centerOfRotation, rotation - PI.toFloat()/2)
+                    Color(0f, 1f, 0f, 1f), BuildShapeAttr(0f, false, allLayers.shapeLayers))
+            startingPathOfRocket.rotate(centerOfRotation, rotation - PI.toFloat()/2)
 //        } else {
 //            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
 //                    centerOfRotationX + initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
 //                    centerOfRotationX + initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
 //                    centerOfRotationX - initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
-//                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
+//                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, allLayers.shapeLayers))
 //        }
 
 
         val avoidDistance = Vector(110f, 0f) // to avoid constant change of visibility
-        startingPathOfRocket.moveShape(avoidDistance) // i'll move it back later
+        startingPathOfRocket.move(avoidDistance) // i'll move it back later
         newPlanet = getRandomPlanet()
         // initialize surrounding
         val iMax = 256
@@ -143,7 +143,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
         }
         for (boundary in planets)
             boundary.movePlanet(-avoidDistance) // move planets back
-        startingPathOfRocket.moveShape(-avoidDistance) // move startingPathOfRocket back
+        startingPathOfRocket.move(-avoidDistance) // move startingPathOfRocket back
     }
 
     private fun isGoodPlanet(planet: Planet, state: State): Boolean {
@@ -404,10 +404,10 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
         val center = Vector(randFloat(rightEnd, leftEnd), topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/)
         val littleStar = /*if (rocket.initialSpeed == 0f)
             LittleStar(YELLOW, centerX, centerY, 1f,
-                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(1f / 1000f, LittleStar.score) * 2).toLong(), nowXY, layers)
+                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(1f / 1000f, LittleStar.score) * 2).toLong(), nowXY, allLayers)
         else*/
             LittleStar(YELLOW, center, 1f,
-                    (distance(center, centerOfRotation) / speedFormula(2f/ 1000f, LittleStar.score) * 2).toLong(), now, layers)
+                    (distance(center, centerOfRotation) / speedFormula(2f/ 1000f, LittleStar.score) * 2).toLong(), now, allLayers)
 
         var finished: Boolean
         while (true) {
@@ -537,9 +537,9 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
 
     private fun setActual(actualCenter: Vector) {
         val dCenter = actualCenter - planetShape.center
-        planetShape.moveShape(dCenter)
+        planetShape.move(dCenter)
         if (angleRotated != 0f) {
-            planetShape.rotateShape(center, angleRotated)
+            planetShape.rotate(center, angleRotated)
             angleRotated = 0f // reset angleRotated
         }
     }

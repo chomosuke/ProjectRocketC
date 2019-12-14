@@ -7,6 +7,6 @@ class FullRingShape(center: Vector, a: Float, b: Float, innerPercentage: Float, 
             TopHalfRingShape(center, a, b, innerPercentage, color, buildShapeAttr))
     
     init {
-        componentShapes[1].rotateShape(center, PI.toFloat())
+        componentShapes[1].rotate(center, PI.toFloat())
     }
 }

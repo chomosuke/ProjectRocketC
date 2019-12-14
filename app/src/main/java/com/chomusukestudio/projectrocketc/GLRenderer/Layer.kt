@@ -6,30 +6,28 @@ import android.util.Log
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
-import java.util.ArrayList
-import java.util.concurrent.locks.ReentrantLock
 
 // if any layer.triangleCoords[i1] or layer.colors[i2] contain this value then it's unused
 const val UNUSED = -107584485858583778999908789293009999999f
 const val COORDS_PER_VERTEX = 2
 const val CPT = COORDS_PER_VERTEX * 3 // number of coordinates per vertex in this array
 
-class Layer(val z: Float) { // depth for the drawing order
+abstract class Layer(val z: Float, private val fragmentBlockSize: Int) { // depth for the drawing order
 
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
 
     private var vertexBuffer: FloatBuffer
-    private var colorBuffer: FloatBuffer
+    private var fragmentBuffer: FloatBuffer
 
     private var size = 100 // number of triangle (including unused) in this layer
     // drawing order from the one with the largest z value to the one with the smallest z value
 
     var triangleCoords: FloatArray // coordinate of triangles
 
-    private var vertexCount: Int = 300// number of vertex for each layer
+    private var vertexCount: Int = size * 3// number of vertex for each layer
     // number of triangle times 3
 
-    var colors: FloatArray // colors of triangles
+    var fragmentData: FloatArray // colors of triangles
 
     private var lastUsedCoordIndex = 0 // should increase performance by ever so slightly, isn't really necessary.
     @Synchronized fun getCoordPointer(): Int {
@@ -60,7 +58,7 @@ class Layer(val z: Float) { // depth for the drawing order
     init {
         // mark ALL colors and triangleCoords as UNUSED
         triangleCoords = FloatArray(size * CPT) { UNUSED }
-        colors = FloatArray(size * 12) { UNUSED }
+        fragmentData = FloatArray(size * fragmentBlockSize) { UNUSED }
 
         // setupBuffers
         val bb = ByteBuffer.allocateDirect(
@@ -75,12 +73,12 @@ class Layer(val z: Float) { // depth for the drawing order
         // initialize vertex byte buffer for shape coordinates
         val bb2 = ByteBuffer.allocateDirect(
                 // (number of coordinate values * 4 bytes per float)
-                colors.size * 4)
+                fragmentData.size * 4)
         // use the device hardware's native byte order
         bb2.order(ByteOrder.nativeOrder())
 
         // create a floating score buffer from the ByteBuffer
-        colorBuffer = bb2.asFloatBuffer()
+        fragmentBuffer = bb2.asFloatBuffer()
     }
 
     private fun setupBuffers() {
@@ -103,12 +101,12 @@ class Layer(val z: Float) { // depth for the drawing order
         // initialize vertex byte buffer for shape coordinates
         val bb2 = ByteBuffer.allocateDirect(
                 // (number of coordinate values * 4 bytes per float)
-                colors.size * 4)
+                fragmentData.size * 4)
         // use the device hardware's native byte order
         bb2.order(ByteOrder.nativeOrder())
 
         // create a floating score buffer from the ByteBuffer
-        colorBuffer = bb2.asFloatBuffer()
+        fragmentBuffer = bb2.asFloatBuffer()
 
         changingBuffer = false
     }
@@ -124,17 +122,17 @@ class Layer(val z: Float) { // depth for the drawing order
         // set the buffer to read the first coordinate
         vertexBuffer.position(0)
         // offset the coordinates to the FloatBuffer
-        colorBuffer.put(colors)
+        fragmentBuffer.put(fragmentData)
         // set the buffer to read the first coordinate
-        colorBuffer.position(0)
+        fragmentBuffer.position(0)
 
         newBufferPassedToArray = true
 
         changingBuffer = false
     }
 
-    fun getColorPointer(coordPointer: Int): Int {
-        return coordPointer / CPT * 12
+    fun getFragmentPointer(coordPointer: Int): Int {
+        return coordPointer / CPT * fragmentBlockSize
     }
 
     private fun increaseSize() {
@@ -142,21 +140,21 @@ class Layer(val z: Float) { // depth for the drawing order
 
         // store arrays
         val oldTriangleCoords = triangleCoords
-        val oldColor = colors
+        val oldColor = fragmentData
 
         // create new arrays with new size
         triangleCoords = FloatArray(CPT * size)
-        colors = FloatArray(12 * size)
+        fragmentData = FloatArray(fragmentBlockSize * size)
 
         // copy old array to new array
         System.arraycopy(oldTriangleCoords, 0, triangleCoords, 0, oldTriangleCoords.size)
-        System.arraycopy(oldColor, 0, colors, 0, oldColor.size)
+        System.arraycopy(oldColor, 0, fragmentData, 0, oldColor.size)
 
         // initialize the new part of the array
         for (i in oldTriangleCoords.size until triangleCoords.size)
             triangleCoords[i] = UNUSED
-        for (i in oldColor.size until colors.size)
-            colors[i] = UNUSED
+        for (i in oldColor.size until fragmentData.size)
+            fragmentData[i] = UNUSED
 
         // size buffers with new arrays' sizes
         setupBuffers()
@@ -206,57 +204,50 @@ class Layer(val z: Float) { // depth for the drawing order
             Matrix.multiplyMM(mvpMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
         }
 
-        // create empty OpenGL ES Program
-        private var mProgram: Int = -1000
-
-        fun initializeGLShaderAndStuff() {
-            mProgram = GLES20.glCreateProgram()
+        fun createGLProgram(vertexShaderCode: String, fragmentShaderCode: String): Int {
+            val program = GLES20.glCreateProgram()
             // can't do in the declaration as will return 0 because not everything is prepared
 
-            val vertexShader = TheGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER,
-                    vertexShaderCode)
-
-            val fragmentShader = TheGLRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER,
-                    fragmentShaderCode)
+            val vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode)
+            val fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode)
 
             // offset the vertex shader to program
-            GLES20.glAttachShader(mProgram, vertexShader)
+            GLES20.glAttachShader(program, vertexShader)
 
             // offset the fragment shader to program
-            GLES20.glAttachShader(mProgram, fragmentShader)
+            GLES20.glAttachShader(program, fragmentShader)
 
             // creates OpenGL ES program executables
-            GLES20.glLinkProgram(mProgram)
+            GLES20.glLinkProgram(program)
 
-            refreshMatrix()
+            // check for errors in glLinkProgram
+            val linkStatus = IntArray(1)
+            GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0)
+            if (linkStatus[0] != GLES20.GL_TRUE) {
+                Log.e("glLinkProgram", "program not successful linked: " + linkStatus[0] +
+                        "\n" + GLES20.glGetProgramInfoLog(program) +
+                        "\nvertexShader's Errors:\n" + GLES20.glGetShaderInfoLog(vertexShader) +
+                        "\nfragmentShader's Errors:\n" + GLES20.glGetShaderInfoLog(fragmentShader) +
+                        "\n" + vertexShaderCode +
+                        "\n" + fragmentShaderCode)
+            }
+            return program
         }
+        private fun loadShader(type: Int, shaderCode: String): Int {
 
-        private const val vertexShaderCode =
-        // This matrix member variable provides a hook to manipulate
-        // the coordinates of the objects that use this vertex shader
-                "uniform mat4 uMVPMatrix;" +
+            // create a vertex shader type (GLES31.GL_VERTEX_SHADER)
+            // or a fragment shader type (GLES31.GL_FRAGMENT_SHADER)
+            val shader = GLES20.glCreateShader(type)
 
-                        "attribute vec4 vPosition;" +
-                        "attribute vec4 aColor;" +
+            // offset the source code to the shader and compile it
+            GLES20.glShaderSource(shader, shaderCode)
+            GLES20.glCompileShader(shader)
 
-                        "varying vec4 vColor;" +
-
-                        "void main() {" +
-                        "vColor = aColor;" +
-                        // the matrix must be included as a modifier of gl_Position
-                        // Note that the uMVPMatrix factor *must be first* in order
-                        // for the matrix multiplication product to be correct.
-                        "  gl_Position = uMVPMatrix * vPosition;" +
-                        "}"
-
-        private const val fragmentShaderCode =
-                "precision mediump float;" +
-                        "varying vec4 vColor;" +
-                        "void main() {" +
-                        "  gl_FragColor = vColor;" +
-                        "}"
+            return shader
+        }
     }
 
+    protected abstract val mProgram: Int
     @Volatile private var drawing = false
     fun drawLayer() {
 //        while (changingBuffer || !newBufferPassedToArray);
@@ -283,7 +274,7 @@ class Layer(val z: Float) { // depth for the drawing order
         GLES20.glEnableVertexAttribArray(mColorHandle)
         GLES20.glVertexAttribPointer(mColorHandle, 4,
                 GLES20.GL_FLOAT, false,
-                0, colorBuffer)
+                0, fragmentBuffer)
 
         // get handle to shape's transformation matrix
         val mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix")
@@ -309,34 +300,3 @@ class Layer(val z: Float) { // depth for the drawing order
     }
 }
 
-class Layers { // a group of arrayList
-    val arrayList = ArrayList<Layer>()
-
-//        fun offsetAllLayers(dOffsetX: Float, dOffsetY: Float) {
-//            for (layer in arrayList)
-//                layer.offsetLayer(dOffsetX, dOffsetY)
-//        }
-
-    val lockOnArrayList = ReentrantLock()
-
-    fun drawAllTriangles() {
-        // no need to sort, already in order
-        lockOnArrayList.lock() // for preventing concurrent modification
-        for (layer in arrayList) { // draw arrayList in order
-            layer.drawLayer()
-        }
-        lockOnArrayList.unlock()
-    }
-
-    //        private val parallelForIForPassArraysToBuffers = ParallelForI(20, "passArraysToBuffers")
-    fun passArraysToBuffers() {
-        lockOnArrayList.lock()
-//            parallelForIForPassArraysToBuffers.run({ i ->
-//                arrayList[i].passArraysToBuffers()
-//            }, arrayList.size)
-//            parallelForIForPassArraysToBuffers.waitForLastRun()
-        for (layer in arrayList)
-            layer.passArraysToBuffers()
-        lockOnArrayList.unlock()
-    }
-}

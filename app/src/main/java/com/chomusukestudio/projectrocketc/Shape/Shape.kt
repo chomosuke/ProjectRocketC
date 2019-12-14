@@ -1,13 +1,14 @@
 package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.GLRenderer.ShapeLayer
 
 
 /**
  * Created by Shuang Li on 28/02/2018.
  */
 
-abstract class Shape{
+abstract class Shape : ISolid {
     /* IMPORTANT
      inheriting note:
      subclass need to defined the constructor and other that might be worth providing
@@ -39,25 +40,25 @@ abstract class Shape{
         }
         get() = componentShapes[0].visibility
     
-    open val overlapper: Overlapper get() = object : Overlapper() {
+    override val overlapper: Overlapper get() = object : Overlapper() {
 		override val components: Array<Overlapper> = Array(componentShapes.size) { componentShapes[it].overlapper }
 	}
     
-    open fun moveShape(displacement: Vector) {
+    override fun move(displacement: Vector) {
         if (displacement.x == 0f && displacement.y == 0f) {
             return // yeah i do that a lot
         }
         for (componentShape in componentShapes)
-            componentShape.moveShape(displacement)
+            componentShape.move(displacement)
     }
     
-    open fun rotateShape(centerOfRotation: Vector, angle: Float) {
+    override fun rotate(centerOfRotation: Vector, angle: Float) {
         if (angle == 0f) {
             return  // as mind blowing as it is, people like me do zero angle a lot
         }
         // positive is counter clockwise
         for (componentShape in componentShapes)
-            componentShape.rotateShape(centerOfRotation, angle)
+            componentShape.rotate(centerOfRotation, angle)
     }
     
     open fun resetShapeColor(color: Color) {
@@ -87,7 +88,7 @@ abstract class Shape{
 
 data class Color (val red: Float, val green: Float, val blue: Float, val alpha: Float)
 
-data class BuildShapeAttr(val z: Float, val visibility: Boolean, val layers: Layers) { // never set this as a property
-    fun newAttrWithChangedZ(dz: Float) = BuildShapeAttr(z + dz, visibility, layers)
-    fun newAttrWithNewVisibility(visibility: Boolean) = BuildShapeAttr(z, visibility, layers)
+data class BuildShapeAttr(val z: Float, val visibility: Boolean, val shapeLayers: Layers<ShapeLayer>) { // never set this as a property
+    fun newAttrWithChangedZ(dz: Float) = BuildShapeAttr(z + dz, visibility, shapeLayers)
+    fun newAttrWithNewVisibility(visibility: Boolean) = BuildShapeAttr(z, visibility, shapeLayers)
 }

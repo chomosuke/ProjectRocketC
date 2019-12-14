@@ -1,20 +1,19 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
+import com.chomusukestudio.projectrocketc.GLRenderer.AllLayers
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
-import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import kotlin.math.PI
 
-class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers): Rocket(surrounding, crashSound, rocketPhysics, layers) {
+class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, allLayers: AllLayers): Rocket(surrounding, crashSound, rocketPhysics, allLayers) {
 	override val trace = AccelerationTrace(7, 1.01f, 0.2f, 0.5f, 1000, 100,
-					0.004f, Color(1f, 1f, 0f, 3f), layers)
+					0.004f, Color(1f, 1f, 0f, 3f), allLayers)
 	override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
 				0.000002f, 0.000001f)
-	override val components = run { // refer to rockets' points/SaturnV.PNG
+	override val components: Array<Shape> = run { // refer to rockets' points/SaturnV.PNG
 		val pR = arrayOf(Vector(305f, 92f), Vector(308f, 99f), Vector(308f, 128f), // 2
 				Vector(312f, 134f), Vector(309f, 134f), Vector(309f, 152f), // 5
 				Vector(315f, 164f), Vector(315f, 189f), Vector(326f, 237f), // 8
@@ -32,7 +31,7 @@ class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: 
 		val pL = convertPointsOnRocket(pR, Vector(305f, 414.5f), Vector(1.3f, 1f) * 0.002f)
 		val white = Color(1f, 1f, 1f, 1f)
 		val black = Color(0.3f, 0.3f, 0.3f, 1f)
-		val build = BuildShapeAttr(0.5f, true, layers)
+		val build = BuildShapeAttr(0.5f, true, allLayers.shapeLayers)
 		return@run arrayOf(TriangularShape(pR[0], pR[1], pL[1], white, build),
 				QuadrilateralShape(pR[1], pR[2], pL[2], pL[1], white, build),
 				QuadrilateralShape(pR[2], pR[3], pL[3], pL[2], white, build),

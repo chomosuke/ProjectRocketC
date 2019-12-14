@@ -431,12 +431,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
-            val layers = Layers()
+            val allLayers = AllLayers(Layers<ShapeLayer>(), Layers<TextureLayer>())
             val processingThread = ProcessingThread(
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
-                    scanForActivity(context) as MainActivity, layers) // we know that the context is MainActivity
+                    scanForActivity(context) as MainActivity, allLayers) // we know that the context is MainActivity
 //            processingThread = TestingProcessingThread()
-            mRenderer = TheGLRenderer(processingThread, this, layers)
+            mRenderer = TheGLRenderer(processingThread, this, allLayers)
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(mRenderer)

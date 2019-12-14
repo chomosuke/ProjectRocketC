@@ -1,11 +1,9 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
 import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.distance
 import com.chomusukestudio.projectrocketc.randFloat
 import java.lang.Math.*
 
-import java.util.ArrayList
 import kotlin.math.pow
 
 class SaturnShape(private val ringA: Float, private val ringB: Float, innerA: Float, numberOfRings: Int,
@@ -52,7 +50,7 @@ class SaturnShape(private val ringA: Float, private val ringB: Float, innerA: Fl
                 // bottomEnd half ring
                 ringComponentShapes[i] = TopHalfRingShape(center, ringA, ringB, factor,
                         ringColor!!, buildShapeAttr.newAttrWithChangedZ(-0.01f))
-                ringComponentShapes[i]!!.rotateShape(center, PI.toFloat())
+                ringComponentShapes[i]!!.rotate(center, PI.toFloat())
                 
                 // smaller a & b
                 ringA *= factor
@@ -74,8 +72,8 @@ class SaturnShape(private val ringA: Float, private val ringB: Float, innerA: Fl
                 get() = arrayOf(CircularOverlapper(center, radius), EllipseOverlapper(center, ringA, ringB, rotation))
         }
     private var rotation = 0f
-    override fun rotateShape(centerOfRotation: Vector, angle: Float) {
-        super.rotateShape(centerOfRotation, angle)
+    override fun rotate(centerOfRotation: Vector, angle: Float) {
+        super.rotate(centerOfRotation, angle)
         rotation += angle
     }
 }

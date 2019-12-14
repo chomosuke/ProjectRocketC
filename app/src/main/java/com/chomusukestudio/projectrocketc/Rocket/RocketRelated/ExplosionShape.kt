@@ -17,10 +17,10 @@ abstract class ExplosionShape(center: Vector, approximateRadius: Float, protecte
         return true
     }
     
-    override fun moveShape(displacement: Vector) {
+    override fun move(displacement: Vector) {
         for (componentShape in componentShapes)
             if (!componentShape.removed)
-                componentShape.moveShape(displacement)
+                componentShape.move(displacement)
     }
 
     override fun removeShape() {
