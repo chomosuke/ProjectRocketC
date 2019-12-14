@@ -9,12 +9,12 @@ import kotlin.math.sqrt
 
 class EllipseShape(center: Vector, a: Float, b: Float, color: Color, buildShapeAttr: BuildShapeAttr) : Shape() {
     override lateinit var componentShapes: Array<Shape>
-    
+
     init {
         val numberOfEdges = CircularShape.getNumberOfEdges((a + b) / 2)
         // just initialize it.
         val componentShapes = arrayOfNulls<TriangularShape>(numberOfEdges - 2)
-    
+
         // generate components triangularShape for EllipseShape isInUse center and a and b
         val initialTheta = 2f * PI.toFloat() / numberOfEdges
         val vertex1 = Vector(center.x, center.y + b)
@@ -30,7 +30,7 @@ class EllipseShape(center: Vector, a: Float, b: Float, color: Color, buildShapeA
                     color, buildShapeAttr)
             vertex2 = vertex3
         }
-    
+
         this.componentShapes = componentShapes as Array<Shape>
     }
 }
@@ -42,7 +42,7 @@ class EllipseOverlapper(val center: Vector, val a: Float, val b: Float, val rota
         when (anotherOverlapper) {
             is PointOverlapper -> {
                 val point = transformToEllipseCoordinate(anotherOverlapper.point)
-                
+
                 val focus1: Vector
                 val focus2: Vector
                 val d: Float
@@ -82,11 +82,11 @@ class EllipseOverlapper(val center: Vector, val a: Float, val b: Float, val rota
         }
     }
     private fun transformToEllipseCoordinate(coordinate: Vector) = (coordinate - center).rotateVector(-rotation)
-    
+
     private fun getEdgePointOverlappers(numberOfEdges: Int) = Array(numberOfEdges) {
         val theta = 2f * PI.toFloat() * it / numberOfEdges
         PointOverlapper(Vector(center.x + a * sin(theta),
                 center.y + b * cos(theta)).rotateVector(center, rotation))
     }
-    
+
 }

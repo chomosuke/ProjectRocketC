@@ -13,10 +13,9 @@ class QuadrilateralShape// in order:
         (componentShapes[0] as TriangularShape).setTriangleCoords(vertex1, vertex2, vertex3)
         (componentShapes[1] as TriangularShape).setTriangleCoords(vertex1, vertex4, vertex3)
     }
-    
+
     val vertex1 get() = (componentShapes[0] as TriangularShape).vertex1
     val vertex2 get() = (componentShapes[0] as TriangularShape).vertex2
     val vertex3 get() = (componentShapes[0] as TriangularShape).vertex3
     val vertex4 get() = (componentShapes[1] as TriangularShape).vertex2
 }
-

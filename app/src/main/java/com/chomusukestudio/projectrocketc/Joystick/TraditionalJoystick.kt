@@ -8,12 +8,12 @@ class TraditionalJoystick : Joystick() {
     override fun getRocketControl(currentRotation: Float): RocketControl {
         return RocketControl(0f)
     }
-    
+
     override fun drawJoystick() {
-    
+
     }
-    
+
     override fun removeAllShape() {
-    
+
     }
 }
