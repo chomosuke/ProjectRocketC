@@ -254,49 +254,11 @@ abstract class Layer(val z: Float, private val fragmentBlockSize: Int) { // dept
 
         drawing = true
 
-        // Add program to OpenGL ES environment
-        GLES20.glUseProgram(mProgram)
-
-        // get handle to vertex shader's vPosition member
-        val mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition")
-
-        // Enable a handle to the triangle vertices
-        GLES20.glEnableVertexAttribArray(mPositionHandle)
-
-        // Prepare the triangle coordinate data
-        GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX,
-                GLES20.GL_FLOAT, false,
-                vertexStride, vertexBuffer)
-
-        // get handle to fragment shader's vColor member
-        val mColorHandle = GLES20.glGetAttribLocation(mProgram, "aColor")
-        // Set colors for drawing the triangle
-        GLES20.glEnableVertexAttribArray(mColorHandle)
-        GLES20.glVertexAttribPointer(mColorHandle, 4,
-                GLES20.GL_FLOAT, false,
-                0, fragmentBuffer)
-
-        // get handle to shape's transformation matrix
-        val mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix")
-        // comment for mMVPMatrixHandle when it's still global: Use to access and set the view transformation
-
-        // Pass the projection and view transformation to the shader
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
-
-        // Draw the triangle
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
-
-        // check for error
-        val error = GLES20.glGetError()
-        if (error != GLES20.GL_NO_ERROR) {
-            throw RuntimeException("GL error: $error")
-        }
-
-        // Disable vertex array
-        GLES20.glDisableVertexAttribArray(mPositionHandle)
-        GLES20.glDisableVertexAttribArray(mColorHandle)
+        drawLayer(mProgram, vertexBuffer, fragmentBuffer, vertexStride, vertexCount, mvpMatrix)
 
         drawing = false
     }
+
+    protected abstract fun drawLayer(mProgram: Int, vertexBuffer: FloatBuffer, fragmentBuffer: FloatBuffer, vertexStride: Int, vertexCount: Int, mvpMatrix: FloatArray)
 }
 

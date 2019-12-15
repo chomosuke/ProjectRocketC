@@ -5,13 +5,9 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.TextView
-import com.chomusukestudio.projectrocketc.GLRenderer.AllLayers
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.Joystick.InertiaJoystick
 import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
 import com.chomusukestudio.projectrocketc.Rocket.*
-import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.AccelerativeRocketPhysics
-import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DirectionalRocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DragRocketPhysics
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 import com.chomusukestudio.projectrocketc.Shape.Color
@@ -23,7 +19,7 @@ import java.lang.IndexOutOfBoundsException
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 
-class ProcessingThread(val refreshRate: Float, private val mainActivity: MainActivity, private val allLayers: AllLayers) {
+class ProcessingThread(val refreshRate: Float, private val mainActivity: MainActivity, private val layers: Layers) {
 
     private val state
             get() = mainActivity.state
@@ -32,7 +28,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
             TwoFingersJoystick()
 //            OneFingerJoystick()
 //            InertiaJoystick()
-    private var surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), allLayers)
+    private var surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers)
     private var rocketIndex = 0
     private var rocket = getRocket(rocketIndex)
     init {
@@ -47,10 +43,10 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         val crashSound = MediaPlayer.create(mainActivity, R.raw.fx22)
         crashSound.setVolume(0.66f, 0.66f)
         return when (rocketIndex) {
-			0 -> V2InstantDeath(surrounding, crashSound, DragRocketPhysics(), allLayers)
-            1 -> V2(surrounding, crashSound, DragRocketPhysics(), allLayers)
-            2 -> SaturnV(surrounding, crashSound, DragRocketPhysics(), allLayers)
-            3 -> Falcon9(surrounding, crashSound, DragRocketPhysics(), allLayers)
+			0 -> V2InstantDeath(surrounding, crashSound, DragRocketPhysics(), layers)
+            1 -> V2(surrounding, crashSound, DragRocketPhysics(), layers)
+            2 -> SaturnV(surrounding, crashSound, DragRocketPhysics(), layers)
+            3 -> Falcon9(surrounding, crashSound, DragRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -90,7 +86,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         pauseForChanges()
         removeAllShapes() // remove all previous shapes
         val surroundingResources = surrounding.trashAndGetResources()
-        surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), allLayers, surroundingResources)
+        surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
         rocket = getRocket(rocketIndex)
         surrounding.initializeSurrounding(rocket, mainActivity.state)
             joystick = TwoFingersJoystick()
@@ -126,7 +122,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     private val lock = ReentrantLock()
     private val condition = lock.newCondition()
 
-    private val warningRed = TriangularShape(Vector(0f, 100f), Vector(100f, -100f), Vector(-100f, -100f), Color(1f, 0f, 0f, 0.5f), BuildShapeAttr(-100f, false, allLayers.shapeLayers))
+    private val warningRed = TriangularShape(Vector(0f, 100f), Vector(100f, -100f), Vector(-100f, -100f), Color(1f, 0f, 0f, 0.5f), BuildShapeAttr(-100f, false, layers))
     
     fun generateNextFrame(now: Long, previousFrameTime: Long) {
         if (!pausedForChanges) { // if aren't pausing for changes

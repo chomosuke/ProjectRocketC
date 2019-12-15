@@ -26,7 +26,7 @@ import kotlin.math.pow
  * Created by Shuang Li on 25/03/2018.
  */
 
-class LittleStar(val COLOR: Color, private var center: Vector, private val range: Float, var duration: Long, now: Long, allLayers: AllLayers) {
+class LittleStar(val COLOR: Color, private var center: Vector, private val range: Float, var duration: Long, now: Long, layers: Layers) {
     private var littleStarShape: LittleStarShape
     private var arrowToLittleStarShape: ArrowToLittleStarShape
     private var rangeCircleThingy: FullRingShape? = null
@@ -41,7 +41,7 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
     init {
         // circle color for arrowToLittleStarShape is star color
         // arrow color is circle color for littleStarShape
-        val buildShapeAttr = BuildShapeAttr(-10f, true, allLayers.shapeLayers)
+        val buildShapeAttr = BuildShapeAttr(-10f, true, layers)
         littleStarShape = LittleStarShape(center, RADIUS_OF_LITTLE_STAR, COLOR.color, Color(1f, 1f, 1f, 1f), buildShapeAttr)
         arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, Color(1f, 1f, 1f, 1f), COLOR.color, buildShapeAttr)
 

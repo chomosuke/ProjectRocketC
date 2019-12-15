@@ -1,17 +1,15 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
-import com.chomusukestudio.projectrocketc.GLRenderer.AllLayers
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.GLRenderer.ShapeLayer
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 
-class Falcon9(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, allLayers: AllLayers) : Rocket(surrounding, crashSound, rocketPhysics, allLayers) {
+class Falcon9(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, crashSound, rocketPhysics, layers) {
     override val trace = AccelerationTrace(7, 1.01f, 0.15f, 0.28f, 1000, 128,
-            0.004f, Color(1f, 1f, 0f, 3f), allLayers)
+            0.004f, Color(1f, 1f, 0f, 3f), layers)
     override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
             0.000002f, 0.000001f)
     override val components: Array<Shape> = run {
@@ -38,13 +36,13 @@ class Falcon9(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: 
                 Vector(71f, 754f),
                 Vector(59f, 754f), // 20
                 Vector(59f, 756f)
-                )
+        )
         val pL = convertPointsOnRocket(pR, Vector(53f, 388f), Vector(0.0035f, 0.0018f))
         val white = Color(1f, 1f, 1f, 1f)
         val black = Color(0.25f, 0.25f, 0.25f, 1f)
         val grill = Color(0.4f, 0.4f, 0.4f, 1f)
-        val build = BuildShapeAttr(0.5f, true, allLayers.shapeLayers)
-        val buildF = BuildShapeAttr(0.49f, true, allLayers.shapeLayers)
+        val build = BuildShapeAttr(0.5f, true, layers)
+        val buildF = BuildShapeAttr(0.49f, true, layers)
         return@run arrayOf(
                 CircleSegmentShape(pR[0], pR[2], pR[1], white, build),
                 CircleSegmentShape(pL[2], pL[0], pL[1], white, build),

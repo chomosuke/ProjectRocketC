@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
 import android.graphics.Point
-import android.opengl.GLES20
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
@@ -431,16 +430,15 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             setEGLConfigChooser(MyConfigChooser())// antialiasing
 
-            val allLayers = AllLayers(Layers<ShapeLayer>(), Layers<TextureLayer>())
+            val layers = Layers()
             val processingThread = ProcessingThread(
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
-                    scanForActivity(context) as MainActivity, allLayers) // we know that the context is MainActivity
+                    scanForActivity(context) as MainActivity, layers) // we know that the context is MainActivity
 //            processingThread = TestingProcessingThread()
-            mRenderer = TheGLRenderer(processingThread, this, allLayers)
+            mRenderer = TheGLRenderer(processingThread, this, layers)
 
             // Set the Renderer for drawing on the GLSurfaceView
             setRenderer(mRenderer)
-            GLES20.glEnable(DEBUG_LOG_GL_CALLS)
             //
             //            // Render the view only when there is a change in the drawing data
             //            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);

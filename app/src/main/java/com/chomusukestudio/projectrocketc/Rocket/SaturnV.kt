@@ -1,16 +1,15 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
-import com.chomusukestudio.projectrocketc.GLRenderer.AllLayers
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 
-class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, allLayers: AllLayers): Rocket(surrounding, crashSound, rocketPhysics, allLayers) {
+class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers): Rocket(surrounding, crashSound, rocketPhysics, layers) {
 	override val trace = AccelerationTrace(7, 1.01f, 0.2f, 0.5f, 1000, 100,
-					0.004f, Color(1f, 1f, 0f, 3f), allLayers)
+					0.004f, Color(1f, 1f, 0f, 3f), layers)
 	override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
 				0.000002f, 0.000001f)
 	override val components: Array<Shape> = run { // refer to rockets' points/SaturnV.PNG
@@ -31,7 +30,7 @@ class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: 
 		val pL = convertPointsOnRocket(pR, Vector(305f, 414.5f), Vector(1.3f, 1f) * 0.002f)
 		val white = Color(1f, 1f, 1f, 1f)
 		val black = Color(0.3f, 0.3f, 0.3f, 1f)
-		val build = BuildShapeAttr(0.5f, true, allLayers.shapeLayers)
+		val build = BuildShapeAttr(0.5f, true, layers)
 		return@run arrayOf(TriangularShape(pR[0], pR[1], pL[1], white, build),
 				QuadrilateralShape(pR[1], pR[2], pL[2], pL[1], white, build),
 				QuadrilateralShape(pR[2], pR[3], pL[3], pL[2], white, build),

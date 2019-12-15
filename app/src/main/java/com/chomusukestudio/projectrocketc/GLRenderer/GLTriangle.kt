@@ -56,37 +56,17 @@ class GLTriangle (buildShapeAttr: BuildShapeAttr) {
         }
     }
 
-    private fun getLayer(z: Float, layers: Layers<ShapeLayer>): ShapeLayer {
-        with(layers) {
-            for (i in arrayList.indices) {
-                if (arrayList[i].z == z) {
-                    return arrayList[i] // find the layer with that z
+    private fun getLayer(z: Float, layers: Layers): ShapeLayer {
+            for (layer in layers.arrayList) {
+                if (layer.z == z && layer is ShapeLayer) {
+                    return layer // find the layer with that z
                 }
             }
 
             // there is no layer with that z so create one and return index of that layer
             val newLayer = ShapeLayer(z)
-            var i = 0
-            while (true) {
-                if (i == arrayList.size) {
-                    // already the last one
-                    lockOnArrayList.lock()
-                    arrayList.add(newLayer)
-                    lockOnArrayList.unlock()
-                    break
-                }
-                if (newLayer.z > arrayList[i].z) {
-                    // if the new z is just bigger than this z
-                    // put it before this layer
-                    lockOnArrayList.lock()
-                    arrayList.add(i, newLayer)
-                    lockOnArrayList.unlock()
-                    break
-                }
-                i++
-            }
+            layers.insert(newLayer)
             return newLayer
-        }
     }
 
     constructor(x1: Float, y1: Float,

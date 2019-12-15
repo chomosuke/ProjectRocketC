@@ -6,7 +6,6 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
 import android.support.annotation.CallSuper
-import com.chomusukestudio.projectrocketc.GLRenderer.AllLayers
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.RocketControl
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
@@ -19,7 +18,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import kotlin.math.*
 
-abstract class Rocket(protected val surrounding: Surrounding, private val crashSound: MediaPlayer, var rocketPhysics: RocketPhysics, private val allLayers: AllLayers) {
+abstract class Rocket(protected val surrounding: Surrounding, private val crashSound: MediaPlayer, var rocketPhysics: RocketPhysics, private val layers: Layers) {
     
     protected fun setRotation(centerOfRotation: Vector, rotation: Float) {
         // called before initialize trace
@@ -71,7 +70,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
     open val explosionCoordinate = centerOfRotation
     fun drawExplosion(now: Long, previousFrameTime: Long) {
         if (explosionShape == null) {
-            explosionShape = RedExplosionShape(explosionCoordinate, 0.75f, 1000, BuildShapeAttr(-11f, true, allLayers.shapeLayers))
+            explosionShape = RedExplosionShape(explosionCoordinate, 0.75f, 1000, BuildShapeAttr(-11f, true, layers))
         } else {
             // rocket already blown up
             for (component in components)

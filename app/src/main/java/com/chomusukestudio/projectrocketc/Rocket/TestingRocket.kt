@@ -1,7 +1,6 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
-import com.chomusukestudio.projectrocketc.GLRenderer.AllLayers
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
@@ -13,10 +12,10 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
  * Created by Shuang Li on 11/03/2018.
  */
 
-class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, allLayers: AllLayers) : Rocket(surrounding, crashSound, rocketPhysics, allLayers) {
+class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, crashSound, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
-            AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f, Color(1f, 1f, 0f, 3f), allLayers)
+            AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f, Color(1f, 1f, 0f, 3f), layers)
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val p1 = (components[3] as QuadrilateralShape).vertex4
         val p2 = (components[3] as QuadrilateralShape).vertex3
@@ -35,18 +34,18 @@ class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlaye
                 TriangularShape(Vector(0.5f, 0f),
                         Vector(0.3f, 0.15f),
                         Vector(0.3f, -0.15f),
-                        Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, allLayers.shapeLayers))
+                        Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, layers))
             1 ->
                 QuadrilateralShape(Vector(0.3f, 0.15f),
                         Vector(0.3f, -0.15f), Vector(-0.3f, -0.15f),
-                        Vector(-0.3f, 0.15f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, allLayers.shapeLayers))
+                        Vector(-0.3f, 0.15f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, layers))
             2 ->
                 CircularShape(centerOfRotation, 0.07f,
-                        Color(0.1f, 0.1f, 0.1f, 1f), BuildShapeAttr(0.9999f, true, allLayers.shapeLayers))
+                        Color(0.1f, 0.1f, 0.1f, 1f), BuildShapeAttr(0.9999f, true, layers))
             3 ->
                 QuadrilateralShape(Vector(-0.3f, 0.1f),
                         Vector(-0.3f, -0.1f), Vector(-0.4f, -0.12f),
-                        Vector(-0.4f, 0.12f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, allLayers.shapeLayers))
+                        Vector(-0.4f, 0.12f), Color(1f, 1f, 1f, 1f), BuildShapeAttr(1f, true, layers))
             else -> {
                 throw IndexOutOfBoundsException()
             }

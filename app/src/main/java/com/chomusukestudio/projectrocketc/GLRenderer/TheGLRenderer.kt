@@ -16,7 +16,7 @@ import android.opengl.GLES20
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.ProcessingThread
 
-class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MainActivity.MyGLSurfaceView, private val allLayers: AllLayers) : GLSurfaceView.Renderer {
+class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MainActivity.MyGLSurfaceView, private val layers: Layers) : GLSurfaceView.Renderer {
 
 
     // so you calculate the how many milliseconds have passed since last frame
@@ -30,6 +30,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         //enable transparency
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
         GLES20.glEnable(GLES20.GL_BLEND)
+        GLES20.glEnable(GLSurfaceView.DEBUG_LOG_GL_CALLS)
 //
 //        mProgramHandle = ShaderHelper.createAndLinkProgram(vertexShaderHandle, fragmentShaderHandle,
 //                arrayOf("a_Position", "a_Color", "a_Normal", "a_TexCoordinate"))
@@ -48,6 +49,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         GLES20.glClearColor(0f, 0f, 0f, 1f)
 
         ShapeLayer.createGLProgram()
+        TextureLayer.createGLProgram()
         Layer.refreshMatrix()
         Log.i(TAG, "onSurfaceCreated() called")
 
@@ -75,7 +77,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             processingThread.waitForLastFrame()
 
             // can't refresh buffers when processingThread is running or when drawing all triangles
-            allLayers.passArraysToBuffers()
+            layers.passArraysToBuffers()
 
             processingThread.generateNextFrame(now, previousFrameTime)
 
@@ -89,7 +91,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         // this is required on certain devices
 
         // Draw all!
-        allLayers.drawAll()
+        layers.drawAll()
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
-import com.chomusukestudio.projectrocketc.GLRenderer.AllLayers
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.Shape.*
@@ -11,7 +10,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 class SquareTrace(private val initialWidth: Float, private val finalWidth: Float, private val duration: Long,
-                  private val initialColor: Color, val z: Float, private val allLayers: AllLayers) : Trace() {
+                  private val initialColor: Color, val z: Float, private val layers: Layers) : Trace() {
 
     private var unfilledDs = 0f
     override fun generateTraceOverride(now: Long, previousFrameTime: Long, origin: Vector, lastOrigin: Vector, rocketState: RocketState) {
@@ -28,7 +27,8 @@ class SquareTrace(private val initialWidth: Float, private val finalWidth: Float
             var i = 0
             while (i < I_MAX) {
 
-                val newTraceShape = SquareTraceShape(origin, Vector(0f, 0f), initialWidth, finalWidth, duration, initialColor, BuildShapeAttr(z, true, allLayers.shapeLayers))
+                val newTraceShape = SquareTraceShape(origin, Vector(0f, 0f), initialWidth, finalWidth,
+                        duration, initialColor, BuildShapeAttr(z, true, layers))
                 newTraceShape.rotate(origin, -dOrigin.direction + PI.toFloat() / 4)
 
                 val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/

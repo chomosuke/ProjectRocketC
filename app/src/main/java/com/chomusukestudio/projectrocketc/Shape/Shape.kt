@@ -1,7 +1,6 @@
 package com.chomusukestudio.projectrocketc.Shape
 
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.GLRenderer.ShapeLayer
 
 
 /**
@@ -88,7 +87,7 @@ abstract class Shape : ISolid {
 
 data class Color (val red: Float, val green: Float, val blue: Float, val alpha: Float)
 
-data class BuildShapeAttr(val z: Float, val visibility: Boolean, val shapeLayers: Layers<ShapeLayer>) { // never set this as a property
+data class BuildShapeAttr(val z: Float, val visibility: Boolean, val shapeLayers: Layers) { // never set this as a property
     fun newAttrWithChangedZ(dz: Float) = BuildShapeAttr(z + dz, visibility, shapeLayers)
     fun newAttrWithNewVisibility(visibility: Boolean) = BuildShapeAttr(z, visibility, shapeLayers)
 }

@@ -1,7 +1,6 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
-import com.chomusukestudio.projectrocketc.GLRenderer.AllLayers
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.RocketControl
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
@@ -17,12 +16,12 @@ import kotlin.math.pow
  * Created by Shuang Li on 11/03/2018.
  */
 
-class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, val allLayers: AllLayers)
-    : Rocket(surrounding, crashSound, rocketPhysics, allLayers) {
+class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, val layers: Layers)
+    : Rocket(surrounding, crashSound, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
             AccelerationTrace(7, 1.01f, 0.14f, 0.5f, 1000, 100,
-                    0.004f, Color(1f, 1f, 0f, 3f), allLayers)
+                    0.004f, Color(1f, 1f, 0f, 3f), layers)
     
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val p1 = (components[9] as QuadrilateralShape).vertex2
@@ -58,7 +57,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         val p13 = Vector(-0.64f * scaleX, 0.015f * scaleY)
         val p14 = Vector(-0.6f * scaleX, 0.032f * scaleY)
         
-        val buildShapeAttr = BuildShapeAttr(0.5f, true, allLayers.shapeLayers)
+        val buildShapeAttr = BuildShapeAttr(0.5f, true, layers)
         return@run arrayOf(
                 // defined components of rocket around centerOfRotation set by surrounding
                 // 0
@@ -81,7 +80,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
                         white, buildShapeAttr),
                 // 6
                 QuadrilateralShape(p10.mirrorXAxis(), Vector(p10.x, 0f), Vector(p4.x, 0f), p4.mirrorXAxis(),
-                        black, BuildShapeAttr(1f, true, allLayers.shapeLayers)),
+                        black, BuildShapeAttr(1f, true, layers)),
                 // 7
                 PolygonalShape(arrayOf(p4, p5, p6, p7, p8, p9, p10/*, Vector(p10.x, 0f), Vector(p4.x, 0f)*/),
                         black, buildShapeAttr),
@@ -139,7 +138,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
             crashShape?.removeShape()
             crashSound.seekTo(0)
             crashSound.start()
-            crashShape = RedExplosionShape(explosionPoint, 0.3f, 200, BuildShapeAttr(-11f, true, allLayers.shapeLayers))
+            crashShape = RedExplosionShape(explosionPoint, 0.3f, 200, BuildShapeAttr(-11f, true, layers))
         }
         
         // repel rocket from planet
@@ -164,7 +163,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
     
     //    private val bloodBar = BarShape(Vector(-4f, 7.8f), Vector(4f, 7.5f), 0.02f,
     private val bloodBar = BarShape(centerOfRotation.offset(-0.5f, 1.25f), centerOfRotation.offset(0.5f, 1.05f), 0.02f,
-            Color(1f, 0f, 0f, 0.6f), Color(1f, 0f, 0f, 1f), BuildShapeAttr(-11f, true, allLayers.shapeLayers))
+            Color(1f, 0f, 0f, 0.6f), Color(1f, 0f, 0f, 1f), BuildShapeAttr(-11f, true, layers))
     
     override fun moveRocket(rocketControl: RocketControl, now: Long, previousFrameTime: Long) {
         super.moveRocket(rocketControl, now, previousFrameTime)
