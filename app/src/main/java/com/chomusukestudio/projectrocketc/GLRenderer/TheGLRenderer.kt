@@ -30,7 +30,6 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         //enable transparency
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
         GLES20.glEnable(GLES20.GL_BLEND)
-        GLES20.glEnable(GLSurfaceView.DEBUG_LOG_GL_CALLS)
 //
 //        mProgramHandle = ShaderHelper.createAndLinkProgram(vertexShaderHandle, fragmentShaderHandle,
 //                arrayOf("a_Position", "a_Color", "a_Normal", "a_TexCoordinate"))

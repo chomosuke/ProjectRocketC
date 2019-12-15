@@ -75,7 +75,7 @@ class ShapeLayer(z: Float) : Layer(z, 12) {
         // check for error
         val error = GLES20.glGetError()
         if (error != GLES20.GL_NO_ERROR) {
-            throw RuntimeException("GL error: $error")
+            throw RuntimeException("GL error: $error, $mProgram")
         }
 
         // Disable vertex array

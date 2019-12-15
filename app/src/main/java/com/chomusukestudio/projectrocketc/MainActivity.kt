@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
 import android.graphics.Point
+import android.opengl.GLES20
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
@@ -438,6 +439,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             mRenderer = TheGLRenderer(processingThread, this, layers)
 
             // Set the Renderer for drawing on the GLSurfaceView
+            debugFlags = DEBUG_LOG_GL_CALLS
             setRenderer(mRenderer)
             //
             //            // Render the view only when there is a change in the drawing data
