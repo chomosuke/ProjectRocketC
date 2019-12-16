@@ -4,7 +4,7 @@ import android.widget.TextView
 import com.chomusukestudio.projectrocketc.Shape.LittleStar.ArrowToLittleStarShape
 import com.chomusukestudio.projectrocketc.Shape.LittleStar.LittleStarShape
 import com.chomusukestudio.projectrocketc.Shape.LittleStar.RADIUS_OF_LITTLE_STAR
-import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
+import com.chomusukestudio.projectrocketc.PlanetShape.PlanetShape
 
 import com.chomusukestudio.projectrocketc.distance
 import com.chomusukestudio.projectrocketc.TouchableView

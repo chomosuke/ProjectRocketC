@@ -1,4 +1,4 @@
-package com.chomusukestudio.projectrocketc.Shape.PlanetShape
+package com.chomusukestudio.projectrocketc.PlanetShape
 
 import com.chomusukestudio.projectrocketc.Shape.Shape
 import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr

@@ -10,11 +10,11 @@ import com.chomusukestudio.projectrocketc.Rocket.speedFormula
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
-import com.chomusukestudio.projectrocketc.Shape.PlanetShape.JupiterShape
-import com.chomusukestudio.projectrocketc.Shape.PlanetShape.MarsShape
-import com.chomusukestudio.projectrocketc.Shape.PlanetShape.PlanetShape
-import com.chomusukestudio.projectrocketc.Shape.PlanetShape.SaturnShape
-import com.chomusukestudio.projectrocketc.Shape.PlanetShape.StarShape
+import com.chomusukestudio.projectrocketc.PlanetShape.JupiterShape
+import com.chomusukestudio.projectrocketc.PlanetShape.MarsShape
+import com.chomusukestudio.projectrocketc.PlanetShape.PlanetShape
+import com.chomusukestudio.projectrocketc.PlanetShape.SaturnShape
+import com.chomusukestudio.projectrocketc.PlanetShape.StarShape
 
 import java.util.ArrayList
 
