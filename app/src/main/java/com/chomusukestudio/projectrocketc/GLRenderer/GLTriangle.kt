@@ -5,7 +5,7 @@ import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
 
 class GLTriangle (buildShapeAttr: BuildShapeAttr) {
 
-    val shapeLayer: ShapeLayer = getLayer(buildShapeAttr.z, buildShapeAttr.shapeLayers) // the layer this triangle belong
+    val shapeLayer: ShapeLayer = getLayer(buildShapeAttr.z, buildShapeAttr.layers) // the layer this triangle belong
 
     val z: Float
         get() = shapeLayer.z

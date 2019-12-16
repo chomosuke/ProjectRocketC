@@ -3,6 +3,7 @@ package com.chomusukestudio.projectrocketc.GLRenderer
 import android.opengl.GLES20
 import android.opengl.Matrix
 import android.util.Log
+import java.lang.Integer.min
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -12,19 +13,19 @@ const val UNUSED = -107584485858583778999908789293009999999f
 const val COORDS_PER_VERTEX = 2
 const val CPT = COORDS_PER_VERTEX * 3 // number of coordinates per vertex in this array
 
-abstract class Layer(val z: Float, private val fragmentBlockSize: Int) { // depth for the drawing order
+abstract class Layer(val z: Float, private val fragmentBlockSize: Int, initialNumOfTriangle: Int) { // depth for the drawing order
 
     private val vertexStride = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
 
     private var vertexBuffer: FloatBuffer
     private var fragmentBuffer: FloatBuffer
 
-    private var size = 100 // number of triangle (including unused) in this layer
+    private var size = initialNumOfTriangle // number of triangle (including unused) in this layer
     // drawing order from the one with the largest z value to the one with the smallest z value
 
     var triangleCoords: FloatArray // coordinate of triangles
 
-    private var vertexCount: Int = size * 3// number of vertex for each layer
+    private var vertexCount: Int = initialNumOfTriangle * 3// number of vertex for each layer
     // number of triangle times 3
 
     var fragmentData: FloatArray // colors of triangles
@@ -171,7 +172,8 @@ abstract class Layer(val z: Float, private val fragmentBlockSize: Int) { // dept
     private fun incrementVertexCountAndGiveNewCoordsPointer(): Int {
         val coordsPointerToBeReturned = vertexCount * COORDS_PER_VERTEX
         // vertexCount have to be multiple of 3
-        vertexCount = (vertexCount * 1.25).toInt() / 3 * 3 // 25% more triangle
+        val newVertexCount = (vertexCount * 1.25).toInt() / 3 * 3 // 25% more triangle
+        vertexCount = if (newVertexCount != vertexCount) newVertexCount else vertexCount * 2
         while (vertexCount > size * 3) {
             increaseSize()
         } // check if index out of bound.

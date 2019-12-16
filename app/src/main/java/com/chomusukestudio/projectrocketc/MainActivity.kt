@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.app.Activity
 import android.content.SharedPreferences
 import android.graphics.Point
-import android.opengl.GLES20
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet

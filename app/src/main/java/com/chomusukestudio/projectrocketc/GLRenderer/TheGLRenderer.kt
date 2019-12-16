@@ -30,13 +30,6 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         //enable transparency
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
         GLES20.glEnable(GLES20.GL_BLEND)
-//
-//        mProgramHandle = ShaderHelper.createAndLinkProgram(vertexShaderHandle, fragmentShaderHandle,
-//                arrayOf("a_Position", "a_Color", "a_Normal", "a_TexCoordinate"))
-
-        // The below glEnable() call is a holdover from OpenGL ES 1, and is not needed in OpenGL ES 2.
-        // Enable texture mapping
-        // GLES20.glEnable(GLES20.GL_TEXTURE_2D);
 
         //
         //        // Enable depth test

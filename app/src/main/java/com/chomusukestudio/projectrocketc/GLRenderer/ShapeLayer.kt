@@ -4,7 +4,7 @@ import android.opengl.GLES20
 import android.util.Log
 import java.nio.FloatBuffer
 
-class ShapeLayer(z: Float) : Layer(z, 12) {
+class ShapeLayer(z: Float) : Layer(z, 12, 100) {
     override val mProgram: Int
             get() = glProgram
 
