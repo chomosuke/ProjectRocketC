@@ -109,7 +109,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
     
     open fun removeAllShape() {
         for (component in components)
-            if (component is Shape)
+            if (component is IRemovable)
                 if (!component.removed)
                     component.remove()
         trace.removeTrace()

@@ -2,9 +2,10 @@ package com.chomusukestudio.projectrocketc.GLRenderer
 
 import android.content.Context
 import com.chomusukestudio.projectrocketc.Shape.IMovable
+import com.chomusukestudio.projectrocketc.Shape.IRemovable
 import com.chomusukestudio.projectrocketc.Shape.Vector
 
-class GLImage(context: Context, resourceId: Int, vertex1: Vector, vertex2: Vector, vertex3: Vector, vertex4: Vector, z: Float, private val layers: Layers): IMovable {
+class GLImage(context: Context, resourceId: Int, vertex1: Vector, vertex2: Vector, vertex3: Vector, vertex4: Vector, z: Float, private val layers: Layers): IMovable, IRemovable {
     private val textureLayer = TextureLayer(context, resourceId, vertex1, vertex2, vertex3, vertex4, z)
 
     init {
@@ -54,10 +55,10 @@ class GLImage(context: Context, resourceId: Int, vertex1: Vector, vertex2: Vecto
         vertex4 = vertex4.rotateVector(centerOfRotation, angle)
     }
 
-    var removed = false
+    override var removed = false
         private set
 
-    fun remove() {
+    override fun remove() {
         removed = true
         layers.arrayList.remove(textureLayer)
     }

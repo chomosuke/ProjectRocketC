@@ -36,7 +36,6 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         LittleStar.soundId = LittleStar.soundPool.load(mainActivity, R.raw.eat_little_star, 1)
 //        LittleStar.soundId = LittleStar.soundPool.load("res/raw/eat_little_star.m4a", 1) // this is not working
 
-
         surrounding.initializeSurrounding(rocket, mainActivity.state)
     }
 
@@ -169,7 +168,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 
                     if (SystemClock.uptimeMillis() - startTime > 16) {
                         Log.i("processing thread", "" + (SystemClock.uptimeMillis() - startTime))
-                        warningRed.visibility = true
+//                        warningRed.visibility = true
                     }
                     else warningRed.visibility = false
 
