@@ -25,23 +25,26 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     private var previousTime: Long = 0
     private var now: Long = 0
     private val timer = PauseableTimer()
-    
+
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         //enable transparency
         GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
         GLES20.glEnable(GLES20.GL_BLEND)
+
         //
         //        // Enable depth test
         //        glEnable(GL_DEPTH_TEST);
         //        // Accept fragment if it closer to the camera than the former one
         //        glDepthFunc(GL_LESS);
-        
-//        // Set the background frame color
-//        GLES20.glClearColor(0f, 0f, 0f, 1f)
-        
-        Layer.initializeGLShaderAndStuff()
+
+        // Set the background frame color
+        GLES20.glClearColor(0f, 0f, 0f, 1f)
+
+        ShapeLayer.createGLProgram()
+        TextureLayer.createGLProgram()
+        Layer.refreshMatrix()
         Log.i(TAG, "onSurfaceCreated() called")
-        
+
     }
 
 //    val allFrameRate = ArrayList<Int>()
@@ -74,19 +77,19 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         }
         // Clear the screen
         //        GLES20.glClear(GL_DEPTH_BUFFER_BIT);
-    
-    // Redraw background color
-    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-    // this is required on certain devices
+
+        // Redraw background color
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        // this is required on certain devices
 
         // Draw all!
-        layers.drawAllTriangles()
+        layers.drawAll()
     }
-    
+
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
         // for transformation to matrix
-        
+
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
 
@@ -115,22 +118,6 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 //            // if something happened with time try uncomment this
 //            nowXY = timeMillis()
 //            previousFrameTime = timeMillis()
-        }
-    }
-    
-    companion object {
-        
-        fun loadShader(type: Int, shaderCode: String): Int {
-            
-            // create a vertex shader type (GLES31.GL_VERTEX_SHADER)
-            // or a fragment shader type (GLES31.GL_FRAGMENT_SHADER)
-            val shader = GLES20.glCreateShader(type)
-            
-            // offset the source code to the shader and compile it
-            GLES20.glShaderSource(shader, shaderCode)
-            GLES20.glCompileShader(shader)
-            
-            return shader
         }
     }
 }

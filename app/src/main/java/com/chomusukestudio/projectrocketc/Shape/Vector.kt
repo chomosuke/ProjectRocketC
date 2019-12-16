@@ -11,17 +11,17 @@ class Vector(val x: Float, val y: Float) {
         if (angle == 0f)
         // yeah, I do zero angle a lot
             return this
-        
+
         // translate point back to origin:
-        var result = this.minus(centerOfRotation)
-        
+        var result = this - centerOfRotation
+
         // rotate point around origin
         result = result.rotateVector(angle)
-        
+
         // translate point back:
         return result + centerOfRotation
     }
-    
+
     fun rotateVector(angle: Float): Vector {
         val sinAngle = sin(angle)
         val cosAngle = cos(angle)
@@ -29,17 +29,17 @@ class Vector(val x: Float, val y: Float) {
         val yNew = x * sinAngle + y * cosAngle
         return Vector(xNew, yNew)
     }
-    
+
     val direction get() = atan2(y, x)
     val abs get() = sqrt(square(x) + square(y))
-    
+
     fun scale(pivot: Vector, factor: Float) = Vector(pivot.x + factor * (x - pivot.x), pivot.y + factor * (y - pivot.y))
     fun scaleXY(factor: Vector) = Vector(x * factor.x, y * factor.y)
     fun offset(dx: Float, dy: Float) = Vector(x + dx, y + dy)
     fun mirrorXAxis() = Vector(x, -y)
     fun mirrorYAxis() = Vector(-x, y)
     fun swapXY() = Vector(y, x)
-    
+
     operator fun plus(anotherVector: Vector) = Vector(x + anotherVector.x, y + anotherVector.y)
     operator fun minus(anotherVector: Vector) = Vector(x - anotherVector.x, y - anotherVector.y)
     operator fun unaryMinus() = Vector(-x, -y)
@@ -49,7 +49,7 @@ class Vector(val x: Float, val y: Float) {
             x == other.x && y == other.y
         else false
     }
-    
+
     override fun hashCode(): Int {
         var result = x.hashCode()
         result = 31 * result + y.hashCode()

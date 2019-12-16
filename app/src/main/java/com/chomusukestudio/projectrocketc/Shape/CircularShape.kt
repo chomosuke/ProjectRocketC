@@ -18,10 +18,10 @@ class CircularShape(center: Vector, radius: Float, private val performanceIndex:
     private var regularPolygonalShape
         set(value) { componentShapes[0] = value }
         get() = componentShapes[0] as RegularPolygonalShape
-    
+
     override val overlapper: Overlapper
         get() = CircularOverlapper(center, radius)
-    
+
     // parameters needed for isOverlapToOverride method.
     val center
         get() = regularPolygonalShape.center
@@ -40,7 +40,7 @@ class CircularShape(center: Vector, radius: Float, private val performanceIndex:
         }
         get() = regularPolygonalShape.radius
 
-    
+
     constructor(center: Vector, radius: Float, color: Color, buildShapeAttr: BuildShapeAttr) : this(center, radius, 1.0, color, buildShapeAttr)
 
     private var lastChangeOfNumberOfEdgesRadius = radius
@@ -133,7 +133,7 @@ class CircularOverlapper(val center: Vector, val radius: Float): Overlapper() {
                                 + square(center.y - y2)) // the line from the center of circle to one of the end of the edge
                                 - square(center.x - x1)// and the edge would be larger than 90 degree
                                 - square(center.y - y1)))) // as pythagoras thingy.
-    
+
         // another level of maintainability lol
         // this is pretty much the most unmaintainable code i ever wrote in this project
     }

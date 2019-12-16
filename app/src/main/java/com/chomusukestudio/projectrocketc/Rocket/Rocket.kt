@@ -91,7 +91,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
         this.currentRotation = rocketState.currentRotation
         
         val displacement = -velocity * (now - previousFrameTime).toFloat()
-        
+
         if (rocketControl.throttleOn) {
             generateTrace(now, previousFrameTime)
         }

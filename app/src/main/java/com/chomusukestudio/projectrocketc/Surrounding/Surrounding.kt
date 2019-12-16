@@ -41,7 +41,8 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
                 // initialize all those stars in the backgrounds
                 Array<Shape>(6000) { // 6000 stars in the background
                     return@Array StarShape(Vector(randFloat(leftEnd, rightEnd), randFloat(topEnd, bottomEnd)),
-                            (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f, random().toFloat() * 0.3f, BuildShapeAttr(1f, true, layers))
+                            (random() * random() * random()).toFloat() * 255f / 256f + 1f / 256f,
+                            random().toFloat() * 0.3f, BuildShapeAttr(1f, true, layers))
                 }
             }
     private val littleStars = ArrayList<LittleStar>()
@@ -78,7 +79,8 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
         } else if (radius < averageRadius + radiusMargin * 0.6) {
 //            val timeStarted = SystemClock.uptimeMillis()
             val ringA = randFloat(1.5f, 1.7f) * radius
-            randomPlanetShape = SaturnShape(ringA, randFloat(0.1f, 0.6f) * ringA, 1.2f * radius, randFloat(3f, 6f).toInt(), center, radius, BuildShapeAttr(z, false, layers))
+            randomPlanetShape = SaturnShape(ringA, randFloat(0.1f, 0.6f) * ringA,
+                    1.2f * radius, randFloat(3f, 6f).toInt(), center, radius, BuildShapeAttr(z, false, layers))
             //            randomPlanetShape = new SaturnShape(ringA, (float) (0.1 + 0.5 * random()) * ringA, (0.67f + 0.2f*(float)random()) * ringA, (int) (3 * random() + 3), centerX, centerY, radius, z);
 //            Log.v("time take for newPlanet", "saturn " + (SystemClock.uptimeMillis() - timeStarted))
         } else {
@@ -118,7 +120,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
 //                    centerOfRotationX + initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
 //                    centerOfRotationX + initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
 //                    centerOfRotationX - initialFlybyDistance, centerOfRotationY - initialFlybyDistance,
-//                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, layers))
+//                    0f, 1f, 0f, 1f, BuildShapeAttr(0f, false, allLayers.shapeLayers))
 //        }
 
 
@@ -404,7 +406,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
         val center = Vector(randFloat(rightEnd, leftEnd), topEnd/*/* + topMarginForLittleStar*/ * topEnd * (float) random()*/)
         val littleStar = /*if (rocket.initialSpeed == 0f)
             LittleStar(YELLOW, centerX, centerY, 1f,
-                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(1f / 1000f, LittleStar.score) * 2).toLong(), nowXY, layers)
+                (distance(centerX, centerY, centerOfRotationX, centerOfRotationY) / speedFormula(1f / 1000f, LittleStar.score) * 2).toLong(), nowXY, allLayers)
         else*/
             LittleStar(YELLOW, center, 1f,
                     (distance(center, centerOfRotation) / speedFormula(2f/ 1000f, LittleStar.score) * 2).toLong(), now, layers)

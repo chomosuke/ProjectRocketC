@@ -27,7 +27,8 @@ class SquareTrace(private val initialWidth: Float, private val finalWidth: Float
             var i = 0
             while (i < I_MAX) {
 
-                val newTraceShape = SquareTraceShape(origin, Vector(0f, 0f), initialWidth, finalWidth, duration, initialColor, BuildShapeAttr(z, true, layers))
+                val newTraceShape = SquareTraceShape(origin, Vector(0f, 0f), initialWidth, finalWidth,
+                        duration, initialColor, BuildShapeAttr(z, true, layers))
                 newTraceShape.rotate(origin, -dOrigin.direction + PI.toFloat() / 4)
 
                 val margin = /*random();*/i / I_MAX/* * (0.5f + (1 * (float) random()))*/

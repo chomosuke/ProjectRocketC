@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
-import android.media.MediaActionSound
 import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
@@ -37,7 +36,7 @@ class Falcon9(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: 
                 Vector(71f, 754f),
                 Vector(59f, 754f), // 20
                 Vector(59f, 756f)
-                )
+        )
         val pL = convertPointsOnRocket(pR, Vector(53f, 388f), Vector(0.0035f, 0.0018f))
         val white = Color(1f, 1f, 1f, 1f)
         val black = Color(0.25f, 0.25f, 0.25f, 1f)
