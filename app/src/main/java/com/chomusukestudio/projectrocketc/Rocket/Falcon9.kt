@@ -13,7 +13,7 @@ class Falcon9(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: 
             0.004f, Color(1f, 1f, 0f, 3f), layers)
     override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
             0.000002f, 0.000001f)
-    override val components = run {
+    override val components: Array<ISolid> = run {
         val pR = arrayOf(
                 Vector(53f, 20f),
                 Vector(71f, 38f),

@@ -14,7 +14,7 @@ class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: 
 					0.004f, Color(1f, 1f, 0f, 3f), layers)
 	override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
 				0.000002f, 0.000001f)
-	override val components = run { // refer to rockets' points/SaturnV.PNG
+	override val components: Array<ISolid> = run { // refer to rockets' points/SaturnV.PNG
 		val pR = arrayOf(Vector(305f, 92f), Vector(308f, 99f), Vector(308f, 128f), // 2
 				Vector(312f, 134f), Vector(309f, 134f), Vector(309f, 152f), // 5
 				Vector(315f, 164f), Vector(315f, 189f), Vector(326f, 237f), // 8

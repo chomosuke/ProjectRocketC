@@ -71,13 +71,13 @@ class CircleSegmentShape() : Shape() {
     override val overlapper: Overlapper
         get() = CircleSegmentOverlapper(angle, center, startPoint)
 
-    override fun moveShape(displacement: Vector) {
-        super.moveShape(displacement)
+    override fun move(displacement: Vector) {
+        super.move(displacement)
         center += displacement
         startPoint += displacement
     }
-    override fun rotateShape(centerOfRotation: Vector, angle: Float) {
-        super.rotateShape(centerOfRotation, angle)
+    override fun rotate(centerOfRotation: Vector, angle: Float) {
+        super.rotate(centerOfRotation, angle)
         center = center.rotateVector(centerOfRotation, angle)
         startPoint = startPoint.rotateVector(centerOfRotation, angle)
     }

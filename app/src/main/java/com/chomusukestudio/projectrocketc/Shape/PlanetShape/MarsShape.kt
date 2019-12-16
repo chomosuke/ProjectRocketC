@@ -80,7 +80,7 @@ class MarsShape(center: Vector, radius: Float, buildShapeAttr: BuildShapeAttr) :
                     }
                     this.componentShapes = componentShapes as Array<Shape>
 
-                    moveShape(centerOfBall)
+                    move(centerOfBall)
                 }
                 
                 private fun mSin(a: Double): Double {
@@ -97,7 +97,7 @@ class MarsShape(center: Vector, radius: Float, buildShapeAttr: BuildShapeAttr) :
         System.arraycopy(componentShapes, 1, rComponentShapes, 0, rComponentShapes.size)
         Arrays.asList<Shape>(*rComponentShapes).shuffle()
         for (i in rComponentShapes.indices) {
-            rComponentShapes[i]!!.rotateShape(center, 2 * PI.toFloat() / rComponentShapes.size * i)
+            rComponentShapes[i]!!.rotate(center, 2 * PI.toFloat() / rComponentShapes.size * i)
         }
         
         this.componentShapes = componentShapes as Array<Shape>

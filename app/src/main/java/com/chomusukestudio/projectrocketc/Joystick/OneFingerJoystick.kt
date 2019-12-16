@@ -23,8 +23,8 @@ class OneFingerJoystick(layers: Layers) : Joystick() {
     }
     
     override fun removeAllShape() {
-        circularShape.removeShape()
-        quadrilateralShape.removeShape()
+        circularShape.remove()
+        quadrilateralShape.remove()
     }
 
     override fun getRocketControl(currentRotation: Float): RocketControl {

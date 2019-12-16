@@ -35,7 +35,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
     
     override val width = 0.3f
     
-    override val components: Array<Shape> = run {
+    override val components: Array<ISolid> = run {
         val white = Color(1f, 1f, 1f, 1f)
         val black = Color(0.3f, 0.3f, 0.3f, 1f)
         
@@ -135,7 +135,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         }
         val explosionPoint = (crashingPoints[0] as PointOverlapper).point
         if (crashShape?.isDone ?: true) {
-            crashShape?.removeShape()
+            crashShape?.remove()
             crashSound.seekTo(0)
             crashSound.start()
             crashShape = RedExplosionShape(explosionPoint, 0.3f, 200, BuildShapeAttr(-11f, true, layers))
@@ -154,7 +154,7 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         
         // if death
         if (blood <= 0) {
-            crashShape?.removeShape()
+            crashShape?.remove()
             crashSound.seekTo(0)
             crashSound.start()
             return true
@@ -169,12 +169,12 @@ class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPh
         super.moveRocket(rocketControl, now, previousFrameTime)
         crashShape?.drawExplosion(now - previousFrameTime)
         val displacement = -velocity * (now - previousFrameTime).toFloat()
-        crashShape?.moveShape(displacement)
+        crashShape?.move(displacement)
     }
     
     override fun removeAllShape() {
         super.removeAllShape()
         crashSound.release()
-        bloodBar.removeShape()
+        bloodBar.remove()
     }
 }

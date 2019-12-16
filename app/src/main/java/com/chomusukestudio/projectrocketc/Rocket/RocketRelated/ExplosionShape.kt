@@ -17,16 +17,16 @@ abstract class ExplosionShape(center: Vector, approximateRadius: Float, protecte
         return true
     }
     
-    override fun moveShape(displacement: Vector) {
+    override fun move(displacement: Vector) {
         for (componentShape in componentShapes)
             if (!componentShape.removed)
-                componentShape.moveShape(displacement)
+                componentShape.move(displacement)
     }
 
-    override fun removeShape() {
+    override fun remove() {
         for (componentShape in componentShapes)
             if (!componentShape.removed)
-                componentShape.removeShape()
+                componentShape.remove()
     }
 }
 
@@ -80,7 +80,7 @@ class RedExplosionShape(center: Vector, approximateRadius: Float, duration: Long
                     (componentShapes[i] as CircularShape).radius = initialRadius[i] * (-square(timeSinceMade[i].toFloat() / duration) + 1)
 
                     if ((componentShapes[i] as CircularShape).radius <= 0f)
-                        componentShapes[i].removeShape()
+                        componentShapes[i].remove()
                 }
             } else { // not yet showing
 

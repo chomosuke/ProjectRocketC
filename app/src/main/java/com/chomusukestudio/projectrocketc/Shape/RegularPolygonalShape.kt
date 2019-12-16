@@ -40,7 +40,7 @@ class RegularPolygonalShape(val numberOfEdges: Int, center: Vector, radius: Floa
 
     fun resetCenter(center: Vector) {
         val vector = center.minus(this.center)
-        moveShape(vector)
+        move(vector)
         this.center = center
     }
 
@@ -83,13 +83,13 @@ class RegularPolygonalShape(val numberOfEdges: Int, center: Vector, radius: Floa
             field = value
         }
 
-    override fun moveShape(displacement: Vector) {
-        super.moveShape(displacement)
+    override fun move(displacement: Vector) {
+        super.move(displacement)
         center += (displacement)
     }
 
-    override fun rotateShape(centerOfRotation: Vector, angle: Float) {
-        super.rotateShape(centerOfRotation, angle)
+    override fun rotate(centerOfRotation: Vector, angle: Float) {
+        super.rotate(centerOfRotation, angle)
         center = center.rotateVector(centerOfRotation, angle)
     }
 }

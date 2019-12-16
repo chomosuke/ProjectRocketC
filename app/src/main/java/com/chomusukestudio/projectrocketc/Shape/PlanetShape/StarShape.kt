@@ -16,12 +16,12 @@ class StarShape(center: Vector, brightness: Float, private val SPEED: Float, bui
         get() = (componentShapes[0] as RegularPolygonalShape).center
     
     fun moveStarShape(displacement: Vector) {
-        super.moveShape(displacement * SPEED)
+        super.move(displacement * SPEED)
     }
     
     fun resetPosition(center: Vector) {
         val dCenter = center - this.center
-        super.moveShape(dCenter)
+        super.move(dCenter)
     }
     
     fun changeBrightness(db: Double) {

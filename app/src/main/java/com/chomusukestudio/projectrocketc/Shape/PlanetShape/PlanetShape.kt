@@ -1,7 +1,6 @@
 package com.chomusukestudio.projectrocketc.Shape.PlanetShape
 
 import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.distance
 
 abstract class PlanetShape internal constructor(center: Vector, val radius: Float) : Shape() {
     var center = center
@@ -18,8 +17,8 @@ abstract class PlanetShape internal constructor(center: Vector, val radius: Floa
 //            super.visibility = value
 //        }
     
-    override fun moveShape(displacement: Vector) {
-        super.moveShape(displacement)
+    override fun move(displacement: Vector) {
+        super.move(displacement)
         center += (displacement)
     }
 
@@ -41,11 +40,11 @@ abstract class PlanetShape internal constructor(center: Vector, val radius: Floa
 
     fun resetPosition(center: Vector) {
         val dCenter = center - this.center
-        moveShape(dCenter)
+        move(dCenter)
     }
     
-    override fun rotateShape(centerOfRotation: Vector, angle: Float) {
-        super.rotateShape(centerOfRotation, angle)
+    override fun rotate(centerOfRotation: Vector, angle: Float) {
+        super.rotate(centerOfRotation, angle)
         center = center.rotateVector(centerOfRotation, angle)
     }
     

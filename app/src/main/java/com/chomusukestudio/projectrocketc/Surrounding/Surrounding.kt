@@ -86,7 +86,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
             randomPlanetShape = JupiterShape(center, radius, BuildShapeAttr(z, false, layers))
 //            Log.v("time take for newPlanet", "jupiter " + (SystemClock.uptimeMillis() - timeStarted))
         }
-        randomPlanetShape.rotateShape(center, (random() * 2.0 * PI).toFloat())
+        randomPlanetShape.rotate(center, (random() * 2.0 * PI).toFloat())
         return Planet(randomPlanetShape)
     }
 
@@ -112,7 +112,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
                             Vector(centerOfRotation.x + initialFlybyDistance, centerOfRotation.y - initialFlybyDistance),
                                     Vector(centerOfRotation.x - initialFlybyDistance, centerOfRotation.y - initialFlybyDistance),
                     Color(0f, 1f, 0f, 1f), BuildShapeAttr(0f, false, layers))
-            startingPathOfRocket.rotateShape(centerOfRotation, rotation - PI.toFloat()/2)
+            startingPathOfRocket.rotate(centerOfRotation, rotation - PI.toFloat()/2)
 //        } else {
 //            startingPathOfRocket = QuadrilateralShape(centerOfRotationX - initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
 //                    centerOfRotationX + initialFlybyDistance, centerOfRotationY + initialFlybyDistance + 1f,
@@ -123,7 +123,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
 
 
         val avoidDistance = Vector(110f, 0f) // to avoid constant change of visibility
-        startingPathOfRocket.moveShape(avoidDistance) // i'll move it back later
+        startingPathOfRocket.move(avoidDistance) // i'll move it back later
         newPlanet = getRandomPlanet()
         // initialize surrounding
         val iMax = 256
@@ -143,7 +143,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
         }
         for (boundary in planets)
             boundary.movePlanet(-avoidDistance) // move planets back
-        startingPathOfRocket.moveShape(-avoidDistance) // move startingPathOfRocket back
+        startingPathOfRocket.move(-avoidDistance) // move startingPathOfRocket back
     }
 
     private fun isGoodPlanet(planet: Planet, state: State): Boolean {
@@ -537,9 +537,9 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
 
     private fun setActual(actualCenter: Vector) {
         val dCenter = actualCenter - planetShape.center
-        planetShape.moveShape(dCenter)
+        planetShape.move(dCenter)
         if (angleRotated != 0f) {
-            planetShape.rotateShape(center, angleRotated)
+            planetShape.rotate(center, angleRotated)
             angleRotated = 0f // reset angleRotated
         }
     }

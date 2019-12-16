@@ -7,8 +7,6 @@ import com.chomusukestudio.projectrocketc.Shape.Color
 import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.randFloat
 import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 class SnowTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long, private val perSecRate: Long, private val initialSpeed: Float,
 						private val initialColor: Color, private val layers: Layers) : Trace() {
@@ -28,11 +26,11 @@ class SnowTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: 
 			val newTraceShape = newAccelerationTraceShape(center, randFloat(initialWidth / 16, initialWidth / 4), finalWidth / 2,
 					initialVelocity, duration, initialColor)
 			
-			newTraceShape.rotateShape(origin, (2 * Math.PI * Math.random()).toFloat())
+			newTraceShape.rotate(origin, (2 * Math.PI * Math.random()).toFloat())
 			
 			val margin = /*random();*/i / iMax/* * (0.5f + (1 * (float) random()))*/
 			newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
-			newTraceShape.moveShape(-dOrigin * margin)
+			newTraceShape.move(-dOrigin * margin)
 			
 			i++
 		}

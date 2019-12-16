@@ -27,7 +27,7 @@ class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlaye
 
     override val width = 0.3f
 
-    override val components: Array<Shape> = Array(4) { i ->
+    override val components: Array<ISolid> = Array(4) { i ->
         when (i) {
             // defined components of rocket around centerOfRotation set by surrounding
             0 ->

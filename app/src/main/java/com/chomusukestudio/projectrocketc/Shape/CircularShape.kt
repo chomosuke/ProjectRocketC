@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.Shape
 
-import android.graphics.Point
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 import com.chomusukestudio.projectrocketc.distance
 import com.chomusukestudio.projectrocketc.square
@@ -34,7 +33,7 @@ class CircularShape(center: Vector, radius: Float, private val performanceIndex:
                     && getNumberOfEdges(radius, performanceIndex) != regularPolygonalShape.numberOfEdges) {
                 lastChangeOfNumberOfEdgesRadius = radius
                 val color = shapeColor
-                regularPolygonalShape.removeShape()
+                regularPolygonalShape.remove()
                 regularPolygonalShape = RegularPolygonalShape(getNumberOfEdges(radius, performanceIndex),
                         center, radius, color, buildShapeAttr.newAttrWithNewVisibility(visibility)/*visibility might have changed*/)
             }

@@ -29,7 +29,7 @@ abstract class Trace {
         var i = 0
         while (i < traceShapes.size) {
             if (traceShapes[i].needToBeRemoved) {
-                traceShapes[i].removeShape()
+                traceShapes[i].remove()
                 traceShapes.removeAt(i)
             } else {
                 i++
@@ -43,7 +43,7 @@ abstract class Trace {
 
     fun moveTrace(vector: Vector) {
         parallelForIForMoveTraces.run({ i ->
-            traceShapes[i].moveShape(vector)
+            traceShapes[i].move(vector)
         }, traceShapes.size)
         lastOrigin = lastOrigin?.plus(vector) // what elegancy lol
         if (generateTraceCalledThisFrame)
@@ -55,7 +55,7 @@ abstract class Trace {
 
     open fun removeTrace() {
         for (traceShape in traceShapes)
-            traceShape.removeShape()
+            traceShape.remove()
     }
 }
 

@@ -12,13 +12,10 @@ import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
-import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.Overlapper
+import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
-import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.Vector
 import kotlin.math.*
 
 abstract class Rocket(protected val surrounding: Surrounding, private val crashSound: MediaPlayer, var rocketPhysics: RocketPhysics, private val layers: Layers) {
@@ -28,8 +25,8 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
         // set rotation
         this.centerOfRotation = centerOfRotation
         for (component in components) {
-            component.moveShape(centerOfRotation)
-            component.rotateShape(centerOfRotation, rotation)
+            component.move(centerOfRotation)
+            component.rotate(centerOfRotation, rotation)
         }
         currentRotation = rotation
     }
@@ -46,15 +43,14 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
             val angle = value - field
             field = value
             for (component in components)
-                component.rotateShape(centerOfRotation, angle)
+                component.rotate(centerOfRotation, angle)
             //            surrounding.rotateSurrounding(dr, nowXY, previousFrameTime);
         }
     protected var velocity = Vector(0f, 0f)
         protected set
     
     abstract val rocketQuirks: RocketQuirks
-    protected abstract val components: Array<Shape>
-    
+    protected abstract val components: Array<ISolid>
     var centerOfRotation = surrounding.centerOfRotation
         protected set
     // surrounding have to define center of rotation
@@ -77,8 +73,9 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
         } else {
             // rocket already blown up
             for (component in components)
-                if (!component.removed)
-                    component.removeShape()
+                if (component is Shape)
+                    if (!component.removed)
+                        component.remove()
             
             explosionShape!!.drawExplosion(now - previousFrameTime)
         }
@@ -112,10 +109,11 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
     
     open fun removeAllShape() {
         for (component in components)
-            if (!component.removed)
-                component.removeShape()
+            if (component is Shape)
+                if (!component.removed)
+                    component.remove()
         trace.removeTrace()
-        explosionShape?.removeShape()
+        explosionShape?.remove()
         crashSound.release()
     }
     

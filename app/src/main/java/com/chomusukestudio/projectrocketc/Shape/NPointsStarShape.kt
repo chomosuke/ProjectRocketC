@@ -12,7 +12,7 @@ class NPointsStarShape(n: Int, center: Vector, radius: Float, color: Color, buil
         componentShapes[0] = RegularPolygonalShape(n, center,
                 radius * (sin(PI / 2f / n) / sin(PI - PI / 2f / n - PI / n)).toFloat(),
                color, buildShapeAttr) // central RegularPolygonalShape
-        componentShapes[0]!!.rotateShape(center, PI.toFloat() / n)
+        componentShapes[0]!!.rotate(center, PI.toFloat() / n)
 
         // points
         val dx = (sin(PI/2f/n) / sin(PI - PI/2f/n - PI/n) * cos(PI/n) * radius).toFloat()
@@ -21,7 +21,7 @@ class NPointsStarShape(n: Int, center: Vector, radius: Float, color: Color, buil
             componentShapes[i] = TriangularShape(
                     Vector(center.x, center.y + radius), Vector(center.x + dx, center.y + dy), Vector(center.x - dx, center.y + dy),
                     color, buildShapeAttr)
-            componentShapes[i]!!.rotateShape(center, 2f*PI.toFloat() / n * i)
+            componentShapes[i]!!.rotate(center, 2f*PI.toFloat() / n * i)
         }
         
         this.componentShapes = componentShapes as Array<Shape>

@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.Shape
 
-import com.chomusukestudio.projectrocketc.randFloat
 import kotlin.collections.ArrayList
 import kotlin.math.PI
 
@@ -26,13 +25,13 @@ class EarClipPolygonalShape(private val vertexes: Array<Vector>, color: Color, b
 		}
 	}
 	
-	override fun moveShape(displacement: Vector) {
-		super.moveShape(displacement)
+	override fun move(displacement: Vector) {
+		super.move(displacement)
 		totalDisplacement += displacement
 	}
 
-	override fun rotateShape(centerOfRotation: Vector, angle: Float) {
-		super.rotateShape(centerOfRotation, angle)
+	override fun rotate(centerOfRotation: Vector, angle: Float) {
+		super.rotate(centerOfRotation, angle)
 		totalRotation += angle
 		totalDisplacement = totalDisplacement.rotateVector(centerOfRotation, angle)
 	}

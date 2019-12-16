@@ -130,9 +130,9 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
                 giveVisualText("×$dScore", visualTextView)
             }
         }
-        littleStarShape.removeShape()
-        arrowToLittleStarShape.removeShape()
-        rangeCircleThingy?.removeShape()
+        littleStarShape.remove()
+        arrowToLittleStarShape.remove()
+        rangeCircleThingy?.remove()
     }
     
     fun isTooCloseToAPlanet(planet: Planet, margin: Float): Boolean {
@@ -148,8 +148,8 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
             return
         }
         center += displacement
-        littleStarShape.moveShape(displacement)
-        rangeCircleThingy?.moveShape(displacement)
+        littleStarShape.move(displacement)
+        rangeCircleThingy?.move(displacement)
         if (inScreen) {
             if (center.x + RADIUS_OF_LITTLE_STAR < leftEnd ||
                     center.x - RADIUS_OF_LITTLE_STAR > rightEnd ||
@@ -224,8 +224,8 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
     
     fun rotateLittleStar(centerOfRotation: Vector, angle: Float) {
         center = center.rotateVector(centerOfRotation, angle)
-        littleStarShape.rotateShape(centerOfRotation, angle)
-        rangeCircleThingy?.rotateShape(centerOfRotation, angle)
+        littleStarShape.rotate(centerOfRotation, angle)
+        rangeCircleThingy?.rotate(centerOfRotation, angle)
     }
     
     fun resetPosition(center: Vector) {
@@ -234,9 +234,9 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
     }
     
     fun removeLittleStarShape() {
-        littleStarShape.removeShape()
-        arrowToLittleStarShape.removeShape()
-        rangeCircleThingy?.removeShape()
+        littleStarShape.remove()
+        arrowToLittleStarShape.remove()
+        rangeCircleThingy?.remove()
     }
     
     fun isOverlap(shape: Shape): Boolean {

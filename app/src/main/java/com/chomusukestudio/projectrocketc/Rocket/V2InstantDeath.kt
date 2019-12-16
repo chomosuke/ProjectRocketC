@@ -34,7 +34,7 @@ class V2InstantDeath(surrounding: Surrounding, crashSound: MediaPlayer, rocketPh
 	
 	override val width = 0.3f
 	
-	override val components: Array<Shape> = run {
+	override val components: Array<ISolid> = run {
 		val white = Color(1f, 1f, 1f, 1f)
 		val black = Color(0.3f, 0.3f, 0.3f, 1f)
 		

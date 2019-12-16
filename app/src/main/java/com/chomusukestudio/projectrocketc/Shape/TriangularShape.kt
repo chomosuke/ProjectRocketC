@@ -101,7 +101,7 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
         }
     }
 
-    override fun moveShape(displacement: Vector) {
+    override fun move(displacement: Vector) {
         val dx = displacement.x
         val dy = displacement.y
         if (visibility) {
@@ -117,7 +117,7 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
         }
     }
 
-    override fun rotateShape(centerOfRotation: Vector, angle: Float) {
+    override fun rotate(centerOfRotation: Vector, angle: Float) {
         if (visibility) {
             var i = 0
             while (i < CPT) {
@@ -152,7 +152,7 @@ class TriangularShape(vertex1: Vector, vertex2: Vector, vertex3: Vector,
     }
 
     override var removed = false
-    override fun removeShape() {
+    override fun remove() {
         if (visibility) {
             triangle!!.removeTriangle()
             triangle = null

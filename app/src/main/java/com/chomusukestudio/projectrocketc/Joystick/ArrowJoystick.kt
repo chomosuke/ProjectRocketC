@@ -53,8 +53,8 @@ class ArrowJoystick(private val centerOfRotation: Vector, buildShapeAttr: BuildS
                     centerOfArrow.offset(-0.05f, 0f)) // update arrow position
             
             // rotate arrow
-            triangularShape.rotateShape(centerOfArrow, intendedDirection)
-            quadrilateralShape.rotateShape(centerOfArrow, intendedDirection)
+            triangularShape.rotate(centerOfArrow, intendedDirection)
+            quadrilateralShape.rotate(centerOfArrow, intendedDirection)
         } else { // if the screen is not touched
             triangularShape.setTriangleCoords(Vector(0f, 0f), Vector(0f, 0f), Vector(0f, 0f)) // hide arrow
             quadrilateralShape.setQuadrilateralShapeCoords(Vector(0f, 0f), Vector(0f, 0f), Vector(0f, 0f), Vector(0f, 0f))
@@ -62,7 +62,7 @@ class ArrowJoystick(private val centerOfRotation: Vector, buildShapeAttr: BuildS
     }
     
     override fun removeAllShape() {
-        triangularShape.removeShape()
-        quadrilateralShape.removeShape()
+        triangularShape.remove()
+        quadrilateralShape.remove()
     }
 }
