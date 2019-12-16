@@ -13,7 +13,7 @@ class Vector(val x: Float, val y: Float) {
             return this
 
         // translate point back to origin:
-        var result = this.minus(centerOfRotation)
+        var result = this - centerOfRotation
 
         // rotate point around origin
         result = result.rotateVector(angle)
