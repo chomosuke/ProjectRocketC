@@ -73,7 +73,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
         } else {
             // rocket already blown up
             for (component in components)
-                if (component is Shape)
+                if (component is IRemovable)
                     if (!component.removed)
                         component.remove()
             

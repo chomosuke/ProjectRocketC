@@ -83,3 +83,28 @@ private fun contain(triangularOverlapper: TriangularOverlapper, points: Collecti
 			return true
 	return false
 }
+
+class PolygonalOverlapper(vertexes: Array<Vector>): Overlapper(), IMovable {
+	private val trianglesVertexes = earClip(vertexes)
+
+	override fun move(displacement: Vector) {
+		for (i in trianglesVertexes.indices)
+			for (j in trianglesVertexes[i].indices)
+				trianglesVertexes[i][j] += displacement
+	}
+
+	override fun rotate(centerOfRotation: Vector, angle: Float) {
+		for (i in trianglesVertexes.indices)
+			for (j in trianglesVertexes[i].indices)
+				trianglesVertexes[i][j] = trianglesVertexes[i][j].rotateVector(centerOfRotation, angle)
+	}
+
+	override val components: Array<Overlapper>
+		get() = run {
+			val triangularOverlappers = arrayOfNulls<TriangularOverlapper>(trianglesVertexes.size)
+			for (i in trianglesVertexes.indices)
+				triangularOverlappers[i] =
+						TriangularOverlapper(trianglesVertexes[i][0], trianglesVertexes[i][1], trianglesVertexes[i][2])
+			return@run triangularOverlappers as Array<Overlapper>
+		}
+}

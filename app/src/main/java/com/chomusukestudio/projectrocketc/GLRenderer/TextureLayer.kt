@@ -53,17 +53,17 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
         triangleCoords[10] = vertex3.x
         triangleCoords[11] = vertex3.y
         fragmentData[0] = 0f
-        fragmentData[1] = 1f
+        fragmentData[1] = 0f
         fragmentData[2] = 1f
-        fragmentData[3] = 1f
+        fragmentData[3] = 0f
         fragmentData[4] = 1f
-        fragmentData[5] = 0f
+        fragmentData[5] = 1f
         fragmentData[6] = 0f
-        fragmentData[7] = 1f
+        fragmentData[7] = 0f
         fragmentData[8] = 0f
-        fragmentData[9] = 0f
+        fragmentData[9] = 1f
         fragmentData[10] = 1f
-        fragmentData[11] = 0f
+        fragmentData[11] = 1f
     }
 
     private fun loadTexture(context: Context, resourceId: Int): Int {
