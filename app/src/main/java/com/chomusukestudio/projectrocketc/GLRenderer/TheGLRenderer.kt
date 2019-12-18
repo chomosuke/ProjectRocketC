@@ -12,7 +12,7 @@ import com.chomusukestudio.projectrocketc.Shape.CircularShape
 import javax.microedition.khronos.opengles.GL10
 
 import android.content.ContentValues.TAG
-import android.opengl.GLES20
+import android.opengl.GLES30
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.ProcessingThread
 
@@ -28,8 +28,8 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
 
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         //enable transparency
-        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
-        GLES20.glEnable(GLES20.GL_BLEND)
+        GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA, GLES30.GL_ONE_MINUS_SRC_ALPHA)
+        GLES30.glEnable(GLES30.GL_BLEND)
 
         //
         //        // Enable depth test
@@ -38,7 +38,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
         //        glDepthFunc(GL_LESS);
 
         // Set the background frame color
-        GLES20.glClearColor(0f, 0f, 0f, 1f)
+        GLES30.glClearColor(0f, 0f, 0f, 1f)
 
         ShapeLayer.createGLProgram()
         TextureLayer.createGLProgram()
@@ -76,10 +76,10 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             previousFrameTime = now
         }
         // Clear the screen
-        //        GLES20.glClear(GL_DEPTH_BUFFER_BIT);
+        //        GLES30.glClear(GL_DEPTH_BUFFER_BIT);
 
         // Redraw background color
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT)
         // this is required on certain devices
 
         // Draw all!
@@ -87,7 +87,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
-        GLES20.glViewport(0, 0, width, height)
+        GLES30.glViewport(0, 0, width, height)
         // for transformation to matrix
 
         // this projection matrix is applied to object coordinates

@@ -2,7 +2,7 @@ package com.chomusukestudio.projectrocketc.GLRenderer
 
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.opengl.GLES20
+import android.opengl.GLES30
 import android.opengl.GLUtils
 import com.chomusukestudio.projectrocketc.Shape.Vector
 import java.nio.FloatBuffer
@@ -68,7 +68,7 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
 
     private fun loadTexture(context: Context, resourceId: Int): Int {
         val textureHandle = IntArray(1)
-        GLES20.glGenTextures(1, textureHandle, 0)
+        GLES30.glGenTextures(1, textureHandle, 0)
         if (textureHandle[0] == 0) {
             throw RuntimeException("Error generating texture handle.")
         }
@@ -80,14 +80,14 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
         val bitmap = BitmapFactory.decodeResource(context.resources, resourceId, options)
 
         // Bind to the texture in OpenGL
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0])
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle[0])
 
         // Set filtering
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR)
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
 
         // Load the bitmap into the bound texture.
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0)
 
         // Recycle the bitmap, since its data has been loaded into OpenGL.
         bitmap.recycle()
@@ -101,56 +101,56 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
             textureHandle = loadTexture(context, resourceId)
 
         // Add program to OpenGL ES environment
-        GLES20.glUseProgram(mProgram)
+        GLES30.glUseProgram(mProgram)
 
         // get handle to vertex shader's vPosition member
-        val mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition")
+        val mPositionHandle = GLES30.glGetAttribLocation(mProgram, "vPosition")
 
         // Enable a handle to the triangle vertices
-        GLES20.glEnableVertexAttribArray(mPositionHandle)
+        GLES30.glEnableVertexAttribArray(mPositionHandle)
 
         // Prepare the triangle coordinate data
-        GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX,
-                GLES20.GL_FLOAT, false,
+        GLES30.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX,
+                GLES30.GL_FLOAT, false,
                 vertexStride, vertexBuffer)
 
         // get handle to fragment shader's vColor member
-        val tCoordsHandle = GLES20.glGetAttribLocation(mProgram, "tCoords")
+        val tCoordsHandle = GLES30.glGetAttribLocation(mProgram, "tCoords")
         // Set colors for drawing the triangle
-        GLES20.glEnableVertexAttribArray(tCoordsHandle)
-        GLES20.glVertexAttribPointer(tCoordsHandle, 2,
-                GLES20.GL_FLOAT, false,
+        GLES30.glEnableVertexAttribArray(tCoordsHandle)
+        GLES30.glVertexAttribPointer(tCoordsHandle, 2,
+                GLES30.GL_FLOAT, false,
                 0, fragmentBuffer)
 
-        val textureUniformHandle = GLES20.glGetUniformLocation(mProgram, "texture")
+        val textureUniformHandle = GLES30.glGetUniformLocation(mProgram, "texture")
 
         // Set the active texture unit to texture unit 0.
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0)
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0)
 
         // Bind the texture to this unit.
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle)
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle)
 
         // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
-        GLES20.glUniform1i(textureUniformHandle, 0);
+        GLES30.glUniform1i(textureUniformHandle, 0)
 
         // get handle to shape's transformation matrix
-        val mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix")
+        val mMVPMatrixHandle = GLES30.glGetUniformLocation(mProgram, "uMVPMatrix")
         // comment for mMVPMatrixHandle when it's still global: Use to access and set the view transformation
 
         // Pass the projection and view transformation to the shader
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
+        GLES30.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
         // Draw the triangle
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
+        GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, vertexCount)
 
         // check for error
-        val error = GLES20.glGetError()
-        if (error != GLES20.GL_NO_ERROR) {
+        val error = GLES30.glGetError()
+        if (error != GLES30.GL_NO_ERROR) {
             throw RuntimeException("GL error: $error")
         }
 
         // Disable vertex array
-        GLES20.glDisableVertexAttribArray(mPositionHandle)
-        GLES20.glDisableVertexAttribArray(tCoordsHandle)
+        GLES30.glDisableVertexAttribArray(mPositionHandle)
+        GLES30.glDisableVertexAttribArray(tCoordsHandle)
     }
 }
