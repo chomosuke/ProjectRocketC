@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.opengl.GLES30
 import android.opengl.GLUtils
 import com.chomusukestudio.projectrocketc.Shape.Vector
+import java.nio.Buffer
 import java.nio.FloatBuffer
 
 // this layer only have a single image/texture
@@ -83,11 +84,14 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureHandle[0])
 
         // Set filtering
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR)
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
 
         // Load the bitmap into the bound texture.
         GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0)
+
+        // generate mipmaps for GL_LINEAR_MIPMAP_LINEAR texture min filter
+        GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D)
 
         // Recycle the bitmap, since its data has been loaded into OpenGL.
         bitmap.recycle()
