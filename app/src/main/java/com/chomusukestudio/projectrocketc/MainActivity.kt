@@ -35,6 +35,8 @@ enum class State { InGame, PreGame, Paused, Crashed }
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
 
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var processingThread: ProcessingThread
+    private lateinit var myGLSurfaceView: MyGLSurfaceView
 
 //    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
@@ -53,8 +55,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         setContentView(R.layout.activity_main)
 
-        // initialize sharedPreference
+        // initialize convenient variable
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+        myGLSurfaceView = findViewById(R.id.MyGLSurfaceView)
 
 //        with(sharedPreferences.edit()) {
 //            putInt(getString(R.string.highestScore), 0)
@@ -88,7 +91,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         Executors.newSingleThreadExecutor().submit {
             runWithExceptionChecked {
 
-                findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).initializeRenderer()
+                myGLSurfaceView.initializeRenderer()
+                processingThread = myGLSurfaceView.mRenderer.processingThread
 
                 // hide splash screen and show game
                 this.runOnUiThread {
@@ -98,8 +102,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
                     findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
                     findViewById<ConstraintLayout>(R.id.scoresLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).visibility = View.VISIBLE
-                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                    myGLSurfaceView.visibility = View.VISIBLE
+                    myGLSurfaceView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
                     findViewById<ImageView>(R.id.chomusukeView).bringToFront()
                     findViewById<ImageView>(R.id.chomusukeView).animate()
@@ -118,8 +122,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //                    // see if this is the first time the game open
 //                    if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
 //                        // if it is show the tutorial
-//                        findViewById<ConstraintLayout>(R.id.tutorialLayout).visibility = View.VISIBLE
-//                        findViewById<ConstraintLayout>(R.id.tutorialLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 //
 //                        // and set the firstTimeOpen to be false
 //                        with(sharedPreferences.edit()) {
@@ -159,12 +161,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         try {
             when (state) {
                 State.Paused -> {
-                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
+                    myGLSurfaceView.mRenderer.resumeGLRenderer()
                     findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.pause_button))
                     state = State.InGame
                 }
                 State.InGame -> {
-                    findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+                    myGLSurfaceView.mRenderer.pauseGLRenderer()
                     findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
                     state = State.Paused
                 }
@@ -202,7 +204,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         fadeOut(findViewById(R.id.onCrashLayout))
 
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
+        processingThread.reset()
 
         state = State.InGame
     }
@@ -219,13 +221,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         fadeOut(findViewById(R.id.onCrashLayout))
         fadeIn(findViewById(R.id.preGameLayout))
 
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).resetGame()
+        processingThread.reset()
 
         state = State.PreGame
     }
 
     fun swapRocketLeft(view: View) {
-        val processingThread = findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.processingThread
         if (processingThread.isOutOfBounds(-2))
             findViewById<Button>(R.id.swapRocketLeftButton).visibility = View.INVISIBLE
         processingThread.swapRocket(-1)
@@ -233,7 +234,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun swapRocketRight(view: View) {
-        val processingThread = findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.processingThread
         if (processingThread.isOutOfBounds(2))
             findViewById<Button>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
         processingThread.swapRocket(1)
@@ -252,7 +252,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     fun onCrashed() {
         state = State.Crashed
 
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.processingThread.updateHighestScore { score ->
+        processingThread.updateHighestScore { score ->
             if (score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
                 // update highest score
                 with(sharedPreferences.edit()) {
@@ -319,7 +319,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         super.onDestroy()
         Log.i("", "\n\nonDestroy() called\n\n")
         // onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)
-        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).shutDown()
+        myGLSurfaceView.shutDown()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -353,7 +353,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             when (state) {
                 State.InGame -> {
                     if (!hasFocus) {
-                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+                        myGLSurfaceView.mRenderer.pauseGLRenderer()
                         findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
                         state = State.Paused
                     }
@@ -361,9 +361,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 State.Paused -> { /*nothing, there is nothing can be done.*/ }
                 else -> {
                     if (!hasFocus)
-                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.pauseGLRenderer()
+                        myGLSurfaceView.mRenderer.pauseGLRenderer()
                     else
-                        findViewById<MyGLSurfaceView>(R.id.MyGLSurfaceView).mRenderer.resumeGLRenderer()
+                        myGLSurfaceView.mRenderer.resumeGLRenderer()
                 }
             }
         } catch (e: UninitializedPropertyAccessException) {
@@ -404,7 +404,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             }
         } // for onStop() and onDestroy() to remove Layer
 
-        internal inner class MyConfigChooser : GLSurfaceView.EGLConfigChooser {// this class is for antialiasing
+        internal inner class MyConfigChooser : EGLConfigChooser {// this class is for antialiasing
 
             override fun chooseConfig(egl: EGL10, display: EGLDisplay): EGLConfig? {
 
@@ -469,10 +469,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //
 //            GLTriangle.refreshAllMatrix()
 //        }
-
-        fun resetGame() {
-            mRenderer.processingThread.reset()
-        }
 
         override fun onTouchEvent(e: MotionEvent): Boolean {
             return mRenderer.processingThread.onTouchEvent(e) // we know that the context is MainActivity

@@ -133,24 +133,11 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
                     val startTime = SystemClock.uptimeMillis()
 
                     if (state == State.InGame) {
-
-                        // see if crashed
-                        if (rocket.isCrashed(surrounding, now - previousFrameTime)) {
-                            mainActivity.onCrashed()
-                        }
-                        surrounding.checkAndAddLittleStar(now)
-                    }
-                    if (/*state == State.PreGame || */state == State.InGame) {
-                        rocket.moveRocket(joystick.getRocketControl(rocket.currentRotation), now, previousFrameTime)
-                        surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime, state)
-                        joystick.drawJoystick()
+                        inGame(now, previousFrameTime)
                     }
                     if (state == State.Crashed) {
-                        rocket.fadeTrace(now, previousFrameTime)
-                        rocket.drawExplosion(now, previousFrameTime)
+                        crashed(now, previousFrameTime)
                     }
-                    if (state == State.InGame)
-                        updateScore() // only update score when InGame
 
 ////                if (SystemClock.uptimeMillis() - startTime > 1000 / refreshRate) {
 //                if (SystemClock.uptimeMillis() - startTime > 16) { // target 60 fps
@@ -183,6 +170,25 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
                 }
             }
         }
+    }
+    private fun inGame(now: Long, previousFrameTime: Long) {
+
+        // see if crashed
+        if (rocket.isCrashed(surrounding, now - previousFrameTime)) {
+            mainActivity.onCrashed()
+        }
+        surrounding.checkAndAddLittleStar(now)
+
+        rocket.moveRocket(joystick.getRocketControl(rocket.currentRotation), now, previousFrameTime)
+        surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime, state)
+
+        joystick.drawJoystick()
+
+        updateScore()
+    }
+    private fun crashed(now: Long, previousFrameTime: Long) {
+        rocket.fadeTrace(now, previousFrameTime)
+        rocket.drawExplosion(now, previousFrameTime)
     }
 
     fun waitForLastFrame() {
