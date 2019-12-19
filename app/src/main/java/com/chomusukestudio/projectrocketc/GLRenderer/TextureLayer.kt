@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import android.opengl.GLES30
 import android.opengl.GLUtils
 import com.chomusukestudio.projectrocketc.Shape.Vector
-import java.nio.Buffer
 import java.nio.FloatBuffer
 
 // this layer only have a single image/texture

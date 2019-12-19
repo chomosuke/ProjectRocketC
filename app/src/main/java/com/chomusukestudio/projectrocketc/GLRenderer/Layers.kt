@@ -4,8 +4,16 @@ import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 import java.util.ArrayList
 import java.util.concurrent.locks.ReentrantLock
 
-class Layers { // a group of arrayList
-    val arrayList = ArrayList<Layer>()
+class Layers : Iterable<Layer> { // a group of arrayList
+    private val arrayList = ArrayList<Layer>()
+
+    override fun iterator() = arrayList.iterator()
+
+    fun remove(element: Layer) {
+        lockOnArrayList.lock()
+        arrayList.remove(element)
+        lockOnArrayList.unlock()
+    }
 
     fun insert(newLayer: Layer) {
         var i = 0

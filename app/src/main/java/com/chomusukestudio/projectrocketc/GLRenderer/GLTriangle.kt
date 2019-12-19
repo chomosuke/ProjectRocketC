@@ -57,7 +57,7 @@ class GLTriangle (buildShapeAttr: BuildShapeAttr) {
     }
 
     private fun getLayer(z: Float, layers: Layers): ShapeLayer {
-            for (layer in layers.arrayList) {
+            for (layer in layers) {
                 if (layer.z == z && layer is ShapeLayer) {
                     return layer // find the layer with that z
                 }

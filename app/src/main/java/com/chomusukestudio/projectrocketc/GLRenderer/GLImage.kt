@@ -60,6 +60,6 @@ class GLImage(context: Context, resourceId: Int, vertex1: Vector, vertex2: Vecto
 
     override fun remove() {
         removed = true
-        layers.arrayList.remove(textureLayer)
+        layers.remove(textureLayer)
     }
 }
