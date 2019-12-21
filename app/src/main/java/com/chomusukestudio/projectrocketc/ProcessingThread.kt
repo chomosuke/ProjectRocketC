@@ -177,6 +177,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         if (rocket.isCrashed(surrounding, now - previousFrameTime)) {
             mainActivity.onCrashed()
         }
+
         surrounding.checkAndAddLittleStar(now)
 
         rocket.moveRocket(joystick.getRocketControl(rocket.currentRotation), now, previousFrameTime)
