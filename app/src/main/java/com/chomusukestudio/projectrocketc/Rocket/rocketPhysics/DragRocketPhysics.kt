@@ -31,7 +31,7 @@ class DragRocketPhysics : RocketPhysics() {
             decelerateVelocity(rocketState.velocity, square(speed), (now - previousFrameTime))
         else
             rocketState.velocity
-        
+
         if (rocketControl.throttleOn) {
             val targetSpeed = speedFormula(rocketQuirks.initialSpeed, LittleStar.score)
             val acceleration = square(targetSpeed)

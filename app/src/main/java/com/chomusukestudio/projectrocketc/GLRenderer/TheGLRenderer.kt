@@ -25,6 +25,9 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     private var previousTime: Long = 0
     private var now: Long = 0
     private val timer = PauseableTimer()
+    fun setTimerRate(rate: Double) {
+        timer.rate = rate
+    }
 
     override fun onSurfaceCreated(unused: GL10, config: javax.microedition.khronos.egl.EGLConfig) {
         //enable transparency
@@ -105,7 +108,7 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
     fun pauseGLRenderer() {
         if (!timer.paused) {
             myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
-            timer.pause()
+            timer.paused = true
         }
     }
     fun resumeGLRenderer() {
@@ -114,8 +117,8 @@ class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView:
             // onDrawFrame which will cause timeMillis to be accessed before pauseTime being set
             myGLSurfaceView.renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
 
-            timer.resume()
-//            // if something happened with time try uncomment this
+            timer.paused = false
+            //            // if something happened with time try uncomment this
 //            nowXY = timeMillis()
 //            previousFrameTime = timeMillis()
         }

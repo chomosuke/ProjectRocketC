@@ -77,31 +77,29 @@ class TouchableView<out V : View>(val view: V, val activity: Activity) {
 
 class PauseableTimer {
     @Volatile var paused = false
-        private set(value) {
+        set(value) {
             if (field && !value) { // paused to unpaused
-                pausedTime += SystemClock.uptimeMillis() - lastpausedTime
-                Log.d("upTimeMillisFromResume", "" + timeMillis())
+                lastUptimeMillis = SystemClock.uptimeMillis()
+                Log.d("upTimeMillisFromResume", "" + time)
                 field = false
             } else if (!field && value) { // unpaused to paused
-                lastpausedTime = SystemClock.uptimeMillis()
-                Log.d("upTimeMillisFromPause", "" + timeMillis())
+                Log.d("upTimeMillisFromPause", "" + time)
                 field = true
             }
         }
-    @Volatile var lastpausedTime = 0L
-    @Volatile var pausedTime: Long = 0L
+    @Volatile var rate = 1.0
+    @Volatile var lastUptimeMillis = SystemClock.uptimeMillis()
+    @Volatile var time = 0.0
+        private set
+        get() {
+            if (!paused) {
+                field += (SystemClock.uptimeMillis() - lastUptimeMillis) * rate
+                lastUptimeMillis = SystemClock.uptimeMillis()
+            }
+            return field
+        }
 
-    fun pause() {
-        paused = true
-    }
-    fun resume() {
-        paused = false
-    }
-
-    fun timeMillis(): Long {
-        return if (paused) lastpausedTime - pausedTime // if paused then apart of pausedTime is not recorded yet
-        else SystemClock.uptimeMillis() - pausedTime
-    }
+    fun timeMillis() = time.toLong()
 }
 
 fun <R>runWithExceptionChecked(runnable: () -> R): R {
