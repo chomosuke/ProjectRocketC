@@ -115,23 +115,28 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                                 }
                             })
 
+                    // see if this is the first time the game open
+                    if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), false)) {
+                        // if it is show the tutorial
+                        findViewById<ConstraintLayout>(R.id.tutorialGroup).visibility = View.VISIBLE
+
+                        // and set the firstTimeOpen to be false
+                        with(sharedPreferences.edit()) {
+                            putBoolean(getString(R.string.firstTimeOpen), true)
+                            apply()
+                        }
+                    }
                     if (state != State.PreGame) {
                         Log.e("game launching", "state not in PreGame but $state")
                         state = State.PreGame // this is pregame
                     }
-//                    // see if this is the first time the game open
-//                    if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
-//                        // if it is show the tutorial
-//
-//                        // and set the firstTimeOpen to be false
-//                        with(sharedPreferences.edit()) {
-//                            putBoolean(getString(R.string.firstTimeOpen), false)
-//                            apply()
-//                        }
-//                    }
                 }
             }
         }
+    }
+
+    fun onTouchMyGLSurface(e: MotionEvent) {
+
     }
 
     fun startGame(view: View) {
@@ -144,8 +149,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // fade away pregame layout with animation
         fadeOut(findViewById(R.id.preGameLayout))
 
-        findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
-        findViewById<ConstraintLayout>(R.id.inGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+        fadeIn(findViewById(R.id.inGameLayout))
     }
 
     private var lastClickOnPause = 0L
@@ -161,13 +165,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         try {
             when (state) {
                 State.Paused -> {
-                    myGLSurfaceView.mRenderer.resumeGLRenderer()
-                    findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.pause_button))
+                    resumeGame()
                     state = State.InGame
                 }
                 State.InGame -> {
-                    myGLSurfaceView.mRenderer.pauseGLRenderer()
-                    findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
+                    pauseGame()
                     state = State.Paused
                 }
                 State.Crashed -> {
@@ -178,6 +180,20 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         } catch (e: UninitializedPropertyAccessException) {
             // TODO: we should do something here
         }
+    }
+    private fun pauseGame() {
+        myGLSurfaceView.mRenderer.pauseGLRenderer()
+        findViewById<ConstraintLayout>(R.id.onPausedLayout).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.onPausedLayout).bringToFront()
+//        fadeIn(findViewById(R.id.onPausedLayout))
+        findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
+        findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
+    }
+    private fun resumeGame() {
+        myGLSurfaceView.mRenderer.resumeGLRenderer()
+//        findViewById<ConstraintLayout>(R.id.onPausedLayout).visibility = View.INVISIBLE
+        fadeOut(findViewById(R.id.onPausedLayout))
+        findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.pause_button))
     }
 
     private var lastClickRestartGame = 0L
@@ -190,19 +206,25 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 })
             return // multi click check
 
-        if (state != State.Crashed) // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
-            return
+        when (state) {
+            State.Crashed -> {
+                // update highest score
+                findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
-        // update highest score
-        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+                findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
 
-        findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
-        findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
+                findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
+                findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
 
-        findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
-        findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
+                findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
 
-        fadeOut(findViewById(R.id.onCrashLayout))
+                fadeOut(findViewById(R.id.onCrashLayout))
+            }
+            State.Paused -> {
+                resumeGame()
+            }
+            else -> return // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
+        }
 
         processingThread.reset()
 
@@ -210,15 +232,21 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun toHome(view: View) {
-        if (state != State.Crashed && state != State.Paused) return // already at home, must've been lag
+        when (state) {
+            State.Crashed -> {// update highest score
+                findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
 
-        // update highest score
-        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+                findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+                findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
+                fadeOut(findViewById(R.id.onCrashLayout))
+            }
+            State.Paused -> {
+                fadeOut(findViewById(R.id.inGameLayout))
+                resumeGame()
+            }
+            else -> return
+        } // already at home, must've been lag
 
-        findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
-        findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
-
-        fadeOut(findViewById(R.id.onCrashLayout))
         fadeIn(findViewById(R.id.preGameLayout))
 
         processingThread.reset()
@@ -385,6 +413,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
     class MyGLSurfaceView(context: Context, attributeSet: AttributeSet) : GLSurfaceView(context, attributeSet) {
 
+        private val mainActivity = scanForActivity(context) as MainActivity
+
         init {
             // Create an OpenGL ES 2.0 context
             setEGLContextClientVersion(2)
@@ -433,7 +463,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             val layers = Layers()
             val processingThread = ProcessingThread(
                     (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
-                    scanForActivity(context) as MainActivity, layers) // we know that the context is MainActivity
+                    mainActivity, layers) // we know that the context is MainActivity
 //            processingThread = TestingProcessingThread()
             mRenderer = TheGLRenderer(processingThread, this, layers)
 
@@ -471,6 +501,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //        }
 
         override fun onTouchEvent(e: MotionEvent): Boolean {
+            mainActivity.onTouchMyGLSurface(e)
             return mRenderer.processingThread.onTouchEvent(e) // we know that the context is MainActivity
         }
     }

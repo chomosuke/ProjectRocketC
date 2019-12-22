@@ -176,6 +176,73 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.5"
+            android:scaleType="centerCrop"
+            android:src="@drawable/black"  />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/onPausedLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+<!--        <ImageView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:alpha="0.5"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:src="@drawable/black"  />-->
+
+        <ImageButton
+            android:id="@+id/restartButtonPaused"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:src="@drawable/restart_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/toHomeButtonPaused"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.75"
+            android:onClick="restartGame"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <ImageButton
+            android:id="@+id/toHomeButtonPaused"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:src="@drawable/to_home_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/restartButtonPaused"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.75"
+            android:onClick="toHome"
+            android:clickable="true"
+            android:focusable="true" />
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -252,6 +319,7 @@
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.75"
+            android:onClick="restartGame"
             android:clickable="true"
             android:focusable="true" />
 
@@ -271,6 +339,7 @@
             app:layout_constraintEnd_toStartOf="@id/restartButton"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.75"
+            android:onClick="toHome"
             android:clickable="true"
             android:focusable="true" />
 
@@ -336,13 +405,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.75"
-            android:scaleType="centerCrop"
-            android:src="@drawable/black" />
 
     </android.support.constraint.ConstraintLayout>
 
