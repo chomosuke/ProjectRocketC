@@ -26,7 +26,7 @@ abstract class Joystick {
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
         when (e.actionMasked) {
-            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN ->
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN, MotionEvent.ACTION_MOVE->
                 if (!pointers.contains(e.getPointerId(e.actionIndex))) // offset the new pointer
                     pointers.add(e.getPointerId(e.actionIndex))
 //                else // this actually does happen for some reason
