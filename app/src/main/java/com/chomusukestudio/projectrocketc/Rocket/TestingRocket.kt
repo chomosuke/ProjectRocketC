@@ -15,7 +15,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 class TestingRocket(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, crashSound, rocketPhysics, layers) {
     override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
 //        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
-            AccelerationTrace(7, 1.01f, 0.24f,  0.4f, 1000, 100, 0.004f, Color(1f, 1f, 0f, 3f), layers)
+            AccelerationTrace(7, 1.01f, 0.24f,  0.1f, 0.4f, 1000, 100, 0.004f, Color(1f, 1f, 0f, 3f), layers)
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val p1 = (components[3] as QuadrilateralShape).vertex4
         val p2 = (components[3] as QuadrilateralShape).vertex3

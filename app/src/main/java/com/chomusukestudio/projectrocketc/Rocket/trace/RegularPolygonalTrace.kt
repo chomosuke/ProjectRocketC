@@ -82,7 +82,7 @@ open class RegularPolygonalTraceShape(numberOfEdges: Int, private var center: Ve
                     color.alpha * alphaEveryMiniSecond.pow((now - previousFrameTime).toFloat())))
         }
         // and change radius
-        (componentShapes[0] as RegularPolygonalShape).radius = deltaRadius * sqrt(timeSinceBorn / duration) + initialRadius
+        (componentShapes[0] as RegularPolygonalShape).radius = deltaRadius * (0.75f * sqrt(timeSinceBorn / duration) + 0.25f * timeSinceBorn / duration) + initialRadius
         if (color.alpha <= 1f / 256f) {
             needToBeRemoved = true
         }

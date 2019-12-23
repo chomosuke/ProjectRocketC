@@ -44,10 +44,9 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         crashSound.setVolume(0.66f, 0.66f)
         return when (rocketIndex) {
 			0 -> V2InstantDeath(surrounding, crashSound, DragRocketPhysics(), layers)
-            1 -> V2(surrounding, crashSound, DragRocketPhysics(), layers)
-            2 -> SaturnV(surrounding, crashSound, DragRocketPhysics(), layers)
-            3 -> Falcon9(surrounding, crashSound, DragRocketPhysics(), layers)
-            4 -> FalconHeavy(surrounding, crashSound, mainActivity, DragRocketPhysics(), layers)
+            1 -> SaturnV(surrounding, crashSound, DragRocketPhysics(), layers)
+            2 -> Falcon9(surrounding, crashSound, DragRocketPhysics(), layers)
+            3 -> FalconHeavy(surrounding, crashSound, mainActivity, DragRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -61,7 +60,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     }
     fun isOutOfBounds(dIndex: Int): Boolean {
         val index = rocketIndex + dIndex
-        return index !in 0..4
+        return index !in 0..3
     }
 
     private fun updateScore() {

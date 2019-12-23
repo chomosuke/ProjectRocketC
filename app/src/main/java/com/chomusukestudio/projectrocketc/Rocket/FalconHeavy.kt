@@ -12,8 +12,8 @@ import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 
 class FalconHeavy(surrounding: Surrounding, crashSound: MediaPlayer, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, crashSound, rocketPhysics, layers) {
-    override val trace: Trace = AccelerationTrace(7, 1.01f, 0.5f, 0.6f, 1000, 256,
-    0.004f, Color(1f, 1f, 0f, 3f), layers)
+    override val trace: Trace = AccelerationTrace(7, 1.01f, 0.3f, 0.01f, 0.3f, 1000, 512,
+            0.004f, Color(1f, 1f, 0f, 3f), layers)
     override val rocketQuirks: RocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
             0.000002f, 0.000001f)
 //    lateinit var e : EarClipPolygonalShape
@@ -35,6 +35,6 @@ class FalconHeavy(surrounding: Surrounding, crashSound: MediaPlayer, mainActivit
     override val width = 0.4f
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
-
+        trace.generateTrace(now, previousFrameTime, ((components[0] as Image).vertex3 + (components[0] as Image).vertex4) / 2f, RocketState(currentRotation, velocity))
     }
 }

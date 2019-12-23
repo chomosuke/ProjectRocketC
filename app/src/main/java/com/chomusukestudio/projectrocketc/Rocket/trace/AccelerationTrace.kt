@@ -9,7 +9,8 @@ import com.chomusukestudio.projectrocketc.decelerateVelocity
 import com.chomusukestudio.projectrocketc.randFloat
 import kotlin.math.PI
 
-class AccelerationTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long, private val perSecRate: Long, private val initialSpeed: Float,
+class AccelerationTrace(val numberOfEdges: Int, val z: Float, private val width: Float, private val initialBubbleSize: Float, private val finalBubbleSize: Float,
+						private val duration: Long, private val perSecRate: Long, private val initialSpeed: Float,
 						private val initialColor: Color, private val layers: Layers) : Trace() {
 	
 	private var preUnfinishedHalfIs = 0f
@@ -21,10 +22,10 @@ class AccelerationTrace(val numberOfEdges: Int, val z: Float, private val initia
 		var i = 0
 		while (i < iMax) {
 			
-			val widthMargin = randFloat(-initialWidth/3, initialWidth/3)
+			val widthMargin = randFloat(-width/2, width/2)
 			val center = origin + Vector(0f, widthMargin).rotateVector(direction)
 			val initialVelocity = Vector(initialSpeed, 0f).rotateVector(direction) + rocketState.velocity
-			val newTraceShape = newAccelerationTraceShape(center, randFloat(initialWidth / 16, initialWidth / 4), finalWidth / 2,
+			val newTraceShape = newAccelerationTraceShape(center, randFloat(initialBubbleSize/2, initialBubbleSize*2), finalBubbleSize,
 					initialVelocity, duration, initialColor)
 
 			newTraceShape.rotate(center, (2 * Math.PI * Math.random()).toFloat())
