@@ -403,5 +403,4 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 toHome(findViewById<Button>(R.id.toHomeButton))
         }
     }
-
 }

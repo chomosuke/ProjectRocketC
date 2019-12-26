@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.Surrounding
 
-import android.util.Log
 import android.widget.TextView
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.GLRenderer.*
@@ -349,7 +348,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
     private fun checkFlyby(frameDuration: Long) {
         for (planet in planets) {
             if (planet.visibility) // only check visible plane for flyby
-            if (planet.checkFlyby(rocket, frameDuration)) {
+            if (planet.checkFlyby(rocket, frameDuration, flybyDistance, timeLimit)) {
                 flybysInThisYellowStar++
 
                 LittleStar.dScore = (LittleStar.dScore + (flybysInThisYellowStar * 5))
@@ -491,104 +490,5 @@ private const val averageRadius = 0.75f // for planet shape to determent which t
 private const val flybyDistance = 0.5f
 private val maxCloseDist = sqrt(square(flybyDistance) + 2 * (averageRadius + radiusMargin) * flybyDistance) * 2
 private val maxFlybySpeed = speedFormula(0.004f, 200)
-private val timeLimit = maxCloseDist / maxFlybySpeed
+private val timeLimit = (maxCloseDist / maxFlybySpeed).toLong()
 
-// this class takes a planetShape and manage it, make it flybyable and reusable.
-// this is done to weaken the coupling between PlanetShapes and Surrounding
-class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
-
-    var visibility: Boolean
-        get() = planetShape.visibility
-        set(value) { planetShape.visibility = value }
-
-    // at first the planet haven't been flybyed and the close time is zero
-    private var flybyable = true
-    private var closeTime = 0L
-    override fun checkFlyby(rocket: Rocket, frameDuration: Long): Boolean {
-        if (distance(rocket.centerOfRotation, center) <= radius + (rocket.width/2) + flybyDistance)
-            closeTime += frameDuration
-        if (flybyable) {
-            if (closeTime > timeLimit) {
-                flybyable = false
-                // can't flyby the same planet twice
-                Log.v("flyby time limit", "" + timeLimit)
-                return true
-            }
-        }
-        return false
-    }
-
-
-    var center = planetShape.center
-        private set // Planet's center is different from actual center while planet go beyond the screen
-
-    val radius: Float
-        get() = planetShape.radius
-
-    private var angleRotated: Float = 0f
-
-    override var isInUse: Boolean = false
-        set(value) {
-            field = value
-            if (!value) {
-                visibility = false
-                flybyable = true
-                closeTime = 0L
-            }
-        }
-
-    private fun setActual(actualCenter: Vector) {
-        val dCenter = actualCenter - planetShape.center
-        planetShape.move(dCenter)
-        if (angleRotated != 0f) {
-            planetShape.rotate(center, angleRotated)
-            angleRotated = 0f // reset angleRotated
-        }
-    }
-
-
-    fun resetPosition(center: Vector) {
-        planetShape.resetPosition(center)
-        this.center = center
-    }
-
-    fun rotatePlanet(centerOfRotation: Vector, angle: Float) {
-        if (angle == 0f) {
-            return
-        }
-        angleRotated += angle
-        center = center.rotateVector(centerOfRotation, angle)
-        visibility = canBeSeen()
-        if (visibility)
-            setActual(center)
-    }
-
-    private fun canBeSeen(): Boolean {
-        return canBeSeenIf(center) || canBeSeenIf(planetShape.center)
-    }
-
-    private fun canBeSeenIf(center: Vector): Boolean {
-        val maxWidth = planetShape.maxWidth
-        return center.x < rightEnd + maxWidth &&
-                center.x > leftEnd - maxWidth &&
-                center.y < topEnd + maxWidth &&
-                center.y > bottomEnd - maxWidth
-    }
-
-    fun movePlanet(vector: Vector) {
-        center += vector
-        visibility = canBeSeen()
-        if (visibility)
-            setActual(center)
-    }
-
-    fun isOverlap(overlapper: Overlapper): Boolean {
-        return planetShape.overlapper overlap overlapper
-    }
-
-    fun isTooClose(anotherPlanet: Planet, distance: Float): Boolean {
-        // if circle and circle are too close
-        return distance(anotherPlanet.center, this.center) <= anotherPlanet.planetShape.radius + planetShape.radius + distance
-        // testing all pointsOutside is impractical because performance, subclass may override this method.
-    }
-}
