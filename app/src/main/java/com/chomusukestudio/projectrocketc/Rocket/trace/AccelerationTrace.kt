@@ -9,7 +9,7 @@ import com.chomusukestudio.projectrocketc.decelerateVelocity
 import com.chomusukestudio.projectrocketc.randFloat
 import kotlin.math.PI
 
-class AccelerationTrace(val numberOfEdges: Int, val z: Float, private val width: Float, private val initialBubbleSize: Float, private val finalBubbleSize: Float,
+class AccelerationTrace(private val numberOfEdges: Int, val z: Float, private val width: Float, private val initialBubbleSize: Float, private val finalBubbleSize: Float,
 						private val duration: Long, private val perSecRate: Long, private val initialSpeed: Float,
 						private val initialColor: Color, private val layers: Layers) : Trace() {
 	

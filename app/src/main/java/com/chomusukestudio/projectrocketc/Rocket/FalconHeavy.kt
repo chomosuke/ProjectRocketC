@@ -16,20 +16,19 @@ class FalconHeavy(surrounding: Surrounding, crashSound: MediaPlayer, mainActivit
             0.004f, Color(1f, 1f, 0f, 3f), layers))
     override val rocketQuirks: RocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
             0.000002f, 0.000001f)
-//    lateinit var e : EarClipPolygonalShape
     override val components: Array<ISolid> = run {
-        val arrayForOverlapper = arrayOf(Vector(-0.2f, 0.1f), Vector(-0.08f, 0.3f),
-                Vector(-0.08f, 0.55f), Vector(0f, 0.6f), Vector(0.08f, 0.55f),
-                Vector(0.08f, 0.3f), Vector(0.2f, 0.1f),
-                Vector(0.2f, -0.6f), Vector(-0.2f, -0.6f))
+        val arrayForOverlapper = arrayOf(
+                Vector(-0.2f, -0.6f), Vector(-0.2f, 0.1f),
+                Vector(-0.15f, 0.2f), Vector(-0.05f, 0.15f),
+                Vector(-0.08f, 0.55f),
+                Vector(0f, 0.6f), // top vertex
+                Vector(0.08f, 0.55f),
+                Vector(0.05f, 0.15f), Vector(0.15f, 0.2f),
+                Vector(0.2f, 0.1f), Vector(0.2f, -0.6f))
         val imageVertexes = arrayOf(Vector(-0.2f, 0.6f), Vector(0.2f, 0.6f), Vector(0.2f, -0.6f), Vector(-0.2f, -0.6f))
-//        e = EarClipPolygonalShape(
-//            arrayForOverlapper,
-//            Color(0f, 1f, 0f, 0.4f),
-//            BuildShapeAttr(-100f, true, layers))
         arrayOf(Image(mainActivity, R.drawable.falcon_heavy,
                 imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
-                arrayForOverlapper,
+                arrayForOverlapper, true,
                 0.5f, layers))
     }
     override val width = 0.4f
