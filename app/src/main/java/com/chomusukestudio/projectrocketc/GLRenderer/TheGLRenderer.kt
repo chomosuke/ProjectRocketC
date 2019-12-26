@@ -16,7 +16,7 @@ import android.opengl.GLES30
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.ProcessingThread
 
-class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MainActivity.MyGLSurfaceView, private val layers: Layers) : GLSurfaceView.Renderer {
+class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MyGLSurfaceView, private val layers: Layers) : GLSurfaceView.Renderer {
 
 
     // so you calculate the how many milliseconds have passed since last frame

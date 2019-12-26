@@ -28,7 +28,7 @@ class FalconHeavy(surrounding: Surrounding, crashSound: MediaPlayer, mainActivit
         val imageVertexes = arrayOf(Vector(-0.2f, 0.6f), Vector(0.2f, 0.6f), Vector(0.2f, -0.6f), Vector(-0.2f, -0.6f))
         arrayOf(Image(mainActivity, R.drawable.falcon_heavy,
                 imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
-                arrayForOverlapper, true,
+                arrayForOverlapper, false,
                 0.5f, layers))
     }
     override val width = 0.4f

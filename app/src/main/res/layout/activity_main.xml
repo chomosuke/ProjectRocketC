@@ -22,7 +22,7 @@
 
     <view
         android:id="@+id/MyGLSurfaceView"
-        class="com.chomusukestudio.projectrocketc.MainActivity$MyGLSurfaceView"
+        class="com.chomusukestudio.projectrocketc.MyGLSurfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
