@@ -4,12 +4,13 @@ import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
+import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 
 class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers): Rocket(surrounding, crashSound, rocketPhysics, layers) {
-	override val trace = AccelerationTrace(7, 1.01f, 0.15f, 0.02f, 0.2f, 750, 256,
-					0.004f, Color(1f, 0.9f, 0f, 3f), layers)
+	override val traces: Array<Trace> = arrayOf(AccelerationTrace(7, 1.01f, 0.15f, 0.02f, 0.2f, 750, 256,
+					0.004f, Color(1f, 0.9f, 0f, 3f), layers))
 	override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
 				0.000002f, 0.000001f)
 	override val components: Array<ISolid> = run { // refer to rockets' points/SaturnV.PNG
@@ -70,7 +71,7 @@ class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: 
 	override fun generateTrace(now: Long, previousFrameTime: Long) {
 		val origin = ((components[25] as PolygonalShape).getVertex(1) +
 				(components[26] as PolygonalShape).getVertex(1)) / 2f
-		trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
+		traces[0].generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
 	}
 	
 }

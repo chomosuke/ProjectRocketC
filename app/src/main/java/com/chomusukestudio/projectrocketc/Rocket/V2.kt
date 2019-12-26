@@ -7,6 +7,7 @@ import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
+import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
@@ -18,16 +19,15 @@ import kotlin.math.pow
 
 class V2(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, val layers: Layers)
     : Rocket(surrounding, crashSound, rocketPhysics, layers) {
-    override val trace = //RegularPolygonalTrace(7, 1.01f, 0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f, layers)
-//        SquareTrace(0.24f,  0.4f, 2000, 1f, 1f, 0f, 1f,1.01f, layers)
-            AccelerationTrace(7, 1.01f, 0.1f, 0.02f, 0.1f, 1000, 100,
-                    0.004f, Color(1f, 1f, 0f, 3f), layers)
+    override val traces = arrayOf<Trace>(
+            AccelerationTrace(7, 1.01f, 0.1f, 0.02f, 0.25f, 1000, 100,
+                    0.004f, Color(1f, 1f, 0f, 3f), layers))
     
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val p1 = (components[9] as QuadrilateralShape).vertex2
         val p2 = (components[10] as QuadrilateralShape).vertex2
         val origin = (p1 + p2) * 0.5f
-        trace.generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
+        traces[0].generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
     
     override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,

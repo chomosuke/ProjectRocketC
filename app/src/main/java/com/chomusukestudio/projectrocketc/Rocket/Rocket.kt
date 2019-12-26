@@ -35,7 +35,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
     
     protected open val crashOverlappers get() = Array(components.size) { components[it].overlapper }
     
-    protected abstract val trace: Trace
+    protected abstract val traces: Array<Trace>
     var currentRotation = surrounding.rotation
         /* angle of rocket's current heading in radians
     angle between up and rocket current heading, positive is clockwise. */
@@ -95,8 +95,10 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
         if (rocketControl.throttleOn) {
             generateTrace(now, previousFrameTime)
         }
-        trace.moveTrace(displacement)
-        trace.fadeTrace(now, previousFrameTime)
+        for (trace in traces) {
+            trace.moveTrace(displacement)
+            trace.fadeTrace(now, previousFrameTime)
+        }
         
         surrounding.moveSurrounding(displacement, now, previousFrameTime)
     }
@@ -104,7 +106,8 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
     protected abstract fun generateTrace(now: Long, previousFrameTime: Long)
 
     fun fadeTrace(now: Long, previousFrameTime: Long) {
-        trace.fadeTrace(now, previousFrameTime)
+        for (trace in traces)
+            trace.fadeTrace(now, previousFrameTime)
     }
     
     open fun removeAllShape() {
@@ -112,7 +115,8 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
             if (component is IRemovable)
                 if (!component.removed)
                     component.remove()
-        trace.removeTrace()
+        for (trace in traces)
+            trace.removeTrace()
         explosionShape?.remove()
         crashSound.release()
     }
