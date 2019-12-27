@@ -491,4 +491,3 @@ private const val flybyDistance = 0.5f
 private val maxCloseDist = sqrt(square(flybyDistance) + 2 * (averageRadius + radiusMargin) * flybyDistance) * 2
 private val maxFlybySpeed = speedFormula(0.004f, 200)
 private val timeLimit = (maxCloseDist / maxFlybySpeed).toLong()
-

@@ -9,6 +9,9 @@ import android.content.SharedPreferences
 import android.graphics.Point
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
+import android.support.v4.app.FragmentActivity
+import android.support.v4.view.PagerTitleStrip
+import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.TextView
@@ -109,9 +112,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
                     // see if this is the first time the game open
                     if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
-                        // if it is show the tutorial
-                        findViewById<ConstraintLayout>(R.id.tutorialGroup).visibility = View.VISIBLE
-                        findViewById<ConstraintLayout>(R.id.tutorialGroup).bringToFront()
+                        showTutorial()
 
                         // and set the firstTimeOpen to be false
                         with(sharedPreferences.edit()) {
@@ -126,6 +127,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 }
             }
         }
+    }
+
+    fun showTutorial() {
+        Log.v("tutorial", "showing")
+        // if it is show the tutorial
+        findViewById<ConstraintLayout>(R.id.tutorialGroup).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.tutorialGroup).bringToFront()
+        findViewById<ViewPager>(R.id.tutorialPager).adapter = MyPagerAdapter(this)
     }
 
     fun onTouchMyGLSurface(e: MotionEvent) {
@@ -303,7 +312,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
-    private fun fadeOut(view: View) {
+    fun fadeOut(view: View) {
         val animation = AnimationUtils.loadAnimation(this, R.anim.fade_out_animation)
         animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation?) {}
@@ -315,7 +324,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         view.startAnimation(animation)
     }
 
-    private fun fadeIn(view: View) {
+    fun fadeIn(view: View) {
         val animation = AnimationUtils.loadAnimation(this, R.anim.fade_in_animation)
         animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation?) {}
