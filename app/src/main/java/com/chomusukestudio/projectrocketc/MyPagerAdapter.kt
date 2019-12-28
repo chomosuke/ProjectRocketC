@@ -55,9 +55,9 @@ class MyPagerAdapter(private val mainActivity: MainActivity) : PagerAdapter() {
         rLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
 
         val scale: Float = mainActivity.resources.displayMetrics.density
-        val dpAsPixels = (16 * scale + 0.5f).toInt()
+        val dpAsPixels = (24 * scale + 0.5f).toInt()
+        rLayoutParams.setMargins(dpAsPixels, dpAsPixels, dpAsPixels, dpAsPixels)
 
-        button.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, dpAsPixels)
         return button
     }
 

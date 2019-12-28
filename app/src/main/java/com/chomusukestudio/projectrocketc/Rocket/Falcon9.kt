@@ -11,7 +11,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 class Falcon9(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, crashSound, rocketPhysics, layers) {
     override val traces = arrayOf<Trace>(AccelerationTrace(7, 1.01f, 0.1f, 0.01f, 0.28f, 1000, 128,
             0.004f, Color(1f, 1f, 0f, 3f), layers))
-    override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
+    override val rocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
             0.000002f, 0.000001f)
     override val components: Array<ISolid> = run {
         val pR = arrayOf(

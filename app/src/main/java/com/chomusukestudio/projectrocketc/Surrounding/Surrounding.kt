@@ -489,5 +489,5 @@ private const val radiusMargin = 0.25f
 private const val averageRadius = 0.75f // for planet shape to determent which type of planet suits the size best.
 private const val flybyDistance = 0.5f
 private val maxCloseDist = sqrt(square(flybyDistance) + 2 * (averageRadius + radiusMargin) * flybyDistance) * 2
-private val maxFlybySpeed = speedFormula(0.004f, 200)
+private val maxFlybySpeed = speedFormula(0.003f, 500)
 private val timeLimit = (maxCloseDist / maxFlybySpeed).toLong()

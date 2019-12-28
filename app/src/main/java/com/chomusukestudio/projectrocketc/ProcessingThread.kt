@@ -43,7 +43,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         val crashSound = MediaPlayer.create(mainActivity, R.raw.fx22)
         crashSound.setVolume(0.66f, 0.66f)
         return when (rocketIndex) {
-			0 -> V2InstantDeath(surrounding, crashSound, DragRocketPhysics(), layers)
+			0 -> V2(surrounding, crashSound, DragRocketPhysics(), layers)
             1 -> SaturnV(surrounding, crashSound, DragRocketPhysics(), layers)
             2 -> Falcon9(surrounding, crashSound, DragRocketPhysics(), layers)
             3 -> FalconHeavy(surrounding, crashSound, mainActivity, DragRocketPhysics(), layers)

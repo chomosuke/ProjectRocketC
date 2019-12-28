@@ -14,7 +14,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 class FalconHeavy(surrounding: Surrounding, crashSound: MediaPlayer, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, crashSound, rocketPhysics, layers) {
     override val traces = arrayOf<Trace>(AccelerationTrace(7, 1.01f, 0.3f, 0.01f, 0.3f, 1000, 512,
             0.004f, Color(1f, 1f, 0f, 3f), layers))
-    override val rocketQuirks: RocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
+    override val rocketQuirks: RocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
             0.000002f, 0.000001f)
     override val components: Array<ISolid> = run {
         val arrayForOverlapper = arrayOf(

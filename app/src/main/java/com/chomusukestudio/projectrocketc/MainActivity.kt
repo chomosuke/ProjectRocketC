@@ -67,6 +67,17 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<Button>(R.id.swapRocketLeftButton).setOnClickListener { view -> swapRocketLeft(view) }
         findViewById<Button>(R.id.swapRocketRightButton).setOnClickListener { view -> swapRocketRight(view) }
 
+        // see if this is the first time the game open
+        if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
+            showTutorial()
+
+            // and set the firstTimeOpen to be false
+            with(sharedPreferences.edit()) {
+                putBoolean(getString(R.string.firstTimeOpen), true)
+                apply()
+            }
+        }
+
         // display splashScreen
         findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
 
@@ -110,16 +121,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                                 }
                             })
 
-                    // see if this is the first time the game open
-                    if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
-                        showTutorial()
-
-                        // and set the firstTimeOpen to be false
-                        with(sharedPreferences.edit()) {
-                            putBoolean(getString(R.string.firstTimeOpen), true)
-                            apply()
-                        }
-                    }
                     if (state != State.PreGame) {
                         Log.e("game launching", "state not in PreGame but $state")
                         state = State.PreGame // this is pregame
@@ -129,7 +130,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
-    fun showTutorial() {
+    private fun showTutorial() {
         Log.v("tutorial", "showing")
         // if it is show the tutorial
         findViewById<ConstraintLayout>(R.id.tutorialGroup).visibility = View.VISIBLE

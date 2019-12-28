@@ -11,7 +11,7 @@ import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers): Rocket(surrounding, crashSound, rocketPhysics, layers) {
 	override val traces: Array<Trace> = arrayOf(AccelerationTrace(7, 1.01f, 0.15f, 0.02f, 0.2f, 750, 256,
 					0.004f, Color(1f, 0.9f, 0f, 3f), layers))
-	override val rocketQuirks = RocketQuirks(2f, 0.004f, 0.003f,
+	override val rocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
 				0.000002f, 0.000001f)
 	override val components: Array<ISolid> = run { // refer to rockets' points/SaturnV.PNG
 		val pR = arrayOf(Vector(305f, 92f), Vector(308f, 99f), Vector(308f, 128f), // 2
