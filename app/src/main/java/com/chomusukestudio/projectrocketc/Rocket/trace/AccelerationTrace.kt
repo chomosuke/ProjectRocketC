@@ -36,7 +36,7 @@ class AccelerationTrace(private val numberOfEdges: Int, val z: Float, private va
 			
 			i++
 		}
-		
+		preUnfinishedHalfIs = iMax - i
 	}
 	
 	private fun newAccelerationTraceShape(center: Vector, initialRadius: Float, finalRadius: Float, initialSpeed: Vector,
