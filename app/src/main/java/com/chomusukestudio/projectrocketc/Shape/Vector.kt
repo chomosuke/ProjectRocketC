@@ -32,6 +32,7 @@ class Vector(val x: Float, val y: Float) {
 
     val direction get() = atan2(y, x)
     val abs get() = sqrt(square(x) + square(y))
+    val unitVector get() = this / this.abs
 
     fun scale(pivot: Vector, factor: Float) = Vector(pivot.x + factor * (x - pivot.x), pivot.y + factor * (y - pivot.y))
     fun scaleXY(factor: Vector) = Vector(x * factor.x, y * factor.y)
