@@ -92,12 +92,12 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
         
         val displacement = -velocity * (now - previousFrameTime).toFloat()
 
-        if (rocketControl.throttleOn) {
-            generateTrace(now, previousFrameTime)
-        }
         for (trace in traces) {
             trace.moveTrace(displacement)
             trace.fadeTrace(now, previousFrameTime)
+        }
+        if (rocketControl.throttleOn) {
+            generateTrace(now, previousFrameTime)
         }
         
         surrounding.moveSurrounding(displacement, now, previousFrameTime)
