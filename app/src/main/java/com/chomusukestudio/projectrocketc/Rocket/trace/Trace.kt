@@ -41,7 +41,7 @@ abstract class Trace {
         }, traceShapes.size)
     }
 
-    fun moveTrace(vector: Vector) {
+    open fun moveTrace(vector: Vector) {
         parallelForIForMoveTraces.run({ i ->
             traceShapes[i].move(vector)
         }, traceShapes.size)

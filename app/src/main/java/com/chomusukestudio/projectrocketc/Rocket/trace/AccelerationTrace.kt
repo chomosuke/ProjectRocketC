@@ -31,7 +31,7 @@ class AccelerationTrace(private val numberOfEdges: Int, val z: Float, private va
 			newTraceShape.rotate(center, (2 * Math.PI * Math.random()).toFloat())
 			
 			val margin = /*random();*/i / iMax/* * (0.5f + (1 * (float) random()))*/
-			newTraceShape.fadeTrace(now, previousFrameTime + ((1 - margin) * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
+			newTraceShape.fadeTrace(now,  now - (margin * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
 			newTraceShape.move(-dOrigin * margin)
 			
 			i++
