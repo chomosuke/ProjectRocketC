@@ -69,8 +69,8 @@ class SaturnV(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: 
 	}
 	
 	override fun generateTrace(now: Long, previousFrameTime: Long) {
-		val origin = ((components[25] as PolygonalShape).getVertex(1) +
-				(components[26] as PolygonalShape).getVertex(1)) / 2f
+		val origin =  ((components.last() as EarClipPolygonalShape).getVertex(2) +
+				(components.last() as EarClipPolygonalShape).getVertex(3)) * 0.5f
 		traces[0].generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
 	}
 	
