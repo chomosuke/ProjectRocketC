@@ -384,9 +384,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             when (state) {
                 State.InGame -> {
                     if (!hasFocus) {
-                        myGLSurfaceView.mRenderer.pauseGLRenderer()
-                        findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
-                        state = State.Paused
+                        onPause(findViewById<Button>(R.id.pauseButton))
                     }
                 }
                 State.Paused -> { /*nothing, there is nothing can be done.*/ }
