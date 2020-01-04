@@ -64,8 +64,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ImageButton>(R.id.pauseButton).setOnClickListener { view -> onPause(view) }
         findViewById<ImageButton>(R.id.restartButton).setOnClickListener { view -> restartGame(view) }
         findViewById<ImageButton>(R.id.toHomeButton).setOnClickListener { view -> toHome(view) }
-        findViewById<Button>(R.id.swapRocketLeftButton).setOnClickListener { view -> swapRocketLeft(view) }
-        findViewById<Button>(R.id.swapRocketRightButton).setOnClickListener { view -> swapRocketRight(view) }
+        findViewById<ImageButton>(R.id.swapRocketLeftButton).setOnClickListener { view -> swapRocketLeft(view) }
+        findViewById<ImageButton>(R.id.swapRocketRightButton).setOnClickListener { view -> swapRocketRight(view) }
 
         // see if this is the first time the game open
         if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
@@ -73,7 +73,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
             // and set the firstTimeOpen to be false
             with(sharedPreferences.edit()) {
-                putBoolean(getString(R.string.firstTimeOpen), true)
+                putBoolean(getString(R.string.firstTimeOpen), false)
                 apply()
             }
         }
@@ -259,16 +259,16 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     fun swapRocketLeft(view: View) {
         if (processingThread.isOutOfBounds(-2))
-            findViewById<Button>(R.id.swapRocketLeftButton).visibility = View.INVISIBLE
+            findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.INVISIBLE
         processingThread.swapRocket(-1)
-        findViewById<Button>(R.id.swapRocketRightButton).visibility = View.VISIBLE
+        findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.VISIBLE
     }
 
     fun swapRocketRight(view: View) {
         if (processingThread.isOutOfBounds(2))
-            findViewById<Button>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
+            findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
         processingThread.swapRocket(1)
-        findViewById<Button>(R.id.swapRocketLeftButton).visibility = View.VISIBLE
+        findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.VISIBLE
     }
 
 
@@ -406,9 +406,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 super.onBackPressed()
             }
             State.InGame, State.Paused ->
-                onPause(findViewById<Button>(R.id.pauseButton))
+                onPause(findViewById<ImageButton>(R.id.pauseButton))
             State.Crashed ->
-                toHome(findViewById<Button>(R.id.toHomeButton))
+                toHome(findViewById<ImageButton>(R.id.toHomeButton))
         }
     }
 }
