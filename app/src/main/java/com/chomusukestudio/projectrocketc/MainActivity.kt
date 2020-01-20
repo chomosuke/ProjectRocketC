@@ -9,8 +9,6 @@ import android.content.SharedPreferences
 import android.graphics.Point
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
-import android.support.v4.app.FragmentActivity
-import android.support.v4.view.PagerTitleStrip
 import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.animation.AnimationUtils
@@ -273,11 +271,32 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
 
     fun openSetting(view: View) {
+        val currentLayout =
+                when (state) {
+                    State.InGame -> findViewById<ConstraintLayout>(R.id.inGameLayout)
+                    State.PreGame -> findViewById(R.id.preGameLayout)
+                    else -> throw IllegalStateException()
+                }
 
+        findViewById<ConstraintLayout>(R.id.settingLayout).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.settingLayout).bringToFront()
+
+        currentLayout.visibility = View.INVISIBLE
     }
 
     fun closeSetting(view: View) {
 
+        val currentLayout =
+                when (state) {
+                    State.InGame -> findViewById<ConstraintLayout>(R.id.inGameLayout)
+                    State.PreGame -> findViewById(R.id.preGameLayout)
+                    else -> throw IllegalStateException()
+                }
+
+        currentLayout.visibility = View.VISIBLE
+        currentLayout.bringToFront()
+
+        findViewById<ConstraintLayout>(R.id.settingLayout).visibility = View.INVISIBLE
     }
 
     fun onCrashed() {
