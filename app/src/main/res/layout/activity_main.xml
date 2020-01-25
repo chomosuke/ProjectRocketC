@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
-    tools:context="com.chomusukestudio.projectrocketc.MainActivity">
+    tools:context="com.chomusukestudio.projectrocketc.UI.MainActivity">
 
     <ImageView
         android:id="@+id/chomusukeView"
@@ -22,7 +22,7 @@
 
     <view
         android:id="@+id/MyGLSurfaceView"
-        class="com.chomusukestudio.projectrocketc.MyGLSurfaceView"
+        class="com.chomusukestudio.projectrocketc.UI.MyGLSurfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
@@ -192,6 +192,30 @@
             android:onClick="closeSetting"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sound effects volume"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintStart_toStartOf="@id/soundEffectsVolumeBar"
+            app:layout_constraintTop_toTopOf="@id/soundEffectsVolumeBar" />
+        <SeekBar
+            android:id="@+id/soundEffectsVolumeBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="32dp"
+            android:maxWidth="200dp"
+            android:thumb="@drawable/seek_bar_thumb"
+            android:progressDrawable="@drawable/seek_bar_progress"
+            android:maxHeight="5dp"
+            android:minHeight="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout

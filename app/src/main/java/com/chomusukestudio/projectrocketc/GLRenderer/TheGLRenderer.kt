@@ -15,6 +15,7 @@ import android.content.ContentValues.TAG
 import android.opengl.GLES30
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.ProcessingThread
+import com.chomusukestudio.projectrocketc.UI.MyGLSurfaceView
 
 class TheGLRenderer(val processingThread: ProcessingThread, val myGLSurfaceView: MyGLSurfaceView, private val layers: Layers) : GLSurfaceView.Renderer {
 

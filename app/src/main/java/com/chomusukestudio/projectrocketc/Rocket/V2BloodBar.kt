@@ -11,14 +11,15 @@ import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.UI.MainActivity
 import kotlin.math.pow
 
 /**
  * Created by Shuang Li on 11/03/2018.
  */
 
-class V2BloodBar(surrounding: Surrounding, private val crashSound: MediaPlayer, rocketPhysics: RocketPhysics, val layers: Layers)
-    : Rocket(surrounding, crashSound, rocketPhysics, layers) {
+class V2BloodBar(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, val layers: Layers)
+    : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
     override val traces = arrayOf<Trace>(
             AccelerationTrace(7, 1.01f, 0.1f, 0.02f, 0.25f, 1000, 100,
                     0.004f, Color(1f, 1f, 0f, 3f), layers))

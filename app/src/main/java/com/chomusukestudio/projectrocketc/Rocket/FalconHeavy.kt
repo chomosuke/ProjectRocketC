@@ -3,17 +3,16 @@ package com.chomusukestudio.projectrocketc.Rocket
 import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Image
-import com.chomusukestudio.projectrocketc.MainActivity
+import com.chomusukestudio.projectrocketc.UI.MainActivity
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
-import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.MultiTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.SquareTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 
-class FalconHeavy(surrounding: Surrounding, crashSound: MediaPlayer, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, crashSound, rocketPhysics, layers) {
+class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
     override val traces = arrayOf<Trace>(
             MultiTrace(3, {
                 SquareTrace(0.007f, 0.15f, 0.075f, 400, 32,

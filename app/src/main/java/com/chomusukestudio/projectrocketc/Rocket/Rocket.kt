@@ -8,6 +8,7 @@ import android.media.MediaPlayer
 import android.support.annotation.CallSuper
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Joystick.RocketControl
+import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
@@ -15,10 +16,12 @@ import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.UI.MainActivity
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import kotlin.math.*
 
-abstract class Rocket(protected val surrounding: Surrounding, private val crashSound: MediaPlayer, var rocketPhysics: RocketPhysics, private val layers: Layers) {
+abstract class Rocket(protected val surrounding: Surrounding, private val mainActivity: MainActivity, var rocketPhysics: RocketPhysics, private val layers: Layers) {
+    protected open val crashSound: MediaPlayer = MediaPlayer.create(mainActivity, R.raw.fx22)
     
     protected fun setRotation(centerOfRotation: Vector, rotation: Float) {
         // called before initialize trace
@@ -60,6 +63,8 @@ abstract class Rocket(protected val surrounding: Surrounding, private val crashS
         // surrounding will handle this
         val crashedOverlapper = surrounding.isCrashed(crashOverlappers)
         if (crashedOverlapper.isNotEmpty()) {
+            crashSound.setVolume(0.66f * mainActivity.soundEffectsVolume/100,
+                    0.66f * mainActivity.soundEffectsVolume/100)
             crashSound.start()
             return true
         }

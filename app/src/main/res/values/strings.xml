@@ -5,4 +5,5 @@
     <string name="performanceIndex">dynamicPerformanceIndex</string><!--highest score log velocity-->
     <!--<string name="highestScore">highestScoreLinearSpeed</string>-->
     <string name="firstTimeOpen">firstTimeOpen</string>
+    <string name="soundEffectsVolume">soundEffectsVolume</string>
 </resources>

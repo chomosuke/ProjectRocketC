@@ -14,6 +14,8 @@ import com.chomusukestudio.projectrocketc.Shape.Color
 import com.chomusukestudio.projectrocketc.Shape.TriangularShape
 import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.UI.MainActivity
+import com.chomusukestudio.projectrocketc.UI.State
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import java.lang.IndexOutOfBoundsException
 import java.util.concurrent.Executors
@@ -28,7 +30,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
             TwoFingersJoystick()
 //            OneFingerJoystick()
 //            InertiaJoystick()
-    private var surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers)
+    private var surrounding = Surrounding(mainActivity, layers)
     private var rocketIndex = 0
     private var rocket = getRocket(rocketIndex)
     init {
@@ -40,13 +42,11 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     }
 
     private fun getRocket(rocketIndex: Int): Rocket {
-        val crashSound = MediaPlayer.create(mainActivity, R.raw.fx22)
-        crashSound.setVolume(0.66f, 0.66f)
         return when (rocketIndex) {
-			0 -> V2(surrounding, crashSound, DragRocketPhysics(), layers)
-            1 -> SaturnV(surrounding, crashSound, DragRocketPhysics(), layers)
-            2 -> Falcon9(surrounding, crashSound, DragRocketPhysics(), layers)
-            3 -> FalconHeavy(surrounding, crashSound, mainActivity, DragRocketPhysics(), layers)
+			0 -> V2(surrounding, mainActivity, DragRocketPhysics(), layers)
+            1 -> SaturnV(surrounding, mainActivity, DragRocketPhysics(), layers)
+            2 -> Falcon9(surrounding, mainActivity, DragRocketPhysics(), layers)
+            3 -> FalconHeavy(surrounding, mainActivity, DragRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -86,7 +86,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
         pauseForChanges()
         removeAllShapes() // remove all previous shapes
         val surroundingResources = surrounding.trashAndGetResources()
-        surrounding = Surrounding(TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity), layers, surroundingResources)
+        surrounding = Surrounding(mainActivity, layers, surroundingResources)
         rocket = getRocket(rocketIndex)
         surrounding.initializeSurrounding(rocket, mainActivity.state)
             joystick = TwoFingersJoystick()

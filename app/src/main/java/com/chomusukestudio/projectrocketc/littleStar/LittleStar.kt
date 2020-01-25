@@ -16,8 +16,10 @@ import android.media.SoundPool
 import android.media.AudioManager
 import android.util.Log
 import com.chomusukestudio.projectrocketc.GLRenderer.*
+import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Planet
+import com.chomusukestudio.projectrocketc.UI.MainActivity
 import java.lang.Math.abs
 import kotlin.math.pow
 
@@ -97,11 +99,11 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
     }
     
     //    static final MediaPlayer eatYellowStar =
-    fun eatLittleStar(visualTextView: TouchableView<TextView>) {
+    fun eatLittleStar(mainActivity: MainActivity) {
         when (COLOR) {
             LittleStar.Color.YELLOW -> {
                 score += dScore
-                giveVisualText("+$dScore", visualTextView)
+                giveVisualText("+$dScore", TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
 
                 // stop all streams
                 while (starEatingStreamIds.isNotEmpty()) {
@@ -109,6 +111,7 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
                     starEatingStreamIds.removeAt(0)
                 }
 
+                val volume = mainActivity.soundEffectsVolume.toFloat()/100
                 if (dScore > 48) {
                     val playbackSpeed = 2f.pow((dScore % 12 + 48).toFloat() / 12) / 2
 
@@ -116,18 +119,20 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
 
                     Log.v("eat star baseVolume", "" + baseVolume)
 
-                    starEatingStreamIds.add(soundPool.play(soundId, baseVolume, baseVolume, 1, 0, playbackSpeed / 2f))
-                    starEatingStreamIds.add(soundPool.play(soundId, 1 - baseVolume, 1 - baseVolume, 1, 0, playbackSpeed))
+                    starEatingStreamIds.add(soundPool.play(soundId, baseVolume*volume, baseVolume*volume,
+                            1, 0, playbackSpeed / 2f))
+                    starEatingStreamIds.add(soundPool.play(soundId, (1 - baseVolume)*volume, (1 - baseVolume)*volume,
+                            1, 0, playbackSpeed))
                 } else {
 
                     val playbackSpeed = 2f.pow(dScore.toFloat() / 12) / 2
 
-                    starEatingStreamIds.add(soundPool.play(soundId, 1f, 1f, 1, 0, playbackSpeed))
+                    starEatingStreamIds.add(soundPool.play(soundId, volume, volume, 1, 0, playbackSpeed))
                 }
             }
             LittleStar.Color.RED -> {
                 dScore *= 2
-                giveVisualText("×$dScore", visualTextView)
+                giveVisualText("×$dScore", TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
             }
         }
         littleStarShape.remove()

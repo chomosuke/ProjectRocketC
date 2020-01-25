@@ -1,4 +1,4 @@
-package com.chomusukestudio.projectrocketc
+package com.chomusukestudio.projectrocketc.UI
 
 import android.content.Context
 import android.opengl.GLSurfaceView
@@ -9,6 +9,8 @@ import android.view.SurfaceHolder
 import android.view.WindowManager
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.GLRenderer.TheGLRenderer
+import com.chomusukestudio.projectrocketc.ProcessingThread
+import com.chomusukestudio.projectrocketc.scanForActivity
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.microedition.khronos.egl.EGL10

@@ -8,8 +8,9 @@ import com.chomusukestudio.projectrocketc.Rocket.trace.SquareTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.UI.MainActivity
 
-class Falcon9(surrounding: Surrounding, crashSound: MediaPlayer, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, crashSound, rocketPhysics, layers) {
+class Falcon9(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
     override val traces = arrayOf<Trace>(
 //            AccelerationTrace(7, 1.01f, 0.1f, 0.01f, 0.28f, 1000, 128,
 //            0.004f, Color(1f, 1f, 0f, 3f), layers)

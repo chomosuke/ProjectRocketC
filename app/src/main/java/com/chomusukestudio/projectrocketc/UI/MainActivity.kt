@@ -1,4 +1,4 @@
-package com.chomusukestudio.projectrocketc
+package com.chomusukestudio.projectrocketc.UI
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -12,13 +12,11 @@ import android.support.constraint.ConstraintLayout
 import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.animation.AnimationUtils
-import android.widget.TextView
 
 import android.view.*
 import android.view.animation.Animation
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
+import android.widget.*
+import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.Shape.CircularShape
 //import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.concurrent.Executors
@@ -34,6 +32,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     @Volatile var state: State = State.PreGame
+        private set
+    @Volatile var soundEffectsVolume = 100
+        private set
+    @Volatile var musicVolume = 100
         private set
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +66,23 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ImageButton>(R.id.toHomeButton).setOnClickListener { view -> toHome(view) }
         findViewById<ImageButton>(R.id.swapRocketLeftButton).setOnClickListener { view -> swapRocketLeft(view) }
         findViewById<ImageButton>(R.id.swapRocketRightButton).setOnClickListener { view -> swapRocketRight(view) }
+
+        // setting
+        with(findViewById<SeekBar>(R.id.soundEffectsVolumeBar)) {
+            soundEffectsVolume = sharedPreferences.getInt(getString(R.string.soundEffectsVolume), 100)
+            progress = soundEffectsVolume
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    soundEffectsVolume = progress
+                    with(sharedPreferences.edit()) {
+                        putInt(getString(R.string.soundEffectsVolume), soundEffectsVolume)
+                        apply()
+                    }
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+        }
 
         // see if this is the first time the game open
         if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {

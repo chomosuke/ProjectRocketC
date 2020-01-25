@@ -14,6 +14,8 @@ import com.chomusukestudio.projectrocketc.PlanetShape.MarsShape
 import com.chomusukestudio.projectrocketc.PlanetShape.PlanetShape
 import com.chomusukestudio.projectrocketc.PlanetShape.SaturnShape
 import com.chomusukestudio.projectrocketc.PlanetShape.StarShape
+import com.chomusukestudio.projectrocketc.UI.MainActivity
+import com.chomusukestudio.projectrocketc.UI.State
 
 import java.util.ArrayList
 
@@ -30,7 +32,7 @@ import kotlin.random.Random
  * Created by Shuang Li on 31/03/2018.
  */
 
-class Surrounding(private val visualTextView: TouchableView<TextView>, private val layers: Layers, resources: SurroundingResources? = null) {
+class Surrounding(private val mainActivity: MainActivity, private val layers: Layers, resources: SurroundingResources? = null) {
     private val planets = ArrayList<Planet>() // this defines where the rocket can't go
     // rockets should have z value of 10 while background should have a z value higher than 10, like 11.
     private val backgrounds = // backGrounds doesn't effect plane
@@ -354,7 +356,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
                 LittleStar.dScore = (LittleStar.dScore + (flybysInThisYellowStar * 5))
                 //            LittleStar.Companion.setDScore(1000000);
 //            if ((1 + flybysInThisYellowStar * 0.5) % 1 == 0.0) { // display an integer
-                giveVisualText("δ+" + (flybysInThisYellowStar * 5), visualTextView)
+                giveVisualText("δ+" + (flybysInThisYellowStar * 5), TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
 //            } else {
 //                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5), visualTextView)
 //            }
@@ -379,7 +381,7 @@ class Surrounding(private val visualTextView: TouchableView<TextView>, private v
         }
         for (i in littleStars.indices) {
             if (rocket.isEaten(littleStars[i])) {
-                littleStars[i].eatLittleStar(visualTextView)
+                littleStars[i].eatLittleStar(mainActivity)
                 when (littleStars[i].COLOR) {
                     YELLOW -> {
                         LittleStar.dScore = LittleStar.dScore + 1
