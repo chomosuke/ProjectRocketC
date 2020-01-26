@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.UI
 
+import android.annotation.SuppressLint
 import android.support.v4.view.PagerAdapter
 import android.util.Log
 import android.view.View
@@ -34,6 +35,14 @@ class MyPagerAdapter(private val mainActivity: MainActivity) : PagerAdapter() {
 
         if (position == count - 1) {
             // last tutorial page give an option to quit
+
+//            val button = mainActivity.findViewById<Button>(R.id.finishTutorialButton)
+//            val rLayoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+//                    RelativeLayout.LayoutParams.WRAP_CONTENT)
+//            button.layoutParams = rLayoutParams
+//            rLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+//            rLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+
             relativeLayout.addView(generateQuitTutorialButton())
         }
 
@@ -44,10 +53,10 @@ class MyPagerAdapter(private val mainActivity: MainActivity) : PagerAdapter() {
     private fun generateQuitTutorialButton(): Button {
         val button = Button(mainActivity)
         button.setOnClickListener {
-            mainActivity.fadeOut(mainActivity.findViewById<RelativeLayout>(R.id.tutorialGroup))
+            mainActivity.finishTutorial(button)
         }
 
-        button.text = "finish tutorial"
+        button.text = mainActivity.getString(R.string.finish_tutorial)
 
         val rLayoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT)

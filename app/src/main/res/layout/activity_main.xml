@@ -31,6 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+<!--  preGame  -->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/preGameLayout"
         android:layout_width="match_parent"
@@ -40,13 +41,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    
+
+
         <ImageButton
             android:id="@+id/settingButton"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:padding="16dp"
-            android:scaleType="centerCrop"
+            android:scaleType="centerInside"
             android:src="@drawable/setting_button"
             android:background="@android:color/transparent"
             android:onClick="openSetting"
@@ -55,17 +57,18 @@
 
         <ImageButton
             android:id="@+id/playButton"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:background="@android:color/transparent"
-            android:cropToPadding="false"
-            android:scaleType="centerCrop"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/image_button_background"
+            android:padding="30dp"
+            android:scaleType="centerInside"
             android:src="@drawable/play_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"
+            app:layout_constraintVertical_bias="0.72"
+            android:onClick="startGame"
             android:clickable="true"
             android:focusable="true" />
 
@@ -76,7 +79,7 @@
             android:background="@android:color/transparent"
             android:padding="20dp"
             android:visibility="invisible"
-            android:scaleType="centerCrop"
+            android:scaleType="centerInside"
             android:src="@drawable/left_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -91,7 +94,7 @@
             android:layout_height="64dp"
             android:background="@android:color/transparent"
             android:padding="20dp"
-            android:scaleType="centerCrop"
+            android:scaleType="centerInside"
             android:src="@drawable/right_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -102,6 +105,7 @@
 
     </android.support.constraint.ConstraintLayout>
 
+<!--  inGame  -->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/inGameLayout"
         android:layout_width="match_parent"
@@ -137,15 +141,16 @@
             android:id="@+id/pauseButton"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
+            android:background="@drawable/image_button_background"
+            android:padding="18dp"
             android:scaleType="centerInside"
             android:src="@drawable/pause_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:onClick="onPause"/>
     
         <TextView
             android:id="@+id/deltaTextView"
@@ -164,6 +169,7 @@
 
     </android.support.constraint.ConstraintLayout>
 
+<!--  setting  -->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/settingLayout"
         android:layout_width="match_parent"
@@ -186,7 +192,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:padding="16dp"
-            android:scaleType="centerCrop"
+            android:scaleType="centerInside"
             android:src="@drawable/back_button"
             android:background="@android:color/transparent"
             android:onClick="closeSetting"
@@ -196,28 +202,40 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="sound effects volume"
+            android:text="@string/sound_effects_volume"
+            android:textColor="#FFF"
             android:layout_marginStart="32dp"
             android:layout_marginTop="2dp"
             app:layout_constraintStart_toStartOf="@id/soundEffectsVolumeBar"
             app:layout_constraintTop_toTopOf="@id/soundEffectsVolumeBar" />
+
         <SeekBar
             android:id="@+id/soundEffectsVolumeBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="32dp"
-            android:maxWidth="200dp"
-            android:thumb="@drawable/seek_bar_thumb"
-            android:progressDrawable="@drawable/seek_bar_progress"
-            android:maxHeight="5dp"
-            android:minHeight="5dp"
+            style="@style/MSeekBar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/tutorialButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tutorial"
+            style="@style/MButton"
+            app:layout_constraintVertical_bias="0.75"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="showTutorial"/>
+
     </android.support.constraint.ConstraintLayout>
 
+<!--  onPaused  -->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/onPausedLayout"
         android:layout_width="match_parent"
@@ -236,48 +254,77 @@
 <!--            android:src="@drawable/black"  />-->
 
         <ImageButton
+            android:id="@+id/resumeButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/image_button_background"
+            android:padding="30dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/play_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.72"
+            android:onClick="onPause"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <ImageButton
             android:id="@+id/restartButtonPaused"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/transparent"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/image_button_background"
+            android:padding="20dp"
             android:scaleType="centerInside"
             android:src="@drawable/restart_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/settingButtonPaused"
             app:layout_constraintStart_toEndOf="@id/toHomeButtonPaused"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"
+            app:layout_constraintVertical_bias="0.9"
             android:onClick="restartGame"
             android:clickable="true"
             android:focusable="true" />
 
         <ImageButton
             android:id="@+id/toHomeButtonPaused"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/transparent"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/image_button_background"
+            android:padding="20dp"
             android:scaleType="centerInside"
             android:src="@drawable/to_home_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/restartButtonPaused"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"
+            app:layout_constraintVertical_bias="0.9"
             android:onClick="toHome"
             android:clickable="true"
             android:focusable="true" />
 
+        <ImageButton
+            android:id="@+id/settingButtonPaused"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/image_button_background"
+            android:padding="19dp"
+            android:scaleType="centerInside"
+            app:layout_constraintVertical_bias="0.9"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/setting_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/restartButtonPaused"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="openSetting" />
+
     </android.support.constraint.ConstraintLayout>
 
+<!--  onCrash  -->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/onCrashLayout"
         android:layout_width="match_parent"
@@ -288,14 +335,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="restartGame"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_to_restart"
+            android:textSize="20sp"
+            android:textColor="#FFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.80"/>
+
         <TextView
             android:id="@+id/previousScoreOnCrashTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
             android:textSize="30sp"
-            android:text="SCORE"
+            android:text="@string/score"
             app:layout_constraintBottom_toTopOf="@+id/previousScoreOnCrash"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -310,7 +379,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3" />
+            app:layout_constraintVertical_bias="0.25" />
     
         <TextView
             android:id="@+id/highestScoreOnCrashTitle"
@@ -318,7 +387,7 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
             android:textSize="30sp"
-            android:text="HIGHEST SCORE"
+            android:text="@string/highest_score"
             app:layout_constraintBottom_toTopOf="@+id/highestScoreOnCrash"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -333,51 +402,46 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
+            app:layout_constraintVertical_bias="0.45" />
 
         <ImageButton
-            android:id="@+id/restartButton"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/transparent"
+            android:id="@+id/settingButtonOnCrash"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="22dp"
+            android:background="@drawable/image_button_background"
             android:scaleType="centerInside"
-            android:src="@drawable/restart_button"
+            android:src="@drawable/setting_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/toHomeButton"
             app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"
-            android:onClick="restartGame"
+            app:layout_constraintVertical_bias="0.6"
+            android:onClick="openSetting"
             android:clickable="true"
             android:focusable="true" />
 
         <ImageButton
             android:id="@+id/toHomeButton"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/transparent"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="23dp"
+            android:background="@drawable/image_button_background"
             android:scaleType="centerInside"
             android:src="@drawable/to_home_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/restartButton"
+            app:layout_constraintEnd_toStartOf="@id/settingButtonOnCrash"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.75"
+            app:layout_constraintVertical_bias="0.6"
             android:onClick="toHome"
             android:clickable="true"
             android:focusable="true" />
 
     </android.support.constraint.ConstraintLayout>
 
+<!--  scores  -->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/scoresLayout"
         android:layout_width="match_parent"
@@ -433,6 +497,7 @@
 
     </android.support.constraint.ConstraintLayout>
 
+<!--  tutorial  -->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/tutorialGroup"
         android:layout_width="match_parent"
@@ -443,6 +508,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/black"  />
+
         <android.support.v4.view.ViewPager
             android:id="@+id/tutorialPager"
             android:layout_width="match_parent"
@@ -450,7 +521,26 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent">
+
+<!--            <android.support.design.widget.TabLayout-->
+<!--                android:id="@+id/tabDots"-->
+<!--                android:layout_alignParentBottom="true"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:tabBackground="@drawable/tab_selector"-->
+<!--                app:tabGravity="center"-->
+<!--                app:tabIndicatorHeight="0dp"/>-->
+
+            <Button
+                android:id="@+id/finishTutorialButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/MButton"
+                android:text="@string/finish_tutorial"
+                android:layout_margin="24dp" />
+
+        </android.support.v4.view.ViewPager>
 
     </android.support.constraint.ConstraintLayout>
 

@@ -8,8 +8,8 @@ android {
         applicationId "com.chomusukestudio.projectrocketc"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 56
-        versionName "PR9"
+        versionCode 57
+        versionName "PR10"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -19,8 +19,8 @@ android {
         }
     }
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+        targetCompatibility "1.8"
+        sourceCompatibility "1.8"
     }
 }
 

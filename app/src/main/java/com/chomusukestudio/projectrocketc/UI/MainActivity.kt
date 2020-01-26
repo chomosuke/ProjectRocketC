@@ -59,14 +59,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //            apply()
 //        }
 
-        // a safer way to set listener
-        findViewById<ImageButton>(R.id.playButton).setOnClickListener { view -> startGame(view) }
-        findViewById<ImageButton>(R.id.pauseButton).setOnClickListener { view -> onPause(view) }
-        findViewById<ImageButton>(R.id.restartButton).setOnClickListener { view -> restartGame(view) }
-        findViewById<ImageButton>(R.id.toHomeButton).setOnClickListener { view -> toHome(view) }
-        findViewById<ImageButton>(R.id.swapRocketLeftButton).setOnClickListener { view -> swapRocketLeft(view) }
-        findViewById<ImageButton>(R.id.swapRocketRightButton).setOnClickListener { view -> swapRocketRight(view) }
-
         // setting
         with(findViewById<SeekBar>(R.id.soundEffectsVolumeBar)) {
             soundEffectsVolume = sharedPreferences.getInt(getString(R.string.soundEffectsVolume), 100)
@@ -86,7 +78,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         // see if this is the first time the game open
         if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
-            showTutorial()
+            showTutorial(findViewById(R.id.tutorialButton))
 
             // and set the firstTimeOpen to be false
             with(sharedPreferences.edit()) {
@@ -147,12 +139,15 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
-    private fun showTutorial() {
+    fun showTutorial(view: View) {
         Log.v("tutorial", "showing")
         // if it is show the tutorial
         findViewById<ConstraintLayout>(R.id.tutorialGroup).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.tutorialGroup).bringToFront()
         findViewById<ViewPager>(R.id.tutorialPager).adapter = MyPagerAdapter(this)
+    }
+    fun finishTutorial(view: View) {
+        fadeOut(findViewById(R.id.tutorialGroup))
     }
 
     fun onTouchMyGLSurface(e: MotionEvent) {
@@ -206,14 +201,13 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ConstraintLayout>(R.id.onPausedLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.onPausedLayout).bringToFront()
 //        fadeIn(findViewById(R.id.onPausedLayout))
-        findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.resume_button))
-        findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
+        findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
     }
     private fun resumeGame() {
         myGLSurfaceView.mRenderer.resumeGLRenderer()
 //        findViewById<ConstraintLayout>(R.id.onPausedLayout).visibility = View.INVISIBLE
         fadeOut(findViewById(R.id.onPausedLayout))
-        findViewById<ImageButton>(R.id.pauseButton).setImageDrawable(resources.getDrawable(R.drawable.pause_button))
+        fadeIn(findViewById(R.id.inGameLayout))
     }
 
     private var lastClickRestartGame = 0L
@@ -280,7 +274,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         processingThread.swapRocket(-1)
         findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.VISIBLE
     }
-
     fun swapRocketRight(view: View) {
         if (processingThread.isOutOfBounds(2))
             findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
@@ -291,31 +284,30 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     fun openSetting(view: View) {
         val currentLayout =
-                when (state) {
-                    State.InGame -> findViewById<ConstraintLayout>(R.id.inGameLayout)
-                    State.PreGame -> findViewById(R.id.preGameLayout)
-                    else -> throw IllegalStateException()
-                }
+                getCurrentLayoutForSetting()
 
         findViewById<ConstraintLayout>(R.id.settingLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.settingLayout).bringToFront()
 
         currentLayout.visibility = View.INVISIBLE
     }
-
     fun closeSetting(view: View) {
 
         val currentLayout =
-                when (state) {
-                    State.InGame -> findViewById<ConstraintLayout>(R.id.inGameLayout)
-                    State.PreGame -> findViewById(R.id.preGameLayout)
-                    else -> throw IllegalStateException()
-                }
+                getCurrentLayoutForSetting()
 
         currentLayout.visibility = View.VISIBLE
         currentLayout.bringToFront()
 
         findViewById<ConstraintLayout>(R.id.settingLayout).visibility = View.INVISIBLE
+    }
+    private fun getCurrentLayoutForSetting(): ConstraintLayout {
+        return when (state) {
+            State.Paused -> findViewById(R.id.onPausedLayout)
+            State.PreGame -> findViewById(R.id.preGameLayout)
+            State.Crashed -> findViewById(R.id.onCrashLayout)
+            else -> throw IllegalStateException()
+        }
     }
 
     fun onCrashed() {

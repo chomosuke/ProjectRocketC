@@ -18,4 +18,18 @@
          <item name="colorPrimaryDark">@android:color/background_dark</item>
     </style>
 
+    <style name="MButton" parent="android:Widget.Button">
+<!--        <item name="android:background">@drawable/button_background</item>-->
+<!--        <item name="android:textColor">#FFF</item>-->
+<!--        <item name="android:padding">16dp</item>-->
+    </style>
+
+    <style name="MSeekBar" parent="android:Widget.SeekBar">
+        <item name="android:maxWidth">200dp</item>
+        <item name="android:thumb">@drawable/seek_bar_thumb</item>
+        <item name="android:progressDrawable">@drawable/seek_bar_progress</item>
+        <item name="android:maxHeight">5dp</item>
+        <item name="android:minHeight">5dp</item>
+    </style>
+
 </resources>
