@@ -10,6 +10,6 @@
     <string name="tutorial">Tutorial</string>
     <string name="tap_to_restart">Tap to restart</string>
     <string name="score">SCORE</string>
-    <string name="highest_score">HIGHEST SCORE</string>
+    <string name="highest_score">BEST</string>
     <string name="finish_tutorial">finish tutorial</string>
 </resources>

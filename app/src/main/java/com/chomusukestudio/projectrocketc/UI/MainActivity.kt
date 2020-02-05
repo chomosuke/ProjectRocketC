@@ -201,13 +201,13 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ConstraintLayout>(R.id.onPausedLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.onPausedLayout).bringToFront()
 //        fadeIn(findViewById(R.id.onPausedLayout))
-        findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
+        findViewById<ImageButton>(R.id.pauseButton).visibility = View.INVISIBLE
     }
     private fun resumeGame() {
         myGLSurfaceView.mRenderer.resumeGLRenderer()
 //        findViewById<ConstraintLayout>(R.id.onPausedLayout).visibility = View.INVISIBLE
         fadeOut(findViewById(R.id.onPausedLayout))
-        fadeIn(findViewById(R.id.inGameLayout))
+        fadeIn(findViewById(R.id.pauseButton))
     }
 
     private var lastClickRestartGame = 0L
@@ -343,7 +343,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
-    fun fadeOut(view: View) {
+    private fun fadeOut(view: View) {
         val animation = AnimationUtils.loadAnimation(this, R.anim.fade_out_animation)
         animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation?) {}
@@ -355,7 +355,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         view.startAnimation(animation)
     }
 
-    fun fadeIn(view: View) {
+    private fun fadeIn(view: View) {
         val animation = AnimationUtils.loadAnimation(this, R.anim.fade_in_animation)
         animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation?) {}
