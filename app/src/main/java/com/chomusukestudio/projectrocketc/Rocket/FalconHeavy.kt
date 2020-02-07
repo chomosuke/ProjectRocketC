@@ -11,6 +11,7 @@ import com.chomusukestudio.projectrocketc.Rocket.trace.SquareTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
+import kotlin.math.PI
 
 class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
     override val traces = arrayOf<Trace>(
@@ -45,5 +46,9 @@ class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPh
         traces[0].generateTrace(now, previousFrameTime,
                 ((components[0] as Image).vertex3 + (components[0] as Image).vertex4) / 2f,
                 RocketState(currentRotation, velocity))
+    }
+
+    init {
+
     }
 }
