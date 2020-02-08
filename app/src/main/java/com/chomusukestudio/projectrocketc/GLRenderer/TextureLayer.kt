@@ -71,7 +71,7 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
                         "    v4.w = 0.0;" +
                         "  else if (v4.w > 1.0)" +
                         "    v4.w = 1.0;" +
-                        
+
                         "  return v4;" +
                         "}"
     }
@@ -230,5 +230,9 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
                 colorOffset[0], colorOffset[1], colorOffset[2], colorOffset[3])
 
 
+    }
+
+    protected fun finalize() {
+        GLES30.glDeleteTextures(1, intArrayOf(textureHandle), 0)
     }
 }
