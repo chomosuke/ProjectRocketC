@@ -34,7 +34,6 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
 
                         "uniform sampler2D texture;" +
 
-                        "uniform bool swapColor;" +
                         "uniform vec4 colorBeSwapped;" +
                         "uniform vec4 colorSwappedTo;" +
                         "uniform vec4 colorOffset;" +
@@ -45,7 +44,7 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
 
                         "void main() {" +
                         "  vec4 color = texture2D(texture, tCoordsF);" +
-                        "  if (color == colorBeSwapped && swapColor) " +
+                        "  if (color == colorBeSwapped) " +
                         "    color = colorSwappedTo;" +
                         "  color += colorOffset;" +
                         "  gl_FragColor = bringInRange(color);" +
@@ -78,11 +77,9 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
 
     private var textureHandle = 0
 
-    private var swapColor = false
     private val colorBeSwapped = arrayOf(0f, 0f, 0f, 0f)
-    private val colorSwappedTo = arrayOf(0f, 1f, 0f, 1f) // default swap to green
+    private val colorSwappedTo = arrayOf(0f, 0f, 0f, 0f)
     fun setColorSwap(colorBeSwapped: Array<Float>, colorSwappedTo: Array<Float>) {
-        swapColor = true
         if (colorBeSwapped.size != this.colorBeSwapped.size
                 || colorSwappedTo.size != this.colorSwappedTo.size)
             throw IllegalArgumentException()
@@ -90,9 +87,6 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
             this.colorBeSwapped[i] = colorBeSwapped[i]
             this.colorSwappedTo[i] = colorSwappedTo[i]
         }
-    }
-    fun stopColorSwap() {
-        swapColor = false
     }
 
     val colorOffset = arrayOf(0f, 0f, 0f, 0f)
@@ -217,19 +211,14 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
         GLES30.glDisableVertexAttribArray(tCoordsHandle)
     }
     private fun setUniforms(mProgram: Int) {
-        GLES30.glUniform1i(GLES30.glGetUniformLocation(mProgram, "swapColor"),
-                if(swapColor) 1 else 0)
-//        if (swapColor) {
-            GLES30.glUniform4f(GLES30.glGetUniformLocation(mProgram, "colorBeSwapped"),
-                    colorBeSwapped[0], colorBeSwapped[1], colorBeSwapped[2], colorBeSwapped[3])
+        GLES30.glUniform4f(GLES30.glGetUniformLocation(mProgram, "colorBeSwapped"),
+                colorBeSwapped[0], colorBeSwapped[1], colorBeSwapped[2], colorBeSwapped[3])
 
-            GLES30.glUniform4f(GLES30.glGetUniformLocation(mProgram, "colorSwappedTo"),
-                    colorSwappedTo[0], colorSwappedTo[1], colorSwappedTo[2], colorSwappedTo[3])
-//        }
+        GLES30.glUniform4f(GLES30.glGetUniformLocation(mProgram, "colorSwappedTo"),
+                colorSwappedTo[0], colorSwappedTo[1], colorSwappedTo[2], colorSwappedTo[3])
+
         GLES30.glUniform4f(GLES30.glGetUniformLocation(mProgram, "colorOffset"),
                 colorOffset[0], colorOffset[1], colorOffset[2], colorOffset[3])
-
-
     }
 
     protected fun finalize() {

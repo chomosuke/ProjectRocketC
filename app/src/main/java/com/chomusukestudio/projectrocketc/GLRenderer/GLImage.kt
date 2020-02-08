@@ -42,7 +42,6 @@ class GLImage(context: Context, resourceId: Int, vertex1: Vector, vertex2: Vecto
         get() = Vector(textureLayer.triangleCoords[8], textureLayer.triangleCoords[9])
 
     fun setColorSwap(colorBeSwapped: Array<Float>, colorSwappedTo: Array<Float>) = textureLayer.setColorSwap(colorBeSwapped, colorSwappedTo)
-    fun stopColorSwap() = textureLayer.stopColorSwap()
 
     val colorOffset = textureLayer.colorOffset
 

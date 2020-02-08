@@ -13,7 +13,6 @@ class Image(context: Context, resourceId: Int, var vertex1: Vector, var vertex2:
     fun setColorSwap(colorBeSwapped: Color, colorSwappedTo: Color) {
         glImage.setColorSwap(colorBeSwapped.toArray(), colorSwappedTo.toArray())
     }
-    fun stopColorSwap() = glImage.stopColorSwap()
 
     var colorOffset: Color
         get() = Color(glImage.colorOffset[0],
