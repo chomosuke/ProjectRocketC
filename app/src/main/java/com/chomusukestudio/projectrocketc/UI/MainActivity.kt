@@ -139,15 +139,20 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
     }
 
+    private var inTutorial = false
     fun showTutorial(view: View) {
         Log.v("tutorial", "showing")
         // if it is show the tutorial
         findViewById<ConstraintLayout>(R.id.tutorialGroup).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.tutorialGroup).bringToFront()
         findViewById<ViewPager>(R.id.tutorialPager).adapter = MyPagerAdapter(this)
+
+        inTutorial = true
     }
     fun finishTutorial(view: View) {
         fadeOut(findViewById(R.id.tutorialGroup))
+
+        inTutorial = false
     }
 
     fun onTouchMyGLSurface(e: MotionEvent) {
@@ -281,7 +286,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.VISIBLE
     }
 
-
+    private var inSetting = false
     fun openSetting(view: View) {
         val currentLayout =
                 getCurrentLayoutForSetting()
@@ -290,6 +295,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ConstraintLayout>(R.id.settingLayout).bringToFront()
 
         currentLayout.visibility = View.INVISIBLE
+
+        inSetting = true
     }
     fun closeSetting(view: View) {
 
@@ -300,6 +307,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         currentLayout.bringToFront()
 
         findViewById<ConstraintLayout>(R.id.settingLayout).visibility = View.INVISIBLE
+
+        inSetting = false
     }
     private fun getCurrentLayoutForSetting(): ConstraintLayout {
         return when (state) {
@@ -431,14 +440,20 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     override fun onBackPressed() {
-        when (state) {
-            State.PreGame -> {
-                super.onBackPressed()
+        if (inTutorial) {
+            finishTutorial(findViewById(R.id.finishTutorialButton))
+        } else if (inSetting) {
+            closeSetting(findViewById(R.id.closeSettingButton))
+        } else {
+            when (state) {
+                State.PreGame -> {
+                    super.onBackPressed()
+                }
+                State.InGame, State.Paused ->
+                    onPause(findViewById<ImageButton>(R.id.pauseButton))
+                State.Crashed ->
+                    toHome(findViewById<ImageButton>(R.id.toHomeButton))
             }
-            State.InGame, State.Paused ->
-                onPause(findViewById<ImageButton>(R.id.pauseButton))
-            State.Crashed ->
-                toHome(findViewById<ImageButton>(R.id.toHomeButton))
         }
     }
 }

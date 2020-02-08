@@ -59,7 +59,7 @@ class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: Ro
 
         val image = Image(mainActivity, R.drawable.v2_, imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
                 overlapperVertexes, false, 0.5f, layers)
-        image.colorOffset = Color(0.2f, 0.2f, 0.2f, 0f)
+        image.colorOffset = Color(0.25f, 0.25f, 0.25f, 0f)
 //        image.setColorSwap(Color(0f, 0f, 0f, 1f), Color(0.2f, 0.2f, 0.2f, 1f))
 
         arrayOf(image)
