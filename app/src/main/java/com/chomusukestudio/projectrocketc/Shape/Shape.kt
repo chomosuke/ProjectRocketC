@@ -85,7 +85,9 @@ abstract class Shape : ISolid, IRemovable {
     }
 }
 
-data class Color (val red: Float, val green: Float, val blue: Float, val alpha: Float)
+data class Color (val red: Float, val green: Float, val blue: Float, val alpha: Float) {
+    fun toArray() = arrayOf(red, green, blue, alpha)
+}
 
 data class BuildShapeAttr(val z: Float, val visibility: Boolean, val layers: Layers) { // never set this as a property
     fun newAttrWithChangedZ(dz: Float) = BuildShapeAttr(z + dz, visibility, layers)

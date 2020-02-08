@@ -47,6 +47,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
             1 -> SaturnV(surrounding, mainActivity, DragRocketPhysics(), layers)
             2 -> Falcon9(surrounding, mainActivity, DragRocketPhysics(), layers)
             3 -> FalconHeavy(surrounding, mainActivity, DragRocketPhysics(), layers)
+            4 -> SpaceShuttle(surrounding, mainActivity, DragRocketPhysics(), layers)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -60,7 +61,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
     }
     fun isOutOfBounds(dIndex: Int): Boolean {
         val index = rocketIndex + dIndex
-        return index !in 0..3
+        return index !in 0..4
     }
 
     private fun updateScore() {
