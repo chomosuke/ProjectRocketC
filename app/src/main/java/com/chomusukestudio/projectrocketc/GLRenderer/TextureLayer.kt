@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.opengl.GLES30
 import android.opengl.GLUtils
+import android.util.Log
 import com.chomusukestudio.projectrocketc.Shape.Vector
 import java.nio.FloatBuffer
 
@@ -30,14 +31,71 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
 
         private const val fragmentShaderCode =
                 "precision mediump float;" +
+
                         "uniform sampler2D texture;" +
+
+                        "uniform bool swapColor;" +
+                        "uniform vec4 colorBeSwapped;" +
+                        "uniform vec4 colorSwappedTo;" +
+                        "uniform vec4 colorOffset;" +
+
                         "varying vec2 tCoordsF;" +
+
+                        "vec4 bringInRange(vec4 v4);" +
+
                         "void main() {" +
-                        " gl_FragColor = texture2D(texture, tCoordsF);" +
+                        "  vec4 color = texture2D(texture, tCoordsF);" +
+                        "  if (color == colorBeSwapped && swapColor) " +
+                        "    color = colorSwappedTo;" +
+                        "  color += colorOffset;" +
+                        "  gl_FragColor = bringInRange(color);" +
+                        "}" +
+
+                        "vec4 bringInRange(vec4 v4) {" +
+                        "  if (v4.x < 0.0)" +
+                        "    v4.x = 0.0;" +
+                        "  else if (v4.x > 1.0)" +
+                        "    v4.x = 1.0;" +
+
+                        "  if (v4.y < 0.0)" +
+                        "    v4.y = 0.0;" +
+                        "  else if (v4.y > 1.0)" +
+                        "    v4.y = 1.0;" +
+
+                        "  if (v4.z < 0.0)" +
+                        "    v4.z = 0.0;" +
+                        "  else if (v4.z > 1.0)" +
+                        "    v4.z = 1.0;" +
+
+                        "  if (v4.w < 0.0)" +
+                        "    v4.w = 0.0;" +
+                        "  else if (v4.w > 1.0)" +
+                        "    v4.w = 1.0;" +
+                        
+                        "  return v4;" +
                         "}"
     }
 
     private var textureHandle = 0
+
+    private var swapColor = false
+    private val colorBeSwapped = arrayOf(0f, 0f, 0f, 0f)
+    private val colorSwappedTo = arrayOf(0f, 1f, 0f, 1f) // default swap to green
+    fun setColorSwap(colorBeSwapped: Array<Float>, colorSwappedTo: Array<Float>) {
+        swapColor = true
+        if (colorBeSwapped.size != this.colorBeSwapped.size
+                || colorSwappedTo.size != this.colorSwappedTo.size)
+            throw IllegalArgumentException()
+        for (i in 0 .. 3) {
+            this.colorBeSwapped[i] = colorBeSwapped[i]
+            this.colorSwappedTo[i] = colorSwappedTo[i]
+        }
+    }
+    fun stopColorSwap() {
+        swapColor = false
+    }
+
+    val colorOffset = arrayOf(0f, 0f, 0f, 0f)
 
     init {
         triangleCoords[0] = vertex1.x
@@ -143,6 +201,8 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
         // Pass the projection and view transformation to the shader
         GLES30.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
+        setUniforms(mProgram)
+
         // Draw the triangle
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, vertexCount)
 
@@ -155,5 +215,20 @@ class TextureLayer(private val context: Context, private val resourceId: Int,
         // Disable vertex array
         GLES30.glDisableVertexAttribArray(mPositionHandle)
         GLES30.glDisableVertexAttribArray(tCoordsHandle)
+    }
+    private fun setUniforms(mProgram: Int) {
+        GLES30.glUniform1i(GLES30.glGetUniformLocation(mProgram, "swapColor"),
+                if(swapColor) 1 else 0)
+//        if (swapColor) {
+            GLES30.glUniform4f(GLES30.glGetUniformLocation(mProgram, "colorBeSwapped"),
+                    colorBeSwapped[0], colorBeSwapped[1], colorBeSwapped[2], colorBeSwapped[3])
+
+            GLES30.glUniform4f(GLES30.glGetUniformLocation(mProgram, "colorSwappedTo"),
+                    colorSwappedTo[0], colorSwappedTo[1], colorSwappedTo[2], colorSwappedTo[3])
+//        }
+        GLES30.glUniform4f(GLES30.glGetUniformLocation(mProgram, "colorOffset"),
+                colorOffset[0], colorOffset[1], colorOffset[2], colorOffset[3])
+
+
     }
 }
