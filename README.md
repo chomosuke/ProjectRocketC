@@ -22,4 +22,4 @@ Every instance of Shape is made up of other instances of shape. The only excepti
 This is of course a oversimplified version of my code. Many of the relationship mention above are infact indirect. If you really want to know more you can potientionally look into my actually code. It's very readable and well structured so if you can't read it it's definetely your fault not mine.
 
 ### Screenshot of The Game
-haha too bad for you there isn't any, if you want to know what the game is like download it on Google Play
+haha too bad for you there isn't any, if you want to know what the game is like download it on Google Play.
