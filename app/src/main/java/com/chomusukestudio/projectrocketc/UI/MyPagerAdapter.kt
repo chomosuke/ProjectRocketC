@@ -52,9 +52,7 @@ class MyPagerAdapter(private val mainActivity: MainActivity) : PagerAdapter() {
 
     private fun generateQuitTutorialButton(): Button {
         val button = Button(mainActivity)
-        button.setOnClickListener {
-            mainActivity.finishTutorial(button)
-        }
+        button.setOnClickListener { mainActivity.finishTutorial() }
 
         button.text = mainActivity.getString(R.string.finish_tutorial)
 

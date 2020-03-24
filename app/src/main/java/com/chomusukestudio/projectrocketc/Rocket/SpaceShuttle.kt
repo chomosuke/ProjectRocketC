@@ -56,8 +56,4 @@ class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketP
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
     }
-
-    init {
-        setRotation(surrounding.centerOfRotation, surrounding.rotation)
-    }
 }

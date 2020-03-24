@@ -52,9 +52,4 @@ class TestingRocket(surrounding: Surrounding, mainActivity: MainActivity, rocket
             }
         }
     }
-
-    // initialize for surrounding to set centerOfRotation
-    init {
-        setRotation(surrounding.centerOfRotation, surrounding.rotation)
-    }
 }

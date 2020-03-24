@@ -68,8 +68,4 @@ class Falcon9(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         traces[0].generateTrace(now, previousFrameTime, ((components.last() as EarClipPolygonalShape).getVertex(8) + (components.last() as EarClipPolygonalShape).getVertex(15)) * 0.5f, RocketState(currentRotation, velocity))
     }
-
-    init {
-        setRotation(surrounding.centerOfRotation, surrounding.rotation)
-    }
 }

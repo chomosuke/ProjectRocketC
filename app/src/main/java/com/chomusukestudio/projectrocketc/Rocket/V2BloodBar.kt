@@ -113,11 +113,6 @@ class V2BloodBar(surrounding: Surrounding, mainActivity: MainActivity, rocketPhy
             Vector(0f, rf), Vector(0f, -rf), Vector(0f, rf), Vector(0f, -rf),
             Vector(0f, rf), Vector(0f, -rf), Vector(0f, rf))
     
-    // initialize for surrounding to set centerOfRotation
-    init {
-        setRotation(surrounding.centerOfRotation, surrounding.rotation)
-    }
-    
     private var blood = 1f
         set(value) {
             field = value

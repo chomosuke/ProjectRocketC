@@ -27,14 +27,14 @@ class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPh
             0.000002f, 0.000001f)
     override val components: Array<ISolid> = run {
         val arrayForOverlapper = arrayOf(
-                Vector(-0.2f, -0.6f), Vector(-0.2f, 0.1f),
-                Vector(-0.15f, 0.2f), Vector(-0.05f, 0.15f),
-                Vector(-0.08f, 0.55f),
-                Vector(0f, 0.6f), // top vertex
-                Vector(0.08f, 0.55f),
-                Vector(0.05f, 0.15f), Vector(0.15f, 0.2f),
-                Vector(0.2f, 0.1f), Vector(0.2f, -0.6f))
-        val imageVertexes = arrayOf(Vector(-0.2f, 0.6f), Vector(0.2f, 0.6f), Vector(0.2f, -0.6f), Vector(-0.2f, -0.6f))
+                Vector(-0.6f, 0.2f), Vector(0.1f, 0.2f),
+                Vector(0.2f, 0.15f), Vector(0.15f, 0.05f),
+                Vector(0.55f, 0.08f),
+                Vector(0.6f, 0f), // top vertex,
+                Vector(0.55f, -0.08f),
+                Vector(0.15f, -0.05f), Vector(0.2f, -0.15f),
+                Vector(0.1f, -0.2f), Vector(-0.6f, -0.2f))
+        val imageVertexes = arrayOf(Vector(0.6f, 0.2f), Vector(0.6f, -0.2f), Vector(-0.6f, -0.2f), Vector(-0.6f, 0.2f))
         arrayOf(Image(mainActivity, R.drawable.falcon_heavy,
                 imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
                 arrayForOverlapper, false,
@@ -46,9 +46,5 @@ class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPh
         traces[0].generateTrace(now, previousFrameTime,
                 ((components[0] as Image).vertex3 + (components[0] as Image).vertex4) / 2f,
                 RocketState(currentRotation, velocity))
-    }
-
-    init {
-
     }
 }

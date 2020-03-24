@@ -523,13 +523,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <Button
-                android:id="@+id/finishTutorialButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/MButton"
-                android:text="@string/finish_tutorial"
-                android:layout_margin="24dp" />
+<!--            <Button-->
+<!--                android:id="@+id/finishTutorialButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                style="@style/MButton"-->
+<!--                android:text="@string/finish_tutorial"-->
+<!--                android:layout_margin="24dp" />-->
 
         </android.support.v4.view.ViewPager>
 

@@ -23,15 +23,11 @@ import kotlin.math.*
 abstract class Rocket(protected val surrounding: Surrounding, private val mainActivity: MainActivity, var rocketPhysics: RocketPhysics, private val layers: Layers) {
     protected open val crashSound: MediaPlayer = MediaPlayer.create(mainActivity, R.raw.fx22)
     
-    protected fun setRotation(centerOfRotation: Vector, rotation: Float) {
+    fun setRotationAndCenter(centerOfRotation: Vector, rotation: Float) {
         // called before initialize trace
         // set rotation
         this.centerOfRotation = centerOfRotation
-        for (component in components) {
-            component.move(centerOfRotation)
-            component.rotate(centerOfRotation, rotation)
-        }
-        currentRotation = rotation
+        currentRotation = rotation // this setter already rotate the rocket
     }
     
     protected open var explosionShape: ExplosionShape? = null
@@ -39,7 +35,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val mainAc
     protected open val crashOverlappers get() = Array(components.size) { components[it].overlapper }
     
     protected abstract val traces: Array<Trace>
-    var currentRotation = surrounding.rotation
+    var currentRotation = 0f
         /* angle of rocket's current heading in radians
     angle between up and rocket current heading, positive is clockwise. */
         protected set(value) {
@@ -55,7 +51,12 @@ abstract class Rocket(protected val surrounding: Surrounding, private val mainAc
     abstract val rocketQuirks: RocketQuirks
     protected abstract val components: Array<ISolid>
     var centerOfRotation = surrounding.centerOfRotation
-        protected set
+        protected set(value) {
+            val offset = value - field
+            field = value
+            for (component in components)
+                component.move(offset)
+        }
     // surrounding have to define center of rotation
     // constructor of subclasses need to reset components with its center of rotation at centerOfRotationY and centerOfRotationX and defined it's velocity
     

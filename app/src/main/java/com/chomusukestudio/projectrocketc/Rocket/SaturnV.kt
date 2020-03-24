@@ -64,15 +64,10 @@ class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 				)
 	}
 	override val width = 0.5f
-
-	init {
-		setRotation(surrounding.centerOfRotation, surrounding.rotation)
-	}
 	
 	override fun generateTrace(now: Long, previousFrameTime: Long) {
-		val origin =  ((components.last() as EarClipPolygonalShape).getVertex(2) +
+		val origin = ((components.last() as EarClipPolygonalShape).getVertex(2) +
 				(components.last() as EarClipPolygonalShape).getVertex(3)) * 0.5f
 		traces[0].generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
 	}
-	
 }

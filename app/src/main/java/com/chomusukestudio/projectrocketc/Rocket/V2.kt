@@ -69,9 +69,4 @@ class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: Ro
     private val repulsiveForces = arrayOf(Vector(-rf, 0f), Vector(0f, -rf),
             Vector(0f, rf), Vector(0f, -rf), Vector(0f, rf), Vector(0f, -rf),
             Vector(0f, rf), Vector(0f, -rf), Vector(0f, rf))
-
-    // initialize for surrounding to set centerOfRotation
-    init {
-        setRotation(surrounding.centerOfRotation, surrounding.rotation)
-    }
 }

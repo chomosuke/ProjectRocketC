@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.Surrounding
 
-import android.widget.TextView
 import com.chomusukestudio.projectrocketc.*
 import com.chomusukestudio.projectrocketc.GLRenderer.*
 
@@ -48,7 +47,14 @@ class Surrounding(private val mainActivity: MainActivity, private val layers: La
             }
     private val littleStars = ArrayList<LittleStar>()
     private lateinit var startingPathOfRocket: Shape
-    lateinit var rocket: Rocket
+
+    private var rocketField: Rocket? = null
+    var rocket: Rocket
+        set(value) {
+            rocketField = value
+            value.setRotationAndCenter(centerOfRotation, rotation)
+        }
+        get() = rocketField!!
 
     val centerOfRotation = Vector(0f, 0f)
     val rotation = PI.toFloat() / 2
