@@ -25,7 +25,7 @@ class SquareTrace(private val speed: Float, private val width: Float, private va
                     duration, initialColor, finalColor, BuildShapeAttr(z, true, layers))
             newTraceShape.rotate(traceCenter, rocketState.currentRotation + PI.toFloat()/4)
 
-            val margin = /*random();*/i / iMax/* * (0.5f + (1 * (float) random()))*/
+            val margin = /*random();*/i / iMax /*+ randFloat(-0.5f, 0.5f)*/ /** (0.5f + (1 * random().toFloat()))*/
             newTraceShape.fadeTrace(now,  now - (margin * (now - previousFrameTime) + random()).toInt()) // + 0.5 for rounding
             newTraceShape.move((lastOrigin - origin) * margin
                     + Vector(-1f, 0f).rotateVector(rocketState.currentRotation) * initialSize/2f)

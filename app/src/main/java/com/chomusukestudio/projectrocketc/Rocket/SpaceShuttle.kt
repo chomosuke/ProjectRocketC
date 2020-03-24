@@ -4,14 +4,26 @@ import com.chomusukestudio.projectrocketc.GLRenderer.Layers
 import com.chomusukestudio.projectrocketc.Image
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
+import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
+import com.chomusukestudio.projectrocketc.Rocket.trace.MultiTrace
+import com.chomusukestudio.projectrocketc.Rocket.trace.SquareTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
+import com.chomusukestudio.projectrocketc.Shape.Color
 import com.chomusukestudio.projectrocketc.Shape.ISolid
 import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.UI.MainActivity
 
 class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
-    override val traces: Array<Trace> = arrayOf()
+    override val traces: Array<Trace> = arrayOf(MultiTrace(2, {
+                AccelerationTrace(7, 1.01f, 0.08f, 0.02f, 0.2f, 750, 256,
+                0.004f, Color(1f, 0.9f, 0f, 3f), layers)
+            }, 0.63f),
+            MultiTrace(2, {
+                SquareTrace(0.007f, 0.05f, 0.05f, 300, 16,
+                        Color(1f, 1f, 1f, 1f), Color(0.1f, 0.2f, 1f, 1f),
+                        1.01f, layers)
+            }, 0.18f))
     override val rocketQuirks: RocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
                 0.000002f, 0.000001f)
     override val components: Array<ISolid> = run {
@@ -55,5 +67,11 @@ class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketP
     override val width: Float = 0.432f
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
+        traces[0].generateTrace(now, previousFrameTime,
+                ((components[0] as Image).vertex3 + (components[0] as Image).vertex4) / 2f,
+                RocketState(currentRotation, velocity))
+        traces[1].generateTrace(now, previousFrameTime,
+                ((components[0] as Image).vertex3 + (components[0] as Image).vertex4) / 2f + Vector(0.15f, 0f).rotateVector(currentRotation),
+                RocketState(currentRotation, velocity))
     }
 }
