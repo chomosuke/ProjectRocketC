@@ -138,6 +138,10 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
                     if (state == State.Crashed) {
                         crashed(now, previousFrameTime)
                     }
+//                    if (state == State.PreGame) {
+//                        rocket.moveRocket(joystick.getRocketControl(rocket.currentRotation), now, previousFrameTime, state)
+//                        surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime, state)
+//                    }
 
 ////                if (SystemClock.uptimeMillis() - startTime > 1000 / refreshRate) {
 //                if (SystemClock.uptimeMillis() - startTime > 16) { // target 60 fps
@@ -180,7 +184,7 @@ class ProcessingThread(val refreshRate: Float, private val mainActivity: MainAct
 
         surrounding.checkAndAddLittleStar(now)
 
-        rocket.moveRocket(joystick.getRocketControl(rocket.currentRotation), now, previousFrameTime)
+        rocket.moveRocket(joystick.getRocketControl(rocket.currentRotation), now, previousFrameTime, state)
         surrounding.makeNewTriangleAndRemoveTheOldOne(now, previousFrameTime, state)
 
         joystick.drawJoystick()

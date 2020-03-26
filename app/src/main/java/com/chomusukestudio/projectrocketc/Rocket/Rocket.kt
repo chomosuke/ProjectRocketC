@@ -17,6 +17,7 @@ import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.UI.MainActivity
+import com.chomusukestudio.projectrocketc.UI.State
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import kotlin.math.*
 
@@ -90,7 +91,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val mainAc
     abstract val width: Float
     
     @CallSuper // allow rocket to have moving component
-    open fun moveRocket(rocketControl: RocketControl, now: Long, previousFrameTime: Long) {
+    open fun moveRocket(rocketControl: RocketControl, now: Long, previousFrameTime: Long, state: State) {
         val rocketState = rocketPhysics.getRocketState(rocketQuirks, RocketState(currentRotation, velocity), rocketControl, now, previousFrameTime)
         
         this.velocity = rocketState.velocity
@@ -102,7 +103,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val mainAc
             trace.moveTrace(displacement)
             trace.fadeTrace(now, previousFrameTime)
         }
-        if (rocketControl.throttleOn) {
+        if (rocketControl.throttleOn/* && state == State.InGame*/) {
             generateTrace(now, previousFrameTime)
         }
         
