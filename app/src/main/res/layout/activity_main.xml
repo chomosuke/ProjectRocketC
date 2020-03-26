@@ -42,36 +42,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-        <ImageButton
-            android:id="@+id/settingButton"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:padding="16dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/setting_button"
-            android:background="@android:color/transparent"
-            android:onClick="openSetting"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ImageButton
-            android:id="@+id/playButton"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/image_button_background"
-            android:padding="30dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/play_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.72"
-            android:onClick="startGame"
-            android:clickable="true"
-            android:focusable="true" />
-
         <ImageButton
             android:id="@+id/swapRocketLeftButton"
             android:layout_width="64dp"
@@ -103,7 +73,37 @@
             app:layout_constraintTop_toTopOf="parent"
             android:onClick="swapRocketRight"/>
 
+        <ImageButton
+            android:id="@+id/playButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/image_button_background"
+            android:padding="30dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/play_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.72"
+            android:onClick="startGame"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <ImageButton
+            android:id="@+id/settingButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:padding="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/setting_button"
+            android:background="@android:color/transparent"
+            android:onClick="openSetting"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
+    <!-- preGame -->
 
 <!--  inGame  -->
     <android.support.constraint.ConstraintLayout
@@ -168,6 +168,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
+    <!--  inGame  -->
 
 <!--  setting  -->
     <android.support.constraint.ConstraintLayout
@@ -234,6 +235,7 @@
             android:onClick="showTutorial"/>
 
     </android.support.constraint.ConstraintLayout>
+    <!--  setting  -->
 
 <!--  onPaused  -->
     <android.support.constraint.ConstraintLayout
@@ -323,6 +325,7 @@
             android:onClick="openSetting" />
 
     </android.support.constraint.ConstraintLayout>
+    <!--  onPaused  -->
 
 <!--  onCrash  -->
     <android.support.constraint.ConstraintLayout
@@ -440,6 +443,7 @@
             android:focusable="true" />
 
     </android.support.constraint.ConstraintLayout>
+    <!--  onCrash  -->
 
 <!--  scores  -->
     <android.support.constraint.ConstraintLayout
@@ -496,6 +500,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
+    <!--  scores  -->
 
 <!--  tutorial  -->
     <android.support.constraint.ConstraintLayout
@@ -534,5 +539,6 @@
         </android.support.v4.view.ViewPager>
 
     </android.support.constraint.ConstraintLayout>
+    <!--  tutorial  -->
 
 </android.support.constraint.ConstraintLayout>
