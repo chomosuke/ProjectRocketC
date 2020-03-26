@@ -12,7 +12,7 @@ import com.chomusukestudio.projectrocketc.UI.MainActivity
 
 /**
  * Created by Shuang Li on 11/03/2018.
- */
+
 
 class TestingRocket(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
     override val traces = arrayOf<Trace>(AccelerationTrace(7, 1.01f, 0.24f,  0.1f, 0.4f,
@@ -52,4 +52,4 @@ class TestingRocket(surrounding: Surrounding, mainActivity: MainActivity, rocket
             }
         }
     }
-}
+}*/

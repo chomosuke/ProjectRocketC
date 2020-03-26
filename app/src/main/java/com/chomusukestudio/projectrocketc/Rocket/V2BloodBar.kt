@@ -12,11 +12,11 @@ import com.chomusukestudio.projectrocketc.Shape.*
 
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.UI.MainActivity
+import com.chomusukestudio.projectrocketc.UI.State
 import kotlin.math.pow
 
 /**
  * Created by Shuang Li on 11/03/2018.
- */
 
 class V2BloodBar(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, val layers: Layers)
     : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
@@ -161,8 +161,8 @@ class V2BloodBar(surrounding: Surrounding, mainActivity: MainActivity, rocketPhy
     private val bloodBar = BarShape(centerOfRotation.offset(-0.5f, 1.25f), centerOfRotation.offset(0.5f, 1.05f), 0.02f,
             Color(1f, 0f, 0f, 0.6f), Color(1f, 0f, 0f, 1f), BuildShapeAttr(-11f, true, layers))
     
-    override fun moveRocket(rocketControl: RocketControl, now: Long, previousFrameTime: Long) {
-        super.moveRocket(rocketControl, now, previousFrameTime)
+    override fun moveRocket(rocketControl: RocketControl, now: Long, previousFrameTime: Long, state: State) {
+        super.moveRocket(rocketControl, now, previousFrameTime, state)
         crashShape?.drawExplosion(now - previousFrameTime)
         val displacement = -velocity * (now - previousFrameTime).toFloat()
         crashShape?.move(displacement)
@@ -174,3 +174,4 @@ class V2BloodBar(surrounding: Surrounding, mainActivity: MainActivity, rocketPhy
         bloodBar.remove()
     }
 }
+ */
