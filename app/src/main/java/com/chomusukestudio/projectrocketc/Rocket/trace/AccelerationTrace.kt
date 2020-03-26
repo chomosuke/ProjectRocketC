@@ -14,6 +14,7 @@ class AccelerationTrace(private val numberOfEdges: Int, val z: Float, private va
 						private val initialColor: Color, private val layers: Layers) : Trace() {
 	
 	private var preUnfinishedHalfIs = 0f
+	var randomization = 0f
 	override fun generateTraceOverride(now: Long, previousFrameTime: Long, origin: Vector, lastOrigin: Vector, rocketState: RocketState) {
 		val dOrigin = origin - lastOrigin
 		val direction = rocketState.currentRotation + PI.toFloat()
@@ -30,7 +31,7 @@ class AccelerationTrace(private val numberOfEdges: Int, val z: Float, private va
 
 			newTraceShape.rotate(center, (2 * Math.PI * Math.random()).toFloat())
 			
-			val margin = /*random();*/i / iMax/* * (0.5f + (1 * (float) random()))*/
+			val margin = /*random();*/(i + randomization * randFloat(-0.5f, 0.5f)) / iMax /* * (0.5f + (1 * (float) random()))*/
 			newTraceShape.fadeTrace(now,  now - (margin * (now - previousFrameTime) + Math.random()).toInt()) // + 0.5 for rounding
 			newTraceShape.move(-dOrigin * margin)
 			

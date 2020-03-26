@@ -2,16 +2,26 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import android.media.MediaPlayer
 import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.projectrocketc.Image
+import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
+import com.chomusukestudio.projectrocketc.Rocket.trace.MultiTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
 import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.UI.MainActivity
 
 class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers): Rocket(surrounding, mainActivity, rocketPhysics, layers) {
-	override val traces: Array<Trace> = arrayOf(AccelerationTrace(7, 1.01f, 0.15f, 0.02f, 0.2f, 750, 256,
-					0.004f, Color(1f, 0.9f, 0f, 3f), layers))
+	override val traces: Array<Trace> = arrayOf(
+			MultiTrace(3,
+					{
+						val t = AccelerationTrace(7, 1.01f, 0.05f, 0.015f, 0.2f, 750, 150,
+								0.004f, Color(1f, 0.9f, 0f, 3f), layers)
+						t.randomization = 1f
+						return@MultiTrace t
+					},
+			0.25f))
 	override val rocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
 				0.000002f, 0.000001f)
 	override val components: Array<ISolid> = run { // refer to rockets' points/SaturnV.PNG
@@ -29,45 +39,25 @@ class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 				Vector(324f, 622f), Vector(324f, 519f), Vector(305f, 519f), // 35
 				Vector(305f, 473f), Vector(324f, 473f), Vector(305f, 351f), // 38
 				Vector(305f, 334f), Vector(332f, 334f))
-		val pL = convertPointsOnRocket(pR, Vector(305f, 414.5f), Vector(1.3f, 1f) * 0.002f)
-		val white = Color(1f, 1f, 1f, 1f)
-		val black = Color(0.3f, 0.3f, 0.3f, 1f)
-		val build = BuildShapeAttr(0.5f, true, layers)
-		return@run arrayOf(TriangularShape(pR[0], pR[1], pL[1], white, build),
-				QuadrilateralShape(pR[1], pR[2], pL[2], pL[1], white, build),
-				QuadrilateralShape(pR[2], pR[3], pL[3], pL[2], white, build),
-				QuadrilateralShape(pR[4], pR[5], pL[5], pL[4], black, build),
-				QuadrilateralShape(pR[5], pR[6], pL[6], pL[5], white, build),
-				QuadrilateralShape(pR[6], pR[7], pL[7], pL[6], white, build),
-				QuadrilateralShape(pR[7], pR[8], pL[8], pL[7], white, build),
-				QuadrilateralShape(pR[8], pR[9], pL[9], pL[8], black, build),
-				QuadrilateralShape(pR[9], pR[10], pL[10], pL[9], white, build),
-				QuadrilateralShape(pR[10], pR[40], pL[40], pL[10], black, build),
-				QuadrilateralShape(pR[40], pR[11], pR[38], pR[39], white, build),
-				QuadrilateralShape(pL[40], pL[11], pL[38], pL[39], black, build),
-				QuadrilateralShape(pR[11], pR[12], pL[12], pL[11], white, build),
-				QuadrilateralShape(pR[12], pR[13], pL[13], pL[12], black, build),
-				QuadrilateralShape(pR[13], pR[14], pR[34], pR[37], black, build),
-				QuadrilateralShape(pR[34], pR[35], pR[36], pR[37], white, build),
-				QuadrilateralShape(pL[13], pL[14], pL[34], pL[37], white, build),
-				QuadrilateralShape(pL[34], pL[35], pL[36], pL[37], black, build),
-				QuadrilateralShape(pR[14], pR[16], pL[16], pL[14], white, build),
-				PolygonalShape(arrayOf(pR[33], pR[16], pR[17], pR[18], pR[21], pR[22], pR[27]), black, build),
-				PolygonalShape(arrayOf(pL[33], pL[16], pL[17], pL[18], pL[21], pL[22], pL[27]), white, build),
-				QuadrilateralShape(pR[33], pR[27], pR[31], pR[32], white, build),
-				QuadrilateralShape(pL[33], pL[27], pL[31], pL[32], black, build),
-				QuadrilateralShape(pR[18], pR[19], pR[20], pR[21], white, build),
-				QuadrilateralShape(pL[18], pL[19], pL[20], pL[21], white, build),
-				PolygonalShape(arrayOf(pR[23], pR[24], pR[25], pR[26], pR[27]), black, build),
-				PolygonalShape(arrayOf(pL[23], pL[24], pL[25], pL[26], pL[27]), black, build),
-				EarClipPolygonalShape(arrayOf(pL[28], pL[29], pL[30], pR[30], pR[29], pR[28]), black, build)
-				)
+		val scale = Vector(1.3f, 1f)
+		val pL = convertPointsOnRocket(pR, Vector(305f, 414.5f), scale * 0.002f)
+		val overlapperVertexes = arrayOf(pL[0], pL[1], pL[2], pL[3], pL[4], pL[5], pL[6], pL[7], pL[8], pL[10], pL[11], pL[17], pL[18], pL[19], pL[20], pL[23], pL[25],
+										pR[25], pR[23], pR[20], pR[19], pR[18], pR[17], pR[11], pR[10], pR[8], pR[7], pR[6], pR[5], pR[4], pR[3], pR[2], pR[1])
+		val x = 0.5f; val y = 0.7f
+		val imageVertexes = arrayOf(Vector(x, y), Vector(x, -y), Vector(-x, -y), Vector(-x, y))
+		for (i in imageVertexes.indices)
+			imageVertexes[i] = imageVertexes[i].scaleXY(scale)
+
+		arrayOf(Image(mainActivity, R.drawable.saturn_v,
+				imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
+				overlapperVertexes, false,
+				0.5f, layers))
 	}
 	override val width = 0.5f
 	
 	override fun generateTrace(now: Long, previousFrameTime: Long) {
-		val origin = ((components.last() as EarClipPolygonalShape).getVertex(2) +
-				(components.last() as EarClipPolygonalShape).getVertex(3)) * 0.5f
+		val origin = ((components[0] as Image).vertex3 +
+				(components[0] as Image).vertex4) * 0.5f
 		traces[0].generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
 	}
 }
