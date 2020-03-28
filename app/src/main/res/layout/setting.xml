@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settingLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="invisible"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:showIn="@layout/activity_main">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:scaleType="centerCrop"
+        android:src="@drawable/black" />
+
+    <ImageButton
+        android:id="@+id/closeSettingButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:padding="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/back_button"
+        android:background="@android:color/transparent"
+        android:onClick="closeSetting"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sound_effects_volume"
+        android:textColor="#FFF"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintStart_toStartOf="@id/soundEffectsVolumeBar"
+        app:layout_constraintTop_toTopOf="@id/soundEffectsVolumeBar" />
+
+    <SeekBar
+        android:id="@+id/soundEffectsVolumeBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="32dp"
+        style="@style/MSeekBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/tutorialButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tutorial"
+        style="@style/MButton"
+        app:layout_constraintVertical_bias="0.75"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="showTutorial" />
+
+</android.support.constraint.ConstraintLayout>
+    

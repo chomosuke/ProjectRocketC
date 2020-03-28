@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/onPausedLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="invisible"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:showIn="@layout/activity_main">
+
+    <!--        <ImageView-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:alpha="0.5"-->
+    <!--            android:scaleType="centerCrop"-->
+    <!--            android:src="@drawable/black"  />-->
+
+    <ImageButton
+        android:id="@+id/resumeButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/image_button_background"
+        android:padding="30dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/play_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.72"
+        android:onClick="onPause"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <ImageButton
+        android:id="@+id/restartButtonPaused"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/image_button_background"
+        android:padding="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/restart_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/settingButtonPaused"
+        app:layout_constraintStart_toEndOf="@id/toHomeButtonPaused"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9"
+        android:onClick="restartGame"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <ImageButton
+        android:id="@+id/toHomeButtonPaused"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/image_button_background"
+        android:padding="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/to_home_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/restartButtonPaused"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9"
+        android:onClick="toHome"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <ImageButton
+        android:id="@+id/settingButtonPaused"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/image_button_background"
+        android:padding="19dp"
+        android:scaleType="centerInside"
+        app:layout_constraintVertical_bias="0.9"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/setting_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/restartButtonPaused"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="openSetting" />
+
+</android.support.constraint.ConstraintLayout>
+

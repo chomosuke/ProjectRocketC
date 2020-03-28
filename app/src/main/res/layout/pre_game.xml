@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/preGameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="invisible"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:showIn="@layout/activity_main">
+
+    <ImageButton
+        android:id="@+id/swapRocketLeftButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="@android:color/transparent"
+        android:padding="20dp"
+        android:visibility="invisible"
+        android:scaleType="centerInside"
+        android:src="@drawable/left_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="swapRocketLeft" />
+
+    <ImageButton
+        android:id="@+id/swapRocketRightButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="@android:color/transparent"
+        android:padding="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/right_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="swapRocketRight" />
+
+    <ImageButton
+        android:id="@+id/playButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/image_button_background"
+        android:padding="30dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/play_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.72"
+        android:onClick="startGame"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <ImageButton
+        android:id="@+id/settingButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:padding="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/setting_button"
+        android:background="@android:color/transparent"
+        android:onClick="openSetting"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
+
+    

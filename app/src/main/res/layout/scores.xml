@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scoresLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="invisible"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:showIn="@layout/activity_main">
+
+    <TextView
+        android:id="@+id/scoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="sans-serif"
+        android:text="0"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/textSize"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/highestScoreIcon"
+        android:layout_width="@dimen/textSize"
+        android:layout_height="@dimen/textSize"
+        android:layout_marginStart="2dp"
+        android:baselineAlignBottom="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/highest_score_icon"
+        app:layout_constraintBaseline_toBaselineOf="@id/highestScoreTextView"
+        app:layout_constraintStart_toEndOf="@id/highestScoreTextView" />
+
+    <TextView
+        android:id="@+id/highestScoreTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/textSize"
+        android:typeface="normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
+

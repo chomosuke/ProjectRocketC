@@ -5,9 +5,6 @@
             android:thickness="2.3dp"
             android:useLevel="false">
             <solid android:color="#FFF"/>
-            <size
-                android:height="@android:dimen/app_icon_size"
-                android:width="@android:dimen/app_icon_size"/>
         </shape>
     </item>
 </selector>
