@@ -1,31 +1,31 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.Image
+import com.chomusukestudio.prcandroid2dgameengine.Image
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.Color
+import com.chomusukestudio.prcandroid2dgameengine.shape.ISolid
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.MultiTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.SquareTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
-import com.chomusukestudio.projectrocketc.Shape.Color
-import com.chomusukestudio.projectrocketc.Shape.ISolid
-import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.UI.MainActivity
 
-class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
+class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, drawData: DrawData) : Rocket(surrounding, mainActivity, rocketPhysics, drawData) {
     override val traces: Array<Trace> = arrayOf(MultiTrace(2, {
                 AccelerationTrace(7, 1.01f, 0.05f, 0.02f, 0.2f, 750, 256,
-                0.004f, Color(1f, 0.9f, 0f, 3f), layers)
+                0.004f, Color(1f, 0.9f, 0f, 3f), drawData)
             }, 0.63f),
             MultiTrace(2, {
                 SquareTrace(0.007f, 0.05f, 0.05f, 300, 16,
                         Color(1f, 1f, 1f, 1f), Color(0.1f, 0.2f, 1f, 1f),
-                        1.01f, layers)
+                        1.01f, drawData)
             }, 0.18f))
     override val rocketQuirks: RocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
-                0.000002f, 0.000001f)
+                0.000002f, 0.000001f, 500000)
     override val components: Array<ISolid> = run {
         val sX = 1.8f
         val sY = 1.8f
@@ -56,12 +56,12 @@ class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketP
 
         overlapperVertexes += mirror as Array<Vector>
 
-        arrayOf(Image(mainActivity, R.drawable.space_shuttle,
+        arrayOf(Image(R.drawable.space_shuttle,
                 Vector(0.341f * sX, 0.158f * sY),
                 Vector(0.341f * sX, -0.158f * sY),
                 Vector(-0.341f * sX, -0.158f * sY),
                 Vector(-0.341f * sX, 0.158f * sY),
-                overlapperVertexes, false, 0.5f, layers))
+                overlapperVertexes, false, 0.5f, drawData))
     }
 
     override val width: Float = 0.432f

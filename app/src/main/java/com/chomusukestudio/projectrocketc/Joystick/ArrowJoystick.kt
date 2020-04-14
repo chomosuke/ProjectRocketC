@@ -1,10 +1,11 @@
 package com.chomusukestudio.projectrocketc.Joystick
 
-import com.chomusukestudio.projectrocketc.Shape.*
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 
 import java.lang.Math.PI
 
-class ArrowJoystick(private val centerOfRotation: Vector, buildShapeAttr: BuildShapeAttr) : Joystick() {
+class ArrowJoystick(private val centerOfRotation: Vector, buildShapeAttr: BuildShapeAttr, drawData: DrawData) : Joystick(drawData) {
     @Volatile
     private var centerOfJoystick = Vector(0f, 0f)
     

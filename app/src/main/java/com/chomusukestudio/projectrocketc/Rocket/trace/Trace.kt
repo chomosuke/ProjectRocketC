@@ -1,9 +1,9 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
+import com.chomusukestudio.prcandroid2dgameengine.shape.Shape
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
+import com.chomusukestudio.prcandroid2dgameengine.threadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
-import com.chomusukestudio.projectrocketc.Shape.Shape
-import com.chomusukestudio.projectrocketc.Shape.Vector
-import com.chomusukestudio.projectrocketc.ThreadClasses.ParallelForI
 
 abstract class Trace {
     protected open val traceShapes = ArrayList<TraceShape>()

@@ -1,20 +1,19 @@
 package com.chomusukestudio.projectrocketc.Surrounding
 
 import android.util.Log
-import com.chomusukestudio.projectrocketc.GLRenderer.bottomEnd
-import com.chomusukestudio.projectrocketc.GLRenderer.leftEnd
-import com.chomusukestudio.projectrocketc.GLRenderer.rightEnd
-import com.chomusukestudio.projectrocketc.GLRenderer.topEnd
+import com.chomusukestudio.prcandroid2dgameengine.distance
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.Overlapper
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.IReusable
 import com.chomusukestudio.projectrocketc.PlanetShape.PlanetShape
 import com.chomusukestudio.projectrocketc.Rocket.Rocket
-import com.chomusukestudio.projectrocketc.Shape.Overlapper
-import com.chomusukestudio.projectrocketc.Shape.Vector
-import com.chomusukestudio.projectrocketc.distance
+import com.chomusukestudio.projectrocketc.max
+import com.chomusukestudio.projectrocketc.min
 
 // this class takes a planetShape and manage it, make it flybyable and reusable.
 // this is done to weaken the coupling between PlanetShapes and Surrounding
-class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
+class Planet(private val planetShape: PlanetShape, private val drawData: DrawData/*for bourndaries*/): IReusable, IFlybyable {
 
     var visibility: Boolean
         get() = planetShape.visibility
@@ -88,10 +87,14 @@ class Planet(private val planetShape: PlanetShape): IReusable, IFlybyable {
 
     private fun canBeSeenIf(center: Vector): Boolean {
         val maxWidth = planetShape.maxWidth
-        return center.x < rightEnd + maxWidth &&
-                center.x > leftEnd - maxWidth &&
-                center.y < topEnd + maxWidth &&
-                center.y > bottomEnd - maxWidth
+        val xMax = max(drawData.leftEnd, drawData.rightEnd)
+        val xMin = min(drawData.leftEnd, drawData.rightEnd)
+        val yMax = max(drawData.topEnd, drawData.bottomEnd)
+        val yMin = min(drawData.topEnd, drawData.bottomEnd)
+        return center.x < xMax + maxWidth &&
+                center.x > xMin - maxWidth &&
+                center.y < yMax + maxWidth &&
+                center.y > yMin - maxWidth
     }
 
     fun movePlanet(vector: Vector) {

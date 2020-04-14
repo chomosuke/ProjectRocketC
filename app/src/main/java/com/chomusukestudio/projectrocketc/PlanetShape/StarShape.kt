@@ -1,6 +1,6 @@
 package com.chomusukestudio.projectrocketc.PlanetShape
 
-import com.chomusukestudio.projectrocketc.Shape.*
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 
 import java.lang.Math.random
 

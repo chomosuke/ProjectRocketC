@@ -1,6 +1,8 @@
 package com.chomusukestudio.projectrocketc.Joystick
 
-class TwoFingersJoystick : Joystick() {
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+
+class TwoFingersJoystick(drawData: DrawData) : Joystick(drawData) {
     override fun getRocketControl(currentRotation: Float): RocketControl {
         return RocketControl(if (actionDown) {
             when {

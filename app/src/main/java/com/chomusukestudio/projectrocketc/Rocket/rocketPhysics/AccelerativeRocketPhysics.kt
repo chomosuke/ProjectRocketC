@@ -1,9 +1,9 @@
 package com.chomusukestudio.projectrocketc.Rocket.rocketPhysics
 
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.Joystick.RocketControl
 import com.chomusukestudio.projectrocketc.Rocket.RocketQuirks
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
-import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.decelerateVelocity
 
 class AccelerativeRocketPhysics : RocketPhysics() {

@@ -1,6 +1,6 @@
-package com.chomusukestudio.projectrocketc.Shape.LittleStar
+package com.chomusukestudio.projectrocketc.littleStar
 
-import com.chomusukestudio.projectrocketc.Shape.*
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 
 class LittleStarShape(center: Vector, radius: Float, starColor: Color,
                       circleColor: Color, buildShapeAttr: BuildShapeAttr) : Shape() {

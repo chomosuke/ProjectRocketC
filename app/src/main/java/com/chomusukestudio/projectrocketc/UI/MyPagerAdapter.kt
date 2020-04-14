@@ -1,7 +1,5 @@
 package com.chomusukestudio.projectrocketc.UI
 
-import android.annotation.SuppressLint
-import android.support.v4.view.PagerAdapter
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +8,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.chomusukestudio.projectrocketc.R
 
-class MyPagerAdapter(private val mainActivity: MainActivity) : PagerAdapter() {
+class MyPagerAdapter(private val mainActivity: MainActivity) : androidx.viewpager.widget.PagerAdapter() {
     override fun instantiateItem(container :ViewGroup, position: Int): View {
         Log.v("tutorial instItem", container.toString())
 

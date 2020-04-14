@@ -1,24 +1,24 @@
 package com.chomusukestudio.projectrocketc.UI
 
+//import com.google.firebase.analytics.FirebaseAnalytics
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.content.Context
-import android.os.Bundle
 import android.app.Activity
+import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Point
+import android.os.Bundle
 import android.os.SystemClock
-import android.support.constraint.ConstraintLayout
-import android.support.v4.view.ViewPager
 import android.util.Log
-import android.view.animation.AnimationUtils
-
-import android.view.*
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
 import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.*
-import com.chomusukestudio.projectrocketc.*
-import com.chomusukestudio.projectrocketc.Shape.CircularShape
-//import com.google.firebase.analytics.FirebaseAnalytics
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.chomusukestudio.prcandroid2dgameengine.runWithExceptionChecked
+import com.chomusukestudio.projectrocketc.MProcessingThread
+import com.chomusukestudio.projectrocketc.R
 import java.util.concurrent.Executors
 
 enum class State { InGame, PreGame, Paused, Crashed }
@@ -26,7 +26,7 @@ enum class State { InGame, PreGame, Paused, Crashed }
 class MainActivity : Activity() { // exception will be throw if you try to create any instance of this class on your own... i think.
 
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var processingThread: ProcessingThread
+    private lateinit var mProcessingThread: MProcessingThread
     private lateinit var myGLSurfaceView: MyGLSurfaceView
 
 //    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
@@ -41,12 +41,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     public override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-
-        // initialize width and height in pixel
-        val size = Point()
-        windowManager.defaultDisplay.getSize(size)
-        widthInPixel = size.x.toFloat()
-        heightInPixel = size.y.toFloat()
 
         setContentView(R.layout.activity_main)
 
@@ -100,14 +94,15 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //        // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        CircularShape.performanceIndex = sharedPreferences.getFloat(getString(R.string.performanceIndex), 1f)
-
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
             runWithExceptionChecked {
+                mProcessingThread = MProcessingThread(
+                        (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
+                        this) // we know that the context is MainActivity
+                myGLSurfaceView.initializeRenderer(mProcessingThread)
 
-                myGLSurfaceView.initializeRenderer()
-                processingThread = myGLSurfaceView.mRenderer.processingThread
+                mProcessingThread
 
                 // hide splash screen and show game
                 this.runOnUiThread {
@@ -145,7 +140,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         // if it is show the tutorial
         findViewById<ConstraintLayout>(R.id.tutorialGroup).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.tutorialGroup).bringToFront()
-        findViewById<ViewPager>(R.id.tutorialPager).adapter = MyPagerAdapter(this)
+        findViewById<androidx.viewpager.widget.ViewPager>(R.id.tutorialPager).adapter = MyPagerAdapter(this)
 
         inTutorial = true
     }
@@ -245,7 +240,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             else -> return // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
         }
 
-        processingThread.reset()
+        mProcessingThread.reset()
 
         state = State.InGame
     }
@@ -268,21 +263,21 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         fadeIn(findViewById(R.id.preGameLayout))
 
-        processingThread.reset()
+        mProcessingThread.reset()
 
         state = State.PreGame
     }
 
     fun swapRocketLeft(view: View) {
-        if (processingThread.isOutOfBounds(-2))
+        if (mProcessingThread.isOutOfBounds(-2))
             findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.INVISIBLE
-        processingThread.swapRocket(-1)
+        mProcessingThread.swapRocket(-1)
         findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.VISIBLE
     }
     fun swapRocketRight(view: View) {
-        if (processingThread.isOutOfBounds(2))
+        if (mProcessingThread.isOutOfBounds(2))
             findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
-        processingThread.swapRocket(1)
+        mProcessingThread.swapRocket(1)
         findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.VISIBLE
     }
 
@@ -322,7 +317,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     fun onCrashed() {
         state = State.Crashed
 
-        processingThread.updateHighestScore { score ->
+        mProcessingThread.updateHighestScore { score ->
             if (score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
                 // update highest score
                 with(sharedPreferences.edit()) {
@@ -389,7 +384,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         super.onDestroy()
         Log.i("", "\n\nonDestroy() called\n\n")
         // onDestroy will be called after onDrawFrame() returns so no worry of removing stuff twice :)
-        myGLSurfaceView.shutDown()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

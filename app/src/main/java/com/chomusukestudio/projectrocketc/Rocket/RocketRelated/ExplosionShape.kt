@@ -1,8 +1,8 @@
 package com.chomusukestudio.projectrocketc.Rocket.RocketRelated
 
-import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.square
-import com.chomusukestudio.projectrocketc.randFloat
+import com.chomusukestudio.prcandroid2dgameengine.randFloat
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
+import com.chomusukestudio.prcandroid2dgameengine.square
 import java.lang.Math.random
 import kotlin.math.PI
 

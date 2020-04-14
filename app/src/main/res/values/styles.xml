@@ -19,9 +19,10 @@
     </style>
 
     <style name="MButton" parent="android:Widget.Button">
-<!--        <item name="android:background">@drawable/button_background</item>-->
-<!--        <item name="android:textColor">#FFF</item>-->
-<!--        <item name="android:padding">16dp</item>-->
+        <item name="android:background">@drawable/button_background</item>
+        <item name="android:textColor">#FFF</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="MSeekBar" parent="android:Widget.SeekBar">

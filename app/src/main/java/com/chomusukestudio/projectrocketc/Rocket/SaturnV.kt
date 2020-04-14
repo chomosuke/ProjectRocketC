@@ -1,29 +1,30 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
-import android.media.MediaPlayer
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.Image
+import com.chomusukestudio.prcandroid2dgameengine.Image
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.Color
+import com.chomusukestudio.prcandroid2dgameengine.shape.ISolid
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.MultiTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
-import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.UI.MainActivity
 
-class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers): Rocket(surrounding, mainActivity, rocketPhysics, layers) {
+class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, drawData: DrawData): Rocket(surrounding, mainActivity, rocketPhysics, drawData) {
 	override val traces: Array<Trace> = arrayOf(
 			MultiTrace(3,
 					{
 						val t = AccelerationTrace(7, 1.01f, 0.05f, 0.015f, 0.2f, 750, 150,
-								0.004f, Color(1f, 0.9f, 0f, 3f), layers)
+								0.004f, Color(1f, 0.9f, 0f, 3f), drawData)
 						t.randomization = 1f
 						return@MultiTrace t
 					},
 			0.25f))
 	override val rocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
-				0.000002f, 0.000001f)
+				0.000002f, 0.000001f, 50000)
 	override val components: Array<ISolid> = run { // refer to rockets' points/SaturnV.PNG
 		val pR = arrayOf(Vector(305f, 92f), Vector(308f, 99f), Vector(308f, 128f), // 2
 				Vector(312f, 134f), Vector(309f, 134f), Vector(309f, 152f), // 5
@@ -48,10 +49,10 @@ class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 		for (i in imageVertexes.indices)
 			imageVertexes[i] = imageVertexes[i].scaleXY(scale)
 
-		arrayOf(Image(mainActivity, R.drawable.saturn_v,
+		arrayOf(Image(R.drawable.saturn_v,
 				imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
 				overlapperVertexes, false,
-				0.5f, layers))
+				0.5f, drawData))
 	}
 	override val width = 0.5f
 	

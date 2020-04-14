@@ -1,18 +1,17 @@
 package com.chomusukestudio.projectrocketc.Joystick
 
 
-import android.support.annotation.CallSuper
 import android.view.MotionEvent
-import com.chomusukestudio.projectrocketc.Shape.Vector
-import com.chomusukestudio.projectrocketc.transformToMatrixX
-import com.chomusukestudio.projectrocketc.transformToMatrixY
-import kotlin.collections.ArrayList
+import androidx.annotation.CallSuper
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
+import kotlin.math.sign
 
 /**
  * Created by Shuang Li on 31/03/2018.
  */
 
-abstract class Joystick {
+abstract class Joystick(private val drawData: DrawData) {
     @Volatile
     protected var nowXY = Vector(0f, 0f)
 
@@ -47,10 +46,9 @@ abstract class Joystick {
                     pointers.remove(e.getPointerId(e.actionIndex))
         }
 
-        val x = transformToMatrixX(e.getX(e.findPointerIndex(pointers.last())))
-        val y = transformToMatrixY(e.getY(e.findPointerIndex(pointers.last())))
-
-        updateTouchPosition(Vector(x, y))
+        updateTouchPosition(transformToMatrix(Vector(
+                e.getX(e.findPointerIndex(pointers.last())),
+                e.getY(e.findPointerIndex(pointers.last())))))
     }
 
     @CallSuper
@@ -63,6 +61,14 @@ abstract class Joystick {
     open fun drawJoystick() {}
 
     open fun removeAllShape() {}
+
+    fun transformToMatrix(vector: Vector) : Vector {
+        var result = vector.scaleXY(drawData.pixelSize) // scale
+        result *= Vector((drawData.rightEnd - drawData.leftEnd).sign, (drawData.bottomEnd - drawData.topEnd).sign) // orientate
+        result += Vector(drawData.leftEnd, drawData.topEnd) // recenter
+        return result
+    }
 }
+
 
 data class RocketControl(val rotationNeeded: Float, val throttleOn: Boolean = true)

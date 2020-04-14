@@ -1,20 +1,19 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
-import android.media.MediaPlayer
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.Image
-import com.chomusukestudio.projectrocketc.UI.MainActivity
+import com.chomusukestudio.prcandroid2dgameengine.Image
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.Color
+import com.chomusukestudio.prcandroid2dgameengine.shape.ISolid
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.MultiTrace
-import com.chomusukestudio.projectrocketc.Rocket.trace.SquareTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
-import com.chomusukestudio.projectrocketc.Shape.*
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import kotlin.math.PI
+import com.chomusukestudio.projectrocketc.UI.MainActivity
 
-class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, layers: Layers) : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
+class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, drawData: DrawData) : Rocket(surrounding, mainActivity, rocketPhysics, drawData) {
     override val traces = arrayOf<Trace>(
             MultiTrace(3, {
 //                SquareTrace(0.007f, 0.15f, 0.075f, 400, 32,
@@ -22,14 +21,14 @@ class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPh
 //                    1.01f, layers)
                 if (it == 1)
                     AccelerationTrace(7, 1.01f, 0.08f, 0.015f, 0.15f, 800, 200,
-                            0.003f, Color(1f, 1f, 0f, 3f), layers)
+                            0.003f, Color(1f, 1f, 0f, 3f), drawData)
                 else
                     AccelerationTrace(7, 1.01f, 0.08f, 0.015f, 0.15f, 1000, 256,
-                            0.004f, Color(1f, 1f, 0f, 3f), layers)
+                            0.004f, Color(1f, 1f, 0f, 3f), drawData)
             }, 0.4f)
     )
     override val rocketQuirks: RocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
-            0.000002f, 0.000001f)
+            0.000002f, 0.000001f, 200000)
     override val components: Array<ISolid> = run {
         val arrayForOverlapper = arrayOf(
                 Vector(-0.6f, 0.2f), Vector(0.1f, 0.2f),
@@ -48,10 +47,10 @@ class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPh
         for (i in imageVertexes.indices)
             imageVertexes[i] = imageVertexes[i].scaleXY(scale)
 
-        arrayOf(Image(mainActivity, R.drawable.falcon_heavy,
+        arrayOf(Image(R.drawable.falcon_heavy,
                 imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
                 arrayForOverlapper, false,
-                0.5f, layers))
+                0.5f, drawData))
     }
     override val width = 0.4f
 

@@ -1,14 +1,10 @@
 package com.chomusukestudio.projectrocketc.PlanetShape
 
-import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.randFloat
-
-import java.util.Arrays
-
-import java.lang.Math.PI
-import java.lang.Math.asin
-import java.lang.Math.cos
-import java.lang.Math.sin
+import com.chomusukestudio.prcandroid2dgameengine.randFloat
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
+import java.lang.Math.*
+import java.util.*
 
 class MarsShape(center: Vector, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(center, radius) {
 	override lateinit var componentShapes: Array<Shape>

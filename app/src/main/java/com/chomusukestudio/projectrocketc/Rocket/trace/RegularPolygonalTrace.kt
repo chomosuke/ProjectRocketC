@@ -1,16 +1,16 @@
 
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.randFloat
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
-import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.randFloat
 import java.lang.Math.random
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long,
-                            private val initialColor: Color, private val layers: Layers) : Trace() {
+                            private val initialColor: Color, private val drawData: DrawData) : Trace() {
 
     override fun generateTraceOverride(now: Long, previousFrameTime: Long, origin: Vector, lastOrigin: Vector, rocketState: RocketState) {
         val dOrigin = origin - lastOrigin
@@ -44,7 +44,7 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
     private fun newRegularPolygonalTraceShape(center: Vector, delta: Vector, initialRadius: Float, finalRadius: Float,
                                               duration: Long, initialColor: Color): RegularPolygonalTraceShape {
         val trace = RegularPolygonalTraceShape(numberOfEdges, center, initialRadius, finalRadius,
-                duration, initialColor, BuildShapeAttr(z, true, layers))
+                duration, initialColor, BuildShapeAttr(z, true, drawData))
         traceShapes.add(trace)
         return trace
     }
@@ -76,10 +76,10 @@ open class RegularPolygonalTraceShape(numberOfEdges: Int, private var center: Ve
             // this is basically white nowXY
             componentShapes[0].resetAlpha(color.alpha * alphaEveryMiniSecond.pow((now - previousFrameTime).toFloat()))
         } else {
-            componentShapes[0].resetShapeColor(Color(color.red + (1 - color.red) * (now - previousFrameTime).toFloat() * 15f / duration,
+            componentShapes[0].shapeColor = Color(color.red + (1 - color.red) * (now - previousFrameTime).toFloat() * 15f / duration,
                     color.green + (1 - color.green) * (now - previousFrameTime).toFloat() * 15f / duration,
                     color.blue + (1 - color.blue) * (now - previousFrameTime).toFloat() * 15f / duration,
-                    color.alpha * alphaEveryMiniSecond.pow((now - previousFrameTime).toFloat())))
+                    color.alpha * alphaEveryMiniSecond.pow((now - previousFrameTime).toFloat()))
         }
         // and change radius
         (componentShapes[0] as RegularPolygonalShape).radius = deltaRadius * (0.75f * sqrt(timeSinceBorn / duration) + 0.25f * timeSinceBorn / duration) + initialRadius

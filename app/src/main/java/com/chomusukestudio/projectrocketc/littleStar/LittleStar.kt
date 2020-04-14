@@ -1,49 +1,49 @@
 package com.chomusukestudio.projectrocketc.littleStar
 
-import android.widget.TextView
-import com.chomusukestudio.projectrocketc.Shape.LittleStar.ArrowToLittleStarShape
-import com.chomusukestudio.projectrocketc.Shape.LittleStar.LittleStarShape
-import com.chomusukestudio.projectrocketc.Shape.LittleStar.RADIUS_OF_LITTLE_STAR
+import android.media.AudioManager
+import android.media.SoundPool
+import android.util.Log
+import com.chomusukestudio.prcandroid2dgameengine.distance
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 import com.chomusukestudio.projectrocketc.PlanetShape.PlanetShape
-
-import com.chomusukestudio.projectrocketc.distance
+import com.chomusukestudio.projectrocketc.R
+import com.chomusukestudio.projectrocketc.Surrounding.Planet
 import com.chomusukestudio.projectrocketc.TouchableView
+import com.chomusukestudio.projectrocketc.UI.MainActivity
 import com.chomusukestudio.projectrocketc.giveVisualText
+import java.lang.Math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.sin
-import android.media.SoundPool
-import android.media.AudioManager
-import android.util.Log
-import com.chomusukestudio.projectrocketc.GLRenderer.*
-import com.chomusukestudio.projectrocketc.R
-import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.Surrounding.Planet
-import com.chomusukestudio.projectrocketc.UI.MainActivity
-import java.lang.Math.abs
 import kotlin.math.pow
+import kotlin.math.sin
 
 
 /**
  * Created by Shuang Li on 25/03/2018.
  */
 
-class LittleStar(val COLOR: Color, private var center: Vector, private val range: Float, var duration: Long, now: Long, layers: Layers) {
+class LittleStar(val COLOR: Color, private var center: Vector, private val range: Float, var duration: Long, now: Long, private val drawData: DrawData) {
     private var littleStarShape: LittleStarShape
     private var arrowToLittleStarShape: ArrowToLittleStarShape
     private var rangeCircleThingy: FullRingShape? = null
     private var inScreen: Boolean
     
-    enum class Color(val color: com.chomusukestudio.projectrocketc.Shape.Color) {
+    enum class Color(val color: com.chomusukestudio.prcandroid2dgameengine.shape.Color) {
         RED(Color(1f, 0f, 0f, 1f)), YELLOW(Color(242f/256f, 187f/256f, 26f/256f, 1f))
     }
     
     private val birthTime: Long = now
 
+    private val leftEnd inline get() = drawData.leftEnd
+    private val rightEnd inline get() = drawData.rightEnd
+    private val topEnd inline get() = drawData.topEnd
+    private val bottomEnd inline get() = drawData.bottomEnd
+
     init {
         // circle color for arrowToLittleStarShape is star color
         // arrow color is circle color for littleStarShape
-        val buildShapeAttr = BuildShapeAttr(-10f, true, layers)
+        val buildShapeAttr = BuildShapeAttr(-10f, true, drawData)
         littleStarShape = LittleStarShape(center, RADIUS_OF_LITTLE_STAR, COLOR.color, Color(1f, 1f, 1f, 1f), buildShapeAttr)
         arrowToLittleStarShape = ArrowToLittleStarShape(RADIUS_OF_LITTLE_STAR, Color(1f, 1f, 1f, 1f), COLOR.color, buildShapeAttr)
 

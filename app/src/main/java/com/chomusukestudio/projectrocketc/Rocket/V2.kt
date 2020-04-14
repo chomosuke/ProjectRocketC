@@ -1,14 +1,14 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
-import android.media.MediaPlayer
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.Image
+import com.chomusukestudio.prcandroid2dgameengine.Image
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.Color
+import com.chomusukestudio.prcandroid2dgameengine.shape.ISolid
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
-import com.chomusukestudio.projectrocketc.Shape.*
-
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.UI.MainActivity
 
@@ -16,11 +16,11 @@ import com.chomusukestudio.projectrocketc.UI.MainActivity
  * Created by Shuang Li on 11/03/2018.
  */
 
-class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, val layers: Layers)
-    : Rocket(surrounding, mainActivity, rocketPhysics, layers) {
+class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, drawData: DrawData)
+    : Rocket(surrounding, mainActivity, rocketPhysics, drawData) {
     override val traces = arrayOf<Trace>(
             AccelerationTrace(7, 1.01f, 0.1f, 0.02f, 0.25f, 1000, 100,
-                    0.004f, Color(1f, 1f, 0f, 3f), layers))
+                    0.004f, Color(1f, 1f, 0f, 3f), drawData))
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val origin = ((components[0] as Image).vertex3 + (components[0] as Image).vertex4) / 2f
@@ -28,7 +28,7 @@ class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: Ro
     }
 
     override val rocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
-            0.000002f, 0.000001f)
+            0.000002f, 0.000001f, 0)
 
     override val width = 0.3f
 
@@ -57,8 +57,8 @@ class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: Ro
                 Vector(0.35f * scaleX, 0.125f * scaleY)
         )
 
-        val image = Image(mainActivity, R.drawable.v2_, imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
-                overlapperVertexes, false, 0.5f, layers)
+        val image = Image(R.drawable.v2_, imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
+                overlapperVertexes, false, 0.5f, drawData)
         image.colorOffset = Color(0.25f, 0.25f, 0.25f, 0f)
 //        image.setColorSwap(Color(0f, 0f, 0f, 1f), Color(0.2f, 0.2f, 0.2f, 1f))
 

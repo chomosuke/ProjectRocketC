@@ -1,13 +1,11 @@
 package com.chomusukestudio.projectrocketc.Joystick
 
 import android.view.MotionEvent
-import com.chomusukestudio.projectrocketc.Shape.Vector
-import com.chomusukestudio.projectrocketc.transformToMatrixX
-import com.chomusukestudio.projectrocketc.transformToMatrixY
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 
-class InertiaJoystick: Joystick() {
-    private var nowX2 = 0f
-    private var nowY2 = 0f
+class InertiaJoystick(drawData: DrawData): Joystick(drawData) {
+    private var nowXY2 = Vector(0f, 0f)
     override fun onTouchEvent(e: MotionEvent) {
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only
@@ -36,8 +34,8 @@ class InertiaJoystick: Joystick() {
         do {
             pointerExist = true
             try {
-                nowXY = Vector(transformToMatrixX(e.getX(e.findPointerIndex(pointers.last()))),
-                        transformToMatrixY(e.getY(e.findPointerIndex(pointers.last()))))
+                nowXY = transformToMatrix(Vector(e.getX(e.findPointerIndex(pointers.last())),
+                               e.getY(e.findPointerIndex(pointers.last()))))
             } catch (e: IllegalArgumentException) {
                 pointerExist = false
             }
@@ -45,22 +43,22 @@ class InertiaJoystick: Joystick() {
 
 
         if (pointers.size > 1) {
-            nowX2 = transformToMatrixX(e.getX(e.findPointerIndex(pointers[pointers.lastIndex - 1])))
-            nowY2 = transformToMatrixY(e.getY(e.findPointerIndex(pointers[pointers.lastIndex - 1])))
+            nowXY2 = transformToMatrix(Vector(
+                    e.getX(e.findPointerIndex(pointers[pointers.lastIndex - 1])),
+                    e.getY(e.findPointerIndex(pointers[pointers.lastIndex - 1]))))
         } else {
-            nowX2 = 0f
-            nowY2 = 0f
+            nowXY2 = Vector(0f, 0f)
         }
     }
     override fun getRocketControl(currentRotation: Float): RocketControl {
         return RocketControl(
-                if (actionDown && nowX2 == 0f) {
+                if (actionDown && nowXY2.x == 0f) {
                     when {
                         nowXY.x > 0 -> -1f
                         nowXY.x < 0 -> 1f
                         else -> 0f
                     }
                 } else 0f
-                , !((nowX2 > 0 && nowXY.x < 0) || (nowXY.x > 0 && nowX2 < 0)))
+                , !((nowXY2.x > 0 && nowXY.x < 0) || (nowXY.x > 0 && nowXY2.x < 0)))
     }
 }

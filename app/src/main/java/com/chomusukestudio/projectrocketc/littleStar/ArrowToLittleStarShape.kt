@@ -1,6 +1,6 @@
-package com.chomusukestudio.projectrocketc.Shape.LittleStar
+package com.chomusukestudio.projectrocketc.littleStar
 
-import com.chomusukestudio.projectrocketc.Shape.*
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 import kotlin.math.PI
 
 class ArrowToLittleStarShape(radius: Float, arrowColor: Color, circleColor: Color, buildShapeAttr: BuildShapeAttr): Shape()/* can't overlap with the arrow */{

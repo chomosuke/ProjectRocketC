@@ -1,7 +1,7 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
-import com.chomusukestudio.projectrocketc.Shape.Vector
 
 class MultiTrace(private val size: Int, getTrace: (Int) -> Trace, private val width: Float) : Trace() {
     override val traceShapes: ArrayList<TraceShape>

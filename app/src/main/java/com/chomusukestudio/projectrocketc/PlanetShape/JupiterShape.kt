@@ -1,12 +1,8 @@
 package com.chomusukestudio.projectrocketc.PlanetShape
 
-import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.randFloat
-
-import java.lang.Math.PI
-import java.lang.Math.cos
-import java.lang.Math.random
-import java.lang.Math.sin
+import com.chomusukestudio.prcandroid2dgameengine.randFloat
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
+import java.lang.Math.*
 
 class JupiterShape(center: Vector, radius: Float, buildShapeAttr: BuildShapeAttr) : PlanetShape(center, radius) {
     override lateinit var componentShapes: Array<Shape>

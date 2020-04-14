@@ -1,17 +1,14 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.randFloat
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
-import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.randFloat
 import java.lang.Math.random
-import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.math.PI
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 class SquareTrace(private val speed: Float, private val width: Float, private val initialSize: Float, private val perSecRate: Int, private val duration: Long,
-                  private val initialColor: Color, private val finalColor: Color, val z: Float, private val layers: Layers) : Trace() {
+                  private val initialColor: Color, private val finalColor: Color, val z: Float, private val drawData: DrawData) : Trace() {
 
     private var preUnfinishedHalfIs = 0f
     override fun generateTraceOverride(now: Long, previousFrameTime: Long, origin: Vector, lastOrigin: Vector, rocketState: RocketState) {
@@ -22,7 +19,7 @@ class SquareTrace(private val speed: Float, private val width: Float, private va
             val traceVelocity = Vector(-speed, 0f).rotateVector(rocketState.currentRotation)
             val traceCenter = origin + Vector(0f, (width-initialSize) * randFloat(-0.5f, 0.5f)).rotateVector(rocketState.currentRotation)
             val newTraceShape = SquareTraceShape(traceCenter, traceVelocity, initialSize, 0f,
-                    duration, initialColor, finalColor, BuildShapeAttr(z, true, layers))
+                    duration, initialColor, finalColor, BuildShapeAttr(z, true, drawData))
             newTraceShape.rotate(traceCenter, rocketState.currentRotation + PI.toFloat()/4)
 
             val margin = /*random();*/i / iMax /*+ randFloat(-0.5f, 0.5f)*/ /** (0.5f + (1 * random().toFloat()))*/

@@ -5,23 +5,26 @@ package com.chomusukestudio.projectrocketc.Rocket
  */
 
 import android.media.MediaPlayer
-import android.support.annotation.CallSuper
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import androidx.annotation.CallSuper
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.shape.BuildShapeAttr
+import com.chomusukestudio.prcandroid2dgameengine.shape.IRemovable
+import com.chomusukestudio.prcandroid2dgameengine.shape.ISolid
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.Joystick.RocketControl
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.ExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.RocketRelated.RedExplosionShape
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
-import com.chomusukestudio.projectrocketc.Shape.*
-
 import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
 import com.chomusukestudio.projectrocketc.UI.MainActivity
 import com.chomusukestudio.projectrocketc.UI.State
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.log
 
-abstract class Rocket(protected val surrounding: Surrounding, private val mainActivity: MainActivity, var rocketPhysics: RocketPhysics, private val layers: Layers) {
+abstract class Rocket(protected val surrounding: Surrounding, private val mainActivity: MainActivity, var rocketPhysics: RocketPhysics, private val drawData: DrawData) {
     protected open val crashSound: MediaPlayer = MediaPlayer.create(mainActivity, R.raw.fx22)
     
     fun setRotationAndCenter(centerOfRotation: Vector, rotation: Float) {
@@ -76,7 +79,7 @@ abstract class Rocket(protected val surrounding: Surrounding, private val mainAc
     open val explosionCoordinate = centerOfRotation
     fun drawExplosion(now: Long, previousFrameTime: Long) {
         if (explosionShape == null) {
-            explosionShape = RedExplosionShape(explosionCoordinate, 0.75f, 1000, BuildShapeAttr(-11f, true, layers))
+            explosionShape = RedExplosionShape(explosionCoordinate, 0.75f, 1000, BuildShapeAttr(-11f, true, drawData))
         } else {
             // rocket already blown up
             for (component in components)
@@ -141,7 +144,8 @@ fun speedFormula(initialSpeed: Float, score: Int): Float {
 
 data class RocketState(val currentRotation: Float, val velocity: Vector)
 
-data class RocketQuirks(val turningRadius: Float, val initialSpeed: Float, val rotationSpeed: Float, val acceleration: Float, val deceleration: Float)
+data class RocketQuirks(val turningRadius: Float, val initialSpeed: Float, val rotationSpeed: Float, val acceleration: Float, val deceleration: Float,
+                        val cost: Int)
 
 fun convertPointsOnRocket(pR: Array<Vector>, center: Vector, scale: Vector): Array<Vector> {
     for (i in pR.indices) {

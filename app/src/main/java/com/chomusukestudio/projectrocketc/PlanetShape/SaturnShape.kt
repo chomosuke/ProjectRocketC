@@ -1,9 +1,8 @@
 package com.chomusukestudio.projectrocketc.PlanetShape
 
-import com.chomusukestudio.projectrocketc.Shape.*
-import com.chomusukestudio.projectrocketc.randFloat
-import java.lang.Math.*
-
+import com.chomusukestudio.prcandroid2dgameengine.randFloat
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
+import java.lang.Math.PI
 import kotlin.math.pow
 
 class SaturnShape(private val ringA: Float, private val ringB: Float, innerA: Float, numberOfRings: Int,

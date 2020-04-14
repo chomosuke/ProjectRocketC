@@ -1,15 +1,5 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
-import android.media.MediaPlayer
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
-import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
-import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
-import com.chomusukestudio.projectrocketc.Rocket.trace.Trace
-import com.chomusukestudio.projectrocketc.Shape.*
-
-import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import com.chomusukestudio.projectrocketc.UI.MainActivity
-
 /**
  * Created by Shuang Li on 11/03/2018.
 

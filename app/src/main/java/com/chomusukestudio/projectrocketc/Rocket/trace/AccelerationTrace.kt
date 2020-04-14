@@ -1,17 +1,17 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
-import com.chomusukestudio.projectrocketc.GLRenderer.Layers
+import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
+import com.chomusukestudio.prcandroid2dgameengine.randFloat
+import com.chomusukestudio.prcandroid2dgameengine.shape.BuildShapeAttr
+import com.chomusukestudio.prcandroid2dgameengine.shape.Color
+import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
-import com.chomusukestudio.projectrocketc.Shape.BuildShapeAttr
-import com.chomusukestudio.projectrocketc.Shape.Color
-import com.chomusukestudio.projectrocketc.Shape.Vector
 import com.chomusukestudio.projectrocketc.decelerateVelocity
-import com.chomusukestudio.projectrocketc.randFloat
 import kotlin.math.PI
 
 class AccelerationTrace(private val numberOfEdges: Int, val z: Float, private val width: Float, private val initialBubbleSize: Float, private val finalBubbleSize: Float,
 						private val duration: Long, private val perSecRate: Long, private val initialSpeed: Float,
-						private val initialColor: Color, private val layers: Layers) : Trace() {
+						private val initialColor: Color, private val drawData: DrawData) : Trace() {
 	
 	private var preUnfinishedHalfIs = 0f
 	var randomization = 0f
@@ -43,7 +43,7 @@ class AccelerationTrace(private val numberOfEdges: Int, val z: Float, private va
 	private fun newAccelerationTraceShape(center: Vector, initialRadius: Float, finalRadius: Float, initialSpeed: Vector,
 										  duration: Long, initialColor: Color): RegularPolygonalTraceShape {
 		val trace = AccelerationTraceShape(numberOfEdges, center, initialRadius, finalRadius, duration,
-				initialSpeed, 0.00002f, initialColor, BuildShapeAttr(z, true, layers))
+				initialSpeed, 0.00002f, initialColor, BuildShapeAttr(z, true, drawData))
 		traceShapes.add(trace)
 		return trace
 	}
