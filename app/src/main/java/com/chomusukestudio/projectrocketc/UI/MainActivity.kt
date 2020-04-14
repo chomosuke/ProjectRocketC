@@ -94,6 +94,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //        // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
+        // make sure splash screen is showing
+        findViewById<View>(R.id.chomusukeView).bringToFront()
+
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
             runWithExceptionChecked {
@@ -101,8 +104,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                         (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
                         this) // we know that the context is MainActivity
                 myGLSurfaceView.initializeRenderer(mProcessingThread)
-
-                mProcessingThread
+                mProcessingThread.waitForInit()
 
                 // hide splash screen and show game
                 this.runOnUiThread {
@@ -112,7 +114,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
                     findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
                     findViewById<ConstraintLayout>(R.id.scoresLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-                    myGLSurfaceView.visibility = View.VISIBLE
                     myGLSurfaceView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
                     findViewById<ImageView>(R.id.chomusukeView).bringToFront()

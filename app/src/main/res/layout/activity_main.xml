@@ -9,23 +9,23 @@
     android:clipChildren="false"
     tools:context="com.chomusukestudio.projectrocketc.UI.MainActivity">
 
+    <view
+        android:id="@+id/MyGLSurfaceView"
+        class="com.chomusukestudio.projectrocketc.UI.MyGLSurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/chomusukeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/profile_chomusuke_anh_nger_vorschau"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <view
-        android:id="@+id/MyGLSurfaceView"
-        class="com.chomusukestudio.projectrocketc.UI.MyGLSurfaceView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
