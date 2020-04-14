@@ -1,1 +1,1 @@
-include ':app', ':prcandroidopenglengine'
+include ':app', ':PRCAndroid2DGameEngine'

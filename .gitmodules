@@ -1,0 +1,3 @@
+[submodule "PRCAndroid2DGameEngine"]
+	path = PRCAndroid2DGameEngine
+	url = https://github.com/chomosuke/PRCAndroid2DGameEngine.git
