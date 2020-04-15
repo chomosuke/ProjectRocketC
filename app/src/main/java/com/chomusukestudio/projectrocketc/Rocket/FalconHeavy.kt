@@ -43,9 +43,9 @@ class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPh
         // scale
         val scale = Vector(1.1f, 1f)
         for (i in arrayForOverlapper.indices)
-            arrayForOverlapper[i] = arrayForOverlapper[i].scaleXY(scale)
+            arrayForOverlapper[i] *= scale
         for (i in imageVertexes.indices)
-            imageVertexes[i] = imageVertexes[i].scaleXY(scale)
+            imageVertexes[i] *= scale
 
         arrayOf(Image(R.drawable.falcon_heavy,
                 imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],

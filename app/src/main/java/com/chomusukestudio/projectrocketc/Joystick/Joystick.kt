@@ -63,7 +63,7 @@ abstract class Joystick(private val drawData: DrawData) {
     open fun removeAllShape() {}
 
     fun transformToMatrix(vector: Vector) : Vector {
-        var result = vector.scaleXY(drawData.pixelSize) // scale
+        var result = vector * drawData.pixelSize // scale
         result *= Vector((drawData.rightEnd - drawData.leftEnd).sign, (drawData.bottomEnd - drawData.topEnd).sign) // orientate
         result += Vector(drawData.leftEnd, drawData.topEnd) // recenter
         return result

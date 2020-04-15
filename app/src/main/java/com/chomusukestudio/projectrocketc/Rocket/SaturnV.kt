@@ -47,7 +47,7 @@ class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 		val x = 0.5f; val y = 0.7f
 		val imageVertexes = arrayOf(Vector(x, y), Vector(x, -y), Vector(-x, -y), Vector(-x, y))
 		for (i in imageVertexes.indices)
-			imageVertexes[i] = imageVertexes[i].scaleXY(scale)
+			imageVertexes[i] *= scale
 
 		arrayOf(Image(R.drawable.saturn_v,
 				imageVertexes[0], imageVertexes[1], imageVertexes[2], imageVertexes[3],
