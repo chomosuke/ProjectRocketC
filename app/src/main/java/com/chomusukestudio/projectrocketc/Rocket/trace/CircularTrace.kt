@@ -9,8 +9,8 @@ import java.lang.Math.random
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long,
-                            private val initialColor: Color, private val drawData: DrawData) : Trace() {
+class CircularTrace(private val initialWidth: Float, private val finalWidth: Float, private val duration: Long, private val initialColor: Color, val z: Float,
+                    private val drawData: DrawData) : Trace() {
 
     override fun generateTraceOverride(now: Long, previousFrameTime: Long, origin: Vector, lastOrigin: Vector, rocketState: RocketState) {
         val dOrigin = origin - lastOrigin
@@ -42,17 +42,17 @@ class RegularPolygonalTrace(val numberOfEdges: Int, val z: Float, private val in
     private var unfilledDs = 0f
 
     private fun newRegularPolygonalTraceShape(center: Vector, delta: Vector, initialRadius: Float, finalRadius: Float,
-                                              duration: Long, initialColor: Color): RegularPolygonalTraceShape {
-        val trace = RegularPolygonalTraceShape(numberOfEdges, center, initialRadius, finalRadius,
+                                              duration: Long, initialColor: Color): CircularTraceShape {
+        val trace = CircularTraceShape(center, initialRadius, finalRadius,
                 duration, initialColor, BuildShapeAttr(z, true, drawData))
         traceShapes.add(trace)
         return trace
     }
 }
 
-open class RegularPolygonalTraceShape(numberOfEdges: Int, private var center: Vector, private val initialRadius: Float, finalRadius: Float,
-                                         private val duration: Long, initialColor: Color, buildShapeAttr: BuildShapeAttr) : TraceShape() {
-    override var componentShapes: Array<Shape> = arrayOf(RegularPolygonalShape(numberOfEdges, center, initialRadius, initialColor, buildShapeAttr))
+open class CircularTraceShape(private var center: Vector, private val initialRadius: Float, finalRadius: Float,
+                              private val duration: Long, initialColor: Color, buildShapeAttr: BuildShapeAttr) : TraceShape() {
+    override var componentShapes: Array<Shape> = arrayOf(CircularShape(center, initialRadius, initialColor, buildShapeAttr))
     private var deltaRadius: Float = finalRadius - initialRadius
     private var alphaEveryMiniSecond: Float = (1f / 256 / initialColor.alpha).pow(1f / duration)
 
@@ -82,7 +82,7 @@ open class RegularPolygonalTraceShape(numberOfEdges: Int, private var center: Ve
                     color.alpha * alphaEveryMiniSecond.pow((now - previousFrameTime).toFloat()))
         }
         // and change radius
-        (componentShapes[0] as RegularPolygonalShape).radius = deltaRadius * (0.75f * sqrt(timeSinceBorn / duration) + 0.25f * timeSinceBorn / duration) + initialRadius
+        (componentShapes[0] as CircularShape).radius = deltaRadius * (0.75f * sqrt(timeSinceBorn / duration) + 0.25f * timeSinceBorn / duration) + initialRadius
         if (color.alpha <= 1f / 256f) {
             needToBeRemoved = true
         }

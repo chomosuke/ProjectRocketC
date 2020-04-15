@@ -16,8 +16,8 @@ import com.chomusukestudio.projectrocketc.UI.MainActivity
 
 class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, drawData: DrawData) : Rocket(surrounding, mainActivity, rocketPhysics, drawData) {
     override val traces: Array<Trace> = arrayOf(MultiTrace(2, {
-                AccelerationTrace(7, 1.01f, 0.05f, 0.02f, 0.2f, 750, 256,
-                0.004f, Color(1f, 0.9f, 0f, 3f), drawData)
+                AccelerationTrace(0.05f, 0.02f, 0.2f, 750, 256, 0.004f, Color(1f, 0.9f, 0f, 3f),
+                        1.01f, drawData)
             }, 0.63f),
             MultiTrace(2, {
                 SquareTrace(0.007f, 0.05f, 0.05f, 300, 16,

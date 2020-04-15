@@ -20,11 +20,11 @@ class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPh
 //                    Color(1f, 1f, 1f, 1f), Color(1f, 0.75f, 0f, 1f),
 //                    1.01f, layers)
                 if (it == 1)
-                    AccelerationTrace(7, 1.01f, 0.08f, 0.015f, 0.15f, 800, 200,
-                            0.003f, Color(1f, 1f, 0f, 3f), drawData)
+                    AccelerationTrace(0.08f, 0.015f, 0.15f, 800, 200, 0.003f, Color(1f, 1f, 0f, 3f),
+                            1.01f, drawData)
                 else
-                    AccelerationTrace(7, 1.01f, 0.08f, 0.015f, 0.15f, 1000, 256,
-                            0.004f, Color(1f, 1f, 0f, 3f), drawData)
+                    AccelerationTrace(0.08f, 0.015f, 0.15f, 1000, 256, 0.004f, Color(1f, 1f, 0f, 3f),
+                            1.01f, drawData)
             }, 0.4f)
     )
     override val rocketQuirks: RocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,

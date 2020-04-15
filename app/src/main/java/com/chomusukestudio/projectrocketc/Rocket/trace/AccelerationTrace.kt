@@ -9,9 +9,9 @@ import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import com.chomusukestudio.projectrocketc.decelerateVelocity
 import kotlin.math.PI
 
-class AccelerationTrace(private val numberOfEdges: Int, val z: Float, private val width: Float, private val initialBubbleSize: Float, private val finalBubbleSize: Float,
-						private val duration: Long, private val perSecRate: Long, private val initialSpeed: Float,
-						private val initialColor: Color, private val drawData: DrawData) : Trace() {
+class AccelerationTrace(private val width: Float, private val initialBubbleSize: Float, private val finalBubbleSize: Float, private val duration: Long, private val perSecRate: Long,
+						private val initialSpeed: Float, private val initialColor: Color, val z: Float,
+						private val drawData: DrawData) : Trace() {
 	
 	private var preUnfinishedHalfIs = 0f
 	var randomization = 0f
@@ -41,17 +41,17 @@ class AccelerationTrace(private val numberOfEdges: Int, val z: Float, private va
 	}
 	
 	private fun newAccelerationTraceShape(center: Vector, initialRadius: Float, finalRadius: Float, initialSpeed: Vector,
-										  duration: Long, initialColor: Color): RegularPolygonalTraceShape {
-		val trace = AccelerationTraceShape(numberOfEdges, center, initialRadius, finalRadius, duration,
+										  duration: Long, initialColor: Color): CircularTraceShape {
+		val trace = AccelerationTraceShape(center, initialRadius, finalRadius, duration,
 				initialSpeed, 0.00002f, initialColor, BuildShapeAttr(z, true, drawData))
 		traceShapes.add(trace)
 		return trace
 	}
 }
 
-class AccelerationTraceShape(numberOfEdges: Int, center: Vector, initialRadius: Float, finalRadius: Float, duration: Long, initialVelocity: Vector,
+class AccelerationTraceShape(center: Vector, initialRadius: Float, finalRadius: Float, duration: Long, initialVelocity: Vector,
 							 private val deceleration: Float, initialColor: Color, buildShapeAttr: BuildShapeAttr)
-	: RegularPolygonalTraceShape(numberOfEdges, center, initialRadius, finalRadius, duration, initialColor, buildShapeAttr) {
+	: CircularTraceShape(center, initialRadius, finalRadius, duration, initialColor, buildShapeAttr) {
 	private var velocity = initialVelocity
 	override fun fadeTrace(now: Long, previousFrameTime: Long) {
 		super.fadeTrace(now, previousFrameTime)

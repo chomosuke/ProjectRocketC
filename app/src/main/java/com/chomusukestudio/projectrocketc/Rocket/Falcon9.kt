@@ -14,8 +14,8 @@ import com.chomusukestudio.projectrocketc.UI.MainActivity
 
 class Falcon9(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, drawData: DrawData) : Rocket(surrounding, mainActivity, rocketPhysics, drawData) {
     override val traces = arrayOf<Trace>(
-            AccelerationTrace(7, 1.01f, 0.08f, 0.015f, 0.2f, 1000, 256,
-            0.004f, Color(1f, 1f, 0f, 3f), drawData)
+            AccelerationTrace(0.08f, 0.015f, 0.2f, 1000, 256, 0.004f, Color(1f, 1f, 0f, 3f),
+                    1.01f, drawData)
 //            SquareTrace(0.007f, 0.15f, 0.075f, 400, 32,
 //                    Color(1f, 1f, 1f, 1f), Color(1f, 0.75f, 0f, 1f),
 //                    1.01f, layers)

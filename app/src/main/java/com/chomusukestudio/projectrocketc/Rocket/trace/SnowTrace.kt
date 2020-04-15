@@ -8,8 +8,8 @@ import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.projectrocketc.Rocket.RocketState
 import kotlin.math.PI
 
-class SnowTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: Float, private val finalWidth: Float, private val duration: Long, private val perSecRate: Long, private val initialSpeed: Float,
-				private val initialColor: Color, private val drawData: DrawData) : Trace() {
+class SnowTrace(private val initialWidth: Float, private val finalWidth: Float, private val duration: Long, private val perSecRate: Long, private val initialSpeed: Float, private val initialColor: Color, val z: Float,
+				private val drawData: DrawData) : Trace() {
 	
 	private var preUnfinishedHalfIs = 0f
 	override fun generateTraceOverride(now: Long, previousFrameTime: Long, origin: Vector, lastOrigin: Vector, rocketState: RocketState) {
@@ -38,8 +38,8 @@ class SnowTrace(val numberOfEdges: Int, val z: Float, private val initialWidth: 
 	}
 	
 	private fun newAccelerationTraceShape(center: Vector, initialRadius: Float, finalRadius: Float, initialSpeed: Vector,
-										  duration: Long, initialColor: Color): RegularPolygonalTraceShape {
-		val trace = AccelerationTraceShape(numberOfEdges, center, initialRadius, finalRadius, duration,
+										  duration: Long, initialColor: Color): CircularTraceShape {
+		val trace = AccelerationTraceShape(center, initialRadius, finalRadius, duration,
 				initialSpeed, 0.00004f, initialColor, BuildShapeAttr(z, true, drawData))
 		traceShapes.add(trace)
 		return trace

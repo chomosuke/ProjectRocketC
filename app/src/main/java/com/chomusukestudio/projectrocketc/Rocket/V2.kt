@@ -19,8 +19,8 @@ import com.chomusukestudio.projectrocketc.UI.MainActivity
 class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: RocketPhysics, drawData: DrawData)
     : Rocket(surrounding, mainActivity, rocketPhysics, drawData) {
     override val traces = arrayOf<Trace>(
-            AccelerationTrace(7, 1.01f, 0.1f, 0.02f, 0.25f, 1000, 100,
-                    0.004f, Color(1f, 1f, 0f, 3f), drawData))
+            AccelerationTrace(0.1f, 0.02f, 0.25f, 1000, 100, 0.004f, Color(1f, 1f, 0f, 3f),
+                    1.01f, drawData))
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         val origin = ((components[0] as Image).vertex3 + (components[0] as Image).vertex4) / 2f

@@ -17,8 +17,8 @@ class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 	override val traces: Array<Trace> = arrayOf(
 			MultiTrace(3,
 					{
-						val t = AccelerationTrace(7, 1.01f, 0.05f, 0.015f, 0.2f, 750, 150,
-								0.004f, Color(1f, 0.9f, 0f, 3f), drawData)
+						val t = AccelerationTrace(0.05f, 0.015f, 0.2f, 750, 150, 0.004f, Color(1f, 0.9f, 0f, 3f),
+                                1.01f, drawData)
 						t.randomization = 1f
 						return@MultiTrace t
 					},
