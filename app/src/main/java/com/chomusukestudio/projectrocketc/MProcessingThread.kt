@@ -5,10 +5,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.widget.TextView
 import com.chomusukestudio.prcandroid2dgameengine.ProcessingThread
-import com.chomusukestudio.prcandroid2dgameengine.shape.BuildShapeAttr
-import com.chomusukestudio.prcandroid2dgameengine.shape.Color
-import com.chomusukestudio.prcandroid2dgameengine.shape.TriangularShape
-import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
 import com.chomusukestudio.projectrocketc.Rocket.*
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DragRocketPhysics
@@ -36,7 +33,7 @@ class MProcessingThread(val refreshRate: Float, private val mainActivity: MainAc
     }
 
     override fun initializeWithBoundaries() {
-        Log.d("init", "${drawData.leftEnd}, ${drawData.rightEnd}, ${drawData.topEnd}, ${drawData.bottomEnd}")
+        CircularShape.pixelPerLength = (1 / drawData.pixelSize.x).toInt()
         surrounding = Surrounding(mainActivity, drawData)
         rocket = getRocket(rocketIndex)
         surrounding.initializeSurrounding(rocket, mainActivity.state)

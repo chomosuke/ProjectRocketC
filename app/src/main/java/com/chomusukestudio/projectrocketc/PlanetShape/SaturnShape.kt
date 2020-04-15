@@ -66,7 +66,7 @@ class SaturnShape(private val ringA: Float, private val ringB: Float, innerA: Fl
     }
     
     override val overlapper: Overlapper
-        get() = object : Overlapper() {
+        get() = object : ComponentOverlapper() {
             override val components: Array<Overlapper>
                 get() = arrayOf(CircularOverlapper(center, radius), EllipseOverlapper(center, ringA, ringB, rotation))
         }
