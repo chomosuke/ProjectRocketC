@@ -145,7 +145,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         inTutorial = true
     }
-    fun finishTutorial() {
+    fun finishTutorial(view: View) {
         fadeOut(findViewById(R.id.tutorialGroup))
 
         inTutorial = false
@@ -436,7 +436,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
     override fun onBackPressed() {
         if (inTutorial) {
-            finishTutorial()
+            finishTutorial(findViewById(R.id.finishTutorialButton))
         } else if (inSetting) {
             closeSetting(findViewById(R.id.closeSettingButton))
         } else {

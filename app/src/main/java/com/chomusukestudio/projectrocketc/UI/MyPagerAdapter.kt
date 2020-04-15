@@ -9,6 +9,9 @@ import android.widget.RelativeLayout
 import com.chomusukestudio.projectrocketc.R
 
 class MyPagerAdapter(private val mainActivity: MainActivity) : androidx.viewpager.widget.PagerAdapter() {
+
+    private val finishTutorialButton = mainActivity.findViewById<Button>(R.id.finishTutorialButton)
+
     override fun instantiateItem(container :ViewGroup, position: Int): View {
         Log.v("tutorial instItem", container.toString())
 
@@ -34,37 +37,22 @@ class MyPagerAdapter(private val mainActivity: MainActivity) : androidx.viewpage
         if (position == count - 1) {
             // last tutorial page give an option to quit
 
-//            val button = mainActivity.findViewById<Button>(R.id.finishTutorialButton)
-//            val rLayoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-//                    RelativeLayout.LayoutParams.WRAP_CONTENT)
-//            button.layoutParams = rLayoutParams
-//            rLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-//            rLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
+            (finishTutorialButton.parent as ViewGroup).removeView(finishTutorialButton)
+            val rLayoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT)
+            finishTutorialButton.layoutParams = rLayoutParams
+            rLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            rLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
 
-            relativeLayout.addView(generateQuitTutorialButton())
+            val scale: Float = mainActivity.resources.displayMetrics.density
+            val dpAsPixels = (24 * scale + 0.5f).toInt()
+            rLayoutParams.setMargins(dpAsPixels, dpAsPixels, dpAsPixels, dpAsPixels)
+
+            relativeLayout.addView(finishTutorialButton)
         }
 
         container.addView(relativeLayout)
         return relativeLayout
-    }
-
-    private fun generateQuitTutorialButton(): Button {
-        val button = Button(mainActivity)
-        button.setOnClickListener { mainActivity.finishTutorial() }
-
-        button.text = mainActivity.getString(R.string.finish_tutorial)
-
-        val rLayoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT)
-        button.layoutParams = rLayoutParams
-        rLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-        rLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_END)
-
-        val scale: Float = mainActivity.resources.displayMetrics.density
-        val dpAsPixels = (24 * scale + 0.5f).toInt()
-        rLayoutParams.setMargins(dpAsPixels, dpAsPixels, dpAsPixels, dpAsPixels)
-
-        return button
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
