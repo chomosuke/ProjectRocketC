@@ -44,7 +44,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-
+    
+        // display splashScreen
+        findViewById<View>(R.id.splashScreen).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
+        
         // initialize convenient variable
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
         myGLSurfaceView = findViewById(R.id.MyGLSurfaceView)
@@ -81,10 +84,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 apply()
             }
         }
-
-        // display splashScreen
-        findViewById<View>(R.id.splashScreen).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
-
+        
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
         with(sharedPreferences.edit()) {

@@ -67,15 +67,22 @@ class Surrounding(private val mainActivity: MainActivity, private val drawData: 
     private var displacement = Vector(0f, 0f) // displacement since last makeNewTriangleAndRemoveTheOldOne()
     private val parallelForIForBackgroundStars = ParallelForI(8, "move background")
 
-    private val planetsStore =
+    private val planetsStore: Array<Planet> =
             if(resources is SurroundingResources)
                 resources.planetsStore
-            else
-                Array(1000) {// 1000 planet in store waiting for use
-                    val planetShape = generateRandomPlanet(Vector(100f, 100f), generateRadius(), 0f, drawData)
-                    planetShape.isInUse = false
-                    return@Array planetShape
-                }
+            else {
+                // 1000 planet in store waiting for use
+                val planets = arrayOfNulls<Planet>(1000)
+                
+                val parallelForI = ParallelForI(16, "fill planetsStore")
+                parallelForI.run({
+                    planets[it] = generateRandomPlanet(Vector(100f, 100f), generateRadius(), 0f, drawData)
+                    planets[it]!!.isInUse = false
+                }, 1000)
+                parallelForI.waitForLastRun()
+                
+                planets as Array<Planet>
+            }
 
     private fun generateRandomPlanet(center: Vector, radius: Float, z: Float, drawData: DrawData): Planet {
         val randomPlanetShape: PlanetShape
