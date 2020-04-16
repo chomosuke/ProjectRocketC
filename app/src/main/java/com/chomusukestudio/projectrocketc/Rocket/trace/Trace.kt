@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.Rocket.trace
 
+import com.chomusukestudio.prcandroid2dgameengine.runWithExceptionChecked
 import com.chomusukestudio.prcandroid2dgameengine.shape.Shape
 import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
 import com.chomusukestudio.prcandroid2dgameengine.threadClasses.ParallelForI
@@ -37,7 +38,9 @@ abstract class Trace {
         }
 
         parallelForIForFadeTraces.run({ i ->
-            traceShapes[i].fadeTrace(now, /*nowXY - ((nowXY - */previousFrameTime/*) * refreshFactor)*/)
+            runWithExceptionChecked {
+                traceShapes[i].fadeTrace(now, /*nowXY - ((nowXY - */previousFrameTime/*) * refreshFactor)*/)
+            }
         }, traceShapes.size)
     }
 

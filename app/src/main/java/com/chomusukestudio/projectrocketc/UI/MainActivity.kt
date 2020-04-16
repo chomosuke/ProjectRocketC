@@ -6,6 +6,7 @@ import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Point
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -82,7 +83,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         }
 
         // display splashScreen
-        findViewById<ImageView>(R.id.chomusukeView).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
+        findViewById<View>(R.id.splashScreen).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
 
         // update highest score
         findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
@@ -94,16 +95,19 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //        // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
-        // make sure splash screen is showing
-        findViewById<View>(R.id.chomusukeView).bringToFront()
-
         // initialize surrounding
         Executors.newSingleThreadExecutor().submit {
             runWithExceptionChecked {
                 mProcessingThread = MProcessingThread(
                         (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.refreshRate/*60f*/,
                         this) // we know that the context is MainActivity
+
+                val size = Point() // updateBoundaries manually as SurfaceView won't be visible after initialization
+                windowManager.defaultDisplay.getSize(size)
+                mProcessingThread.updateBoundaries(size.x, size.y)
+
                 myGLSurfaceView.initializeRenderer(mProcessingThread)
+
                 mProcessingThread.waitForInit()
 
                 // hide splash screen and show game
@@ -114,15 +118,15 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     findViewById<ConstraintLayout>(R.id.preGameLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
                     findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
                     findViewById<ConstraintLayout>(R.id.scoresLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                    myGLSurfaceView.visibility = View.VISIBLE
                     myGLSurfaceView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
 
-                    findViewById<ImageView>(R.id.chomusukeView).bringToFront()
-                    findViewById<ImageView>(R.id.chomusukeView).animate()
+                    findViewById<View>(R.id.splashScreen).animate()
                             .alpha(0f)
                             .setDuration(250)
                             .setListener(object : AnimatorListenerAdapter() {
                                 override fun onAnimationEnd(animation: Animator?) {
-                                    findViewById<ImageView>(R.id.chomusukeView).visibility = View.INVISIBLE
+                                    findViewById<View>(R.id.splashScreen).visibility = View.INVISIBLE
                                 }
                             })
 
