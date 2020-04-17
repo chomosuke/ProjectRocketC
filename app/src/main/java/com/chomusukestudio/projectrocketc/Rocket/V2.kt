@@ -27,7 +27,7 @@ class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: Ro
         traces[0].generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
 
-    override val rocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
+    override val rocketQuirks = RocketQuirks("V-2 rocket", 2f, 0.003f, 0.003f,
             0.000002f, 0.000001f, 0)
 
     override val width = 0.3f

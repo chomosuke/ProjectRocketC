@@ -20,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.chomusukestudio.prcandroid2dgameengine.runWithExceptionChecked
 import com.chomusukestudio.projectrocketc.MProcessingThread
 import com.chomusukestudio.projectrocketc.R
+import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import java.util.concurrent.Executors
 
 enum class State { InGame, PreGame, Paused, Crashed }
@@ -73,6 +74,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {}
             })
         }
+        
+        // update balance view
+        findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, sharedPreferences.getInt(getString(R.string.balance), 0))
 
         // see if this is the first time the game open
         if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
@@ -276,77 +280,130 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     fun swapRocketLeft(view: View) {
         if (mProcessingThread.isOutOfBounds(-2))
             findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.INVISIBLE
-        mProcessingThread.swapRocket(-1)
+        swapRocket(-1)
         findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.VISIBLE
     }
     fun swapRocketRight(view: View) {
         if (mProcessingThread.isOutOfBounds(2))
             findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
-        mProcessingThread.swapRocket(1)
+        swapRocket(1)
         findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.VISIBLE
     }
-
-    private var inSetting = false
-    fun openSetting(view: View) {
-        val currentLayout =
-                getCurrentLayoutForSetting()
-
-        findViewById<ConstraintLayout>(R.id.settingLayout).visibility = View.VISIBLE
-        findViewById<ConstraintLayout>(R.id.settingLayout).bringToFront()
-
-        currentLayout.visibility = View.INVISIBLE
-
-        inSetting = true
+    private fun swapRocket(dIndex: Int) {
+        mProcessingThread.swapRocket(dIndex)
+        
+        val rocketQuirks = mProcessingThread.currentRocketQuirks
+        val buyButton = findViewById<Button>(R.id.buyButton)
+        val playButton = findViewById<ImageButton>(R.id.playButton)
+        
+        if (sharedPreferences.getBoolean(getString(R.string.bought, rocketQuirks.name), false)
+                || mProcessingThread.rocketIndex == 0 // first rocket automatically brought
+        ) {
+            // if bought
+            buyButton.visibility = View.INVISIBLE
+            playButton.visibility = View.VISIBLE
+        } else {
+            // if not bought
+            playButton.visibility = View.INVISIBLE
+            buyButton.text = getString(R.string.add_dollar_symbol, rocketQuirks.price)
+            buyButton.visibility = View.VISIBLE
+        }
     }
-    fun closeSetting(view: View) {
-
-        val currentLayout =
-                getCurrentLayoutForSetting()
-
-        currentLayout.visibility = View.VISIBLE
-        currentLayout.bringToFront()
-
-        findViewById<ConstraintLayout>(R.id.settingLayout).visibility = View.INVISIBLE
-
-        inSetting = false
+    
+    fun buyRocket(view: View) {
+        val balance = sharedPreferences.getInt(getString(R.string.balance), 0)
+        val rocketQuirks = mProcessingThread.currentRocketQuirks
+        
+        if (rocketQuirks.price < balance) {
+            val newBalance = balance - rocketQuirks.price
+            with(sharedPreferences.edit()) {
+                putBoolean(getString(R.string.bought, rocketQuirks.name), true)
+                putInt(getString(R.string.balance), newBalance)
+                apply()
+            }
+            
+            findViewById<View>(R.id.buyButton).visibility = View.INVISIBLE
+            findViewById<View>(R.id.playButton).visibility = View.VISIBLE
+            findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, newBalance)
+        } else {
+            overlay(findViewById(R.id.insufficientFundsButton))
+        }
     }
-    private fun getCurrentLayoutForSetting(): ConstraintLayout {
+    
+    private fun overlay(view: View) {
+        getCurrentLayout().visibility = View.INVISIBLE
+        
+        findViewById<View>(R.id.overlayBlack).visibility = View.VISIBLE
+        findViewById<View>(R.id.overlayBlack).bringToFront()
+        
+        view.visibility = View.VISIBLE
+        view.bringToFront()
+    
+    }
+    fun removeOverlay(view: View) {
+        findViewById<View>(R.id.overlayBlack).visibility = View.INVISIBLE
+    
+        getCurrentLayout().visibility = View.VISIBLE
+        getCurrentLayout().bringToFront()
+    
+        view.visibility = View.INVISIBLE
+    }
+    private fun getCurrentLayout(): ConstraintLayout {
         return when (state) {
             State.Paused -> findViewById(R.id.onPausedLayout)
             State.PreGame -> findViewById(R.id.preGameLayout)
             State.Crashed -> findViewById(R.id.onCrashLayout)
-            else -> throw IllegalStateException()
+            State.InGame -> findViewById(R.id.inGameLayout)
         }
+    }
+
+    private var inSetting = false
+    fun openSetting(view: View) {
+        overlay(findViewById(R.id.settingLayout))
+        inSetting = true
+    }
+    fun closeSetting(view: View) {
+        removeOverlay(findViewById(R.id.settingLayout))
+        inSetting = false
     }
 
     fun onCrashed() {
         state = State.Crashed
-
-        mProcessingThread.updateHighestScore { score ->
-            if (score > sharedPreferences.getInt(getString(R.string.highestScore), 0)) {
-                // update highest score
-                with(sharedPreferences.edit()) {
-                    putInt(getString(R.string.highestScore), score)
-                    apply()
-                }
-                // firebase stuff that i don't understand
+    
+        val score = LittleStar.score
+        with(sharedPreferences) {
+            with(edit()) {
+                
+                if (score > getInt(getString(R.string.highestScore), 0))
+                    putInt(getString(R.string.highestScore), score) // update highest score
+    
+                // new balance
+                putInt(getString(R.string.balance), getInt(getString(R.string.balance), 0) + score)
+                
+                apply()
+            }
+        }
+        // firebase stuff that i don't understand
 //            val bundle = Bundle()
 //            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
 //            bundle.putString("leaderboard_id", "mLeaderboard")
 //            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
-
-            }
-        }
+    
+    
         runOnUiThread {
             findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.onCrashLayout).bringToFront()
-
+        
             findViewById<TextView>(R.id.highestScoreOnCrash).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
             findViewById<TextView>(R.id.previousScoreOnCrash).text = findViewById<TextView>(R.id.scoreTextView).text
-
+            
+            // update balance textView
+            findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, sharedPreferences.getInt(getString(R.string.balance), 0))
+        
             findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.INVISIBLE
-
+        
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
+            
             // prevent any uncleaned visual effect
             findViewById<TextView>(R.id.visualText).text = ""
         }

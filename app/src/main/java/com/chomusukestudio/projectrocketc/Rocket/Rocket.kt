@@ -144,8 +144,8 @@ fun speedFormula(initialSpeed: Float, score: Int): Float {
 
 data class RocketState(val currentRotation: Float, val velocity: Vector)
 
-data class RocketQuirks(val turningRadius: Float, val initialSpeed: Float, val rotationSpeed: Float, val acceleration: Float, val deceleration: Float,
-                        val cost: Int)
+data class RocketQuirks(val name: String, val turningRadius: Float, val initialSpeed: Float, val rotationSpeed: Float,
+                        val acceleration: Float, val deceleration: Float, val price: Int)
 
 fun convertPointsOnRocket(pR: Array<Vector>, center: Vector, scale: Vector): Array<Vector> {
     for (i in pR.indices) {

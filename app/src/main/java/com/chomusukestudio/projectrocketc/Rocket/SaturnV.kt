@@ -23,8 +23,8 @@ class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 						return@MultiTrace t
 					},
 			0.25f))
-	override val rocketQuirks = RocketQuirks(2f, 0.003f, 0.003f,
-				0.000002f, 0.000001f, 50000)
+	override val rocketQuirks = RocketQuirks("Saturn V", 2f, 0.003f, 0.003f,
+				0.000002f, 0.000001f, 5000)
 	override val components: Array<ISolid> = run { // refer to rockets' points/SaturnV.PNG
 		val pR = arrayOf(Vector(305f, 92f), Vector(308f, 99f), Vector(308f, 128f), // 2
 				Vector(312f, 134f), Vector(309f, 134f), Vector(309f, 152f), // 5

@@ -24,7 +24,8 @@ class MProcessingThread(val refreshRate: Float, private val mainActivity: MainAc
 //            OneFingerJoystick()
 //            InertiaJoystick()
     private lateinit var surrounding: Surrounding
-    private var rocketIndex = 0
+    var rocketIndex = 0
+        private set
     private lateinit var rocket: Rocket
     init {
         // load sound for eat little star soundPool
@@ -38,6 +39,8 @@ class MProcessingThread(val refreshRate: Float, private val mainActivity: MainAc
         rocket = getRocket(rocketIndex)
         surrounding.initializeSurrounding(rocket, mainActivity.state)
     }
+    
+    val currentRocketQuirks get() = rocket.rocketQuirks
 
     private fun getRocket(rocketIndex: Int): Rocket {
         return when (rocketIndex) {
@@ -67,10 +70,6 @@ class MProcessingThread(val refreshRate: Float, private val mainActivity: MainAc
             mainActivity.findViewById<TextView>(R.id.scoreTextView).text = /*putCommasInInt*/(LittleStar.score.toString())
             mainActivity.findViewById<TextView>(R.id.deltaTextView).text = "δ " + (LittleStar.dScore).toString()
         }
-    }
-
-    fun updateHighestScore(updateHighestScore: (Int) -> Unit ) {
-        updateHighestScore(LittleStar.score)
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
