@@ -2,9 +2,7 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import com.chomusukestudio.prcandroid2dgameengine.Image
 import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
-import com.chomusukestudio.prcandroid2dgameengine.shape.Color
-import com.chomusukestudio.prcandroid2dgameengine.shape.ISolid
-import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
@@ -54,7 +52,9 @@ class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 				overlapperVertexes, false,
 				0.5f, drawData))
 	}
-	override val width = 0.5f
+	override val width = 0.295f
+//	val widthSquare = QuadrilateralShape(Vector(width/2, 1f), Vector(-width/2, 1f),
+//			Vector(-width/2, -1f), Vector(width/2, -1f), Color(0f, 1f, 0f, 0.2f), BuildShapeAttr(10f, true, drawData))
 	
 	override fun generateTrace(now: Long, previousFrameTime: Long) {
 		val origin = ((components[0] as Image).vertex3 +

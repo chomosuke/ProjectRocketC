@@ -2,9 +2,7 @@ package com.chomusukestudio.projectrocketc.Rocket
 
 import com.chomusukestudio.prcandroid2dgameengine.Image
 import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
-import com.chomusukestudio.prcandroid2dgameengine.shape.Color
-import com.chomusukestudio.prcandroid2dgameengine.shape.ISolid
-import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
+import com.chomusukestudio.prcandroid2dgameengine.shape.*
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.RocketPhysics
 import com.chomusukestudio.projectrocketc.Rocket.trace.AccelerationTrace
@@ -64,7 +62,9 @@ class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketP
                 overlapperVertexes, false, 0.5f, drawData))
     }
 
-    override val width: Float = 0.432f
+    override val width: Float = 0.57f
+//    val widthSquare = QuadrilateralShape(Vector(width/2, 1f), Vector(-width/2, 1f),
+//            Vector(-width/2, -1f), Vector(width/2, -1f), Color(0f, 1f, 0f, 0.2f), BuildShapeAttr(10f, true, drawData))
 
     override fun generateTrace(now: Long, previousFrameTime: Long) {
         traces[0].generateTrace(now, previousFrameTime,
