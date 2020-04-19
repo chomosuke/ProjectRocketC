@@ -23,7 +23,7 @@ class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketP
                         1.01f, drawData)
             }, 0.18f))
     override val rocketQuirks: RocketQuirks = RocketQuirks("Space Shuttle", 2f, 0.003f, 0.003f,
-                0.000002f, 0.000001f, 50000)
+                0.000002f, 0.000001f, 50000, 0.1f, 20, 1)
     override val components: Array<ISolid> = run {
         val sX = 1.8f
         val sY = 1.8f

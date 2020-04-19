@@ -120,8 +120,8 @@ class Surrounding(private val mainActivity: MainActivity, private val drawData: 
 
         this.rocket = rocket
 
-        val minCloseDist = 0.004f * timeLimit
-        val initialFlybyDistance = sqrt(square(flybyDistance + averageRadius) - square(minCloseDist))/*rocket.width / 2 + flybyDistance*/
+//        val minCloseDist = 0.004f * timeLimit
+        val initialFlybyDistance = 1f//sqrt(square(flybyDistance + averageRadius) - square(minCloseDist))/*rocket.width / 2 + flybyDistance*/
 //        if (rocket.initialSpeed != 0f) {
             startingPathOfRocket = QuadrilateralShape(Vector(centerOfRotation.x - initialFlybyDistance, 100000000f),
                     Vector(centerOfRotation.x + initialFlybyDistance, 100000000f), // max value is bad because it causes overflow... twice
@@ -362,27 +362,14 @@ class Surrounding(private val mainActivity: MainActivity, private val drawData: 
     private fun checkFlyby(frameDuration: Long) {
         for (planet in planets) {
             if (planet.visibility) // only check visible plane for flyby
-            if (planet.checkFlyby(rocket, frameDuration, flybyDistance, timeLimit)) {
-                flybysInThisYellowStar++
-
-                LittleStar.dScore = (LittleStar.dScore + (flybysInThisYellowStar * 5))
-                //            LittleStar.Companion.setDScore(1000000);
-//            if ((1 + flybysInThisYellowStar * 0.5) % 1 == 0.0) { // display an integer
-                giveVisualText("δ+" + (flybysInThisYellowStar * 5), TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
-//            } else {
-//                giveVisualText("×" + (1 + flybysInThisYellowStar * 0.5), visualTextView)
-//            }
-                when (flybysInThisYellowStar) {
-                    1 -> {
-                    }
-                    2 -> {
-                    }
-                    3 -> {
-                    }
-                    else -> {
-                    }
+                if (planet.checkFlyby(rocket, frameDuration)) {
+                    flybysInThisYellowStar++
+            
+                    LittleStar.dScore = (LittleStar.dScore + (flybysInThisYellowStar * rocket.rocketQuirks.flybyDelta))
+                    
+                    giveVisualText("δ+" + (flybysInThisYellowStar * rocket.rocketQuirks.flybyDelta),
+                            TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
                 }
-            }
         }
     }
 
@@ -396,7 +383,7 @@ class Surrounding(private val mainActivity: MainActivity, private val drawData: 
                 littleStars[i].eatLittleStar(mainActivity)
                 when (littleStars[i].COLOR) {
                     YELLOW -> {
-                        LittleStar.dScore = LittleStar.dScore + 1
+                        LittleStar.dScore = LittleStar.dScore + rocket.rocketQuirks.eatLittleStarDelta
                     }
                     LittleStar.Color.RED -> numberOfRedStar--
                 }
@@ -501,7 +488,7 @@ class SurroundingResources(val background: Array<Shape>, val planetsStore: Array
 
 private const val radiusMargin = 0.25f
 private const val averageRadius = 0.75f // for planet shape to determent which type of planet suits the size best.
-private const val flybyDistance = 0.25f//0.5f
-private val maxCloseDist = sqrt(square(flybyDistance) + 2 * (averageRadius + radiusMargin) * flybyDistance) * 2
-private val maxFlybySpeed = speedFormula(0.003f, 500)
-private val timeLimit = 1L//(maxCloseDist / maxFlybySpeed).toLong()
+//private const val flybyDistance = 0.25f//0.5f
+//private val maxCloseDist = sqrt(square(flybyDistance) + 2 * (averageRadius + radiusMargin) * flybyDistance) * 2
+//private val maxFlybySpeed = speedFormula(0.003f, 500)
+//private val timeLimit = 1L//(maxCloseDist / maxFlybySpeed).toLong()

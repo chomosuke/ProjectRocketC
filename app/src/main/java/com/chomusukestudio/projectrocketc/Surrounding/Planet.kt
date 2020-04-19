@@ -21,17 +21,12 @@ class Planet(private val planetShape: PlanetShape, private val drawData: DrawDat
 
     // at first the planet haven't been flybyed and the close time is zero
     private var flybyable = true
-    private var closeTime = 0L
-    override fun checkFlyby(rocket: Rocket, frameDuration: Long, flybyDistance: Float, timeLimit: Long): Boolean {
-        if (distance(rocket.centerOfRotation, center) <= radius + (rocket.width/2) + flybyDistance)
-            closeTime += frameDuration
-        if (flybyable) {
-            if (closeTime > timeLimit) {
+    override fun checkFlyby(rocket: Rocket, frameDuration: Long): Boolean {
+        if (flybyable &&
+                distance(rocket.centerOfRotation, center) <= radius + (rocket.width/2) + rocket.rocketQuirks.flybyDistance) {
                 flybyable = false
                 // can't flyby the same planet twice
-                Log.v("flyby time limit", "" + timeLimit)
                 return true
-            }
         }
         return false
     }
@@ -51,7 +46,6 @@ class Planet(private val planetShape: PlanetShape, private val drawData: DrawDat
             if (!value) {
                 visibility = false
                 flybyable = true
-                closeTime = 0L
             }
         }
 
@@ -113,4 +107,8 @@ class Planet(private val planetShape: PlanetShape, private val drawData: DrawDat
         return distance(anotherPlanet.center, this.center) <= anotherPlanet.planetShape.radius + planetShape.radius + distance
         // testing all pointsOutside is impractical because performance, subclass may override this method.
     }
+}
+
+interface IFlybyable{
+    fun checkFlyby(rocket: Rocket, frameDuration: Long): Boolean
 }

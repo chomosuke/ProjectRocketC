@@ -101,7 +101,7 @@ class LittleStar(val COLOR: Color, private var center: Vector, private val range
     //    static final MediaPlayer eatYellowStar =
     fun eatLittleStar(mainActivity: MainActivity) {
         when (COLOR) {
-            LittleStar.Color.YELLOW -> {
+            Color.YELLOW -> {
                 score += dScore
                 giveVisualText("+$dScore", TouchableView(mainActivity.findViewById(R.id.visualText), mainActivity))
 
