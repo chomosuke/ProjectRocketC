@@ -362,7 +362,8 @@ class Surrounding(private val mainActivity: MainActivity, private val drawData: 
     private fun checkFlyby(frameDuration: Long) {
         for (planet in planets) {
             if (planet.visibility) // only check visible plane for flyby
-                if (planet.checkFlyby(rocket, frameDuration)) {
+                if (planet.
+                        checkFlyby(rocket, frameDuration)) {
                     flybysInThisYellowStar++
             
                     LittleStar.dScore = (LittleStar.dScore + (flybysInThisYellowStar * rocket.rocketQuirks.flybyDelta))

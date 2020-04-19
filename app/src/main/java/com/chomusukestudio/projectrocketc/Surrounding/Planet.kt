@@ -13,7 +13,7 @@ import com.chomusukestudio.projectrocketc.min
 
 // this class takes a planetShape and manage it, make it flybyable and reusable.
 // this is done to weaken the coupling between PlanetShapes and Surrounding
-class Planet(private val planetShape: PlanetShape, private val drawData: DrawData/*for bourndaries*/): IReusable, IFlybyable {
+class Planet(private val planetShape: PlanetShape, private val drawData: DrawData/*for bourndaries*/): IReusable {
 
     var visibility: Boolean
         get() = planetShape.visibility
@@ -21,7 +21,7 @@ class Planet(private val planetShape: PlanetShape, private val drawData: DrawDat
 
     // at first the planet haven't been flybyed and the close time is zero
     private var flybyable = true
-    override fun checkFlyby(rocket: Rocket, frameDuration: Long): Boolean {
+    fun checkFlyby(rocket: Rocket, frameDuration: Long): Boolean {
         if (flybyable &&
                 distance(rocket.centerOfRotation, center) <= radius + (rocket.width/2) + rocket.rocketQuirks.flybyDistance) {
                 flybyable = false
@@ -107,8 +107,4 @@ class Planet(private val planetShape: PlanetShape, private val drawData: DrawDat
         return distance(anotherPlanet.center, this.center) <= anotherPlanet.planetShape.radius + planetShape.radius + distance
         // testing all pointsOutside is impractical because performance, subclass may override this method.
     }
-}
-
-interface IFlybyable{
-    fun checkFlyby(rocket: Rocket, frameDuration: Long): Boolean
 }
