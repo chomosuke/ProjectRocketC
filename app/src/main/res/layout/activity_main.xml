@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
-    tools:context="com.chomusukestudio.projectrocketc.UI.MainActivity">
+    tools:context="com.chomusukestudio.projectrocketc.userInterface.MainActivity">
 
     <ImageView
         android:id="@+id/splashScreen"
@@ -22,7 +22,7 @@
 
     <view
         android:id="@+id/MyGLSurfaceView"
-        class="com.chomusukestudio.projectrocketc.UI.MyGLSurfaceView"
+        class="com.chomusukestudio.projectrocketc.userInterface.MyGLSurfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"

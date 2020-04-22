@@ -6,12 +6,12 @@ import android.view.MotionEvent
 import android.widget.TextView
 import com.chomusukestudio.prcandroid2dgameengine.ProcessingThread
 import com.chomusukestudio.prcandroid2dgameengine.shape.*
-import com.chomusukestudio.projectrocketc.Joystick.TwoFingersJoystick
-import com.chomusukestudio.projectrocketc.Rocket.*
-import com.chomusukestudio.projectrocketc.Rocket.rocketPhysics.DragRocketPhysics
-import com.chomusukestudio.projectrocketc.Surrounding.Surrounding
-import com.chomusukestudio.projectrocketc.UI.MainActivity
-import com.chomusukestudio.projectrocketc.UI.State
+import com.chomusukestudio.projectrocketc.joystick.TwoFingersJoystick
+import com.chomusukestudio.projectrocketc.rocket.*
+import com.chomusukestudio.projectrocketc.rocket.rocketPhysics.DragRocketPhysics
+import com.chomusukestudio.projectrocketc.surrounding.Surrounding
+import com.chomusukestudio.projectrocketc.userInterface.MainActivity
+import com.chomusukestudio.projectrocketc.userInterface.State
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 
 class MProcessingThread(val refreshRate: Float, private val mainActivity: MainActivity): ProcessingThread(mainActivity) {

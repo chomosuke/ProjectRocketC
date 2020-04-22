@@ -6,11 +6,11 @@ import android.util.Log
 import com.chomusukestudio.prcandroid2dgameengine.distance
 import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
 import com.chomusukestudio.prcandroid2dgameengine.shape.*
-import com.chomusukestudio.projectrocketc.PlanetShape.PlanetShape
+import com.chomusukestudio.projectrocketc.planetShape.PlanetShape
 import com.chomusukestudio.projectrocketc.R
-import com.chomusukestudio.projectrocketc.Surrounding.Planet
+import com.chomusukestudio.projectrocketc.surrounding.Planet
 import com.chomusukestudio.projectrocketc.TouchableView
-import com.chomusukestudio.projectrocketc.UI.MainActivity
+import com.chomusukestudio.projectrocketc.userInterface.MainActivity
 import com.chomusukestudio.projectrocketc.giveVisualText
 import java.lang.Math.abs
 import kotlin.math.atan2
