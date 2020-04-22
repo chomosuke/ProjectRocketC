@@ -308,6 +308,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             buyButton.text = getString(R.string.add_dollar_symbol, rocketQuirks.price)
             buyButton.visibility = View.VISIBLE
         }
+//        with(sharedPreferences.edit()) {
+//            putBoolean(getString(R.string.bought, rocketQuirks.name), true)
+//            apply()
+//        }
     }
     
     fun buyRocket(view: View) {

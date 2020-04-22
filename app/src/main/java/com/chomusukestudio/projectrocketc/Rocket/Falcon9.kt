@@ -1,7 +1,6 @@
 package com.chomusukestudio.projectrocketc.Rocket
 
 import com.chomusukestudio.prcandroid2dgameengine.Image
-import com.chomusukestudio.prcandroid2dgameengine.distance
 import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
 import com.chomusukestudio.prcandroid2dgameengine.shape.*
 import com.chomusukestudio.projectrocketc.R
@@ -20,7 +19,7 @@ class Falcon9(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 //                    1.01f, layers)
     )
     override val rocketQuirks = RocketQuirks("Falcon 9", 2f, 0.003f, 0.003f,
-            0.000002f, 0.000001f, 10000, 0.3f, 5, 1)
+            0.000002f, 0.000001f, 100000, 0.3f, 5, 1)
     override val components: Array<ISolid> = run {
         val arrayForOverlapper = arrayOf(
                 Vector(-0.6f, 0.05f), Vector(0.35f, 0.05f),

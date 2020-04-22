@@ -45,10 +45,12 @@ class MProcessingThread(val refreshRate: Float, private val mainActivity: MainAc
     private fun getRocket(rocketIndex: Int): Rocket {
         return when (rocketIndex) {
 			0 -> V2(surrounding, mainActivity, DragRocketPhysics(), drawData)
-            1 -> SaturnV(surrounding, mainActivity, DragRocketPhysics(), drawData)
-            2 -> Falcon9(surrounding, mainActivity, DragRocketPhysics(), drawData)
-            3 -> FalconHeavy(surrounding, mainActivity, DragRocketPhysics(), drawData)
+            1 -> Sputnik(surrounding, mainActivity, DragRocketPhysics(), drawData)
+            2 -> VostokK(surrounding, mainActivity, DragRocketPhysics(), drawData)
+            3 -> SaturnV(surrounding, mainActivity, DragRocketPhysics(), drawData)
             4 -> SpaceShuttle(surrounding, mainActivity, DragRocketPhysics(), drawData)
+            5 -> Falcon9(surrounding, mainActivity, DragRocketPhysics(), drawData)
+            6 -> FalconHeavy(surrounding, mainActivity, DragRocketPhysics(), drawData)
             else -> throw IndexOutOfBoundsException("rocketIndex out of bounds")
         }
     }
@@ -62,7 +64,7 @@ class MProcessingThread(val refreshRate: Float, private val mainActivity: MainAc
     }
     fun isOutOfBounds(dIndex: Int): Boolean {
         val index = rocketIndex + dIndex
-        return index !in 0..4
+        return index !in 0..6
     }
 
     private fun updateScore() {

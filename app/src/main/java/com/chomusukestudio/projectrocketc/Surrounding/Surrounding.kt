@@ -5,7 +5,6 @@ import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
 import com.chomusukestudio.prcandroid2dgameengine.randFloat
 import com.chomusukestudio.prcandroid2dgameengine.shape.*
 import com.chomusukestudio.prcandroid2dgameengine.shape.Vector
-import com.chomusukestudio.prcandroid2dgameengine.square
 import com.chomusukestudio.prcandroid2dgameengine.threadClasses.ParallelForI
 import com.chomusukestudio.projectrocketc.PlanetShape.*
 import com.chomusukestudio.projectrocketc.R

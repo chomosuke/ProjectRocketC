@@ -1,6 +1,5 @@
 package com.chomusukestudio.projectrocketc.Surrounding
 
-import android.util.Log
 import com.chomusukestudio.prcandroid2dgameengine.distance
 import com.chomusukestudio.prcandroid2dgameengine.glRenderer.DrawData
 import com.chomusukestudio.prcandroid2dgameengine.shape.Overlapper

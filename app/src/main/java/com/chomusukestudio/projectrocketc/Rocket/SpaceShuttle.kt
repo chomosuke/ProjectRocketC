@@ -16,17 +16,17 @@ class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketP
     override val traces: Array<Trace> = arrayOf(MultiTrace(2, {
                 AccelerationTrace(0.05f, 0.02f, 0.2f, 750, 256, 0.004f, Color(1f, 0.9f, 0f, 3f),
                         1.01f, drawData)
-            }, 0.63f),
+            }, 0.525f),
             MultiTrace(2, {
                 SquareTrace(0.007f, 0.05f, 0.05f, 300, 16,
                         Color(1f, 1f, 1f, 1f), Color(0.1f, 0.2f, 1f, 1f),
                         1.01f, drawData)
-            }, 0.18f))
+            }, 0.15f))
     override val rocketQuirks: RocketQuirks = RocketQuirks("Space Shuttle", 2f, 0.003f, 0.003f,
-                0.000002f, 0.000001f, 50000, 0.1f, 20, 1)
+            0.000002f, 0.000001f, 50000, 0.1f, 20, 1)
     override val components: Array<ISolid> = run {
-        val sX = 1.8f
-        val sY = 1.8f
+        val sX = 1.5f
+        val sY = 1.5f
 
         var overlapperVertexes = arrayOf(
                 Vector(0f * sX, 0.158f * sY),
@@ -62,7 +62,7 @@ class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketP
                 overlapperVertexes, false, 0.5f, drawData))
     }
 
-    override val width: Float = 0.57f
+    override val width: Float = 0.48f
 //    val widthSquare = QuadrilateralShape(Vector(width/2, 1f), Vector(-width/2, 1f),
 //            Vector(-width/2, -1f), Vector(width/2, -1f), Color(0f, 1f, 0f, 0.2f), BuildShapeAttr(10f, true, drawData))
 

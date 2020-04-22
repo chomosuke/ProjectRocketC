@@ -25,18 +25,18 @@ class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: Ro
         traces[0].generateTrace(now, previousFrameTime, origin, RocketState(currentRotation, velocity))
     }
 
-    override val rocketQuirks = RocketQuirks("V-2 rocket", 2f, 0.003f, 0.003f,
+    override val rocketQuirks = RocketQuirks("V-2 rocket", 2f, 0.003f, 0.004f,
             0.000002f, 0.000001f, 0, 0.5f, 1, 1)
 
-    override val width = 0.32f
+    override val width = 0.26f
 //    val widthSquare = QuadrilateralShape(Vector(width/2, 1f), Vector(-width/2, 1f),
 //            Vector(-width/2, -1f), Vector(width/2, -1f), Color(0f, 1f, 0f, 0.2f), BuildShapeAttr(10f, true, drawData))
 
     override val components: Array<ISolid> = run {
 
         // when the rocket is created it's pointed towards right which is angle 0
-        val scaleX = 0.8f
-        val scaleY = 0.5f
+        val scaleX = 0.7f
+        val scaleY = 0.4f
 
         val imageVertexes = arrayOf(
                 Vector(0.65f * scaleX, 0.32f * scaleY),
