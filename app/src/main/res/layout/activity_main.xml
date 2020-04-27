@@ -45,12 +45,11 @@
         app:layout_constraintTop_toTopOf="parent" />
     
     <Button
-        android:id="@+id/insufficientFundsButton"
+        android:id="@+id/overlayMessage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
         android:background="@android:color/transparent"
-        android:text="@string/insufficient_funds"
         android:textAllCaps="false"
         android:textSize="@dimen/textSize"
         android:textColor="#FFF"

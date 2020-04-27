@@ -330,10 +330,13 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             findViewById<View>(R.id.playButton).visibility = View.VISIBLE
             findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, newBalance)
         } else {
-            overlay(findViewById(R.id.insufficientFundsButton))
+            displayMessage(getString(R.string.insufficient_funds))
         }
     }
-    
+    private fun displayMessage(msg: String) {
+        findViewById<Button>(R.id.overlayMessage).text = msg
+        overlay(findViewById(R.id.overlayMessage))
+    }
     private fun overlay(view: View) {
         getCurrentLayout().visibility = View.INVISIBLE
         
