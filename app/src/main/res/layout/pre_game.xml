@@ -13,7 +13,9 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     tools:showIn="@layout/activity_main">
-
+    
+    <include layout="@layout/quirks" />
+    
     <ImageButton
         android:id="@+id/swapRocketLeftButton"
         android:layout_width="64dp"
@@ -81,6 +83,7 @@
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        style="@style/shadow"
         android:textSize="@dimen/textSize"
         android:textColor="#FFF"/>
     

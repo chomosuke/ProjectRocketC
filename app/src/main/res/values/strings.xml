@@ -16,4 +16,6 @@
     <string name="insufficient_funds">You can\'t afford this Rocket.</string>
     <string name="bought">%s bought</string>
     <string name="balance">balance</string>
+    <string name="flybyDelta">\u0020\u0020flyby delta: %s</string>
+    <string name="turningSpeed">turning speed: %s</string>
 </resources>

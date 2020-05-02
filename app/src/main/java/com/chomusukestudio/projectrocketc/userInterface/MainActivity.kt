@@ -124,6 +124,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     findViewById<ConstraintLayout>(R.id.scoresLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
                     myGLSurfaceView.visibility = View.VISIBLE
                     myGLSurfaceView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
+                    
+                    showRocketQuirks()
 
                     findViewById<View>(R.id.splashScreen).animate()
                             .alpha(0f)
@@ -308,10 +310,25 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             buyButton.text = getString(R.string.add_dollar_symbol, rocketQuirks.price)
             buyButton.visibility = View.VISIBLE
         }
+        showRocketQuirks()
 //        with(sharedPreferences.edit()) {
 //            putBoolean(getString(R.string.bought, rocketQuirks.name), true)
 //            apply()
 //        }
+    
+    }
+    private fun showRocketQuirks() {
+        val rocketQuirks = mProcessingThread.currentRocketQuirks
+        findViewById<Button>(R.id.flyByDelta).text = getString(R.string.flybyDelta, formatQuirks(rocketQuirks.flybyDelta))
+        findViewById<Button>(R.id.turningSpeed).text = getString(R.string.turningSpeed, formatQuirks(rocketQuirks.rotationSpeed * 1000))
+        
+        findViewById<Button>(R.id.name).text = rocketQuirks.name
+    }
+    private fun <T>formatQuirks(value: T) : String {
+        var str = value.toString()
+        if (value is Float && value % 1 == 0f)
+            str = str.substring(0, str.length - 2)
+        return str + " ".repeat(2 - str.length)
     }
     
     fun buyRocket(view: View) {

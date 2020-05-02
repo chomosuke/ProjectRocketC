@@ -26,6 +26,10 @@
         <item name="android:paddingStart">13.8dp</item>
         <item name="android:paddingEnd">13.8dp</item>
         <item name="android:textSize">18sp</item>
+        <item name="android:shadowRadius">1.2</item>
+        <item name="android:shadowDy">1.2</item>
+        <item name="android:shadowDx">1.2</item>
+        <item name="android:shadowColor">#000</item>
     </style>
 
     <style name="MSeekBar" parent="android:Widget.SeekBar">
@@ -34,6 +38,13 @@
         <item name="android:progressDrawable">@drawable/seek_bar_progress</item>
         <item name="android:maxHeight">5dp</item>
         <item name="android:minHeight">5dp</item>
+    </style>
+    
+    <style name="shadow">
+        <item name="android:shadowRadius">1.2</item>
+        <item name="android:shadowDy">1.2</item>
+        <item name="android:shadowDx">1.2</item>
+        <item name="android:shadowColor">#000</item>
     </style>
 
 </resources>

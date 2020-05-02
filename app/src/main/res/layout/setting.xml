@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:text="@string/sound_effects_volume"
         android:textColor="#FFF"
+        style="@style/shadow"
         android:layout_marginStart="32dp"
         android:layout_marginTop="2dp"
         app:layout_constraintStart_toStartOf="@id/soundEffectsVolumeBar"

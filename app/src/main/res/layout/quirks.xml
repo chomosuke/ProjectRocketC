@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/quirks"
+	android:orientation="vertical"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	app:layout_constraintBottom_toBottomOf="parent"
+	app:layout_constraintEnd_toEndOf="parent"
+	app:layout_constraintStart_toStartOf="parent"
+	app:layout_constraintTop_toTopOf="parent"
+	app:layout_constraintVertical_bias="0.33"
+	tools:showIn="@layout/pre_game">
+	
+	<Button
+		android:id="@+id/name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@android:color/transparent"
+		android:typeface="monospace"
+		android:padding="8dp"
+		style="@style/shadow"
+		android:gravity="center"
+		android:layout_gravity="center_horizontal"
+		android:textColor="#FFF"
+		android:textSize="20sp" />
+	
+	<Button
+		android:id="@+id/turningSpeed"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@android:color/transparent"
+		android:typeface="monospace"
+		android:padding="0dp"
+		style="@style/shadow"
+		android:gravity="center"
+		android:layout_gravity="center_horizontal"
+		android:textColor="#FFF"
+		android:textSize="18sp" />
+	
+	<Button
+		android:id="@+id/flyByDelta"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:typeface="monospace"
+		android:background="@android:color/transparent"
+		android:padding="0dp"
+		style="@style/shadow"
+		android:gravity="center"
+		android:layout_gravity="center_horizontal"
+		android:textColor="#FFF"
+		android:textSize="18sp" />
+	
+</LinearLayout>
