@@ -18,8 +18,8 @@ class Falcon9(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 //                    Color(1f, 1f, 1f, 1f), Color(1f, 0.75f, 0f, 1f),
 //                    1.01f, layers)
     )
-    override val rocketQuirks = RocketQuirks("Falcon 9", 2f, 0.003f, 0.003f,
-            0.000002f, 0.000001f, 100000, 0.3f, 5, 1)
+    override val rocketQuirks = falcon9RocketQuirks
+    
     override val components: Array<ISolid> = run {
         val arrayForOverlapper = arrayOf(
                 Vector(-0.6f, 0.05f), Vector(0.35f, 0.05f),

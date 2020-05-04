@@ -319,15 +319,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
     private fun showRocketQuirks() {
         val rocketQuirks = mProcessingThread.currentRocketQuirks
-        findViewById<Button>(R.id.flyByDelta).text = getString(R.string.flybyDelta, formatQuirks(rocketQuirks.flybyDelta))
+        findViewById<Button>(R.id.flyByDelta).text = getString(R.string.flybyDelta, formatQuirks(rocketQuirks.flybyDelta.toFloat()))
         findViewById<Button>(R.id.turningSpeed).text = getString(R.string.turningSpeed, formatQuirks(rocketQuirks.rotationSpeed * 1000))
         
         findViewById<Button>(R.id.name).text = rocketQuirks.name
     }
-    private fun <T>formatQuirks(value: T) : String {
-        var str = value.toString()
-        if (value is Float && value % 1 == 0f)
-            str = str.substring(0, str.length - 2)
+    private fun formatQuirks(value: Float) : String {
+        val v = (value + 0.3f).toInt() // 0.3 is a random number it has no purpose except giving me the desire result without me doing more work
+        val str = v.toString()
         return str + " ".repeat(2 - str.length)
     }
     

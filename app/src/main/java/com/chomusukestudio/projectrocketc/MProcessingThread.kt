@@ -117,7 +117,8 @@ class MProcessingThread(val refreshRate: Float, private val mainActivity: MainAc
     } // for onStop() and onDestroy() to remove Shapes
     // and when crashed
 
-    private val warningRed = TriangularShape(Vector(0f, 100f), Vector(100f, -100f), Vector(-100f, -100f), Color(1f, 0f, 0f, 0.5f), BuildShapeAttr(-100f, false, drawData))
+    private val warningRed = TriangularShape(Vector(0f, 100f), Vector(100f, -100f), Vector(-100f, -100f),
+            Color(1f, 0f, 0f, 0.5f), BuildShapeAttr(-100f, false, drawData))
 
     private var previousFrameTime: Long = 0
     override fun generateNextFrame(timeInMillis: Long) {
