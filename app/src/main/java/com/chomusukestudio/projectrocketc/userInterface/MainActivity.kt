@@ -422,6 +422,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             
             // update balance textView
             findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, sharedPreferences.getInt(getString(R.string.balance), 0))
+            findViewById<TextView>(R.id.gainedMoneyTextView).text = "+" + getString(R.string.add_dollar_symbol, score)
         
             findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.INVISIBLE
         

@@ -86,6 +86,9 @@
         android:id="@+id/gainedMoneyTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textColor="@android:color/white"
+        style="@style/shadow"
         android:textSize="@dimen/textSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -124,6 +127,6 @@
         android:onClick="toHome"
         android:clickable="true"
         android:focusable="true" />
-
+    
 </androidx.constraintlayout.widget.ConstraintLayout>
 
