@@ -205,10 +205,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             when (state) {
                 State.Paused -> {
                     resumeGame()
+					// resume bgm
+					bgm.start()
                     state = State.InGame
                 }
                 State.InGame -> {
                     pauseGame()
+					// pause bgm
+					bgm.pause()
                     state = State.Paused
                 }
                 State.Crashed -> {
@@ -227,18 +231,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         findViewById<ConstraintLayout>(R.id.onPausedLayout).bringToFront()
 //        fadeIn(findViewById(R.id.onPausedLayout))
         findViewById<ImageButton>(R.id.pauseButton).visibility = View.INVISIBLE
-        
-        // pause bgm
-        bgm.pause()
     }
     private fun resumeGame() {
         myGLSurfaceView.mRenderer.resumeGLRenderer()
 //        findViewById<ConstraintLayout>(R.id.onPausedLayout).visibility = View.INVISIBLE
         fadeOut(findViewById(R.id.onPausedLayout))
         fadeIn(findViewById(R.id.pauseButton))
-    
-        // resume bgm
-        bgm.start()
     }
 
     private var lastClickRestartGame = 0L
@@ -267,6 +265,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             }
             State.Paused -> {
                 resumeGame()
+				// restart bgm
+				bgm.seekTo(2500)
+				bgm.start()
             }
             else -> return // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
         }
@@ -289,8 +290,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 fadeOut(findViewById(R.id.onCrashLayout))
             }
             State.Paused -> {
+				resumeGame()
                 fadeOut(findViewById(R.id.inGameLayout))
-                resumeGame()
             }
             else -> return
         } // already at home, must've been lag

@@ -71,8 +71,8 @@ abstract class Rocket(protected val surrounding: Surrounding, private val mainAc
         // surrounding will handle this
         val crashedOverlapper = surrounding.isCrashed(crashOverlappers)
         if (crashedOverlapper.isNotEmpty()) {
-            crashSound.setVolume(0.66f * mainActivity.soundEffectsVolume/100,
-                    0.66f * mainActivity.soundEffectsVolume/100)
+            crashSound.setVolume(mainActivity.soundEffectsVolume.toFloat()/100,
+                    mainActivity.soundEffectsVolume.toFloat()/100)
             crashSound.start()
             return true
         }
