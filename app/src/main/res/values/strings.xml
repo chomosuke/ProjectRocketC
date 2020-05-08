@@ -7,6 +7,8 @@
     <string name="firstTimeOpen">firstTimeOpen</string>
     <string name="soundEffectsVolume">soundEffectsVolume</string>
     <string name="sound_effects_volume">sound effects volume</string>
+    <string name="musicVolume">musicVolume</string>
+    <string name="music_volume">music volume</string>
     <string name="tutorial">Tutorial</string>
     <string name="tap_to_restart">Tap to restart</string>
     <string name="score">SCORE</string>

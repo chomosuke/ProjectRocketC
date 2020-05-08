@@ -24,7 +24,7 @@
         android:onClick="closeSetting"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
+    
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,30 +35,54 @@
         android:layout_marginTop="2dp"
         app:layout_constraintStart_toStartOf="@id/soundEffectsVolumeBar"
         app:layout_constraintTop_toTopOf="@id/soundEffectsVolumeBar" />
-
+    
     <SeekBar
         android:id="@+id/soundEffectsVolumeBar"
+        style="@style/MSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="32dp"
-        style="@style/MSeekBar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/tutorialButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/tutorial"
-        style="@style/MButton"
-        app:layout_constraintVertical_bias="0.75"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:onClick="showTutorial" />
+        app:layout_constraintVertical_bias="0.3"/>
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/music_volume"
+        android:textColor="#FFF"
+        style="@style/shadow"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintStart_toStartOf="@id/musicVolumeBar"
+        app:layout_constraintTop_toTopOf="@id/musicVolumeBar" />
+    
+    <SeekBar
+        android:id="@+id/musicVolumeBar"
+        style="@style/MSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="32dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/soundEffectsVolumeBar" />
+    
+    <Button
+        android:id="@+id/tutorialButton"
+        style="@style/MButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="showTutorial"
+        android:text="@string/tutorial"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
     

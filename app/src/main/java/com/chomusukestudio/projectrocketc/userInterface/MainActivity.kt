@@ -42,8 +42,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         private set
     @Volatile var soundEffectsVolume = 100
         private set
-    @Volatile var musicVolume = 100
-        private set
     private lateinit var bgm: MediaPlayer
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,21 +65,36 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //        }
 
         // setting
-        with(findViewById<SeekBar>(R.id.soundEffectsVolumeBar)) {
-            soundEffectsVolume = sharedPreferences.getInt(getString(R.string.soundEffectsVolume), 100)
-            progress = soundEffectsVolume
-            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    soundEffectsVolume = progress
-                    with(sharedPreferences.edit()) {
-                        putInt(getString(R.string.soundEffectsVolume), soundEffectsVolume)
-                        apply()
-                    }
-                }
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            })
-        }
+		with(findViewById<SeekBar>(R.id.soundEffectsVolumeBar)) {
+			soundEffectsVolume = sharedPreferences.getInt(getString(R.string.soundEffectsVolume), 100)
+			progress = soundEffectsVolume
+			setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+				override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+					soundEffectsVolume = progress
+					with(sharedPreferences.edit()) {
+						putInt(getString(R.string.soundEffectsVolume), soundEffectsVolume)
+						apply()
+					}
+				}
+				override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+				override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+			})
+		}
+		with(findViewById<SeekBar>(R.id.musicVolumeBar)) {
+			progress = sharedPreferences.getInt(getString(R.string.musicVolume), 75)
+			bgm.setVolume(progress.toFloat()/100, progress.toFloat()/100)
+			setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+				override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+					bgm.setVolume(progress.toFloat()/100, progress.toFloat()/100)
+					with(sharedPreferences.edit()) {
+						putInt(getString(R.string.musicVolume), progress)
+						apply()
+					}
+				}
+				override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+				override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+			})
+		}
         
         // update balance view
         findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, sharedPreferences.getInt(getString(R.string.balance), 0))
