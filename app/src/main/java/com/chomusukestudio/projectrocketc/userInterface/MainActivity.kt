@@ -271,9 +271,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             else -> return // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
         }
     
-        state = State.InGame
+        state = State.PreGame
         // change state before reset so next frame get the correct state
+		// and also PreGame for reset to initialize correctly
         mProcessingThread.reset()
+		// start the game
+		state = State.InGame
     }
 
     fun toHome(view: View) {
