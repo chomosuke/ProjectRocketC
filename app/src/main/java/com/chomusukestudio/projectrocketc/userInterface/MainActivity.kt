@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Point
 import android.graphics.Typeface
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -43,6 +44,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         private set
     @Volatile var musicVolume = 100
         private set
+    private lateinit var bgm: MediaPlayer
 
     public override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -52,6 +54,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
         // display splashScreen
         findViewById<View>(R.id.splashScreen).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_splash_image))
+        
+        bgm = MediaPlayer.create(this, R.raw.bgm)
         
         // initialize convenient variable
         sharedPreferences = getPreferences(Context.MODE_PRIVATE)
@@ -175,6 +179,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         if (state != State.PreGame)
             throw IllegalStateException("Starting Game while not in PreGame")
         state = State.InGame // start game
+        
+        // start bgm
+        bgm.seekTo(2500)
+        bgm.start()
+        bgm.isLooping = true
 
         // fade away pregame layout with animation
         fadeOut(findViewById(R.id.preGameLayout))
@@ -213,16 +222,23 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
     private fun pauseGame() {
         myGLSurfaceView.mRenderer.pauseGLRenderer()
+        
         findViewById<ConstraintLayout>(R.id.onPausedLayout).visibility = View.VISIBLE
         findViewById<ConstraintLayout>(R.id.onPausedLayout).bringToFront()
 //        fadeIn(findViewById(R.id.onPausedLayout))
         findViewById<ImageButton>(R.id.pauseButton).visibility = View.INVISIBLE
+        
+        // pause bgm
+        bgm.pause()
     }
     private fun resumeGame() {
         myGLSurfaceView.mRenderer.resumeGLRenderer()
 //        findViewById<ConstraintLayout>(R.id.onPausedLayout).visibility = View.INVISIBLE
         fadeOut(findViewById(R.id.onPausedLayout))
         fadeIn(findViewById(R.id.pauseButton))
+    
+        // resume bgm
+        bgm.start()
     }
 
     private var lastClickRestartGame = 0L
@@ -277,6 +293,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         } // already at home, must've been lag
 
         fadeIn(findViewById(R.id.preGameLayout))
+	
+		// stop bgm
+		bgm.pause()
 	
 		state = State.PreGame
 		// change state before reset so next frame get the correct state
@@ -530,10 +549,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 }
                 State.Paused -> { /*nothing, there is nothing can be done.*/ }
                 else -> {
-                    if (!hasFocus)
+                    if (!hasFocus) {
                         myGLSurfaceView.mRenderer.pauseGLRenderer()
-                    else
+                        bgm.pause()
+                    } else {
                         myGLSurfaceView.mRenderer.resumeGLRenderer()
+                        if (state == State.Crashed)
+                            bgm.start()
+                    }
                 }
             }
         } catch (e: UninitializedPropertyAccessException) {
