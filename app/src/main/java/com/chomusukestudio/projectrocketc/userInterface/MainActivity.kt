@@ -254,10 +254,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             }
             else -> return // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
         }
-
-        mProcessingThread.reset()
-
+    
         state = State.InGame
+        // change state before reset so next frame get the correct state
+        mProcessingThread.reset()
     }
 
     fun toHome(view: View) {
@@ -277,10 +277,10 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         } // already at home, must've been lag
 
         fadeIn(findViewById(R.id.preGameLayout))
-
+	
+		state = State.PreGame
+		// change state before reset so next frame get the correct state
         mProcessingThread.reset()
-
-        state = State.PreGame
     }
 
     fun swapRocketLeft(view: View) {
