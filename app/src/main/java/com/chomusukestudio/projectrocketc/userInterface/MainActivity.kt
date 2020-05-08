@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Point
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -15,7 +16,10 @@ import android.view.View
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.chomusukestudio.prcandroid2dgameengine.runWithExceptionChecked
 import com.chomusukestudio.projectrocketc.MProcessingThread
@@ -329,6 +333,22 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         val str = v.toString()
         return str + " ".repeat(2 - str.length)
     }
+
+    fun showRocketDescription(view: View) {
+        findViewById<TextView>(R.id.overlayMessage).typeface = Typeface.MONOSPACE
+        findViewById<TextView>(R.id.overlayMessage).textSize = 21f
+        displayMessage(mProcessingThread.currentRocketDescription)
+    }
+    fun flybyDeltaExplained(view: View) {
+        findViewById<TextView>(R.id.overlayMessage).typeface = Typeface.MONOSPACE
+        findViewById<TextView>(R.id.overlayMessage).textSize = 21f
+        displayMessage(getString(R.string.flybyDeltaExplained))
+    }
+    fun turningSpeedExplained(view: View) {
+        findViewById<TextView>(R.id.overlayMessage).typeface = Typeface.MONOSPACE
+        findViewById<TextView>(R.id.overlayMessage).textSize = 21f
+        displayMessage(getString(R.string.turningSpeedExplained))
+    }
     
     fun buyRocket(view: View) {
         val balance = sharedPreferences.getInt(getString(R.string.balance), 0)
@@ -346,6 +366,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             findViewById<View>(R.id.playButton).visibility = View.VISIBLE
             findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, newBalance)
         } else {
+            findViewById<TextView>(R.id.overlayMessage).typeface = Typeface.DEFAULT
+            findViewById<TextView>(R.id.overlayMessage).textSize = 27f
             displayMessage(getString(R.string.insufficient_funds))
         }
     }

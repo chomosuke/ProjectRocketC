@@ -25,7 +25,8 @@ class FalconHeavy(surrounding: Surrounding, mainActivity: MainActivity, rocketPh
                             1.01f, drawData)
             }, 0.4f)
     )
-    override val rocketQuirks: RocketQuirks = falconHeavyRocketQuirks
+    override val rocketQuirks = falconHeavyRocketQuirks
+    override val description = "The most capable rocket since Saturn V."
     
     override val components: Array<ISolid> = run {
         val arrayForOverlapper = arrayOf(

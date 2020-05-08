@@ -19,6 +19,7 @@ class Falcon9(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 //                    1.01f, layers)
     )
     override val rocketQuirks = falcon9RocketQuirks
+    override val description = "The first partially reusable rocket. It was built by SpaceX aimed at making it cheaper to send things into space."
     
     override val components: Array<ISolid> = run {
         val arrayForOverlapper = arrayOf(

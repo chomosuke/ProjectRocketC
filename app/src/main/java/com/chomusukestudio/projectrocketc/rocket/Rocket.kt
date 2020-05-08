@@ -53,6 +53,9 @@ abstract class Rocket(protected val surrounding: Surrounding, private val mainAc
         protected set
     
     abstract val rocketQuirks: RocketQuirks
+
+    abstract val description: String
+
     protected abstract val components: Array<ISolid>
     var centerOfRotation = surrounding.centerOfRotation
         protected set(value) {

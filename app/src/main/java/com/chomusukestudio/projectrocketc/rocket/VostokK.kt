@@ -21,7 +21,8 @@ class VostokK(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 			AccelerationTrace(0.08f, 0.01f, 0.15f, 800, 256, 0.004f, Color(1f, 1f, 0f, 3f),
 					1.01f, drawData)
 	}, 0.37f))
-	override val rocketQuirks: RocketQuirks = vostokKRocketQuirks
+	override val rocketQuirks = vostokKRocketQuirks
+	override val description = "The rocket that sent Yuri Gagarin into space, making him the first human to be in space."
 	
 	override val components: Array<ISolid> = run {
 		

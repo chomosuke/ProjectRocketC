@@ -14,6 +14,10 @@
     <string name="finish_tutorial">Finish</string>
     <string name="add_dollar_symbol">$%d</string>
     <string name="insufficient_funds">You can\'t afford this Rocket.</string>
+    <string name="flybyDeltaExplained">The amount of delta you gain by performing a flyby.\n\n
+        A flyby can be performed by flying pass a planet very closed.\n\n
+        It\'s harder to perform flyby for rockets with higher flyby delta.</string>
+    <string name="turningSpeedExplained">How fast the rocket turn.</string>
     <string name="bought">%s bought</string>
     <string name="balance">balance</string>
     <string name="flybyDelta">\u0020\u0020flyby delta: %s</string>

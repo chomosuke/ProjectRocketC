@@ -22,7 +22,8 @@ class SpaceShuttle(surrounding: Surrounding, mainActivity: MainActivity, rocketP
                         Color(1f, 1f, 1f, 1f), Color(0.1f, 0.2f, 1f, 1f),
                         1.01f, drawData)
             }, 0.15f))
-    override val rocketQuirks: RocketQuirks = spaceShuttleRocketQuirks
+    override val rocketQuirks = spaceShuttleRocketQuirks
+    override val description = "A partially reusable, very cool but dangerous and expensive vehicle."
     
     override val components: Array<ISolid> = run {
         val sX = 1.5f

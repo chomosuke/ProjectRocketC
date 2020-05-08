@@ -22,6 +22,7 @@ class SaturnV(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysic
 					},
 			0.25f))
 	override val rocketQuirks = saturnVRocketQuirks
+	override val description = "The biggest and most capable rocket mankind has ever built. It sent a number of people to moon and was very cool but very expensive."
 	
 	override val components: Array<ISolid> = run { // refer to rockets' points/SaturnV.PNG
 		val pR = arrayOf(Vector(305f, 92f), Vector(308f, 99f), Vector(308f, 128f), // 2

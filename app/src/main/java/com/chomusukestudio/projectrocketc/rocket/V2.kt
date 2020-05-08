@@ -26,6 +26,7 @@ class V2(surrounding: Surrounding, mainActivity: MainActivity, rocketPhysics: Ro
     }
 
     override val rocketQuirks = v2RocketQuirks
+    override val description = "The first artificial object to travel into space."
 
     override val width = 0.26f
 //    val widthSquare = QuadrilateralShape(Vector(width/2, 1f), Vector(-width/2, 1f),

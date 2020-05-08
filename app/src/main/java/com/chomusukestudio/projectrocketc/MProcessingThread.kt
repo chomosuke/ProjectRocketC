@@ -41,6 +41,7 @@ class MProcessingThread(val refreshRate: Float, private val mainActivity: MainAc
     }
     
     val currentRocketQuirks get() = rocket.rocketQuirks
+    val currentRocketDescription get() = rocket.description
 
     private fun getRocket(rocketIndex: Int): Rocket {
         return when (rocketIndex) {
