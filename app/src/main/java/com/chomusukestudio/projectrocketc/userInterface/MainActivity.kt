@@ -23,6 +23,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.chomusukestudio.prcandroid2dgameengine.runWithExceptionChecked
+import com.chomusukestudio.prcandroid2dgameengine.threadClasses.ScheduledThread
 import com.chomusukestudio.projectrocketc.MProcessingThread
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
@@ -43,6 +44,8 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     @Volatile var soundEffectsVolume = 100
         private set
     private lateinit var bgm: MediaPlayer
+    @Volatile var musicVolume = 100
+        private set
 
     public override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -82,12 +85,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 		}
 		with(findViewById<SeekBar>(R.id.musicVolumeBar)) {
 			progress = sharedPreferences.getInt(getString(R.string.musicVolume), 75)
-			bgm.setVolume(progress.toFloat()/100, progress.toFloat()/100)
+            musicVolume = progress
+			bgm.setVolume(musicVolume.toFloat()/100, musicVolume.toFloat()/100)
 			setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 				override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-					bgm.setVolume(progress.toFloat()/100, progress.toFloat()/100)
+                    musicVolume = progress
+					bgm.setVolume(musicVolume.toFloat()/100, musicVolume.toFloat()/100)
 					with(sharedPreferences.edit()) {
-						putInt(getString(R.string.musicVolume), progress)
+						putInt(getString(R.string.musicVolume), musicVolume)
 						apply()
 					}
 				}
@@ -145,7 +150,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     findViewById<ConstraintLayout>(R.id.scoresLayout).startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
                     myGLSurfaceView.visibility = View.VISIBLE
                     myGLSurfaceView.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_animation))
-                    
+	
+//					// start bgm
+//					bgm.start()
+//					bgm.isLooping = true
+					
                     showRocketQuirks()
 
                     findViewById<View>(R.id.splashScreen).animate()
@@ -192,9 +201,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         if (state != State.PreGame)
             throw IllegalStateException("Starting Game while not in PreGame")
         state = State.InGame // start game
-        
+
         // start bgm
+        bgmFadeOut.pauseAndWait()
         bgm.seekTo(2500)
+        bgm.setVolume(musicVolume.toFloat()/100, musicVolume.toFloat()/100)
         bgm.start()
         bgm.isLooping = true
 
@@ -292,7 +303,20 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 		// start the game
 		state = State.InGame
     }
-
+    
+    private var volume = 1f
+    private val bgmFadeOut: ScheduledThread = ScheduledThread(30) {
+        volume /= 1.1f
+        if (volume < 0.01f) {
+            volume = 1f
+            bgmFO.pause()
+            bgm.pause()
+            return@ScheduledThread
+        }
+        bgm.setVolume(volume*musicVolume/100, volume*musicVolume/100)
+    }
+    // bgmFO so bgmFadeOut can reference itself
+    private val bgmFO = bgmFadeOut
     fun toHome(view: View) {
         when (state) {
             State.Crashed -> {// update highest score
@@ -311,9 +335,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 
         fadeIn(findViewById(R.id.preGameLayout))
 	
-		// stop bgm
-		bgm.pause()
-	
+		// fade out bgm
+        bgmFadeOut.run()
+
 		state = State.PreGame
 		// change state before reset so next frame get the correct state
         mProcessingThread.reset()
@@ -562,9 +586,16 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 State.InGame -> {
                     if (!hasFocus) {
                         onPause(findViewById<Button>(R.id.pauseButton))
+//						bgm.pause()
                     }
                 }
-                State.Paused -> { /*nothing, there is nothing can be done.*/ }
+                State.Paused -> {
+//					if (hasFocus) {
+//						bgm.start()
+//					} else {
+//                        bgm.pause()
+//                    }
+				}
                 else -> {
                     if (!hasFocus) {
                         myGLSurfaceView.mRenderer.pauseGLRenderer()
