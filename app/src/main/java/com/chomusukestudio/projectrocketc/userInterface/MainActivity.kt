@@ -154,6 +154,9 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //					// start bgm
 //					bgm.start()
 //					bgm.isLooping = true
+                    
+                    // to the rocket last left off
+                    swapRocket(sharedPreferences.getInt(getString(R.string.rocketIndex), 0))
 					
                     showRocketQuirks()
 
@@ -344,19 +347,22 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     fun swapRocketLeft(view: View) {
-        if (mProcessingThread.isOutOfBounds(-2))
-            findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.INVISIBLE
         swapRocket(-1)
-        findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.VISIBLE
     }
     fun swapRocketRight(view: View) {
-        if (mProcessingThread.isOutOfBounds(2))
-            findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
         swapRocket(1)
-        findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.VISIBLE
     }
     private fun swapRocket(dIndex: Int) {
         mProcessingThread.swapRocket(dIndex)
+        
+        if (mProcessingThread.isOutOfBounds(1))
+            findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.INVISIBLE
+        else
+            findViewById<ImageButton>(R.id.swapRocketRightButton).visibility = View.VISIBLE
+        if (mProcessingThread.isOutOfBounds(-1))
+            findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.INVISIBLE
+        else
+            findViewById<ImageButton>(R.id.swapRocketLeftButton).visibility = View.VISIBLE
         
         val rocketQuirks = mProcessingThread.currentRocketQuirks
         val buyButton = findViewById<Button>(R.id.buyButton)
@@ -379,6 +385,12 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //            putBoolean(getString(R.string.bought, rocketQuirks.name), true)
 //            apply()
 //        }
+        
+        // save rocket index
+        with(sharedPreferences.edit()) {
+            putInt(getString(R.string.rocketIndex), mProcessingThread.rocketIndex)
+            apply()
+        }
     
     }
     private fun showRocketQuirks() {
