@@ -16,6 +16,8 @@
     <string name="highest_score">BEST</string>
     <string name="finish_tutorial">Finish</string>
     <string name="add_dollar_symbol">$%d</string>
+    <string name="unlockScore">%d</string>
+    <string name="toUnlock">\u0020to unlock</string>
     <string name="insufficient_funds">You can\'t afford this Rocket.</string>
     <string name="flybyDeltaExplained">The amount of delta you gain by performing a flyby.\n\n
         A flyby can be performed by flying pass a planet very closed.\n\n

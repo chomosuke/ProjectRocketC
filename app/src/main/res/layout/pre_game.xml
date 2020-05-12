@@ -76,6 +76,50 @@
         app:layout_constraintTop_toTopOf="@+id/playButton"
         android:onClick="buyRocket"/>
     
+    <LinearLayout
+        android:id="@+id/unlockLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="@+id/playButton"
+        app:layout_constraintStart_toStartOf="@+id/playButton"
+        app:layout_constraintTop_toTopOf="@+id/playButton"
+        android:visibility="invisible">
+        
+        <TextView
+            android:id="@+id/unlockTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:text=""
+            style="@style/shadow"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:typeface="normal" />
+        
+        <ImageView
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+            android:baselineAlignBottom="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/highest_score_icon" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/toUnlock"
+            style="@style/shadow"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:typeface="normal" />
+
+    </LinearLayout>
+    
     <TextView
         android:id="@+id/balanceTextView"
         android:layout_width="wrap_content"

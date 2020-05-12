@@ -27,6 +27,7 @@ import com.chomusukestudio.prcandroid2dgameengine.threadClasses.ScheduledThread
 import com.chomusukestudio.projectrocketc.MProcessingThread
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
+import kotlinx.android.synthetic.main.pre_game.*
 import java.util.concurrent.Executors
 
 enum class State { InGame, PreGame, Paused, Crashed }
@@ -373,16 +374,24 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         ) {
             // if bought
             buyButton.visibility = View.INVISIBLE
+            unlockLayout.visibility = View.INVISIBLE
             playButton.visibility = View.VISIBLE
+        } else if (sharedPreferences.getInt(getString(R.string.highestScore), 0) < rocketQuirks.unlockScore) {
+            // if not unlocked
+            buyButton.visibility = View.INVISIBLE
+            playButton.visibility = View.INVISIBLE
+            unlockLayout.visibility = View.VISIBLE
+            unlockTextView.text = getString(R.string.unlockScore, rocketQuirks.unlockScore)
         } else {
             // if not bought
             playButton.visibility = View.INVISIBLE
+            unlockLayout.visibility = View.INVISIBLE
             buyButton.text = getString(R.string.add_dollar_symbol, rocketQuirks.price)
             buyButton.visibility = View.VISIBLE
         }
         showRocketQuirks()
 //        with(sharedPreferences.edit()) {
-//            putBoolean(getString(R.string.bought, rocketQuirks.name), true)
+//            putBoolean(getString(R.string.bought, rocketQuirks.name), false)
 //            apply()
 //        }
         

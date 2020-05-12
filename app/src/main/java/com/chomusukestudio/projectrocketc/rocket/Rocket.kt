@@ -147,15 +147,15 @@ fun speedFormula(initialSpeed: Float, score: Int): Float {
 
 data class RocketState(val currentRotation: Float, val velocity: Vector)
 
-data class RocketQuirks(val name: String, val initialSpeed: Float, val rotationSpeed: Float, val price: Int,
+data class RocketQuirks(val name: String, val initialSpeed: Float, val rotationSpeed: Float, val unlockScore: Int, val price: Int,
                         val flybyDistance: Float, val flybyDelta: Int, val eatLittleStarDelta: Int)
-val v2RocketQuirks           = RocketQuirks("V-2 rocket",    0.003f, 0.0026f, 0,      0.5f, 1, 1)
-val sputnikRocketQuirks      = RocketQuirks("Sputnik",       0.003f, 0.0024f, 5000,   0.36f, 2, 1)
-val vostokKRocketQuirks      = RocketQuirks("Vostok-K",      0.003f, 0.0033f, 10000,  0.36f, 2, 1)
-val saturnVRocketQuirks      = RocketQuirks("Saturn V",      0.003f, 0.003f, 20000,  0.26f, 5, 1)
-val spaceShuttleRocketQuirks = RocketQuirks("Space Shuttle", 0.003f, 0.0042f, 50000,  0.19f, 8, 1)
-val falcon9RocketQuirks      = RocketQuirks("Falcon 9",      0.003f, 0.0038f, 100000, 0.14f, 15, 1)
-val falconHeavyRocketQuirks  = RocketQuirks("Falcon Heavy",  0.003f, 0.005f, 200000, 0.10f, 25, 1)
+val v2RocketQuirks           = RocketQuirks("V-2 rocket",    0.003f, 0.0026f, 0,    0,      0.5f,  1,  1)
+val sputnikRocketQuirks      = RocketQuirks("Sputnik",       0.003f, 0.0024f, 50,   5000,   0.36f, 2,  1)
+val vostokKRocketQuirks      = RocketQuirks("Vostok-K",      0.003f, 0.0033f, 100,  10000,  0.36f, 2,  1)
+val saturnVRocketQuirks      = RocketQuirks("Saturn V",      0.003f, 0.003f,  200,  20000,  0.26f, 5,  1)
+val spaceShuttleRocketQuirks = RocketQuirks("Space Shuttle", 0.003f, 0.0042f, 500,  50000,  0.19f, 8,  1)
+val falcon9RocketQuirks      = RocketQuirks("Falcon 9",      0.003f, 0.0038f, 1000, 100000, 0.14f, 15, 1)
+val falconHeavyRocketQuirks  = RocketQuirks("Falcon Heavy",  0.003f, 0.005f,  2000, 200000, 0.10f, 25, 1)
 
 fun convertPointsOnRocket(pR: Array<Vector>, center: Vector, scale: Vector): Array<Vector> {
     for (i in pR.indices) {
