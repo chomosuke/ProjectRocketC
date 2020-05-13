@@ -57,6 +57,10 @@ abstract class Trace {
     }
 
     open fun removeTrace() {
+        parallelForIForFadeTraces.waitForLastRun()
+        parallelForIForMoveTraces.waitForLastRun()
+        // to prevent removing while still fading trace which will cause some trace not being removed
+
         for (traceShape in traceShapes)
             traceShape.remove()
     }

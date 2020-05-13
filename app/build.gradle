@@ -8,8 +8,8 @@ android {
         applicationId "com.chomusukestudio.projectrocketc"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 65
-        versionName "PR13.2"
+        versionCode 66
+        versionName "PR14"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
