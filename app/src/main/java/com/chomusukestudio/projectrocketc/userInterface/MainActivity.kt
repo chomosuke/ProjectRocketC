@@ -85,7 +85,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 			})
 		}
 		with(findViewById<SeekBar>(R.id.musicVolumeBar)) {
-			progress = sharedPreferences.getInt(getString(R.string.musicVolume), 75)
+			progress = sharedPreferences.getInt(getString(R.string.musicVolume), 50)
             musicVolume = progress
 			bgm.setVolume(musicVolume.toFloat()/100, musicVolume.toFloat()/100)
 			setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
