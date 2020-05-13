@@ -28,6 +28,7 @@ import com.chomusukestudio.projectrocketc.MProcessingThread
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import kotlinx.android.synthetic.main.pre_game.*
+import java.lang.Exception
 import java.util.concurrent.Executors
 
 enum class State { InGame, PreGame, Paused, Crashed }
@@ -210,7 +211,21 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         bgmFadeOut.pauseAndWait()
         bgm.seekTo(2500)
         bgm.setVolume(musicVolume.toFloat()/100, musicVolume.toFloat()/100)
-        bgm.start()
+		bgm.start()
+		while (!bgm.isPlaying) {
+			// try to recover when MediaPlayer goes wrong
+			try {
+				bgm.release()
+			} catch (e: Exception) {
+				Log.e("bgm start", "$e")
+			}
+			try {
+				bgm = MediaPlayer.create(this, R.raw.bgm)
+				bgm.start()
+			} catch (e: Exception) {
+				Log.e("bgm start", "$e")
+			}
+		}
         bgm.isLooping = true
 
         // fade away pregame layout with animation
