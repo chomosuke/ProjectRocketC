@@ -27,6 +27,7 @@ import com.chomusukestudio.prcandroid2dgameengine.threadClasses.ScheduledThread
 import com.chomusukestudio.projectrocketc.MProcessingThread
 import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
+import kotlinx.android.synthetic.main.on_crash.*
 import kotlinx.android.synthetic.main.pre_game.*
 import java.lang.Exception
 import java.util.concurrent.Executors
@@ -450,7 +451,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         val balance = sharedPreferences.getInt(getString(R.string.balance), 0)
         val rocketQuirks = mProcessingThread.currentRocketQuirks
         
-        if (rocketQuirks.price < balance) {
+        if (rocketQuirks.price <= balance) {
             val newBalance = balance - rocketQuirks.price
             with(sharedPreferences.edit()) {
                 putBoolean(getString(R.string.bought, rocketQuirks.name), true)
@@ -512,32 +513,24 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         state = State.Crashed
     
         val score = LittleStar.score
-        with(sharedPreferences) {
-            with(edit()) {
-                
-                if (score > getInt(getString(R.string.highestScore), 0))
-                    putInt(getString(R.string.highestScore), score) // update highest score
-    
-                // new balance
-                putInt(getString(R.string.balance), getInt(getString(R.string.balance), 0) + score)
-                
-                apply()
-            }
-        }
-        // firebase stuff that i don't understand
-//            val bundle = Bundle()
-//            bundle.putInt(FirebaseAnalytics.Param.SCORE, LittleStar.score)
-//            bundle.putString("leaderboard_id", "mLeaderboard")
-//            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.POST_SCORE, bundle)
-    
+        val previousBest = sharedPreferences.getInt(getString(R.string.highestScore), 0)
     
         runOnUiThread {
             findViewById<ConstraintLayout>(R.id.onCrashLayout).visibility = View.VISIBLE
             findViewById<ConstraintLayout>(R.id.onCrashLayout).bringToFront()
         
-            findViewById<TextView>(R.id.highestScoreOnCrash).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
-            findViewById<TextView>(R.id.previousScoreOnCrash).text = findViewById<TextView>(R.id.scoreTextView).text
-            
+            if (score > previousBest) {
+                highestScoreOnCrashTitle.text = getString(R.string.previous_highest_score)
+                highestScoreOnCrash.text = sharedPreferences.getInt(getString(R.string.highestScore), 0).toString()
+                previousScoreOnCrashTitle.text = getString(R.string.new_best)
+                previousScoreOnCrash.text = findViewById<TextView>(R.id.scoreTextView).text
+            } else {
+                highestScoreOnCrashTitle.text = getString(R.string.highest_score)
+                findViewById<TextView>(R.id.highestScoreOnCrash).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+                previousScoreOnCrashTitle.text = getString(R.string.score)
+                findViewById<TextView>(R.id.previousScoreOnCrash).text = findViewById<TextView>(R.id.scoreTextView).text
+            }
+        
             // update balance textView
             findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, sharedPreferences.getInt(getString(R.string.balance), 0))
             findViewById<TextView>(R.id.gainedMoneyTextView).text = "+" + getString(R.string.add_dollar_symbol, score)
@@ -545,9 +538,22 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.INVISIBLE
         
             findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.INVISIBLE
-            
+        
             // prevent any uncleaned visual effect
             findViewById<TextView>(R.id.visualText).text = ""
+        
+            with(sharedPreferences) {
+                with(edit()) {
+                
+                    if (score > getInt(getString(R.string.highestScore), 0))
+                        putInt(getString(R.string.highestScore), score) // update highest score
+                
+                    // new balance
+                    putInt(getString(R.string.balance), getInt(getString(R.string.balance), 0) + score)
+                
+                    apply()
+                }
+            }
         }
     }
 
