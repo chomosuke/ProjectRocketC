@@ -530,7 +530,20 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 previousScoreOnCrashTitle.text = getString(R.string.score)
                 findViewById<TextView>(R.id.previousScoreOnCrash).text = findViewById<TextView>(R.id.scoreTextView).text
             }
-        
+    
+            with(sharedPreferences) {
+                with(edit()) {
+            
+                    if (score > getInt(getString(R.string.highestScore), 0))
+                        putInt(getString(R.string.highestScore), score) // update highest score
+            
+                    // new balance
+                    putInt(getString(R.string.balance), getInt(getString(R.string.balance), 0) + score)
+            
+                    apply()
+                }
+            }
+            
             // update balance textView
             findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, sharedPreferences.getInt(getString(R.string.balance), 0))
             findViewById<TextView>(R.id.gainedMoneyTextView).text = "+" + getString(R.string.add_dollar_symbol, score)
@@ -541,19 +554,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         
             // prevent any uncleaned visual effect
             findViewById<TextView>(R.id.visualText).text = ""
-        
-            with(sharedPreferences) {
-                with(edit()) {
-                
-                    if (score > getInt(getString(R.string.highestScore), 0))
-                        putInt(getString(R.string.highestScore), score) // update highest score
-                
-                    // new balance
-                    putInt(getString(R.string.balance), getInt(getString(R.string.balance), 0) + score)
-                
-                    apply()
-                }
-            }
         }
     }
 
