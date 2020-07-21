@@ -90,11 +90,10 @@
             android:id="@+id/unlockTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
             android:paddingStart="2dp"
             android:paddingEnd="2dp"
             android:text=""
-            style="@style/shadow"
+            style="@style/MTextView"
             android:textAlignment="center"
             android:textColor="@android:color/white"
             android:textSize="24sp"
@@ -110,9 +109,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
             android:text="@string/toUnlock"
-            style="@style/shadow"
+            style="@style/MTextView"
             android:textAlignment="center"
             android:textColor="@android:color/white"
             android:textSize="24sp"
@@ -127,7 +125,7 @@
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        style="@style/shadow"
+        style="@style/MTextView"
         android:textSize="@dimen/textSize"
         android:textColor="#FFF"/>
     

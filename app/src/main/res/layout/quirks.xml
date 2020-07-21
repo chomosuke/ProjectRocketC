@@ -22,11 +22,10 @@
 		android:background="@android:color/transparent"
 		android:typeface="monospace"
 		android:padding="8dp"
-		style="@style/shadow"
+		style="@style/MTextView"
 		android:onClick="showRocketDescription"
 		android:gravity="center"
 		android:layout_gravity="center_horizontal"
-		android:textColor="#FFF"
 		android:textSize="20sp" />
 	
 	<Button
@@ -36,11 +35,10 @@
 		android:background="@android:color/transparent"
 		android:typeface="monospace"
 		android:padding="0dp"
-		style="@style/shadow"
+		style="@style/MTextView"
 		android:onClick="turningSpeedExplained"
 		android:gravity="center"
 		android:layout_gravity="center_horizontal"
-		android:textColor="#FFF"
 		android:textSize="18sp" />
 	
 	<Button
@@ -50,11 +48,10 @@
 		android:typeface="monospace"
 		android:background="@android:color/transparent"
 		android:padding="0dp"
-		style="@style/shadow"
+		style="@style/MTextView"
 		android:onClick="flybyDeltaExplained"
 		android:gravity="center"
 		android:layout_gravity="center_horizontal"
-		android:textColor="#FFF"
 		android:textSize="18sp" />
 	
 </LinearLayout>

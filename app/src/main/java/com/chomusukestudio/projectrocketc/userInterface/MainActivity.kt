@@ -4,11 +4,14 @@ package com.chomusukestudio.projectrocketc.userInterface
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Point
 import android.graphics.Typeface
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
@@ -29,7 +32,7 @@ import com.chomusukestudio.projectrocketc.R
 import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import kotlinx.android.synthetic.main.on_crash.*
 import kotlinx.android.synthetic.main.pre_game.*
-import java.lang.Exception
+import kotlinx.android.synthetic.main.rate_me_maybe.*
 import java.util.concurrent.Executors
 
 enum class State { InGame, PreGame, Paused, Crashed }
@@ -106,16 +109,15 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         
         // update balance view
         findViewById<TextView>(R.id.balanceTextView).text = getString(R.string.add_dollar_symbol, sharedPreferences.getInt(getString(R.string.balance), 0))
-
+        
+        val numOfTimesOpened = sharedPreferences.getInt(getString(R.string.numOfTimesOpened), 0)
         // see if this is the first time the game open
-        if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true)) {
+        if (sharedPreferences.getBoolean(getString(R.string.firstTimeOpen), true) && numOfTimesOpened == 0) {
             showTutorial(findViewById(R.id.tutorialButton))
-
-            // and set the firstTimeOpen to be false
-            with(sharedPreferences.edit()) {
-                putBoolean(getString(R.string.firstTimeOpen), false)
-                apply()
-            }
+        }
+        with (sharedPreferences.edit()) {
+            putInt(getString(R.string.numOfTimesOpened), numOfTimesOpened + 1)
+            apply()
         }
         
         // update highest score
@@ -284,7 +286,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     private var lastClickRestartGame = 0L
-    fun restartGame(view: View) {
+    fun restartGamePaused(view: View) {
         if (if (SystemClock.uptimeMillis() - lastClickRestartGame < 1000) {
                     true
                 } else {
@@ -292,37 +294,108 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     false
                 })
             return // multi click check
-
-        when (state) {
-            State.Crashed -> {
-                // update highest score
-                findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
-
-                findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
-
-                findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
-                findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
-
-                findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
-
-                fadeOut(findViewById(R.id.onCrashLayout))
-            }
-            State.Paused -> {
-                resumeGame()
-				// restart bgm
-				bgm.seekTo(2500)
-				bgm.start()
-            }
-            else -> return // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
-        }
+    
+        if (state != State.Paused)
+            return // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
+    
+        resumeGame()
+        // restart bgm
+        bgm.seekTo(2500)
+        bgm.start()
     
         state = State.PreGame
         // change state before reset so next frame get the correct state
-		// and also PreGame for reset to initialize correctly
+        // and also PreGame for reset to initialize correctly
         mProcessingThread.reset()
-		// start the game
-		state = State.InGame
+        // start the game
+        state = State.InGame
     }
+    fun restartGameCrash(view: View) {
+        if (if (SystemClock.uptimeMillis() - lastClickRestartGame < 1000) {
+                    true
+                } else {
+                    lastClickRestartGame = SystemClock.uptimeMillis()
+                    false
+                })
+            return // multi click check
+    
+        if (state != State.Crashed)
+            return // already in other state, could be lag so big that multi click check failed or pressed immediately after toHome
+    
+        // update highest score
+        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+    
+        fadeOut(findViewById(R.id.onCrashLayout))
+        
+        if (shouldAskRate()) {
+            fadeIn(rateMeMaybeLayout)
+        } else {
+            // restart
+            restartGame()
+        }
+    }
+    private fun restartGame() {
+    
+        findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+    
+        findViewById<ConstraintLayout>(R.id.inGameLayout).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.inGameLayout).bringToFront()
+    
+        findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
+    
+        state = State.PreGame
+        // change state before reset so next frame get the correct state
+        // and also PreGame for reset to initialize correctly
+        mProcessingThread.reset()
+        // start the game
+        state = State.InGame
+    }
+    
+    private fun shouldAskRate() =
+            previousScoreOnCrash.text.toString().toInt() > highestScoreOnCrash.text.toString().toInt()
+                    && sharedPreferences.getInt(getString(R.string.numOfTimesOpened), 0) >= 5
+                    && !sharedPreferences.getBoolean(getString(R.string.noMoreRate), false)
+//            true
+    
+    fun rateAnswer(view: View) {
+        when (view) {
+            noRate -> {
+                
+                with(sharedPreferences.edit()) {
+                    putBoolean(getString(R.string.noMoreRate), true)
+                    apply()
+                }
+            }
+            yesRate -> {
+                val uri: Uri = Uri.parse("market://details?id=$packageName")
+                val goToMarket = Intent(Intent.ACTION_VIEW, uri)
+                // To count with Play market backstack, After pressing back button,
+                // to taken back to our application, we need to add following flags to intent.
+                // To count with Play market backstack, After pressing back button,
+                // to taken back to our application, we need to add following flags to intent.
+                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or
+                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                try {
+                    startActivity(goToMarket)
+                } catch (e: ActivityNotFoundException) {
+                    startActivity(Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://play.google.com/store/apps/details?id=$packageName")))
+                }
+                
+                with(sharedPreferences.edit()) {
+                    putBoolean(getString(R.string.noMoreRate), true)
+                    apply()
+                }
+            }
+            maybeLaterRate -> {
+                // do nothing
+            }
+        }
+        fadeOut(rateMeMaybeLayout)
+        restartGame()
+    }
+    
     
     private var volume = 1f
     private val bgmFadeOut: ScheduledThread = ScheduledThread(30) {

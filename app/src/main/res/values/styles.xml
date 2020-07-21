@@ -40,7 +40,8 @@
         <item name="android:minHeight">5dp</item>
     </style>
     
-    <style name="shadow">
+    <style name="MTextView">
+        <item name="android:textColor">#FFF</item>
         <item name="android:shadowRadius">1.2</item>
         <item name="android:shadowDy">1.2</item>
         <item name="android:shadowDx">1.2</item>

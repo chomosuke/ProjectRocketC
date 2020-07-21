@@ -72,5 +72,7 @@
     <include layout="@layout/scores" />
 
     <include layout="@layout/tutorial" />
+    
+    <include layout="@layout/rate_me_maybe" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

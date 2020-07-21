@@ -29,4 +29,6 @@
     <string name="balance">balance</string>
     <string name="flybyDelta">\u0020\u0020flyby delta: %s</string>
     <string name="turningSpeed">turning speed: %s</string>
+    <string name="numOfTimesOpened">numOfTimesOpened</string>
+    <string name="noMoreRate">refuseToRate</string>
 </resources>
