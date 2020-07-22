@@ -33,6 +33,7 @@ import com.chomusukestudio.projectrocketc.littleStar.LittleStar
 import kotlinx.android.synthetic.main.on_crash.*
 import kotlinx.android.synthetic.main.pre_game.*
 import kotlinx.android.synthetic.main.rate_me_maybe.*
+import java.lang.RuntimeException
 import java.util.concurrent.Executors
 
 enum class State { InGame, PreGame, Paused, Crashed }
@@ -46,7 +47,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
 //    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     @Volatile var state: State = State.PreGame
-        private set
+        private set(value)
+        {
+            field = value
+            Log.v("change state to", state.toString())
+        }
     @Volatile var soundEffectsVolume = 100
         private set
     private lateinit var bgm: MediaPlayer
@@ -303,12 +308,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         bgm.seekTo(2500)
         bgm.start()
     
-        state = State.PreGame
-        // change state before reset so next frame get the correct state
-        // and also PreGame for reset to initialize correctly
-        mProcessingThread.reset()
-        // start the game
-        state = State.InGame
+        restartGame()
     }
     fun restartGameCrash(view: View) {
         if (if (SystemClock.uptimeMillis() - lastClickRestartGame < 1000) {
@@ -328,6 +328,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         fadeOut(findViewById(R.id.onCrashLayout))
         
         if (shouldAskRate()) {
+            rateAnswerDestination = State.InGame
             fadeIn(rateMeMaybeLayout)
         } else {
             // restart
@@ -357,6 +358,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     && !sharedPreferences.getBoolean(getString(R.string.noMoreRate), false)
 //            true
     
+    private var rateAnswerDestination: State? = null
     fun rateAnswer(view: View) {
         when (view) {
             noRate -> {
@@ -393,7 +395,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             }
         }
         fadeOut(rateMeMaybeLayout)
-        restartGame()
+        when (rateAnswerDestination) {
+            State.InGame -> restartGame()
+            State.PreGame -> toHome()
+            else -> throw RuntimeException("rateAnswer: state in $state.")
+        }
     }
     
     
@@ -410,29 +416,42 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
     // bgmFO so bgmFadeOut can reference itself
     private val bgmFO = bgmFadeOut
-    fun toHome(view: View) {
-        when (state) {
-            State.Crashed -> {// update highest score
-                findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
-
-                findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
-                findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
-                fadeOut(findViewById(R.id.onCrashLayout))
-            }
-            State.Paused -> {
-				resumeGame()
-                fadeOut(findViewById(R.id.inGameLayout))
-            }
-            else -> return
-        } // already at home, must've been lag
-
+    fun toHomePaused(view: View) {
+        if (state != State.Paused)
+            return
+        
+        resumeGame()
+        fadeOut(findViewById(R.id.inGameLayout))
+    
+        toHome()
+    }
+    fun toHomeCrash(view: View) {
+        if (state != State.Crashed)
+            return
+        
+        // update highest score
+        findViewById<TextView>(R.id.highestScoreTextView).text = /*putCommasInInt*/(sharedPreferences.getInt(getString(R.string.highestScore), 0).toString())
+    
+        findViewById<ConstraintLayout>(R.id.scoresLayout).visibility = View.VISIBLE
+        findViewById<ConstraintLayout>(R.id.scoresLayout).bringToFront()
+        fadeOut(findViewById(R.id.onCrashLayout))
+        
+        if (shouldAskRate()) {
+            rateAnswerDestination = State.PreGame
+            fadeIn(rateMeMaybeLayout)
+        } else {
+            // to home
+            toHome()
+        }
+    }
+    private fun toHome() {
         fadeIn(findViewById(R.id.preGameLayout))
-	
-		// fade out bgm
+    
+        // fade out bgm
         bgmFadeOut.run()
-
-		state = State.PreGame
-		// change state before reset so next frame get the correct state
+    
+        state = State.PreGame
+        // change state before reset so next frame get the correct state
         mProcessingThread.reset()
     }
 
@@ -740,7 +759,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 State.InGame, State.Paused ->
                     onPause(findViewById<ImageButton>(R.id.pauseButton))
                 State.Crashed ->
-                    toHome(findViewById<ImageButton>(R.id.toHomeButton))
+                    toHomePaused(findViewById<ImageButton>(R.id.toHomeButton))
             }
         }
     }
