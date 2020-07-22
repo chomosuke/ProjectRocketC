@@ -374,7 +374,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                 // To count with Play market backstack, After pressing back button,
                 // to taken back to our application, we need to add following flags to intent.
                 goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or
-                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                        Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET or
                         Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
                 try {
                     startActivity(goToMarket)
