@@ -352,11 +352,14 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         state = State.InGame
     }
     
-    private fun shouldAskRate() =
-            previousScoreOnCrash.text.toString().toInt() > highestScoreOnCrash.text.toString().toInt()
-                    && sharedPreferences.getInt(getString(R.string.numOfTimesOpened), 0) >= 5
-                    && !sharedPreferences.getBoolean(getString(R.string.noMoreRate), false)
-//            true
+    private fun shouldAskRate(): Boolean {
+        val higherScore = previousScoreOnCrash.text.toString().toInt() > highestScoreOnCrash.text.toString().toInt()
+        val moreThan5 = sharedPreferences.getInt(getString(R.string.numOfTimesOpened), 0) >= 5
+        val yesMoreRate = !sharedPreferences.getBoolean(getString(R.string.noMoreRate), false)
+        
+        Log.v("should ask rate?", "$higherScore, $moreThan5, $yesMoreRate")
+        return higherScore && moreThan5 && yesMoreRate
+    }
     
     private var rateAnswerDestination: State? = null
     fun rateAnswer(view: View) {

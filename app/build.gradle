@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.chomusukestudio.projectrocketc"
         minSdkVersion 18
-        targetSdkVersion 28
-        versionCode 69
-        versionName "PR14.4"
+        targetSdkVersion 29
+        versionCode 70
+        versionName "PR15"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
