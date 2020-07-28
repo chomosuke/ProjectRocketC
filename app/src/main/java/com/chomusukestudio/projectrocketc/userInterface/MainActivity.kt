@@ -354,11 +354,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
     private fun shouldAskRate(): Boolean {
         val higherScore = previousScoreOnCrash.text.toString().toInt() > highestScoreOnCrash.text.toString().toInt()
-        val moreThan5 = sharedPreferences.getInt(getString(R.string.numOfTimesOpened), 0) >= 5
+        val enoughOpened = sharedPreferences.getInt(getString(R.string.numOfTimesOpened), 0) >= 3
         val yesMoreRate = !sharedPreferences.getBoolean(getString(R.string.noMoreRate), false)
         
-        Log.v("should ask rate?", "$higherScore, $moreThan5, $yesMoreRate")
-        return higherScore && moreThan5 && yesMoreRate
+        Log.v("should ask rate?", "$higherScore, $enoughOpened, $yesMoreRate")
+        return higherScore && enoughOpened && yesMoreRate
     }
     
     private var rateAnswerDestination: State? = null
