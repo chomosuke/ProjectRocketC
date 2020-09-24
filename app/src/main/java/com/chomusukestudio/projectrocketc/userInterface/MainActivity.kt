@@ -358,7 +358,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
         val yesMoreRate = !sharedPreferences.getBoolean(getString(R.string.noMoreRate), false)
         
         Log.v("should ask rate?", "$higherScore, $enoughOpened, $yesMoreRate")
-        return higherScore && enoughOpened && yesMoreRate
+        return /*higherScore &&*/ enoughOpened && yesMoreRate
     }
     
     private var rateAnswerDestination: State? = null
