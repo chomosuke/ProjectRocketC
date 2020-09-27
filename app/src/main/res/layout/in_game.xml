@@ -45,7 +45,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="onPause" />
+        android:onClick="pauseClicked" />
 
     <TextView
         android:id="@+id/deltaTextView"

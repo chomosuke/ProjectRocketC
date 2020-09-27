@@ -243,7 +243,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     }
 
     private var lastClickOnPause = 0L
-    fun onPause(view: View) {
+    fun pauseClicked(view: View) {
         if (if (SystemClock.uptimeMillis() - lastClickOnPause < 500) {
                     true
                 } else {
@@ -354,11 +354,11 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     
     private fun shouldAskRate(): Boolean {
         val higherScore = previousScoreOnCrash.text.toString().toInt() > highestScoreOnCrash.text.toString().toInt()
-        val enoughOpened = sharedPreferences.getInt(getString(R.string.numOfTimesOpened), 0) >= 3
+        val enoughOpened = sharedPreferences.getInt(getString(R.string.numOfTimesOpened), 0) > 1
         val yesMoreRate = !sharedPreferences.getBoolean(getString(R.string.noMoreRate), false)
         
         Log.v("should ask rate?", "$higherScore, $enoughOpened, $yesMoreRate")
-        return /*higherScore &&*/ enoughOpened && yesMoreRate
+        return higherScore && enoughOpened && yesMoreRate
     }
     
     private var rateAnswerDestination: State? = null
@@ -722,7 +722,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
             when (state) {
                 State.InGame -> {
                     if (!hasFocus) {
-                        onPause(findViewById<Button>(R.id.pauseButton))
+                        pauseClicked(findViewById<Button>(R.id.pauseButton))
 //						bgm.pause()
                     }
                 }
@@ -760,7 +760,7 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
                     super.onBackPressed()
                 }
                 State.InGame, State.Paused ->
-                    onPause(findViewById<ImageButton>(R.id.pauseButton))
+                    pauseClicked(findViewById<ImageButton>(R.id.pauseButton))
                 State.Crashed ->
                     toHomePaused(findViewById<ImageButton>(R.id.toHomeButton))
             }

@@ -1,5 +1,6 @@
 package com.chomusukestudio.projectrocketc.userInterface
 
+import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,7 @@ class MyPagerAdapter(private val mainActivity: MainActivity) : androidx.viewpage
 
     private val finishTutorialButton = mainActivity.findViewById<Button>(R.id.finishTutorialButton)
 
-    override fun instantiateItem(container :ViewGroup, position: Int): View {
+    override fun instantiateItem(container: ViewGroup, position: Int): View {
         Log.v("tutorial instItem", container.toString())
 
         val imageView = ImageView(mainActivity)
@@ -67,6 +68,15 @@ class MyPagerAdapter(private val mainActivity: MainActivity) : androidx.viewpage
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         Log.v("tutorial destroyItem", container.toString())
         container.removeView(`object` as View)
+//        val relativeLayout = (`object` as RelativeLayout)
+//        for (i in 0 until relativeLayout.childCount) {
+//            val view = relativeLayout.getChildAt(i)
+//            if (view is ImageView) {
+//                // recycle bitmap when destroy item to prevent a certain memory error
+//                (view.drawable as BitmapDrawable).bitmap.recycle()
+//                Log.v("destroyed ImageView", view.toString())
+//            }
+//        }
     }
 
     override fun isViewFromObject(p0: View, p1: Any) = p0 == p1
