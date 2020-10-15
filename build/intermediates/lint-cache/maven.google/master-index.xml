@@ -23,6 +23,7 @@
   <androidx.collection/>
   <androidx.compose/>
   <androidx.compose.animation/>
+  <androidx.compose.compiler/>
   <androidx.compose.foundation/>
   <androidx.compose.material/>
   <androidx.compose.runtime/>
@@ -138,6 +139,7 @@
   <com.google.android.ads/>
   <com.google.android.ads.consent/>
   <com.google.android.datatransport/>
+  <com.google.android.games/>
   <com.google.android.gms/>
   <com.google.android.instantapps/>
   <com.google.android.instantapps.thirdpartycompat/>
