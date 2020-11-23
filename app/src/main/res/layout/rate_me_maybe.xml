@@ -24,18 +24,7 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent" />
-	
-	<Button
-		android:id="@+id/noRate"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="No"
-		style="@style/MButton"
-		app:layout_constraintEnd_toStartOf="@+id/maybeLaterRate"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintBaseline_toBaselineOf="@+id/maybeLaterRate"
-		android:onClick="rateAnswer"/>
-	
+
 	<Button
 		android:id="@+id/maybeLaterRate"
 		style="@style/MButton"
@@ -43,22 +32,22 @@
 		android:layout_height="wrap_content"
 		android:text="Maybe Later"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintEnd_toStartOf="@id/yesRate"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
 		app:layout_constraintVertical_bias="0.666"
 		android:onClick="rateAnswer"/>
-	
+
 	<Button
 		android:id="@+id/yesRate"
+		style="@style/MButton"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:onClick="rateAnswer"
 		android:text="Yes"
-		style="@style/MButton"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@+id/maybeLaterRate"
 		app:layout_constraintBaseline_toBaselineOf="@+id/maybeLaterRate"
-		android:onClick="rateAnswer"/>
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@+id/maybeLaterRate" />
 	
 	<TextView
 		android:id="@+id/textView"

@@ -364,13 +364,6 @@ class MainActivity : Activity() { // exception will be throw if you try to creat
     private var rateAnswerDestination: State? = null
     fun rateAnswer(view: View) {
         when (view) {
-            noRate -> {
-                
-                with(sharedPreferences.edit()) {
-                    putBoolean(getString(R.string.noMoreRate), true)
-                    apply()
-                }
-            }
             yesRate -> {
                 val uri: Uri = Uri.parse("market://details?id=$packageName")
                 val goToMarket = Intent(Intent.ACTION_VIEW, uri)
